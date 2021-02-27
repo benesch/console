@@ -1,0 +1,72 @@
+:root {
+  --mz-purple: #612dd3;
+  --mz-purple-100: #612dd3;
+  --mz-purple-80: #815adc;
+  --mz-purple-60: #a084e6;
+  --mz-purple-40: #c0aeee;
+  --mz-purple-20: #dfd6f6;
+  --mz-purple-10: #f0ebfc;
+
+  --mz-lime: #77e04c;
+  --mz-lime-100: #77e04c;
+  --mz-lime-80: #92e772;
+  --mz-lime-60: #adec96;
+  --mz-lime-40: #c9f3b9;
+  --mz-lime-20: #e5fadc;
+
+  --mz-teal: #2fbad1;
+  --mz-magenta: #d12fa7;
+  --mz-orange: #ff7c1a;
+  --mz-yellow: #efc71b;
+
+  --mz-black: #2b2c30;
+  --mz-dark-gray: #575961;
+  --mz-gray: #c1c3c6;
+  --mz-light-gray: #e0e2e2;
+  --mz-white: #ffffff;
+}
+
+@font-face {
+  font-family: "RM Neue";
+  src: url("./fonts/RMNeue-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RM Neue";
+  src: url("./fonts/RMNeue-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RM Neue";
+  src: url("./fonts/RMNeue-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RM Neue";
+  src: url("./fonts/RMNeue-SemiBoldItalic.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* TODO(benesch): manually overriding Semantic UI's font like this is
+   annoying and error prone. The recommended mechanism for this involves
+   integrating with Semantic UI's LESS build system, but that is not
+   trivial with Create React App.
+   See: https://react.semantic-ui.com/theming/#theming-with-create-react-app
+*/
+body,
+.ui.button,
+.ui.card > .content > .header,
+.ui.cards > .ui.card > .content > .header,
+.ui.header,
+.ui.menu,
+.ui.text.container
+{
+  font-family: "RM Neue", Helvetica, sans-serif;
+}

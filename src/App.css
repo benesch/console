@@ -1,0 +1,78 @@
+.login {
+  display: flex;
+  flex-direction: column;
+}
+
+.loading {
+  background: url(spinner.svg);
+}
+
+.App {
+  text-align: center;
+  display: grid;
+  grid-gap: 1rem;
+  background-color: var(--mz-light-gray);
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+}
+
+.nav-link {
+  font-weight: 600;
+  font-size: 16px;
+  color: #2b2c30;
+  line-height: 19px;
+  text-decoration: none;
+}
+
+nav {
+  position: fixed;
+  background-color: var(--mz-white);
+  left: 0;
+  right: 0;
+}
+
+nav ul {
+  display: flex;
+}
+
+.log-out {
+}
+
+nav li {
+  color: var(--mz-white);
+  list-style-type: none;
+  margin: 10px;
+  flex-grow: 0;
+}
+.spacer {
+  flex-grow: 1;
+}
+
+main {
+  padding-top: 70px;
+}
+
+.logo {
+  max-height: 60px;
+}
+
+.App-header {
+}
+
+.App-footer {
+  background-color: var(--mz-purple);
+  color: var(--mz-white);
+  grid-area: footer;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+/* Semantic UI's form field labels are weirdly a bit smaller than their
+   surrounding text by default. Bump them up to a normal size. */
+.ui.form .field > label {
+  font-size: 1.05rem;
+}
