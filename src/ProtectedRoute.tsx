@@ -5,7 +5,6 @@ import { useUser } from "./auth/AuthContext";
 
 function ProtectedRoute(props: any) {
   const { user, hasInitialized } = useUser();
-  console.log(user);
 
   if (user) {
     return <Route {...props} />;

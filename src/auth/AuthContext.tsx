@@ -143,7 +143,6 @@ export function UserProvider({
   async function confirmSignUp(email: string, code: string): Promise<any> {
     if (!user) {
       const result = await Auth.confirmSignUp(email, code);
-      Auth.currentAuthenticatedUser().then((user) => console.log(user));
       return result;
     }
     return Promise.reject(null);

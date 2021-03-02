@@ -13,8 +13,7 @@ function NewPassword() {
       }}
       onSubmit={async (values, actions) => {
         if (values.password === values.repeatPassword) {
-          const user = await newPassword(values.password);
-          console.log(user);
+          await newPassword(values.password);
         }
       }}
     >
