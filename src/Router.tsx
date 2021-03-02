@@ -1,5 +1,8 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { Provider } from "react-redux";
+import { Playground, store } from "graphql-playground-react";
+import { useApolloClient } from "@apollo/client";
 
 import Deployments from "./Deployments";
 import AuthLayout from "./auth/AuthLayout";
@@ -7,10 +10,11 @@ import ForgotPassword from "./auth/ForgotPassword";
 import Login from "./auth/Login";
 import SignUp from "./auth/SignUp";
 import NewPassword from "./auth/NewPassword";
-
 import ProtectedRoute from "./ProtectedRoute";
+import LoggedInLayout from "./LoggedInLayout";
 
 function Router() {
+  const client = useApolloClient();
   return (
     <Switch>
       <Route path="/login">
@@ -29,10 +33,17 @@ function Router() {
         </AuthLayout>
       </Route>
       <ProtectedRoute path="/deployments">
-        <Deployments />
+        <LoggedInLayout>
+          <Deployments />
+        </LoggedInLayout>
       </ProtectedRoute>
       <Route path="/new-password">
         <NewPassword />
+      </Route>
+      <Route path="/graphql-playground" endpoint="/graphql">
+        <Provider store={store}>
+          <Playground createApolloLink={() => client} />
+        </Provider>
       </Route>
       <Route>
         <Redirect to="/deployments" />
