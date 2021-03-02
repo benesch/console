@@ -239,8 +239,6 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
 function DestroyModal(props: { deployment: Deployment; close: () => void }) {
   const [destroyDeployment] = useMutation(DESTROY_DEPLOYMENT);
 
-  window.console.log(props);
-
   const doDestroy = async () => {
     try {
       await destroyDeployment({
