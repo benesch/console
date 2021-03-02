@@ -192,15 +192,29 @@ function Deployments() {
 }
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
+  const download = () => {
+    // TODO(benesch): remove hack.
+    let host = window.location.host;
+    if (window.location.hostname === "localhost") {
+      host = "localhost:8000";
+    }
+    window.location.href = `http://${host}/deployment/${props.deployment.id}/download-certs`;
+  };
+
   return (
     <Modal open={true}>
       <Modal.Header>Connect to {props.deployment.name} deployment</Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <p>To connect to this deployment via the psql command-line tool:</p>
-          <pre>
-            psql -h {props.deployment.ip} -p 6875 -U materialize materialize
-          </pre>
+          <code>
+            psql "postgresql://materialize@{props.deployment.ip}
+            :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
+          </code>
+          <p>
+            Run this command from the directory in which you have downloaded the
+            certificates below.
+          </p>
           <p>
             If your instance booted recently, it may take another minute or two
             before the psql connection will succeed.
@@ -209,6 +223,9 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
       </Modal.Content>
       <Modal.Actions>
         <Modal.Actions>
+          <Button onClick={() => download()} primary>
+            Download certificates
+          </Button>
           <Button onClick={() => props.close()}>Done</Button>
         </Modal.Actions>
       </Modal.Actions>
