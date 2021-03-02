@@ -124,7 +124,10 @@ function Deployments() {
       <Form
         loading={formik.isSubmitting}
         error={Boolean(creationError)}
-        onSubmit={formik.handleSubmit}
+        onSubmit={() => {
+          setTimeout(() => window.location.reload(), 200);
+          formik.handleSubmit();
+        }}
       >
         <Form.Group>
           <Form.Select
@@ -244,6 +247,7 @@ function DestroyModal(props: { deployment: Deployment; close: () => void }) {
         variables: { deploymentId: props.deployment.id },
       });
       props.close();
+      window.location.reload();
     } catch (e) {
       // TODO(benesch): do better.
       window.console.log(e.message);
