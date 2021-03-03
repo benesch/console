@@ -196,12 +196,7 @@ function Deployments() {
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   const download = () => {
-    // TODO(benesch): remove hack.
-    let host = window.location.host;
-    if (window.location.hostname === "localhost") {
-      host = "localhost:8000";
-    }
-    window.location.href = `http://${host}/deployment/${props.deployment.id}/download-certs`;
+    window.location.href = `/deployment/${props.deployment.id}/download-certs`;
   };
 
   return (

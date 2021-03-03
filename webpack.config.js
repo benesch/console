@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
   entry: './src/index.tsx',
   resolve: {
     extensions: [ ".tsx", ".ts", ".js" ],
@@ -12,15 +11,6 @@ module.exports = {
       // used to automatically provide a polyfill but from v5 onwards we need
       // to specify the fallback explicitly
       "crypto": false,
-    },
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    host: '0.0.0.0',
-    port: 3000,
-    historyApiFallback: true,
-    proxy: {
-      '/graphql': 'http://backend:8000',
     },
   },
   module: {
