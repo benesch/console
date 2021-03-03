@@ -60,8 +60,9 @@ interface Deployment {
 
 function Deployments() {
   const { user } = useUser();
-  const { loading, data } = useQuery(GET_DEPLOYMENTS, {
+  const { loading, data, refetch } = useQuery(GET_DEPLOYMENTS, {
     variables: { user: user.attributes.sub },
+    pollInterval: 5000,
   });
   const [createDeployment] = useMutation(CREATE_DEPLOYMENT);
   const [creationError, setCreationError] = useState("");
@@ -72,11 +73,12 @@ function Deployments() {
     initialValues: {
       tlsAuthorityId: "",
     },
-    onSubmit: async ({ tlsAuthorityId }, actions) => {
+    onSubmit: async ({ tlsAuthorityId }) => {
       try {
         await createDeployment({
           variables: { tlsAuthorityId: tlsAuthorityId },
         });
+        refetch();
       } catch (e) {
         setCreationError(e.message);
       }
@@ -97,14 +99,6 @@ function Deployments() {
 
   return (
     <React.Fragment>
-      <Message color="orange">
-        <Message.Header>Heads up!</Message.Header>
-        <p>
-          The UI does not yet refresh properly. Please reload the page (via F5
-          or Cmd+R) after clicking a button. If you pummel "Create deployment"
-          ten times, you will get ten deployments.
-        </p>
-      </Message>
       {showConnectId && (
         <ConnectModal
           deployment={
@@ -119,13 +113,13 @@ function Deployments() {
             deployments.find((d) => d.id === showDestroyId) as Deployment
           }
           close={() => setShowDestroyId("")}
+          refetch={refetch}
         />
       )}
       <Form
         loading={formik.isSubmitting}
         error={Boolean(creationError)}
         onSubmit={() => {
-          setTimeout(() => window.location.reload(), 200);
           formik.handleSubmit();
         }}
       >
@@ -140,7 +134,7 @@ function Deployments() {
                 text: c.name,
               };
             })}
-            onChange={(e, { value }) => {
+            onChange={(_e, { value }) => {
               formik.setFieldValue("tlsAuthorityId", value);
             }}
             label="TLS CA"
@@ -157,7 +151,7 @@ function Deployments() {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>State</Table.HeaderCell>
+            <Table.HeaderCell style={{ width: "20%" }}>State</Table.HeaderCell>
             <Table.HeaderCell>Public IP</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
@@ -231,7 +225,11 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   );
 }
 
-function DestroyModal(props: { deployment: Deployment; close: () => void }) {
+function DestroyModal(props: {
+  deployment: Deployment;
+  close: () => void;
+  refetch: () => void;
+}) {
   const [destroyDeployment] = useMutation(DESTROY_DEPLOYMENT);
 
   const doDestroy = async () => {
@@ -239,8 +237,8 @@ function DestroyModal(props: { deployment: Deployment; close: () => void }) {
       await destroyDeployment({
         variables: { deploymentId: props.deployment.id },
       });
+      props.refetch();
       props.close();
-      window.location.reload();
     } catch (e) {
       // TODO(benesch): do better.
       window.console.log(e.message);

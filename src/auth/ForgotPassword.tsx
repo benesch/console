@@ -24,7 +24,7 @@ function ForgotPassword() {
         .email("Enter a valid email")
         .required("Email is required"),
     }),
-    onSubmit: async (values, actions) => {
+    onSubmit: async (values) => {
       try {
         await forgotPassword(values.email);
         setSentEmail(true);
@@ -49,7 +49,7 @@ function ForgotPassword() {
         .string()
         .oneOf([yup.ref("password")], "Passwords must match"),
     }),
-    onSubmit: async (values, actions) => {
+    onSubmit: async (values) => {
       try {
         await forgotPasswordSubmit(
           requestEmailForm.values.email,

@@ -22,7 +22,7 @@ function Code({ email, password, destination }: CodeProps) {
     initialValues: {
       code: "",
     },
-    onSubmit: async (values, actions) => {
+    onSubmit: async (values) => {
       try {
         await confirmSignUp(email, values.code);
         await login(email, password);

@@ -24,20 +24,27 @@
     "build": "webpack",
     "test": "jest",
     "lint": "eslint --max-warnings 0 src",
-    "lint:fix": "eslint --fix --max-warnings 0 src"
+    "lint:fix": "eslint --fix src"
   },
   "engines": {
     "node": "14.x"
   },
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
     "plugins": [
-      "prettier"
+      "prettier",
+      "@typescript-eslint"
     ],
     "rules": {
-      "prettier/prettier": "error"
+      "prettier/prettier": "error",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars-experimental": "error"
     },
     "extends": [
-      "react-app",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
       "plugin:prettier/recommended"
     ]
   },
@@ -65,7 +72,11 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-redux": "^7.1.15",
     "@types/react-router-dom": "^5.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "babel-eslint": "^10.1.0",
     "css-loader": "^5.1.1",
+    "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "fork-ts-checker-webpack-plugin": "^6.1.0",
@@ -75,7 +86,7 @@
     "style-loader": "^2.0.0",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.17",
-    "typescript": "^4",
+    "typescript": "^4.2.2",
     "webpack": "^5.24.2",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"

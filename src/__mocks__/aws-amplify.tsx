@@ -39,7 +39,7 @@ export class Auth {
     return Promise.resolve({});
   }
 
-  static signUp(email: string, password: string): Promise<CognitoUser | any> {
+  static signUp(email: string, _password: string): Promise<CognitoUser | any> {
     // Not logged in
     if (email === "existing") {
       return Promise.reject({
@@ -60,7 +60,7 @@ export class Auth {
   }
 
   static confirmSignUp(
-    email: string,
+    _email: string,
     code: string
   ): Promise<CognitoUser | any> {
     if (code === "mismatch") {

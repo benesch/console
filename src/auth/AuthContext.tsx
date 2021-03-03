@@ -44,15 +44,15 @@ export const UserContext = React.createContext<ContextType>({
   inContext: false,
   hasInitialized: false,
   getSession: () => Promise.reject(null),
-  login: (email: string, password: string) => Promise.resolve(null),
-  signUp: (email: string, password: string) => Promise.resolve(null),
+  login: (_email: string, _password: string) => Promise.resolve(null),
+  signUp: (_email: string, _password: string) => Promise.resolve(null),
   logout: () => Promise.resolve(null),
-  forgotPassword: (password: string) => Promise.resolve(null),
-  forgotPasswordSubmit: (email: string, code: string, password: string) =>
+  forgotPassword: (_password: string) => Promise.resolve(null),
+  forgotPasswordSubmit: (_email: string, _code: string, _password: string) =>
     Promise.resolve(null),
-  newPassword: (password: string) => Promise.resolve(null),
-  confirmSignUp: (email: string, code: string) => Promise.resolve(null),
-  resendSignUp: (email: string) => Promise.reject(null),
+  newPassword: (_password: string) => Promise.resolve(null),
+  confirmSignUp: (_email: string, _code: string) => Promise.resolve(null),
+  resendSignUp: (_email: string) => Promise.reject(null),
 });
 
 type UserProviderOptions = {
@@ -81,7 +81,7 @@ export function UserProvider({
     // attempt to fetch the info of the user that was already logged in
     Auth.currentAuthenticatedUser()
       .then((user) => setUser(user))
-      .catch((e: Error) => {
+      .catch((_e: Error) => {
         //TODO: Is this needed?
         //console.log(`Error getting current user: ${e}`);
         //setUser(null)
