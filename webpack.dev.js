@@ -1,6 +1,7 @@
 const path = require('path');
 const base = require('./webpack.config.js');
 const { merge } = require('webpack-merge');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = merge(base, {
   mode: 'development',
@@ -14,4 +15,5 @@ module.exports = merge(base, {
   },
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
+  plugins: [new ReactRefreshWebpackPlugin()]
 });
