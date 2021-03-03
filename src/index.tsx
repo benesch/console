@@ -5,6 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { UserProvider } from "./auth/AuthContext";
+import config from "./config";
 
 const root = document.createElement("div");
 document.body.appendChild(root);
@@ -12,9 +13,9 @@ document.body.appendChild(root);
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider
-      region="us-east-2"
-      userPoolId="us-east-2_GbM7D8ZVg"
-      userPoolWebClientId="7st072o8h1lhfj66mjf9vbcauo"
+      region={config.cognitoRegion}
+      userPoolId={config.cognitoUserPoolId}
+      userPoolWebClientId={config.cognitoWebClientId}
     >
       <App />
     </UserProvider>
