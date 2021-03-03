@@ -162,7 +162,12 @@ function Deployments() {
               <Table.Cell>{name}</Table.Cell>
               <Table.Cell>
                 {humanizeDeploymentState(state)}
-                <Loader active={!["R", "E"].includes(state)} inline size="tiny" style={{marginLeft: "0.5em"}} />
+                <Loader
+                  active={!["R", "E"].includes(state)}
+                  inline
+                  size="tiny"
+                  style={{ marginLeft: "0.5em" }}
+                />
               </Table.Cell>
               <Table.Cell>{ip}</Table.Cell>
               {/* TODO(benesch): avoid hardcoding a width here. */}
