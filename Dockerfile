@@ -1,11 +1,8 @@
 FROM node:14
 
-WORKDIR /srv/frontend
+WORKDIR /code
 
-COPY package.json package-lock.json /srv/frontend/
+COPY package.json package-lock.json /code/
 RUN npm install
 
-COPY . /srv/frontend
-
-EXPOSE 3000
-CMD "./entrypoint.sh"
+CMD ["npm", "run", "start"]
