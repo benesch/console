@@ -13,7 +13,6 @@ import {
   Modal,
   Table,
 } from "semantic-ui-react";
-import { refetchSchema } from "graphql-playground-react";
 
 const GET_DEPLOYMENTS = gql`
   query GetDeployments {
@@ -74,7 +73,7 @@ function Deployments() {
     initialValues: {
       tlsAuthorityId: "",
     },
-    onSubmit: async ({ tlsAuthorityId }, actions) => {
+    onSubmit: async ({ tlsAuthorityId }) => {
       try {
         await createDeployment({
           variables: { tlsAuthorityId: tlsAuthorityId },
@@ -135,7 +134,7 @@ function Deployments() {
                 text: c.name,
               };
             })}
-            onChange={(e, { value }) => {
+            onChange={(_e, { value }) => {
               formik.setFieldValue("tlsAuthorityId", value);
             }}
             label="TLS CA"
@@ -152,7 +151,7 @@ function Deployments() {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell style={{width: "20%"}}>State</Table.HeaderCell>
+            <Table.HeaderCell style={{ width: "20%" }}>State</Table.HeaderCell>
             <Table.HeaderCell>Public IP</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
@@ -226,7 +225,11 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   );
 }
 
-function DestroyModal(props: { deployment: Deployment; close: () => void; refetch: () => void; }) {
+function DestroyModal(props: {
+  deployment: Deployment;
+  close: () => void;
+  refetch: () => void;
+}) {
   const [destroyDeployment] = useMutation(DESTROY_DEPLOYMENT);
 
   const doDestroy = async () => {

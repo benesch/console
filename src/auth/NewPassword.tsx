@@ -11,7 +11,7 @@ function NewPassword() {
         password: "",
         repeatPassword: "",
       }}
-      onSubmit={async (values, actions) => {
+      onSubmit={async (values) => {
         if (values.password === values.repeatPassword) {
           await newPassword(values.password);
         }

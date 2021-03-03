@@ -39,7 +39,7 @@ function SignUp() {
       confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values, actions) => {
+    onSubmit: async (values) => {
       try {
         await signUp(values.email, values.password);
         setStep("CODE");
