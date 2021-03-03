@@ -151,7 +151,7 @@ function Deployments() {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell style={{ width: "20%" }}>State</Table.HeaderCell>
+            <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
             <Table.HeaderCell>Public IP</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
@@ -160,7 +160,10 @@ function Deployments() {
           {deployments.map(({ id, name, state, ip }: Deployment) => (
             <Table.Row key={id}>
               <Table.Cell>{name}</Table.Cell>
-              <Table.Cell>{humanizeDeploymentState(state)}</Table.Cell>
+              <Table.Cell>
+                {humanizeDeploymentState(state)}
+                <Loader active={!["R", "E"].includes(state)} inline size="tiny" style={{marginLeft: "0.5em"}} />
+              </Table.Cell>
               <Table.Cell>{ip}</Table.Cell>
               {/* TODO(benesch): avoid hardcoding a width here. */}
               <Table.Cell style={{ width: "35%" }}>
@@ -261,7 +264,7 @@ function DestroyModal(props: {
 function humanizeDeploymentState(deploymentState: string) {
   switch (deploymentState) {
     case "DQ":
-      return "DestroyQueued";
+      return "Destroy queued";
     case "D":
       return "Destroying";
     case "E":
@@ -269,7 +272,7 @@ function humanizeDeploymentState(deploymentState: string) {
     case "R":
       return "Ready";
     case "Q":
-      return "Queued";
+      return "Update queued";
     case "U":
       return "Updating";
     default:
