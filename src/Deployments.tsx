@@ -61,7 +61,6 @@ interface Deployment {
 function Deployments() {
   const { user } = useUser();
   const { loading, data, refetch } = useQuery(GET_DEPLOYMENTS, {
-    variables: { user: user.attributes.sub },
     pollInterval: 5000,
   });
   const [createDeployment] = useMutation(CREATE_DEPLOYMENT);
