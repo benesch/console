@@ -15,5 +15,7 @@ module.exports = merge(base, {
   },
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
-  plugins: [new ReactRefreshWebpackPlugin()]
+  plugins: [new ReactRefreshWebpackPlugin({
+    overlay: { sockPort: 3000 }
+  })]
 });
