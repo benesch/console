@@ -1,4 +1,5 @@
 import { CognitoUser, CognitoUserPool } from "amazon-cognito-identity-js";
+import config from "../config";
 
 export class Auth {
   static configure(): any {
@@ -21,8 +22,8 @@ export class Auth {
     }
     if (password === "correct") {
       const pool = new CognitoUserPool({
-        UserPoolId: "us-east-2_GbM7D8ZVg",
-        ClientId: "7st072o8h1lhfj66mjf9vbcauo",
+        UserPoolId: config.cognitoUserPoolId,
+        ClientId: config.cognitoWebClientId,
       });
       return Promise.resolve(
         new CognitoUser({ Username: "email", Pool: pool })

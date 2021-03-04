@@ -1,6 +1,7 @@
 import React from "react";
 import { UserProvider, useUser } from "../../auth/AuthContext";
 import { renderHook } from "@testing-library/react-hooks";
+import config from "../../config";
 
 jest.mock("aws-amplify");
 
@@ -20,9 +21,9 @@ describe("useUser()", () => {
   describe("when in a UserProvider", () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <UserProvider
-        region="us-east-2"
-        userPoolId="us-east-2_GbM7D8ZVg"
-        userPoolWebClientId="7st072o8h1lhfj66mjf9vbcauo"
+        region={config.cognitoRegion}
+        userPoolId={config.cognitoUserPoolId}
+        userPoolWebClientId={config.cognitoWebClientId}
       >
         {children}
       </UserProvider>

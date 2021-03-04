@@ -5,6 +5,7 @@ import { render, act, screen } from "@testing-library/react";
 import { UserProvider } from "../../auth/AuthContext";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
+import config from "../../config";
 
 jest.mock("aws-amplify");
 
@@ -14,9 +15,9 @@ describe("<Login>", () => {
       render(
         <MemoryRouter>
           <UserProvider
-            region="us-east-2"
-            userPoolId="us-east-2_GbM7D8ZVg"
-            userPoolWebClientId="7st072o8h1lhfj66mjf9vbcauo"
+            region={config.cognitoRegion}
+            userPoolId={config.cognitoUserPoolId}
+            userPoolWebClientId={config.cognitoWebClientId}
           >
             <Login />
           </UserProvider>
@@ -32,9 +33,9 @@ describe("<Login>", () => {
     render(
       <MemoryRouter>
         <UserProvider
-          region="us-east-2"
-          userPoolId="us-east-2_GbM7D8ZVg"
-          userPoolWebClientId="7st072o8h1lhfj66mjf9vbcauo"
+          region={config.cognitoRegion}
+          userPoolId={config.cognitoUserPoolId}
+          userPoolWebClientId={config.cognitoWebClientId}
         >
           <Login />
         </UserProvider>
