@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useApolloClient, useMutation } from "@apollo/client";
 import { useUser } from "./auth/AuthContext";
 import { useFormik } from "formik";
 import {
@@ -13,6 +13,7 @@ import {
   Modal,
   Table,
 } from "semantic-ui-react";
+import download from "downloadjs";
 
 const GET_DEPLOYMENTS = gql`
   query GetDeployments {
@@ -28,6 +29,12 @@ const GET_DEPLOYMENTS = gql`
         name
       }
     }
+  }
+`;
+
+const DOWNLOAD_CERT = gql`
+  query DownloadCert($deploymentId: UUID!) {
+    downloadCert(deploymentId: $deploymentId)
   }
 `;
 
@@ -196,8 +203,18 @@ function Deployments() {
 }
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
-  const download = () => {
-    window.location.href = `/deployment/${props.deployment.id}/download-certs`;
+  const apolloClient = useApolloClient();
+
+  const downloadCert = async () => {
+    let data = await apolloClient.query({
+      query: DOWNLOAD_CERT,
+      variables: { deploymentId: props.deployment.id },
+    });
+    const certData = Uint8Array.from(atob(data.data.downloadCert), (c) =>
+      c.charCodeAt(0)
+    );
+    const blob = new Blob([certData]);
+    download(blob, "materialize-cert.zip", "application/zip");
   };
 
   return (
@@ -222,7 +239,7 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
       </Modal.Content>
       <Modal.Actions>
         <Modal.Actions>
-          <Button onClick={() => download()} primary>
+          <Button onClick={downloadCert} primary>
             Download certificates
           </Button>
           <Button onClick={() => props.close()}>Done</Button>
