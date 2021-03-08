@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { gql, useQuery, useApolloClient, useMutation } from "@apollo/client";
 import { useUser } from "./auth/AuthContext";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import {
   Button,
   Confirm,
@@ -75,22 +75,6 @@ function Deployments() {
   const [showConnectId, setShowConnectId] = useState("");
   const [showDestroyId, setShowDestroyId] = useState("");
 
-  const formik = useFormik({
-    initialValues: {
-      tlsAuthorityId: "",
-    },
-    onSubmit: async ({ tlsAuthorityId }) => {
-      try {
-        await createDeployment({
-          variables: { tlsAuthorityId: tlsAuthorityId },
-        });
-        refetch();
-      } catch (e) {
-        setCreationError(e.message);
-      }
-    },
-  });
-
   if (loading)
     return (
       <Container>
@@ -122,37 +106,59 @@ function Deployments() {
           refetch={refetch}
         />
       )}
-      <Form
-        loading={formik.isSubmitting}
-        error={Boolean(creationError)}
-        onSubmit={() => {
-          formik.handleSubmit();
+      <Formik
+        initialValues={{
+          tlsAuthorityId:
+            tlsAuthorities.length === 1 ? tlsAuthorities[0].id : "",
+        }}
+        onSubmit={async ({ tlsAuthorityId }) => {
+          try {
+            await createDeployment({
+              variables: { tlsAuthorityId: tlsAuthorityId },
+            });
+            refetch();
+          } catch (e) {
+            setCreationError(e.message);
+          }
         }}
       >
-        <Form.Group>
-          <Form.Select
-            inline
-            name="tlsAuthorityId"
-            options={tlsAuthorities.map((c: any) => {
-              return {
-                key: c.id,
-                value: c.id,
-                text: c.name,
-              };
-            })}
-            onChange={(_e, { value }) => {
-              formik.setFieldValue("tlsAuthorityId", value);
+        {(formik) => (
+          <Form
+            loading={formik.isSubmitting}
+            error={Boolean(creationError)}
+            onSubmit={() => {
+              formik.handleSubmit();
             }}
-            label="TLS CA"
-            placeholder="Choose a CA"
-          />
+          >
+            <Form.Group>
+              <Form.Select
+                inline
+                name="tlsAuthorityId"
+                value={formik.values["tlsAuthorityId"]}
+                options={tlsAuthorities.map((c: any) => {
+                  return {
+                    value: c.id,
+                    text: c.name,
+                  };
+                })}
+                onChange={(_e, { value }) => {
+                  formik.setFieldValue("tlsAuthorityId", value);
+                }}
+                label="TLS CA"
+                placeholder="Choose a CA"
+              />
 
-          <Form.Button color="green" disabled={!formik.values.tlsAuthorityId}>
-            Create deployment
-          </Form.Button>
-        </Form.Group>
-        <Message error header="Creation failed" content={creationError} />
-      </Form>
+              <Form.Button
+                color="green"
+                disabled={!formik.values.tlsAuthorityId}
+              >
+                Create deployment
+              </Form.Button>
+            </Form.Group>
+            <Message error header="Creation failed" content={creationError} />
+          </Form>
+        )}
+      </Formik>
       <Table>
         <Table.Header>
           <Table.Row>
