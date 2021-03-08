@@ -4,7 +4,6 @@ import { useUser } from "./auth/AuthContext";
 import { useFormik } from "formik";
 import {
   Button,
-  Confirm,
   Container,
   Dimmer,
   Loader,
@@ -14,6 +13,7 @@ import {
   Table,
 } from "semantic-ui-react";
 import download from "downloadjs";
+import { TextConfirmModal } from "./components";
 
 const GET_DEPLOYMENTS = gql`
   query GetDeployments {
@@ -270,15 +270,12 @@ function DestroyModal(props: {
   };
 
   return (
-    <Confirm
-      confirmButton={{
-        negative: true,
-        content: "Yes, destroy my deployment",
-      }}
-      open={true}
-      onCancel={() => props.close()}
-      onConfirm={() => doDestroy()}
-    ></Confirm>
+    <TextConfirmModal
+      confirmButtonText="Yes, destroy my deployment"
+      textConfirmation={props.deployment.name}
+      onCancel={props.close}
+      onConfirm={doDestroy}
+    ></TextConfirmModal>
   );
 }
 
