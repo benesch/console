@@ -1,5 +1,5 @@
 export default {
-  cognitoRegion: "us-east-2",
-  cognitoUserPoolId: "us-east-2_NJBnurdwm",
-  cognitoWebClientId: "5l2lghj82uua2g59420fjb8uo5",
+  cognitoRegion: "us-east-1",
+  cognitoUserPoolId: "us-east-1_pkFKNeuN3",
+  cognitoWebClientId: "4ing59mni5mut8glh7lb50io4b",
 };
