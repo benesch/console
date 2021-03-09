@@ -22,7 +22,7 @@ const GET_DEPLOYMENTS = gql`
         id
         name
         state
-        ip
+        hostname
       }
       tlsAuthorities {
         id
@@ -63,7 +63,7 @@ interface Deployment {
   id: string;
   name: string;
   state: string;
-  ip: string;
+  hostname: string;
 }
 
 function Deployments() {
@@ -170,12 +170,12 @@ function Deployments() {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
-            <Table.HeaderCell>Public IP</Table.HeaderCell>
+            <Table.HeaderCell>Hostname</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {deployments.map(({ id, name, state, ip }: Deployment) => (
+          {deployments.map(({ id, name, state, hostname }: Deployment) => (
             <Table.Row key={id}>
               <Table.Cell>{name}</Table.Cell>
               <Table.Cell>
@@ -187,7 +187,7 @@ function Deployments() {
                   style={{ marginLeft: "0.5em" }}
                 />
               </Table.Cell>
-              <Table.Cell>{ip}</Table.Cell>
+              <Table.Cell>{hostname}</Table.Cell>
               {/* TODO(benesch): avoid hardcoding a width here. */}
               <Table.Cell style={{ width: "35%" }}>
                 <Button
@@ -236,7 +236,7 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
         <Modal.Description>
           <p>To connect to this deployment via the psql command-line tool:</p>
           <code>
-            psql "postgresql://materialize@{props.deployment.ip}
+            psql "postgresql://materialize@{props.deployment.hostname}
             :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
           </code>
           <p>
