@@ -28,6 +28,7 @@ const GET_DEPLOYMENTS = gql`
         id
         name
       }
+      canCreateDeployment
     }
   }
 `;
@@ -86,6 +87,7 @@ function Deployments() {
 
   const deployments: Array<Deployment> = data.defaultOrganization.deployments;
   const tlsAuthorities = data.defaultOrganization.tlsAuthorities;
+  const canCreateDeployment = data.defaultOrganization.canCreateDeployment;
 
   return (
     <React.Fragment>
@@ -112,6 +114,7 @@ function Deployments() {
             tlsAuthorities.length === 1 ? tlsAuthorities[0].id : "",
         }}
         onSubmit={async ({ tlsAuthorityId }) => {
+          setCreationError("");
           try {
             await createDeployment({
               variables: { tlsAuthorityId: tlsAuthorityId },
@@ -150,7 +153,7 @@ function Deployments() {
 
               <Form.Button
                 color="green"
-                disabled={!formik.values.tlsAuthorityId}
+                disabled={!formik.values.tlsAuthorityId || !canCreateDeployment}
               >
                 Create deployment
               </Form.Button>
@@ -159,6 +162,9 @@ function Deployments() {
           </Form>
         )}
       </Formik>
+      {!canCreateDeployment && (
+        <Message info content="Deployment limit reached." />
+      )}
       <Table>
         <Table.Header>
           <Table.Row>
