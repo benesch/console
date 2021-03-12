@@ -23,6 +23,7 @@ const GET_DEPLOYMENTS = gql`
         name
         state
         hostname
+        mzVersion
       }
       tlsAuthorities {
         id
@@ -30,6 +31,7 @@ const GET_DEPLOYMENTS = gql`
       }
       canCreateDeployment
     }
+    mzVersion
   }
 `;
 
@@ -59,11 +61,22 @@ const DESTROY_DEPLOYMENT = gql`
   }
 `;
 
+const UPGRADE_DEPLOYMENT = gql`
+  mutation($deploymentId: UUID!) {
+    upgradeDeployment(deploymentId: $deploymentId) {
+      deployment {
+        id
+      }
+    }
+  }
+`;
+
 interface Deployment {
   id: string;
   name: string;
   state: string;
   hostname: string;
+  mzVersion: string;
 }
 
 function Deployments() {
@@ -75,6 +88,7 @@ function Deployments() {
   const [creationError, setCreationError] = useState("");
   const [showConnectId, setShowConnectId] = useState("");
   const [showDestroyId, setShowDestroyId] = useState("");
+  const [showUpgradeId, setShowUpgradeId] = useState("");
 
   if (loading)
     return (
@@ -105,6 +119,16 @@ function Deployments() {
             deployments.find((d) => d.id === showDestroyId) as Deployment
           }
           close={() => setShowDestroyId("")}
+          refetch={refetch}
+        />
+      )}
+      {showUpgradeId && (
+        <UpgradeModal
+          mzVersion={data.mzVersion}
+          deployment={
+            deployments.find((d) => d.id === showUpgradeId) as Deployment
+          }
+          close={() => setShowUpgradeId("")}
           refetch={refetch}
         />
       )}
@@ -170,44 +194,57 @@ function Deployments() {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
+            <Table.HeaderCell>Version</Table.HeaderCell>
             <Table.HeaderCell>Hostname</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {deployments.map(({ id, name, state, hostname }: Deployment) => (
-            <Table.Row key={id}>
-              <Table.Cell>{name}</Table.Cell>
-              <Table.Cell>
-                {humanizeDeploymentState(state)}
-                <Loader
-                  active={!["R", "E"].includes(state)}
-                  inline
-                  size="tiny"
-                  style={{ marginLeft: "0.5em" }}
-                />
-              </Table.Cell>
-              <Table.Cell>{hostname}</Table.Cell>
-              {/* TODO(benesch): avoid hardcoding a width here. */}
-              <Table.Cell style={{ width: "35%" }}>
-                <Button
-                  primary
-                  onClick={() => setShowConnectId(id)}
-                  disabled={state !== "R"}
-                >
-                  Connect
-                </Button>
-                <Button
-                  basic
-                  color="red"
-                  onClick={() => setShowDestroyId(id)}
-                  disabled={state !== "R"}
-                >
-                  Destroy
-                </Button>
-              </Table.Cell>
-            </Table.Row>
-          ))}
+          {deployments.map(
+            ({ id, name, state, hostname, mzVersion }: Deployment) => (
+              <Table.Row key={id}>
+                <Table.Cell>{name}</Table.Cell>
+                <Table.Cell>
+                  {humanizeDeploymentState(state)}
+                  <Loader
+                    active={!["R", "E"].includes(state)}
+                    inline
+                    size="tiny"
+                    style={{ marginLeft: "0.5em" }}
+                  />
+                </Table.Cell>
+                <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
+                <Table.Cell>{hostname}</Table.Cell>
+                {/* TODO(benesch): avoid hardcoding a width here. */}
+                <Table.Cell style={{ width: "35%" }}>
+                  <Button
+                    primary
+                    onClick={() => setShowConnectId(id)}
+                    disabled={state !== "R"}
+                  >
+                    Connect
+                  </Button>
+                  {mzVersion !== data.mzVersion && (
+                    <Button
+                      basic
+                      color="green"
+                      onClick={() => setShowUpgradeId(id)}
+                    >
+                      Upgrade
+                    </Button>
+                  )}
+                  <Button
+                    basic
+                    color="red"
+                    onClick={() => setShowDestroyId(id)}
+                    disabled={state !== "R"}
+                  >
+                    Destroy
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            )
+          )}
         </Table.Body>
       </Table>
     </React.Fragment>
@@ -287,6 +324,40 @@ function DestroyModal(props: {
       textConfirmation={props.deployment.name}
       onCancel={props.close}
       onConfirm={doDestroy}
+    ></TextConfirmModal>
+  );
+}
+
+function UpgradeModal(props: {
+  mzVersion: string;
+  deployment: Deployment;
+  close: () => void;
+  refetch: () => void;
+}) {
+  const [upgradeDeployment] = useMutation(UPGRADE_DEPLOYMENT);
+
+  const doUpgrade = async () => {
+    try {
+      await upgradeDeployment({
+        variables: { deploymentId: props.deployment.id },
+      });
+      props.refetch();
+      props.close();
+    } catch (e) {
+      // TODO(benesch): do better.
+      window.console.log(e.message);
+    }
+  };
+
+  return (
+    <TextConfirmModal
+      confirmButtonText="Yes, upgrade and restart"
+      description={`Upgrade from ${
+        props.deployment.mzVersion || "an unknown version"
+      } to ${props.mzVersion}. This will restart materialize.`}
+      textConfirmation={props.deployment.name}
+      onCancel={props.close}
+      onConfirm={doUpgrade}
     ></TextConfirmModal>
   );
 }

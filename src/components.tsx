@@ -10,12 +10,15 @@ function TextConfirmModal(props: {
   confirmButtonText: string;
   // The text string the user must type for the confirmation button to enable.
   textConfirmation: string;
+  // An optional description string displayed above the textConfirmation input.
+  description?: string;
 }) {
   const [confirmEnabled, setConfirmEnabled] = useState(false);
 
   return (
     <Modal open={true}>
       <Modal.Content>Are you sure?</Modal.Content>
+      {props.description && <Modal.Content>{props.description}</Modal.Content>}
       <Modal.Content>
         Please type <b>{props.textConfirmation}</b> to confirm.
       </Modal.Content>
