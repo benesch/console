@@ -45,7 +45,7 @@ function SignUp() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        let data = await apolloClient.query({
+        const data = await apolloClient.query({
           query: ALLOWED_EMAIL,
           variables: { email: values.email },
         });

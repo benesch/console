@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { gql, useQuery, useApolloClient, useMutation } from "@apollo/client";
-import { useUser } from "./auth/AuthContext";
 import { Formik } from "formik";
 import {
   Button,
@@ -80,7 +79,6 @@ interface Deployment {
 }
 
 function Deployments() {
-  const { user } = useUser();
   const { loading, data, refetch } = useQuery(GET_DEPLOYMENTS, {
     pollInterval: 5000,
   });
@@ -255,7 +253,7 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   const apolloClient = useApolloClient();
 
   const downloadCert = async () => {
-    let data = await apolloClient.query({
+    const data = await apolloClient.query({
       query: DOWNLOAD_CERT,
       variables: { deploymentId: props.deployment.id },
     });
