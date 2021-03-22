@@ -222,7 +222,7 @@ function Deployments() {
                   >
                     Connect
                   </Button>
-                  {mzVersion !== data.mzVersion && (
+                  {state === "R" && mzVersion !== data.mzVersion && (
                     <Button
                       basic
                       color="green"
