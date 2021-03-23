@@ -46,6 +46,13 @@ function Nav() {
                 >
                   Join us on Slack
                 </Dropdown.Item>
+                <Dropdown.Item
+                  as="a"
+                  target="_blank"
+                  href="mailto:support@materialize.com"
+                >
+                  Email Support
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             <Dropdown item simple text={user.attributes.email}>
