@@ -269,18 +269,26 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
       <Modal.Header>Connect to {props.deployment.name} deployment</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>To connect to this deployment via the psql command-line tool:</p>
-          <code>
-            psql "postgresql://materialize@{props.deployment.hostname}
-            :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
-          </code>
+          <p>To connect to this deployment:</p>
+          <ol>
+            <li>
+              Click <b>Download certificates</b>.
+            </li>
+            <li>Unzip the certificate package.</li>
+            <li>
+              In the same directory as the certificates, run the following
+              command:
+            </li>
+          </ol>
           <p>
-            Run this command from the directory in which you have downloaded the
-            certificates below.
+            <code>
+              psql "postgresql://materialize@{props.deployment.hostname}
+              :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
+            </code>
           </p>
           <p>
-            If your instance booted recently, it may take another minute or two
-            before the psql connection will succeed.
+            If you've just created the deployment, you may need to wait a minute
+            or two before you'll be able to connect.
           </p>
         </Modal.Description>
       </Modal.Content>
