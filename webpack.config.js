@@ -46,7 +46,7 @@ module.exports = {
   ],
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/static/',
+    path: path.resolve(__dirname, 'dist', 'frontend'),
+    publicPath: '/static/frontend/',
   },
 };

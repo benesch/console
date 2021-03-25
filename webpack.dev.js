@@ -6,12 +6,12 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 module.exports = merge(base, {
   mode: 'development',
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, 'dist', 'frontend'),
     host: '0.0.0.0',
     port: 3000,
     hot: true,
     allowedHosts: ["frontend", "localhost"],
-    publicPath: '/static/',
+    publicPath: '/static/frontend/',
   },
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
