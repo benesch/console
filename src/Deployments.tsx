@@ -35,7 +35,7 @@ const GET_DEPLOYMENTS = gql`
 `;
 
 const DOWNLOAD_CERT = gql`
-  query DownloadCert($deploymentId: UUID!) {
+  query DownloadCert($deploymentId: String!) {
     downloadCert(deploymentId: $deploymentId)
   }
 `;
@@ -51,7 +51,7 @@ const CREATE_DEPLOYMENT = gql`
 `;
 
 const DESTROY_DEPLOYMENT = gql`
-  mutation($deploymentId: UUID!) {
+  mutation($deploymentId: String!) {
     destroyDeployment(deploymentId: $deploymentId) {
       deployment {
         id
@@ -61,7 +61,7 @@ const DESTROY_DEPLOYMENT = gql`
 `;
 
 const UPGRADE_DEPLOYMENT = gql`
-  mutation($deploymentId: UUID!) {
+  mutation($deploymentId: String!) {
     upgradeDeployment(deploymentId: $deploymentId) {
       deployment {
         id
