@@ -7,14 +7,15 @@ import {
   ApolloProvider,
   InMemoryCache,
 } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 
 type AuthApolloProviderProps = {
   uri: string;
   children: React.ReactNode;
 };
 
-function AuthApolloProvider({ uri, children }: AuthApolloProviderProps) {
-  const { getSession } = useUser();
+export function AuthApolloProvider({ uri, children }: AuthApolloProviderProps) {
+  const { getSession, setAuthTokenRejected } = useUser();
   const httpLink = createHttpLink({
     uri,
   });
@@ -37,11 +38,25 @@ function AuthApolloProvider({ uri, children }: AuthApolloProviderProps) {
     }
   });
 
+  const errorLink = onError(({ graphQLErrors }) => {
+    if (graphQLErrors)
+      graphQLErrors.forEach(({ message, extensions }) => {
+        if (
+          extensions &&
+          "code" in extensions &&
+          extensions.code == "INVALID-AUTHENTICATION"
+        ) {
+          console.error(`Server rejected authentication token: ${message}`);
+          setAuthTokenRejected();
+        }
+      });
+  });
+
   return (
     <ApolloProvider
       client={
         new ApolloClient({
-          link: authLink.concat(httpLink),
+          link: errorLink.concat(authLink).concat(httpLink),
           cache: new InMemoryCache(),
         })
       }
@@ -50,5 +65,3 @@ function AuthApolloProvider({ uri, children }: AuthApolloProviderProps) {
     </ApolloProvider>
   );
 }
-
-export default AuthApolloProvider;

@@ -22,6 +22,8 @@ export interface ISignUpResult {
 
 type ContextType = {
   user: any | null;
+  authTokenRejected: boolean;
+  setAuthTokenRejected: () => Promise<any>;
   inContext: boolean;
   hasInitialized: boolean;
   getSession: () => Promise<CognitoUserSession>;
@@ -41,6 +43,8 @@ type ContextType = {
 
 export const UserContext = React.createContext<ContextType>({
   user: null,
+  authTokenRejected: false,
+  setAuthTokenRejected: () => Promise.resolve(null),
   inContext: false,
   hasInitialized: false,
   getSession: () => Promise.reject(null),
@@ -70,6 +74,9 @@ export function UserProvider({
 }: UserProviderOptions) {
   const [user, setUser] = React.useState(null);
   const [hasInitialized, setHasInitialized] = React.useState(false);
+  const [authTokenRejected, setAuthTokenRejectedInternal] = React.useState(
+    false
+  );
 
   React.useEffect(() => {
     Auth.configure({
@@ -89,6 +96,11 @@ export function UserProvider({
       .finally(() => setHasInitialized(true));
   }, [region, userPoolId, userPoolWebClientId]);
 
+  function setAuthTokenRejected() {
+    setAuthTokenRejectedInternal(true);
+    return logout();
+  }
+
   function getSession(): Promise<CognitoUserSession> {
     return Auth.userSession(user);
   }
@@ -99,6 +111,7 @@ export function UserProvider({
   ): Promise<ISignInResult | null> {
     return Auth.signIn(email, password).then((cognitoUser) => {
       setUser(cognitoUser);
+      setAuthTokenRejectedInternal(false);
       return cognitoUser;
     });
   }
@@ -164,6 +177,8 @@ export function UserProvider({
         user: userMemo,
         inContext: true,
         hasInitialized,
+        authTokenRejected,
+        setAuthTokenRejected,
         getSession,
         login,
         logout,

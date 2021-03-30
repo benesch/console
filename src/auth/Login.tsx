@@ -21,7 +21,7 @@ const validationSchema = yup.object({
 });
 
 function Login() {
-  const { login } = useUser();
+  const { login, authTokenRejected } = useUser();
   const history = useHistory();
 
   const [error, setError] = useState("");
@@ -54,6 +54,19 @@ function Login() {
   if (step === "LOGIN") {
     return (
       <React.Fragment>
+        <Message error hidden={!authTokenRejected}>
+          <Message.Header>Session expired or invalid</Message.Header>
+          <p>
+            You were automatically logged out because your session expired or
+            was otherwise invalidated.
+          </p>
+
+          <p>
+            Please try logging in again. If the problem persists,{" "}
+            <a href="mailto:support@materialize.com">contact support</a>.
+          </p>
+        </Message>
+
         <Form
           size="large"
           error={Boolean(error)}
