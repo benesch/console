@@ -328,6 +328,7 @@ function DestroyModal(props: {
     <TextConfirmModal
       confirmButtonText="Yes, destroy my deployment"
       textConfirmation={props.deployment.name}
+      description="This will irreversibly destroy all views and other data for this deployment."
       onCancel={props.close}
       onConfirm={doDestroy}
     ></TextConfirmModal>
