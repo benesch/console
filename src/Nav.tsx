@@ -35,7 +35,7 @@ function Nav() {
                 <Dropdown.Item
                   as="a"
                   target="_blank"
-                  href="https://materialize.com/docs/"
+                  href="https://materialize.com/docs/cloud/"
                 >
                   Documentation
                 </Dropdown.Item>
