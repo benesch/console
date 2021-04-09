@@ -44,10 +44,10 @@ export function AuthApolloProvider({ uri, children }: AuthApolloProviderProps) {
         if (
           extensions &&
           "code" in extensions &&
-          extensions.code == "INVALID-AUTHENTICATION"
+          extensions.code == "AUTH-INVALID"
         ) {
           console.error(`Server rejected authentication token: ${message}`);
-          setAuthTokenRejected();
+          setAuthTokenRejected(extensions.reasonCode);
         }
       });
   });
