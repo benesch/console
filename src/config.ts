@@ -2,6 +2,7 @@ interface Config {
   cognitoRegion: string;
   cognitoUserPoolId: string;
   cognitoWebClientId: string;
+  fullStoryOrgId: string;
   sentryDsn: string;
   sentryEnvironment: string;
   sentryRelease: string;

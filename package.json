@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.6",
+    "@fullstory/browser": "^1.4.9",
     "@sentry/react": "^6.2.4",
     "@sentry/tracing": "^6.2.4",
     "amazon-cognito-identity-js": "^4.3.3",
