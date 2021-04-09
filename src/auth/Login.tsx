@@ -9,6 +9,46 @@ import { useHistory, Link } from "react-router-dom";
 
 import Code from "./Code";
 
+function InvalidAuthMessage(props: { authTokenRejected: string }) {
+  let contents;
+  switch (props.authTokenRejected) {
+    case "":
+      return <React.Fragment></React.Fragment>;
+    case "BAD-SESSION":
+      contents = (
+        <React.Fragment>
+          <Message.Header>Session expired or invalid</Message.Header>
+          <p>
+            You were automatically logged out because your session expired or
+            was otherwise invalidated.
+          </p>
+          <p>
+            Please try logging in again. If the problem persists,{" "}
+            <a href="mailto:support@materialize.com">contact support</a>.
+          </p>
+        </React.Fragment>
+      );
+      break;
+    case "UNINVITED":
+      contents = (
+        <React.Fragment>
+          <Message.Header>Invitation revoked</Message.Header>
+          <p>Your invitation to Materialize Cloud has been revoked.</p>
+        </React.Fragment>
+      );
+      break;
+    default:
+      contents = (
+        <React.Fragment>
+          <Message.Header>Unknown authentication error</Message.Header>
+          <p>An unknown authentication error occurred.</p>
+        </React.Fragment>
+      );
+      break;
+  }
+  return <Message error>{contents}</Message>;
+}
+
 const validationSchema = yup.object({
   email: yup
     .string()
@@ -54,18 +94,7 @@ function Login() {
   if (step === "LOGIN") {
     return (
       <React.Fragment>
-        <Message error hidden={!authTokenRejected}>
-          <Message.Header>Session expired or invalid</Message.Header>
-          <p>
-            You were automatically logged out because your session expired or
-            was otherwise invalidated.
-          </p>
-
-          <p>
-            Please try logging in again. If the problem persists,{" "}
-            <a href="mailto:support@materialize.com">contact support</a>.
-          </p>
-        </Message>
+        <InvalidAuthMessage authTokenRejected={authTokenRejected} />
 
         <Form
           size="large"
