@@ -174,7 +174,7 @@ function Deployments() {
               />
 
               <Form.Button
-                color="green"
+                primary
                 disabled={!formik.values.tlsAuthorityId || !canCreateDeployment}
               >
                 Create deployment
@@ -233,7 +233,7 @@ function Deployments() {
                   )}
                   <Button
                     basic
-                    color="red"
+                    color="orange"
                     onClick={() => setShowDestroyId(id)}
                     disabled={state !== "R"}
                   >

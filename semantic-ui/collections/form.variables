@@ -1,0 +1,3 @@
+// Semantic UI's form field labels are weirdly a bit smaller than their
+// surrounding text by default. Bump them up to a normal size.
+@labelFontSize: 1rem;

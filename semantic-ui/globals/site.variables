@@ -1,0 +1,14 @@
+@fontName: "RM Neue";
+
+// Color specifications. We map Semantic UI's colors to Materialize's
+// color palette as closely as we can, but Semantic UI has more
+// colors in its lexicon than our brand guidelines do.
+@primaryColor:    @purple;
+@secondaryColor:  @green;
+@purple:          #612dd3;
+@green:           #77e04c;
+@teal:            #2fbad1;
+@pink:            #d12fa7;
+@orange:          #ff7c1a;
+@yellow:          #efc71b;
+@grey:            #c1c3c6;
