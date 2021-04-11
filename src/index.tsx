@@ -1,4 +1,4 @@
-import "semantic-ui-css/semantic.min.css";
+import "fomantic-ui-less/semantic.less";
 import "./index.css";
 
 import React from "react";

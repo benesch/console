@@ -53,20 +53,3 @@
   font-weight: 600;
   font-style: italic;
 }
-
-/* TODO(benesch): manually overriding Semantic UI's font like this is
-   annoying and error prone. The recommended mechanism for this involves
-   integrating with Semantic UI's LESS build system, but that is not
-   trivial with Create React App.
-   See: https://react.semantic-ui.com/theming/#theming-with-create-react-app
-*/
-body,
-.ui.button,
-.ui.card > .content > .header,
-.ui.cards > .ui.card > .content > .header,
-.ui.header,
-.ui.menu,
-.ui.text.container
-{
-  font-family: "RM Neue", Helvetica, sans-serif;
-}

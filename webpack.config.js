@@ -1,9 +1,14 @@
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: './src/index.tsx',
   resolve: {
+    alias: {
+      "../../theme.config$": path.join(__dirname, "semantic-ui", "theme.config"),
+      "semantic-ui/site": path.join(__dirname, "semantic-ui"),
+    },
     extensions: [ ".tsx", ".ts", ".js" ],
     fallback: {
       // amazon-cognito-identity-js attempts to require('crypto'). Webpack v4
@@ -36,6 +41,14 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.less$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'less-loader',
+        ],
+      },
+      {
         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
         type: "asset",
       },
@@ -43,10 +56,12 @@ module.exports = {
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
+    new MiniCssExtractPlugin(),
   ],
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist', 'frontend'),
     publicPath: '/static/frontend/',
   },
+  cache: { type: 'filesystem' },
 };
