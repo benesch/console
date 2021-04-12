@@ -6,6 +6,7 @@ import { Button, Input, Modal } from "semantic-ui-react";
 function TextConfirmModal(props: {
   onConfirm: () => void;
   onCancel: () => void;
+  headerText?: string;
   // The contents of the confirmation button.
   confirmButtonText: string;
   // The text string the user must type for the confirmation button to enable.
@@ -17,12 +18,12 @@ function TextConfirmModal(props: {
 
   return (
     <Modal open={true}>
-      <Modal.Content>Are you sure?</Modal.Content>
-      {props.description && <Modal.Content>{props.description}</Modal.Content>}
+      {props.headerText && <Modal.Header>{props.headerText}</Modal.Header>}
       <Modal.Content>
-        Please type <b>{props.textConfirmation}</b> to confirm.
-      </Modal.Content>
-      <Modal.Content>
+        <p>Are you sure? {props.description}</p>
+        <p>
+          Please type <b>{props.textConfirmation}</b> to confirm.
+        </p>
         <Input
           onChange={(_e, { value }) => {
             setConfirmEnabled(value === props.textConfirmation);

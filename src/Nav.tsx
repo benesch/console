@@ -51,7 +51,7 @@ function Nav() {
                   target="_blank"
                   href="mailto:support@materialize.com"
                 >
-                  Email Support
+                  Email us
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
