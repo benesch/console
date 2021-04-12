@@ -247,7 +247,7 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
       c.charCodeAt(0)
     );
     const blob = new Blob([certData]);
-    download(blob, "materialize-cert.zip", "application/zip");
+    download(blob, `${props.deployment.name}-certs.zip`, "application/zip");
   };
 
   return (

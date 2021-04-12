@@ -60,7 +60,9 @@ test(
     console.log("creating deployment");
 
     // Wait for it to be ready.
-    await page.waitForXPath(XPATH_DEPLOYMENTS_READY);
+    const statusCell = await page.waitForXPath(XPATH_DEPLOYMENTS_READY);
+    const deploymentName = await (await statusCell.$x("../td[1]"))[0].evaluate(e => e.textContent);
+    console.log("got deployment", deploymentName);
 
     // Download certs and connection string.
     console.log("download certs");
@@ -89,7 +91,7 @@ test(
     await page.waitForXPath('//button[text()="Done"]').then((el) => {
       return el.click();
     });
-    const certZip = path.join(SCRATCH_DIR, "materialize-cert.zip");
+    const certZip = path.join(SCRATCH_DIR, `${deploymentName}-certs.zip`);
     // Wait until we can see the download.
     while (true) {
       try {
