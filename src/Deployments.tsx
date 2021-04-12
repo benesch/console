@@ -155,31 +155,9 @@ function Deployments() {
               formik.handleSubmit();
             }}
           >
-            <Form.Group>
-              <Form.Select
-                inline
-                name="tlsAuthorityId"
-                value={formik.values["tlsAuthorityId"]}
-                options={tlsAuthorities.map((c: any) => {
-                  return {
-                    value: c.id,
-                    text: c.name,
-                  };
-                })}
-                onChange={(_e, { value }) => {
-                  formik.setFieldValue("tlsAuthorityId", value);
-                }}
-                label="TLS CA"
-                placeholder="Choose a CA"
-              />
-
-              <Form.Button
-                primary
-                disabled={!formik.values.tlsAuthorityId || !canCreateDeployment}
-              >
-                Create deployment
-              </Form.Button>
-            </Form.Group>
+            <Form.Button primary disabled={!canCreateDeployment}>
+              Create deployment
+            </Form.Button>
             <Message error header="Creation failed" content={creationError} />
           </Form>
         )}
@@ -198,50 +176,58 @@ function Deployments() {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {deployments.map(
-            ({ id, name, state, hostname, mzVersion }: Deployment) => (
-              <Table.Row key={id}>
-                <Table.Cell>{name}</Table.Cell>
-                <Table.Cell>
-                  {humanizeDeploymentState(state)}
-                  <Loader
-                    active={!["R", "E"].includes(state)}
-                    inline
-                    size="tiny"
-                    style={{ marginLeft: "0.5em" }}
-                  />
-                </Table.Cell>
-                <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
-                <Table.Cell>{hostname}</Table.Cell>
-                {/* TODO(benesch): avoid hardcoding a width here. */}
-                <Table.Cell style={{ width: "35%" }}>
-                  <Button
-                    primary
-                    onClick={() => setShowConnectId(id)}
-                    disabled={state !== "R"}
-                  >
-                    Connect
-                  </Button>
-                  {state === "R" && mzVersion !== data.mzVersion && (
+          {deployments.length > 0 ? (
+            deployments.map(
+              ({ id, name, state, hostname, mzVersion }: Deployment) => (
+                <Table.Row key={id}>
+                  <Table.Cell>{name}</Table.Cell>
+                  <Table.Cell>
+                    {humanizeDeploymentState(state)}
+                    <Loader
+                      active={!["R", "E"].includes(state)}
+                      inline
+                      size="tiny"
+                      style={{ marginLeft: "0.5em" }}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
+                  <Table.Cell>{hostname}</Table.Cell>
+                  {/* TODO(benesch): avoid hardcoding a width here. */}
+                  <Table.Cell style={{ width: "35%" }}>
+                    <Button
+                      primary
+                      onClick={() => setShowConnectId(id)}
+                      disabled={state !== "R"}
+                    >
+                      Connect
+                    </Button>
+                    {state === "R" && mzVersion !== data.mzVersion && (
+                      <Button
+                        basic
+                        color="green"
+                        onClick={() => setShowUpgradeId(id)}
+                      >
+                        Upgrade
+                      </Button>
+                    )}
                     <Button
                       basic
-                      color="green"
-                      onClick={() => setShowUpgradeId(id)}
+                      color="orange"
+                      onClick={() => setShowDestroyId(id)}
+                      disabled={state !== "R"}
                     >
-                      Upgrade
+                      Destroy
                     </Button>
-                  )}
-                  <Button
-                    basic
-                    color="orange"
-                    onClick={() => setShowDestroyId(id)}
-                    disabled={state !== "R"}
-                  >
-                    Destroy
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
+                  </Table.Cell>
+                </Table.Row>
+              )
             )
+          ) : (
+            <Table.Row>
+              <Table.Cell colSpan="4" textAlign="center">
+                No deployments yet.
+              </Table.Cell>
+            </Table.Row>
           )}
         </Table.Body>
       </Table>
@@ -266,26 +252,40 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
 
   return (
     <Modal open={true}>
-      <Modal.Header>Connect to {props.deployment.name} deployment</Modal.Header>
+      <Modal.Header>Connect to {props.deployment.name}</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>To connect to this deployment:</p>
+          <p>
+            To connect to this deployment using the{" "}
+            <a href="https://www.postgresql.org/docs/13/app-psql.html">psql</a>{" "}
+            command-line SQL shell:
+          </p>
           <ol>
+            <li>
+              Install psql, if you don't already have it installed.
+              <br />
+              <ul>
+                <li>
+                  On macOS: <code>brew install postgresql</code>
+                </li>
+                <li>
+                  On Debian/Ubuntu: <code>apt install postgresql-client</code>
+                </li>
+              </ul>
+            </li>
             <li>
               Click <b>Download certificates</b>.
             </li>
-            <li>Unzip the certificate package.</li>
+            <li>Unzip the certificate ZIP file.</li>
             <li>
               In the same directory as the certificates, run the following
               command:
+              <p className="connection-string">
+                psql "postgresql://materialize@{props.deployment.hostname}
+                :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
+              </p>
             </li>
           </ol>
-          <p>
-            <code>
-              psql "postgresql://materialize@{props.deployment.hostname}
-              :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
-            </code>
-          </p>
           <p>
             If you've just created the deployment, you may need to wait a minute
             or two before you'll be able to connect.
@@ -326,6 +326,7 @@ function DestroyModal(props: {
 
   return (
     <TextConfirmModal
+      headerText={`Destroy ${props.deployment.name}?`}
       confirmButtonText="Yes, destroy my deployment"
       textConfirmation={props.deployment.name}
       description="This will irreversibly destroy all views and other data for this deployment."

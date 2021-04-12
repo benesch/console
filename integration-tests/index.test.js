@@ -15,6 +15,11 @@ const XPATH_DEPLOYMENTS_READY = '//td[contains(text(), "Ready")]';
 
 console.log("CONSOLE_ADDR", CONSOLE_ADDR);
 
+beforeEach(async () => {
+  // 5 minute timeout waiting for elements.
+  page.setDefaultTimeout(1000 * 60 * 5);
+});
+
 test(
   "console",
   async () => {
@@ -62,7 +67,7 @@ test(
     const connectButton = await page.waitForXPath(XPATH_DEPLOYMENTS_CONNECT);
     await connectButton.click();
     const psql = await page
-      .waitForSelector(".modal .content .description code")
+      .waitForSelector(".connection-string")
       .then((el) => el.evaluate((el) => el.textContent));
     console.log(psql);
     const matches = psql.match(
