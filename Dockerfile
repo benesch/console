@@ -14,10 +14,23 @@
 
 FROM node:14
 
+# Install Puppeteer and configure it for use in Docker.
+# See: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
+RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable libxss1 --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+ENV PUPPETEER_BROWSER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage"
+ENV CONSOLE_ADDR=http://backend:8000/
+
 COPY package.json package-lock.json /
 RUN npm install && rm package.json package-lock.json
 
 WORKDIR /code/frontend
 ENV PATH=$PATH:/node_modules/.bin
 
+ENTRYPOINT ["/code/misc/docker-entrypoint.sh"]
 CMD ["npm", "run", "start"]
