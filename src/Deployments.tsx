@@ -363,7 +363,7 @@ function UpgradeModal(props: {
       description={`Upgrade from ${
         props.deployment.mzVersion || "an unknown version"
       } to ${props.mzVersion}. This will restart materialize.
-      All your data will be preserved, but clients will need
+      All data will be preserved, but clients will need
       to reconnect.`}
       textConfirmation={props.deployment.name}
       onCancel={props.close}
