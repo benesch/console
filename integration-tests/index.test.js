@@ -11,7 +11,7 @@ const SCRATCH_DIR = "scratch";
 const XPATH_DEPLOYMENTS_CREATE = '//button[text()="Create deployment"]';
 const XPATH_DEPLOYMENTS_DESTROY = '//td/button[contains(text(), "Destroy")]';
 const XPATH_DEPLOYMENTS_CONNECT = '//td/button[contains(text(), "Connect")]';
-const XPATH_DEPLOYMENTS_READY = '//td[contains(text(), "Ready")]';
+const XPATH_DEPLOYMENTS_READY = '//td[contains(text(), "Healthy")]';
 
 console.log("CONSOLE_ADDR", CONSOLE_ADDR);
 

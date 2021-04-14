@@ -23,6 +23,9 @@ const GET_DEPLOYMENTS = gql`
         state
         hostname
         mzVersion
+        orchestratorDeployment {
+          status
+        }
       }
       tlsAuthorities {
         id
@@ -70,12 +73,17 @@ const UPGRADE_DEPLOYMENT = gql`
   }
 `;
 
+interface K8sDeployment {
+  status: string;
+}
+
 interface Deployment {
   id: string;
   name: string;
   state: string;
   hostname: string;
   mzVersion: string;
+  orchestratorDeployment: K8sDeployment;
 }
 
 function Deployments() {
@@ -178,11 +186,21 @@ function Deployments() {
         <Table.Body>
           {deployments.length > 0 ? (
             deployments.map(
-              ({ id, name, state, hostname, mzVersion }: Deployment) => (
+              ({
+                id,
+                name,
+                state,
+                hostname,
+                mzVersion,
+                orchestratorDeployment,
+              }: Deployment) => (
                 <Table.Row key={id}>
                   <Table.Cell>{name}</Table.Cell>
                   <Table.Cell>
-                    {humanizeDeploymentState(state)}
+                    {humanizeDeploymentState(
+                      state,
+                      orchestratorDeployment.status
+                    )}
                     <Loader
                       active={!["R", "E"].includes(state)}
                       inline
@@ -372,7 +390,10 @@ function UpgradeModal(props: {
   );
 }
 
-function humanizeDeploymentState(deploymentState: string) {
+function humanizeDeploymentState(
+  deploymentState: string,
+  orchestrationState: string
+) {
   switch (deploymentState) {
     case "DQ":
       return "Destroy queued";
@@ -381,6 +402,14 @@ function humanizeDeploymentState(deploymentState: string) {
     case "E":
       return "Error";
     case "R":
+      switch (orchestrationState) {
+        case "OK":
+          return "Healthy";
+        case "STARTING":
+          return "Starting";
+        case "DAMAGED":
+          return "Damaged";
+      }
       return "Ready";
     case "Q":
       return "Update queued";
