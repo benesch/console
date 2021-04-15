@@ -24,6 +24,7 @@ const GET_DEPLOYMENTS = gql`
         hostname
         mzVersion
         orchestratorDeployment {
+          id
           status
         }
       }
@@ -73,6 +74,12 @@ const UPGRADE_DEPLOYMENT = gql`
   }
 `;
 
+const DOWNLOAD_LOGS = gql`
+  query DownloadLogs($deploymentId: String!) {
+    downloadLogs(deploymentId: $deploymentId)
+  }
+`;
+
 interface K8sDeployment {
   status: string;
 }
@@ -95,6 +102,7 @@ function Deployments() {
   const [showConnectId, setShowConnectId] = useState("");
   const [showDestroyId, setShowDestroyId] = useState("");
   const [showUpgradeId, setShowUpgradeId] = useState("");
+  const [showLogsId, setShowLogsId] = useState("");
 
   if (loading)
     return (
@@ -111,6 +119,12 @@ function Deployments() {
 
   return (
     <React.Fragment>
+      {showLogsId && (
+        <LogsModal
+          deployment={deployments.find((d) => d.id == showLogsId) as Deployment}
+          close={() => setShowLogsId("")}
+        />
+      )}
       {showConnectId && (
         <ConnectModal
           deployment={
@@ -236,6 +250,14 @@ function Deployments() {
                     >
                       Destroy
                     </Button>
+                    <Button
+                      basic
+                      color="blue"
+                      onClick={() => setShowLogsId(id)}
+                      disabled={["D", "E"].includes(state)}
+                    >
+                      Logs
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               )
@@ -250,6 +272,32 @@ function Deployments() {
         </Table.Body>
       </Table>
     </React.Fragment>
+  );
+}
+
+function LogsModal(props: { deployment: Deployment; close: () => void }) {
+  const { loading, error: _, data, refetch } = useQuery(DOWNLOAD_LOGS, {
+    variables: { deploymentId: props.deployment.id },
+  });
+  return (
+    <Modal open={true} size="fullscreen">
+      <Modal.Header>
+        Logs for <code>{props.deployment.name}</code>
+      </Modal.Header>
+      <Modal.Content>
+        <Modal.Description>
+          {loading ? (
+            <Loader size="large">Loading</Loader>
+          ) : (
+            <pre className="logs">{data.downloadLogs}</pre>
+          )}
+        </Modal.Description>
+        <Modal.Actions>
+          <Button onClick={() => props.close()}>Done</Button>
+          <Button onClick={() => refetch()}>Refresh</Button>
+        </Modal.Actions>
+      </Modal.Content>
+    </Modal>
   );
 }
 

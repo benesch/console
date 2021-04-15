@@ -61,3 +61,9 @@
   padding: 5px;
   word-wrap: break-word;
 }
+
+.logs {
+  background: #efefef;
+  font-family: monospace;
+  overflow: scroll;
+}
