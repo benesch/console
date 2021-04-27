@@ -16,13 +16,16 @@ FROM node:14
 
 # Install Puppeteer and configure it for use in Docker.
 # See: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
-RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable libxss1 --no-install-recommends \
+#
+# We have to symlink the binary as /usr/bin/chromium-browser because Puppeteer
+# hardcodes that path on ARM (!).
+# See: https://github.com/puppeteer/puppeteer/issues/6641
+RUN apt-get update \
+    && apt-get install -y chromium --no-install-recommends \
+    && ln -s /usr/bin/chromium /usr/bin/chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PUPPETEER_BROWSER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage"
 ENV CONSOLE_ADDR=http://backend:8000/
 
