@@ -13,6 +13,7 @@ module.exports = merge(base, {
     allowedHosts: ["frontend", "localhost"],
     publicPath: '/static/frontend/',
   },
+  devtool: 'eval-cheap-module-source-map',
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
   plugins: [new ReactRefreshWebpackPlugin({
