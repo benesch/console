@@ -6,7 +6,7 @@ import { AuthApolloProvider } from "./auth/AuthApolloProvider";
 
 function App() {
   return (
-    <AuthApolloProvider uri="/graphql">
+    <AuthApolloProvider uri="/api/graphql">
       <BrowserRouter>
         <Router />
       </BrowserRouter>
