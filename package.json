@@ -43,7 +43,7 @@
     "mini-css-extract-plugin": "^1.4.1",
     "pg": "^8.5.1",
     "prettier": "^2.2.1",
-    "puppeteer": "^8.0.0",
+    "puppeteer": "^9.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-password-strength-bar": "^0.3.3",
