@@ -27,7 +27,7 @@
     "babel-eslint": "^10.1.0",
     "css-loader": "^5.1.1",
     "downloadjs": "^1.4.7",
-    "eslint": "^7.21.0",
+    "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "extract-zip": "^2.0.1",
