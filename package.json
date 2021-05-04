@@ -46,7 +46,7 @@
     "puppeteer": "^8.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-password-strength-bar": "^0.3.2",
+    "react-password-strength-bar": "^0.3.3",
     "react-refresh": "^0.9.0",
     "react-router-dom": "^5.2.0",
     "semantic-ui-react": "^2.0.3",
