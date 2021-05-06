@@ -1,7 +1,7 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const extract = require('extract-zip');
+const extract = require("extract-zip");
 
 const { Client } = require("pg");
 
@@ -12,6 +12,7 @@ const XPATH_DEPLOYMENTS_CREATE = '//button[text()="Create deployment"]';
 const XPATH_DEPLOYMENTS_DESTROY = '//td/button[contains(text(), "Destroy")]';
 const XPATH_DEPLOYMENTS_CONNECT = '//td/button[contains(text(), "Connect")]';
 const XPATH_DEPLOYMENTS_READY = '//td[contains(text(), "Healthy")]';
+const XPATH_DEPLOYMENTS_LOGS = '//button[text()="Logs"]';
 
 console.log("CONSOLE_ADDR", CONSOLE_ADDR);
 
@@ -61,7 +62,9 @@ test(
 
     // Wait for it to be ready.
     const statusCell = await page.waitForXPath(XPATH_DEPLOYMENTS_READY);
-    const deploymentName = await (await statusCell.$x("../td[1]"))[0].evaluate(e => e.textContent);
+    const deploymentName = await (await statusCell.$x("../td[1]"))[0].evaluate(
+      (e) => e.textContent
+    );
     console.log("got deployment", deploymentName);
 
     // Download certs and connection string.
@@ -114,7 +117,10 @@ test(
       ssl: {
         ca: fs.readFileSync(path.join(SCRATCH_DIR, "ca.crt"), "utf8"),
         key: fs.readFileSync(path.join(SCRATCH_DIR, "materialize.key"), "utf8"),
-        cert: fs.readFileSync(path.join(SCRATCH_DIR, "materialize.crt"), "utf8"),
+        cert: fs.readFileSync(
+          path.join(SCRATCH_DIR, "materialize.crt"),
+          "utf8"
+        ),
         rejectUnauthorized: false,
       },
       connectionTimeoutMillis: 1000,
@@ -141,6 +147,18 @@ test(
     )[0].evaluate((el) => el.textContent.match(/v(.*)/)[1]);
     assert.strictEqual(query_version, table_version);
     await client.end();
+
+    // View logs for the deployment
+    const logButton = (await page.$x(XPATH_DEPLOYMENTS_LOGS))[0];
+    await logButton.click();
+    const logLines = await page
+      .waitForSelector(".logs")
+      .then((el) => el.evaluate((el) => el.textContent));
+    console.log("materialized log", logLines);
+    assert(logLines.length > 0);
+    await page.waitForXPath('//button[text()="Done"]').then((el) => {
+      return el.click();
+    });
 
     // Destroy it.
     const destroyButton = (await page.$x(XPATH_DEPLOYMENTS_DESTROY))[0];
