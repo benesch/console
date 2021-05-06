@@ -45,7 +45,7 @@ const DOWNLOAD_CERT = gql`
 `;
 
 const CREATE_DEPLOYMENT = gql`
-  mutation($tlsAuthorityId: UUID!) {
+  mutation CreateDeployment($tlsAuthorityId: UUID!) {
     createDeployment(tlsAuthorityId: $tlsAuthorityId) {
       deployment {
         id
@@ -55,7 +55,7 @@ const CREATE_DEPLOYMENT = gql`
 `;
 
 const DESTROY_DEPLOYMENT = gql`
-  mutation($deploymentId: String!) {
+  mutation DestroyDeployment($deploymentId: String!) {
     destroyDeployment(deploymentId: $deploymentId) {
       deployment {
         id
@@ -65,7 +65,7 @@ const DESTROY_DEPLOYMENT = gql`
 `;
 
 const UPGRADE_DEPLOYMENT = gql`
-  mutation($deploymentId: String!) {
+  mutation UpgradeDeployment($deploymentId: String!) {
     upgradeDeployment(deploymentId: $deploymentId) {
       deployment {
         id
