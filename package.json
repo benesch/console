@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.16",
-    "@aws-amplify/auth": "^3.4.16",
+    "@aws-amplify/auth": "^3.4.30",
     "@fullstory/browser": "^1.4.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@sentry/react": "^6.2.4",
