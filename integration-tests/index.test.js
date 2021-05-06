@@ -32,13 +32,13 @@ test(
     console.log("response status", response.status());
     assert(response.status() == 200);
 
+    assert(page.url().endsWith("/login"), page.url());
     await page.waitForSelector("#login-form-email").then((el) => {
       return el.type("matt@materialize.io");
     });
     await page.waitForSelector("#login-form-password").then((el) => {
       return el.type("aoeuhtns");
     });
-    assert(page.url().endsWith("/login"));
     await page.waitForXPath("//button[text()='Log in']").then((el) => {
       return el.click();
     });
