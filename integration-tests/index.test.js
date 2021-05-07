@@ -28,7 +28,8 @@ test(
     fs.mkdirSync(SCRATCH_DIR, { recursive: true });
 
     // Initial loading can take a while if the backend is spinning up.
-    await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 5 /* 5 minutes */ });
+    const response = await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 5 /* 5 minutes */ });
+    assert(response.status() == 200);
 
     await page.waitForSelector("#login-form-email").then((el) => {
       return el.type("matt@materialize.io");
