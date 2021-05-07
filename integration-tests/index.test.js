@@ -29,6 +29,7 @@ test(
 
     // Initial loading can take a while if the backend is spinning up.
     const response = await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 5 /* 5 minutes */ });
+    console.log("response status", response.status());
     assert(response.status() == 200);
 
     await page.waitForSelector("#login-form-email").then((el) => {
