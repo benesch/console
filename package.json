@@ -28,7 +28,7 @@
     "css-loader": "^5.1.1",
     "downloadjs": "^1.4.7",
     "eslint": "^7.25.0",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "extract-zip": "^2.0.1",
     "fomantic-ui-less": "^2.8.7",
