@@ -276,7 +276,12 @@ function Deployments() {
 }
 
 function LogsModal(props: { deployment: Deployment; close: () => void }) {
-  const { loading, error: _, data, refetch } = useQuery(DOWNLOAD_LOGS, {
+  const {
+    loading,
+    error: _,
+    data,
+    refetch,
+  } = useQuery(DOWNLOAD_LOGS, {
     variables: { deploymentId: props.deployment.id },
   });
   return (
