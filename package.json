@@ -20,7 +20,7 @@
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
-    "@typescript-eslint/parser": "^4.22.1",
+    "@typescript-eslint/parser": "^4.23.0",
     "amazon-cognito-identity-js": "^4.6.1",
     "aws-amplify": "^3.4.0",
     "aws-amplify-react": "^4.2.32",
