@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^4.23.0",
     "amazon-cognito-identity-js": "^4.6.1",
     "aws-amplify": "^3.4.0",
-    "aws-amplify-react": "^4.2.32",
+    "aws-amplify-react": "^4.2.33",
     "babel-eslint": "^10.1.0",
     "css-loader": "^5.2.4",
     "downloadjs": "^1.4.7",
