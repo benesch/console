@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { gql, useQuery, useApolloClient, useMutation } from "@apollo/client";
 import { Formik } from "formik";
+import type { Deployment } from "./types";
+import DeploymentTable from "./DeploymentTable";
 import {
   Button,
   Container,
@@ -9,9 +11,9 @@ import {
   Form,
   Message,
   Modal,
-  Table,
 } from "semantic-ui-react";
 import download from "downloadjs";
+import { groupBy } from "./util";
 import { TextConfirmModal } from "./components";
 
 const GET_DEPLOYMENTS = gql`
@@ -26,6 +28,11 @@ const GET_DEPLOYMENTS = gql`
         orchestratorDeployment {
           id
           status
+        }
+        pendingMigration {
+          id
+          deadline
+          description
         }
       }
       tlsAuthorities {
@@ -80,20 +87,7 @@ const DOWNLOAD_LOGS = gql`
   }
 `;
 
-interface K8sDeployment {
-  status: string;
-}
-
-interface Deployment {
-  id: string;
-  name: string;
-  state: string;
-  hostname: string;
-  mzVersion: string;
-  orchestratorDeployment: K8sDeployment;
-}
-
-function Deployments() {
+function Deployments(): JSX.Element {
   const { loading, data, refetch } = useQuery(GET_DEPLOYMENTS, {
     pollInterval: 5000,
   });
@@ -113,7 +107,9 @@ function Deployments() {
       </Container>
     );
 
-  const deployments: Array<Deployment> = data.defaultOrganization.deployments;
+  const deployments: Deployment[] = data.defaultOrganization.deployments;
+  const deploymentsByWarning = groupBy(deployments, (d) => d.pendingMigration);
+
   const tlsAuthorities = data.defaultOrganization.tlsAuthorities;
   const canCreateDeployment = data.defaultOrganization.canCreateDeployment;
 
@@ -187,90 +183,19 @@ function Deployments() {
       {!canCreateDeployment && (
         <Message info content="Deployment limit reached." />
       )}
-      <Table>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
-            <Table.HeaderCell>Version</Table.HeaderCell>
-            <Table.HeaderCell>Hostname</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {deployments.length > 0 ? (
-            deployments.map(
-              ({
-                id,
-                name,
-                state,
-                hostname,
-                mzVersion,
-                orchestratorDeployment,
-              }: Deployment) => (
-                <Table.Row key={id}>
-                  <Table.Cell>{name}</Table.Cell>
-                  <Table.Cell>
-                    {humanizeDeploymentState(
-                      state,
-                      orchestratorDeployment.status
-                    )}
-                    <Loader
-                      active={!["R", "E"].includes(state)}
-                      inline
-                      size="tiny"
-                      style={{ marginLeft: "0.5em" }}
-                    />
-                  </Table.Cell>
-                  <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
-                  <Table.Cell>{hostname}</Table.Cell>
-                  {/* TODO(benesch): avoid hardcoding a width here. */}
-                  <Table.Cell style={{ width: "35%" }}>
-                    <Button
-                      primary
-                      onClick={() => setShowConnectId(id)}
-                      disabled={state !== "R"}
-                    >
-                      Connect
-                    </Button>
-                    {state === "R" && mzVersion !== data.mzVersion && (
-                      <Button
-                        basic
-                        color="green"
-                        onClick={() => setShowUpgradeId(id)}
-                      >
-                        Upgrade
-                      </Button>
-                    )}
-                    <Button
-                      basic
-                      color="orange"
-                      onClick={() => setShowDestroyId(id)}
-                      disabled={state !== "R"}
-                    >
-                      Destroy
-                    </Button>
-                    <Button
-                      basic
-                      color="blue"
-                      onClick={() => setShowLogsId(id)}
-                      disabled={["D", "E"].includes(state)}
-                    >
-                      Logs
-                    </Button>
-                  </Table.Cell>
-                </Table.Row>
-              )
-            )
-          ) : (
-            <Table.Row>
-              <Table.Cell colSpan="4" textAlign="center">
-                No deployments yet.
-              </Table.Cell>
-            </Table.Row>
-          )}
-        </Table.Body>
-      </Table>
+      <React.Fragment>
+        {Array.from(deploymentsByWarning).map(([warning, deployments]) => (
+          <DeploymentTable
+            deployments={deployments}
+            latestMzVersion={data.mzVersion}
+            warning={warning}
+            setShowConnectId={setShowConnectId}
+            setShowDestroyId={setShowDestroyId}
+            setShowUpgradeId={setShowUpgradeId}
+            setShowLogsId={setShowLogsId}
+          />
+        ))}
+      </React.Fragment>
     </React.Fragment>
   );
 }
@@ -441,36 +366,6 @@ function UpgradeModal(props: {
       onConfirm={doUpgrade}
     ></TextConfirmModal>
   );
-}
-
-function humanizeDeploymentState(
-  deploymentState: string,
-  orchestrationState: string
-) {
-  switch (deploymentState) {
-    case "DQ":
-      return "Destroy queued";
-    case "D":
-      return "Destroying";
-    case "E":
-      return "Error";
-    case "R":
-      switch (orchestrationState) {
-        case "OK":
-          return "Healthy";
-        case "STARTING":
-          return "Starting";
-        case "DAMAGED":
-          return "Damaged";
-      }
-      return "Ready";
-    case "Q":
-      return "Update queued";
-    case "U":
-      return "Updating";
-    default:
-      return "Unknown";
-  }
 }
 
 export default Deployments;
