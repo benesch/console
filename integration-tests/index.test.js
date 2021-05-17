@@ -170,6 +170,23 @@ test(
   1000 * 60 * 10
 );
 
+test(
+  "admin_requires_authentication",
+  async () => {
+    const response = await page.goto(CONSOLE_ADDR + "/admin", { timeout: 1000 * 60 * 5 /* 5 minutes */ });
+    console.log("admin interface response status", response.status());
+    assert(response.status() == 200);
+
+    if(CONSOLE_ADDR.startsWith("http://backend") || !process.env.CONSOLE_ADDR) {
+      console.log("Test appears to be running in the dev environment - terminating early with success.")
+      return;
+    }
+    assert.match(page.url(), new RegExp("^" + CONSOLE_ADDR + "/admin/login", ""));
+  },
+  // 10 minute timeout
+  1000 * 60 * 10
+);
+
 // returns a Promise that resolves when xpathSelector no longer exists on the
 // page.
 function waitForXPathDoesNotExist(page, xpathSelector) {
