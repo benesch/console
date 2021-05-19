@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.3.17",
+    "@apollo/client": "^3.3.19",
     "@aws-amplify/auth": "^3.4.34",
     "@fullstory/browser": "^1.4.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
