@@ -7,8 +7,8 @@
     "@aws-amplify/auth": "^3.4.34",
     "@fullstory/browser": "^1.4.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-    "@sentry/react": "^6.3.6",
-    "@sentry/tracing": "^6.3.6",
+    "@sentry/react": "^6.4.0",
+    "@sentry/tracing": "^6.4.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/react-hooks": "^5.1.2",
@@ -66,9 +66,6 @@
     "test:integration": "cd integration-tests && jest",
     "lint": "eslint --max-warnings 0 src",
     "lint:fix": "eslint --fix src"
-  },
-  "engines": {
-    "node": "14.x"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
