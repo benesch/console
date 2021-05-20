@@ -1,4 +1,3 @@
-const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const extract = require("extract-zip");
@@ -30,9 +29,9 @@ test(
     // Initial loading can take a while if the backend is spinning up.
     const response = await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 5 /* 5 minutes */ });
     console.log("response status", response.status());
-    assert(response.status() == 200);
+    expect(response.status()).toBe(200);
 
-    assert(page.url().endsWith("/login"), page.url());
+    expect(page.url()).toEndWith("/login");
     await page.waitForSelector("#login-form-email").then((el) => {
       return el.type("matt@materialize.io");
     });
@@ -45,7 +44,7 @@ test(
 
     // Wait for the deployments page to load.
     const create = await page.waitForXPath(XPATH_DEPLOYMENTS_CREATE);
-    assert(page.url().endsWith("/deployments"));
+    expect(page.url()).toEndWith("/deployments");
 
     // Delete any existing deployments.
     const destroyButtons = await page.$x(XPATH_DEPLOYMENTS_DESTROY);
@@ -55,8 +54,8 @@ test(
 
     // Verify there's no Destroy buttons or Ready columns.
     await waitForXPathDoesNotExist(page, XPATH_DEPLOYMENTS_DESTROY);
-    assert((await page.$x(XPATH_DEPLOYMENTS_DESTROY)).length === 0);
-    assert((await page.$x(XPATH_DEPLOYMENTS_READY)).length === 0);
+    expect(await page.$x(XPATH_DEPLOYMENTS_DESTROY)).toBeEmpty();
+    expect(await page.$x(XPATH_DEPLOYMENTS_READY)).toBeEmpty();
 
     // Create a deployment.
     await create.click();
@@ -80,7 +79,6 @@ test(
     const matches = psql.match(
       /psql "postgresql:\/\/(.*)@(.*):(.*)\/(.*)\?ssl.*"/
     );
-    assert(matches);
     await page
       .waitForXPath('//button[text()="Download certificates"]')
       .then((el) => {
@@ -147,7 +145,7 @@ test(
     const table_version = await (
       await connectButton.$x("./../../td[3]")
     )[0].evaluate((el) => el.textContent.match(/v(.*)/)[1]);
-    assert.strictEqual(query_version, table_version);
+    expect(query_version).toBe(table_version);
     await client.end();
 
     // View logs for the deployment
@@ -157,7 +155,7 @@ test(
       .waitForSelector(".logs")
       .then((el) => el.evaluate((el) => el.textContent));
     console.log("materialized log", logLines);
-    assert(logLines.length > 0);
+    expect(logLines).not.toBeEmpty();
     await page.waitForXPath('//button[text()="Done"]').then((el) => {
       return el.click();
     });
@@ -175,13 +173,13 @@ test(
   async () => {
     const response = await page.goto(CONSOLE_ADDR + "/admin", { timeout: 1000 * 60 * 5 /* 5 minutes */ });
     console.log("admin interface response status", response.status());
-    assert(response.status() == 200);
+    expect(response.status()).toBe(200);
 
     if(CONSOLE_ADDR.startsWith("http://backend") || !process.env.CONSOLE_ADDR) {
       console.log("Test appears to be running in the dev environment - terminating early with success.")
       return;
     }
-    assert.match(page.url(), new RegExp("^" + CONSOLE_ADDR + "/admin/login", ""));
+    expect(page.url()).toMatch(new RegExp("^" + CONSOLE_ADDR + "/admin/login", ""));
   },
   // 10 minute timeout
   1000 * 60 * 10
