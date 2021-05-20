@@ -12,7 +12,7 @@
 # NPM packages into /node_modules. When Node resolves modules, it will recurse
 # up the directory hierarchy until it finds the packages in /node_modules.
 
-FROM node:14
+FROM node:16.2.0-buster AS frontend
 
 # Install Puppeteer and configure it for use in Docker.
 # See: https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
