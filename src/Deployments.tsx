@@ -108,7 +108,10 @@ function Deployments(): JSX.Element {
     );
 
   const deployments: Deployment[] = data.defaultOrganization.deployments;
-  const deploymentsByWarning = groupBy(deployments, (d) => d.pendingMigration);
+  let deploymentsByWarning = groupBy(deployments, (d) => d.pendingMigration);
+  if (deploymentsByWarning.size == 0) {
+    deploymentsByWarning = new Map([[null, []]]);
+  }
 
   const tlsAuthorities = data.defaultOrganization.tlsAuthorities;
   const canCreateDeployment = data.defaultOrganization.canCreateDeployment;

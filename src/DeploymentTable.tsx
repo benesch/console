@@ -5,7 +5,7 @@ import { Button, Header, Segment, Loader, Table } from "semantic-ui-react";
 type DeploymentTableProps = {
   deployments: Deployment[];
   latestMzVersion: string;
-  warning: PendingMigration;
+  warning: PendingMigration | null;
   setShowConnectId: (id: string) => any;
   setShowDestroyId: (id: string) => any;
   setShowUpgradeId: (id: string) => any;
@@ -22,9 +22,100 @@ export default function DeploymentTable({
   setShowLogsId,
 }: DeploymentTableProps) {
   deployments.sort(deploymentOrder);
-  return (
-    <Segment raised={warning != null} basic={warning == null}>
-      {warning && (
+  const table = (
+    <Table warning={warning != null}>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>Name</Table.HeaderCell>
+          <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
+          <Table.HeaderCell>Version</Table.HeaderCell>
+          <Table.HeaderCell>Hostname</Table.HeaderCell>
+          <Table.HeaderCell></Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {deployments.length > 0 ? (
+          deployments.map(
+            ({
+              id,
+              name,
+              state,
+              hostname,
+              mzVersion,
+              orchestratorDeployment,
+              pendingMigration,
+            }: Deployment) => (
+              <Table.Row
+                warning={pendingMigration != null}
+                key={id}
+                title={pendingMigration && pendingMigration.description}
+              >
+                <Table.Cell>{name}</Table.Cell>
+                <Table.Cell>
+                  {humanizeDeploymentState(
+                    state,
+                    orchestratorDeployment.status
+                  )}
+                  <Loader
+                    active={!["R", "E"].includes(state)}
+                    inline
+                    size="tiny"
+                    style={{ marginLeft: "0.5em" }}
+                  />
+                </Table.Cell>
+                <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
+                <Table.Cell>{hostname}</Table.Cell>
+                {/* TODO(benesch): avoid hardcoding a width here. */}
+                <Table.Cell style={{ width: "35%" }}>
+                  <Button
+                    primary
+                    onClick={() => setShowConnectId(id)}
+                    disabled={state !== "R"}
+                  >
+                    Connect
+                  </Button>
+                  {state === "R" && mzVersion !== latestMzVersion && (
+                    <Button
+                      basic
+                      color="green"
+                      onClick={() => setShowUpgradeId(id)}
+                    >
+                      Upgrade
+                    </Button>
+                  )}
+                  <Button
+                    basic
+                    color="orange"
+                    onClick={() => setShowDestroyId(id)}
+                    disabled={state !== "R"}
+                  >
+                    Destroy
+                  </Button>
+                  <Button
+                    basic
+                    color="blue"
+                    onClick={() => setShowLogsId(id)}
+                    disabled={["D", "E"].includes(state)}
+                  >
+                    Logs
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            )
+          )
+        ) : (
+          <Table.Row>
+            <Table.Cell colSpan="4" textAlign="center">
+              No deployments yet.
+            </Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table>
+  );
+  if (warning)
+    return (
+      <Segment raised>
         <Segment secondary>
           <Header color="red">
             {"Watch out - these instances will shut down on " +
@@ -32,98 +123,10 @@ export default function DeploymentTable({
           </Header>
           <p>{warning.description}</p>
         </Segment>
-      )}
-      <Table warning={warning != null}>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
-            <Table.HeaderCell>Version</Table.HeaderCell>
-            <Table.HeaderCell>Hostname</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {deployments.length > 0 ? (
-            deployments.map(
-              ({
-                id,
-                name,
-                state,
-                hostname,
-                mzVersion,
-                orchestratorDeployment,
-                pendingMigration,
-              }: Deployment) => (
-                <Table.Row
-                  warning={pendingMigration != null}
-                  key={id}
-                  title={pendingMigration && pendingMigration.description}
-                >
-                  <Table.Cell>{name}</Table.Cell>
-                  <Table.Cell>
-                    {humanizeDeploymentState(
-                      state,
-                      orchestratorDeployment.status
-                    )}
-                    <Loader
-                      active={!["R", "E"].includes(state)}
-                      inline
-                      size="tiny"
-                      style={{ marginLeft: "0.5em" }}
-                    />
-                  </Table.Cell>
-                  <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
-                  <Table.Cell>{hostname}</Table.Cell>
-                  {/* TODO(benesch): avoid hardcoding a width here. */}
-                  <Table.Cell style={{ width: "35%" }}>
-                    <Button
-                      primary
-                      onClick={() => setShowConnectId(id)}
-                      disabled={state !== "R"}
-                    >
-                      Connect
-                    </Button>
-                    {state === "R" && mzVersion !== latestMzVersion && (
-                      <Button
-                        basic
-                        color="green"
-                        onClick={() => setShowUpgradeId(id)}
-                      >
-                        Upgrade
-                      </Button>
-                    )}
-                    <Button
-                      basic
-                      color="orange"
-                      onClick={() => setShowDestroyId(id)}
-                      disabled={state !== "R"}
-                    >
-                      Destroy
-                    </Button>
-                    <Button
-                      basic
-                      color="blue"
-                      onClick={() => setShowLogsId(id)}
-                      disabled={["D", "E"].includes(state)}
-                    >
-                      Logs
-                    </Button>
-                  </Table.Cell>
-                </Table.Row>
-              )
-            )
-          ) : (
-            <Table.Row>
-              <Table.Cell colSpan="4" textAlign="center">
-                No deployments yet.
-              </Table.Cell>
-            </Table.Row>
-          )}
-        </Table.Body>
-      </Table>
-    </Segment>
-  );
+        {table}
+      </Segment>
+    );
+  return table;
 }
 
 function humanizeDeploymentState(
