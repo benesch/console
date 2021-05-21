@@ -14,5 +14,5 @@ export interface Deployment {
   hostname: string;
   mzVersion: string;
   orchestratorDeployment: K8sDeployment;
-  pendingMigration: PendingMigration;
+  pendingMigration: PendingMigration | null;
 }
