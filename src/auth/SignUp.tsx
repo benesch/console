@@ -27,6 +27,7 @@ const validationSchema = yup.object({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match"),
+  acceptTerms: yup.bool().isTrue("You must accept the Terms and Conditions"),
 });
 
 function SignUp() {
@@ -41,6 +42,7 @@ function SignUp() {
       email: "",
       password: "",
       confirmPassword: "",
+      acceptTerms: false,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -61,6 +63,20 @@ function SignUp() {
   });
 
   if (step === "SIGNUP") {
+    const tosLabel = (
+      <React.Fragment>
+        <label>
+          I agree to the{" "}
+          <a
+            href="https://materialize.com/terms-and-conditions/"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Terms and Conditions
+          </a>
+          .
+        </label>
+      </React.Fragment>
+    );
     return (
       <React.Fragment>
         <Form
@@ -80,6 +96,16 @@ function SignUp() {
               label="Email"
             />
             <PasswordInput form={formik} />
+
+            <Form.Checkbox
+              required
+              name="acceptTerms"
+              onChange={() =>
+                formik.setFieldValue("acceptTerms", !formik.values.acceptTerms)
+              }
+              error={formik.touched.acceptTerms && formik.errors.acceptTerms}
+              label={tosLabel}
+            />
 
             <Message error header="Signup failed" content={error} />
 
