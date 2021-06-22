@@ -29,6 +29,7 @@ export default function DeploymentTable({
           <Table.HeaderCell>Name</Table.HeaderCell>
           <Table.HeaderCell style={{ width: "30%" }}>State</Table.HeaderCell>
           <Table.HeaderCell>Version</Table.HeaderCell>
+          <Table.HeaderCell>ClusterId</Table.HeaderCell>
           <Table.HeaderCell>Hostname</Table.HeaderCell>
           <Table.HeaderCell></Table.HeaderCell>
         </Table.Row>
@@ -42,6 +43,7 @@ export default function DeploymentTable({
               state,
               hostname,
               mzVersion,
+              clusterId,
               orchestratorDeployment,
               pendingMigration,
             }: Deployment) => (
@@ -64,6 +66,7 @@ export default function DeploymentTable({
                   />
                 </Table.Cell>
                 <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
+                <Table.Cell>{clusterId}</Table.Cell>
                 <Table.Cell>{hostname}</Table.Cell>
                 {/* TODO(benesch): avoid hardcoding a width here. */}
                 <Table.Cell style={{ width: "35%" }}>

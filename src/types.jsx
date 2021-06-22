@@ -11,6 +11,7 @@ export interface Deployment {
   id: string;
   name: string;
   state: string;
+  clusterId: string;
   hostname: string;
   mzVersion: string;
   orchestratorDeployment: K8sDeployment;
