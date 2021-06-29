@@ -11,6 +11,8 @@ import {
   Form,
   Message,
   Modal,
+  Accordion,
+  Icon,
 } from "semantic-ui-react";
 import download from "downloadjs";
 import { groupBy } from "./util";
@@ -236,6 +238,7 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
 }
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
+  const [activeAccordion, setAccordion] = useState(0);
   const apolloClient = useApolloClient();
 
   const downloadCert = async () => {
@@ -255,37 +258,136 @@ function ConnectModal(props: { deployment: Deployment; close: () => void }) {
       <Modal.Header>Connect to {props.deployment.name}</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>
-            To connect to this deployment using the{" "}
-            <a href="https://www.postgresql.org/docs/13/app-psql.html">psql</a>{" "}
-            command-line SQL shell:
-          </p>
-          <ol>
-            <li>
-              Install psql, if you don't already have it installed.
-              <br />
-              <ul>
-                <li>
-                  On macOS: <code>brew install postgresql</code>
-                </li>
-                <li>
-                  On Debian/Ubuntu: <code>apt install postgresql-client</code>
-                </li>
-              </ul>
-            </li>
-            <li>
-              Click <b>Download certificates</b>.
-            </li>
-            <li>Unzip the certificate ZIP file.</li>
-            <li>
-              In the same directory as the certificates, run the following
-              command:
-              <p className="connection-string">
-                psql "postgresql://materialize@{props.deployment.hostname}
-                :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
+          <Accordion styled>
+            <Accordion.Title
+              active={activeAccordion === 0}
+              index={0}
+              onClick={() => setAccordion(0)}
+            >
+              <Icon name="dropdown" />
+              PostgreSQL (psql)
+            </Accordion.Title>
+            <Accordion.Content active={activeAccordion == 0}>
+              <p>
+                To connect to this deployment using the{" "}
+                <a href="https://www.postgresql.org/docs/13/app-psql.html">
+                  psql
+                </a>{" "}
+                command-line SQL shell:
               </p>
-            </li>
-          </ol>
+              <ol>
+                <li>
+                  Install psql, if you don't already have it installed.
+                  <br />
+                  <ul>
+                    <li>
+                      On macOS: <code>brew install postgresql</code>
+                    </li>
+                    <li>
+                      On Debian/Ubuntu:{" "}
+                      <code>apt install postgresql-client</code>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  Click <b>Download certificates</b>.
+                </li>
+                <li>Unzip the certificate ZIP file.</li>
+                <li>
+                  In the same directory as the certificates, run the following
+                  command:
+                  <p className="connection-string">
+                    psql "postgresql://materialize@{props.deployment.hostname}
+                    :6875/materialize?sslcert=materialize.crt&amp;sslkey=materialize.key&amp;sslrootcert=ca.crt"
+                  </p>
+                </li>
+              </ol>
+            </Accordion.Content>
+            <Accordion.Title
+              active={activeAccordion === 1}
+              index={1}
+              onClick={() => setAccordion(1)}
+            >
+              <Icon name="dropdown" />
+              Metabase
+            </Accordion.Title>
+            <Accordion.Content active={activeAccordion == 1}>
+              <p>
+                To connect to this deployment using a{" "}
+                <a href="https://www.metabase.com/">metabase</a> client:
+              </p>
+              <ol>
+                <li>
+                  Ensure metabase runs on your local machine or on a machine you
+                  controll. This is necessary to support the certificate-based
+                  authentication used by Materialize Cloud. <p /> Follow the{" "}
+                  <a href="https://www.metabase.com/docs/latest/operations-guide/installing-metabase.html">
+                    official installation instructions
+                  </a>{" "}
+                  to get metabase set up.
+                </li>
+                <li>
+                  Click <b>Download certificates</b>.
+                </li>
+                <li>
+                  Unzip the certificate ZIP file and ensure the directory is
+                  reachable by metabase. Here, we assume they got unpacked to{" "}
+                  <span className="connection-string">
+                    /Users/you/Downloads/{props.deployment.name}-certs/
+                  </span>
+                </li>
+                <li>
+                  In metabase, create a new database:
+                  <ul>
+                    <li>Select "PostgreSQL" as the type</li>
+                    <li>
+                      <b>Host</b>:{" "}
+                      <span className="connection-string">
+                        {props.deployment.hostname}
+                      </span>
+                    </li>
+                    <li>
+                      <b>Port</b>:{" "}
+                      <span className="connection-string">6875</span>
+                    </li>
+                    <li>
+                      <b>Database name</b>:{" "}
+                      <span className="connection-string">materialize</span>
+                    </li>
+                    <li>
+                      <b>Username</b>:{" "}
+                      <span className="connection-string">materialize</span>
+                    </li>
+                    <li>
+                      <b>Password</b>: (leave empty)
+                    </li>
+                    <li>
+                      <b>Use a secure connection (SSL)</b>: check to turn on
+                    </li>
+                    <li>
+                      <b>Additional JDBC connection string options</b>:{" "}
+                      <span className="connection-string">
+                        sslcert=/Users/you/Downloads/{props.deployment.name}
+                        -certs/materialize.crt&sslkey=/Users/you/Downloads/
+                        {props.deployment.name}
+                        -certs/materialize.der.key&sslrootcert=/Users/you/Downloads/
+                        {props.deployment.name}-certs/ca.crt&sslmode=verify-full
+                      </span>
+                      <p>
+                        replacing
+                        <span className="connection-string">
+                          /Users/you/Downloads/{props.deployment.name}
+                          -certs
+                        </span>{" "}
+                        with the location where metabase can reach your
+                        certificates.
+                      </p>
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </Accordion.Content>
+          </Accordion>
           <p>
             If you've just created the deployment, you may need to wait a minute
             or two before you'll be able to connect.
