@@ -25,7 +25,6 @@ const GET_DEPLOYMENTS = gql`
         state
         hostname
         mzVersion
-        clusterId
         orchestratorDeployment {
           id
           status
