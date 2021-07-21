@@ -1,4 +1,3 @@
-import { gql, useApolloClient } from "@apollo/client";
 import React, { useState } from "react";
 import { Button, Form, Message, Segment } from "semantic-ui-react";
 
@@ -8,12 +7,6 @@ import { useUser } from "./AuthContext";
 import { Link } from "react-router-dom";
 import Code from "./Code";
 import PasswordInput from "./PasswordInput";
-
-const ALLOWED_EMAIL = gql`
-  query AllowedEmail($email: String!) {
-    allowedEmail(email: $email)
-  }
-`;
 
 const validationSchema = yup.object({
   email: yup
@@ -31,7 +24,6 @@ const validationSchema = yup.object({
 });
 
 function SignUp() {
-  const apolloClient = useApolloClient();
   const { signUp } = useUser();
   const [step, setStep] = useState("SIGNUP");
 
@@ -47,11 +39,9 @@ function SignUp() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const data = await apolloClient.query({
-          query: ALLOWED_EMAIL,
-          variables: { email: values.email },
-        });
-        if (!data.data.allowedEmail) {
+        const response = await fetch(`/api/allowed-emails/${values.email}`);
+        const isAllowed = await response.json();
+        if (!isAllowed) {
           throw { message: "Only invited users are permitted right now." };
         }
         await signUp(values.email, values.password);
