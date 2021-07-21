@@ -1,10 +1,10 @@
 import React from "react";
 
 import { Formik, Form, Field } from "formik";
-import { useUser } from "./AuthContext";
+import { AuthStatus, Cognito, useAuth } from "./AuthProvider";
 
 function NewPassword() {
-  const { newPassword } = useUser();
+  const auth = useAuth();
   return (
     <Formik
       initialValues={{
@@ -12,8 +12,11 @@ function NewPassword() {
         repeatPassword: "",
       }}
       onSubmit={async (values) => {
-        if (values.password === values.repeatPassword) {
-          await newPassword(values.password);
+        if (
+          values.password === values.repeatPassword &&
+          auth.state.status == AuthStatus.LoggedIn
+        ) {
+          await Cognito.completeNewPassword(auth.state.user, values.password);
         }
       }}
     >

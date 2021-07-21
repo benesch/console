@@ -3,7 +3,7 @@ import { Button, Divider, Form, Message, Segment } from "semantic-ui-react";
 
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
-import { useUser } from "./AuthContext";
+import { Cognito, useAuth } from "./AuthProvider";
 
 type CodeProps = {
   email: string;
@@ -12,7 +12,7 @@ type CodeProps = {
 };
 
 function Code({ email, password, destination }: CodeProps) {
-  const { login, confirmSignUp, resendSignUp } = useUser();
+  const auth = useAuth();
   const history = useHistory();
 
   const [error, setError] = useState("");
@@ -24,8 +24,8 @@ function Code({ email, password, destination }: CodeProps) {
     },
     onSubmit: async (values) => {
       try {
-        await confirmSignUp(email, values.code);
-        await login(email, password);
+        await Cognito.confirmSignUp(email, values.code);
+        await auth.login(email, password);
         history.push(destination);
       } catch (e) {
         setError(e.message);
@@ -36,7 +36,7 @@ function Code({ email, password, destination }: CodeProps) {
   const handleResendCode = async () => {
     try {
       setResendLoading(true);
-      await resendSignUp(email);
+      await Cognito.resendSignUp(email);
     } catch (e) {
       setError(e.message);
     }

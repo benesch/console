@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Grid, Header, Image } from "semantic-ui-react";
 
-import { useUser } from "./AuthContext";
+import { AuthStatus, useAuth } from "./AuthProvider";
 import logo from "../img/logo-symbol-primary.png";
 
 type AuthLayoutProps = {
@@ -10,10 +10,10 @@ type AuthLayoutProps = {
 };
 
 function AuthLayout(props: AuthLayoutProps) {
-  const { user } = useUser();
+  const auth = useAuth();
 
-  if (user) {
-    return <Redirect to="/instances" />;
+  if (auth.state.status == AuthStatus.LoggedIn) {
+    return <Redirect to="/deployments" />;
   }
 
   return (

@@ -6,8 +6,9 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/react";
 import * as FullStory from "@fullstory/browser";
 import { Integrations } from "@sentry/tracing";
-import App from "./App";
-import { UserProvider } from "./auth/AuthContext";
+import { BrowserRouter } from "react-router-dom";
+import Router from "./Router";
+import { AuthProvider } from "./auth/AuthProvider";
 import config from "./config";
 import { newTracker, trackPageView } from "@snowplow/browser-tracker";
 import { PerformanceTimingPlugin } from "@snowplow/browser-plugin-performance-timing";
@@ -15,6 +16,7 @@ import {
   FormTrackingPlugin,
   enableFormTracking,
 } from "@snowplow/browser-plugin-form-tracking";
+import { Auth } from "@aws-amplify/auth";
 
 if (config.sentryDsn) {
   Sentry.init({
@@ -37,18 +39,23 @@ newTracker("cg", "sp.materialize.com", {
 trackPageView();
 enableFormTracking();
 
+// AWS Cognito configuration.
+Auth.configure({
+  region: config.cognitoRegion,
+  userPoolId: config.cognitoUserPoolId,
+  userPoolWebClientId: config.cognitoWebClientId,
+});
+
 const root = document.createElement("div");
 document.body.appendChild(root);
 
 ReactDOM.render(
   <React.StrictMode>
-    <UserProvider
-      region={config.cognitoRegion}
-      userPoolId={config.cognitoUserPoolId}
-      userPoolWebClientId={config.cognitoWebClientId}
-    >
-      <App />
-    </UserProvider>
+    <AuthProvider>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>,
   root
 );

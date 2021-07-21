@@ -25,3 +25,14 @@ export function groupBy<K, V>(
   });
   return map;
 }
+
+/**
+ * Asserts that the specified condition is truthy.
+ *
+ * Modeled after the function of the same name in Node.js.
+ */
+export function assert(condition: any): asserts condition {
+  if (!condition) {
+    throw new Error("assertion failed");
+  }
+}

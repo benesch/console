@@ -3,19 +3,14 @@ import { Container, Dropdown, Image, Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
 import logo from "./img/logo-symbol-primary.png";
-import { useUser } from "./auth/AuthContext";
+import { AuthStatus, useAuth } from "./auth/AuthProvider";
+import { assert } from "./util";
 
 function Nav() {
-  const { user, logout } = useUser();
+  const auth = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
-  // Only render the nav bar if we have logged in
-  if (!user) {
-    return null;
-  }
+  // The `Nav` component is only rendered for logged-in users.
+  assert(auth.state.status == AuthStatus.LoggedIn);
 
   return (
     <React.Fragment>
@@ -55,9 +50,11 @@ function Nav() {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <Dropdown item simple text={user.attributes.email}>
+            <Dropdown item simple text={auth.state.user.attributes.email}>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={handleLogout}>Log out</Dropdown.Item>
+                <Dropdown.Item onClick={() => auth.logout()}>
+                  Log out
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Menu.Menu>

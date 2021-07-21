@@ -4,14 +4,14 @@ import { Button, Form, Message, Segment } from "semantic-ui-react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
-import { useUser } from "./AuthContext";
+import { AuthStatus, useAuth } from "./AuthProvider";
 import { useHistory, Link } from "react-router-dom";
 
 import Code from "./Code";
 
-function InvalidAuthMessage(props: { authTokenRejected: string }) {
+function InvalidAuthMessage(props: { reason: string }) {
   let contents;
-  switch (props.authTokenRejected) {
+  switch (props.reason) {
     case "":
       return <React.Fragment></React.Fragment>;
     case "BAD-SESSION":
@@ -61,7 +61,7 @@ const validationSchema = yup.object({
 });
 
 function Login() {
-  const { login, authTokenRejected } = useUser();
+  const auth = useAuth();
   const history = useHistory();
 
   const [error, setError] = useState("");
@@ -75,11 +75,11 @@ function Login() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const user = await login(values.email, values.password);
+        const user = await auth.login(values.email, values.password);
         if (user && user.challengeName) {
           history.push("/new-password");
         } else if (user) {
-          history.push("/instances");
+          history.push("/deployments");
         }
       } catch (e) {
         if (e.name === "UserNotConfirmedException") {
@@ -94,7 +94,9 @@ function Login() {
   if (step === "LOGIN") {
     return (
       <React.Fragment>
-        <InvalidAuthMessage authTokenRejected={authTokenRejected} />
+        {auth.state.status == AuthStatus.LoggedOut && auth.state.reason && (
+          <InvalidAuthMessage reason={auth.state.reason} />
+        )}
 
         <Form
           size="large"

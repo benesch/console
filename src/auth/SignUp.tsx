@@ -3,7 +3,7 @@ import { Button, Form, Message, Segment } from "semantic-ui-react";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useUser } from "./AuthContext";
+import { Cognito } from "./AuthProvider";
 import { Link } from "react-router-dom";
 import Code from "./Code";
 import PasswordInput from "./PasswordInput";
@@ -24,9 +24,7 @@ const validationSchema = yup.object({
 });
 
 function SignUp() {
-  const { signUp } = useUser();
   const [step, setStep] = useState("SIGNUP");
-
   const [error, setError] = useState("");
 
   const formik = useFormik({
@@ -44,7 +42,7 @@ function SignUp() {
         if (!isAllowed) {
           throw { message: "Only invited users are permitted right now." };
         }
-        await signUp(values.email, values.password);
+        await Cognito.signUp(values.email, values.password);
         setStep("CODE");
       } catch (e) {
         setError(e.message);
@@ -114,7 +112,7 @@ function SignUp() {
       <Code
         email={formik.values.email}
         password={formik.values.password}
-        destination="/instances"
+        destination="/deployments"
       />
     );
   }

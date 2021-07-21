@@ -24,9 +24,6 @@
     "@types/react": "^17.0.6",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.1",
-    "amazon-cognito-identity-js": "^5.0.3",
-    "aws-amplify-react": "^5.0.4",
-    "aws-amplify": "^4.0.3",
     "babel-eslint": "^10.1.0",
     "css-loader": "^5.2.4",
     "downloadjs": "^1.4.7",
@@ -81,6 +78,7 @@
       "prettier/prettier": "error",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars-experimental": "error"
     },

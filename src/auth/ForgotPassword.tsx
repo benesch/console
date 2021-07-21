@@ -4,11 +4,11 @@ import { Button, Form, Message, Segment } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useUser } from "./AuthContext";
+import { Cognito, useAuth } from "./AuthProvider";
 import PasswordInput from "./PasswordInput";
 
 function ForgotPassword() {
-  const { login, forgotPassword, forgotPasswordSubmit } = useUser();
+  const auth = useAuth();
   const history = useHistory();
 
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ function ForgotPassword() {
     }),
     onSubmit: async (values) => {
       try {
-        await forgotPassword(values.email);
+        await Cognito.forgotPassword(values.email);
         setSentEmail(true);
       } catch (e) {
         setError(e.message);
@@ -51,13 +51,13 @@ function ForgotPassword() {
     }),
     onSubmit: async (values) => {
       try {
-        await forgotPasswordSubmit(
+        await Cognito.forgotPasswordSubmit(
           requestEmailForm.values.email,
           values.code,
           values.password
         );
         setSentEmail(true);
-        await login(requestEmailForm.values.email, values.password);
+        await auth.login(requestEmailForm.values.email, values.password);
         history.push("/");
       } catch (e) {
         setError(e.message);
