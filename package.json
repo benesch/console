@@ -46,7 +46,7 @@
     "prettier": "^2.3.2",
     "puppeteer": "^10.1.0",
     "react-dom": "^17.0.2",
-    "react-password-strength-bar": "^0.3.4",
+    "react-password-strength-bar": "^0.3.5",
     "react-refresh": "^0.10.0",
     "react-router-dom": "^5.2.0",
     "react": "^17.0.2",
