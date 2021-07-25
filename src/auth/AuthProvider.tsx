@@ -2,14 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Auth as Cognito, CognitoUser } from "@aws-amplify/auth";
-import { setContext } from "@apollo/client/link/context";
-import {
-  createHttpLink,
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-} from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
+import { RestfulProvider } from "restful-react";
 
 /**
  * Re-export the underlying AWS "Auth" module as "Cognito"
@@ -45,6 +38,13 @@ export interface IAuthContext {
   login: (username: string, password: string) => Promise<IUser>;
   /** Log out the current user. */
   logout: () => Promise<void>;
+  /**
+   * Make an authenticated HTTP request.
+   *
+   * The API of `fetchAuthed` is identical to `window.fetch`, except that the
+   * credentials of the current user, if any, will be attached to the request.
+   */
+  fetchAuthed(input: RequestInfo, init?: RequestInit): Promise<Response>;
 }
 
 /**
@@ -81,52 +81,39 @@ export const AuthProvider = (props: { children: React.ReactNode }) => {
     setState({ status: AuthStatus.LoggedOut, reason: null });
   };
 
-  const httpLink = createHttpLink({
-    uri: "/api/graphql",
-  });
+  const requestOptions = async () => {
+    const session = await Cognito.currentSession();
+    const jwtToken = session.getIdToken().getJwtToken();
+    return { headers: { authorization: `Bearer ${jwtToken}` } };
+  };
 
-  const authLink = setContext(async (_, { headers }) => {
-    try {
-      const session = await Cognito.currentSession();
-      if (session.isValid()) {
-        const accessToken = session.getIdToken().getJwtToken();
-        return {
-          headers: {
-            ...headers,
-            authorization: `Bearer ${accessToken}`,
-          },
-        };
-      }
-    } catch {
-      // If there's no logged in user, don't send an auth header.
-    }
-  });
-
-  const errorLink = onError(({ graphQLErrors }) => {
-    if (graphQLErrors)
-      graphQLErrors.forEach(({ message, extensions }) => {
-        if (
-          extensions &&
-          "code" in extensions &&
-          extensions.code == "AUTH-INVALID"
-        ) {
-          console.error(`Server rejected authentication token: ${message}`);
-          setState({
-            status: AuthStatus.LoggedOut,
-            reason: extensions.reasonCode,
-          });
-        }
+  const onError = (error: { status?: number; data: any }) => {
+    if (error.data && error.data.code == "AUTH-INVALID") {
+      console.error(
+        `Server rejected authentication token: ${error.data.detail}`
+      );
+      setState({
+        status: AuthStatus.LoggedOut,
+        reason: error.data.reasonCode,
       });
-  });
+    }
+  };
 
-  const client = new ApolloClient({
-    link: errorLink.concat(authLink).concat(httpLink),
-    cache: new InMemoryCache(),
-  });
+  const fetchAuthed = async (input: RequestInfo, init?: RequestInit) =>
+    fetch(input, {
+      ...(await requestOptions()),
+      ...init,
+    });
 
   return (
-    <AuthContext.Provider value={{ state, login, logout }}>
-      <ApolloProvider client={client}>{props.children}</ApolloProvider>
+    <AuthContext.Provider value={{ state, login, logout, fetchAuthed }}>
+      <RestfulProvider
+        base="/"
+        requestOptions={requestOptions}
+        onError={onError}
+      >
+        {props.children}
+      </RestfulProvider>
     </AuthContext.Provider>
   );
 };

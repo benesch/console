@@ -1,5 +1,4 @@
 /* eslint "@typescript-eslint/no-var-requires": off */
-/* global module, require */
 
 const outputs = require("../../config/settings/local.outputs.json");
 

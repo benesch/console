@@ -1,5 +1,5 @@
 import React from "react";
-import type { Deployment, PendingMigration } from "./types";
+import type { Deployment, PendingMigration } from "./api";
 import { Button, Header, Segment, Loader, Table } from "semantic-ui-react";
 
 type DeploymentTableProps = {
