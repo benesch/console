@@ -8,7 +8,7 @@
     "@fullstory/browser": "^1.4.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@sentry/react": "^6.8.0",
-    "@sentry/tracing": "^6.9.0",
+    "@sentry/tracing": "^6.10.0",
     "@snowplow/browser-plugin-form-tracking": "^3.1.0",
     "@snowplow/browser-plugin-performance-timing": "^3.1.0",
     "@snowplow/browser-tracker": "^3.1.0",
