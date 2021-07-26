@@ -184,9 +184,9 @@ function overrideDeploymentVersion(request) {
         console.log(postData.operationName)
         if (postData.operationName == "CreateDeployment") {
             console.log(`overriding request to use v${LEGACY_VERSION}`);
-            postData.variables.dockerTag = `v${LEGACY_VERSION}`;
-            postData.query = `mutation CreateDeployment($tlsAuthorityId: UUID!, $dockerTag: String!) {
-                createDeployment(tlsAuthorityId: $tlsAuthorityId, dockerTag: $dockerTag) {
+            postData.variables.mzVersion = `v${LEGACY_VERSION}`;
+            postData.query = `mutation CreateDeployment($tlsAuthorityId: UUID!, $mzVersion: String!) {
+                createDeployment(tlsAuthorityId: $tlsAuthorityId, mzVersion: $mzVersion) {
                     deployment {
                         id
                         __typename
