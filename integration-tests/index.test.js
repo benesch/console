@@ -178,25 +178,12 @@ function overrideDeploymentVersion(request) {
     // Have to check what request we're handling,
     // since awaiting the button click doesn't wait
     // for the request to send.
-    console.log(request.postData());
-    if (request.postData()) {
+    console.log(request.method(), request.url(), request.postData());
+    if (request.method() == "POST" && request.postData() && request.url().endsWith("/api/deployments")) {
+        console.log(`overriding request to use v${LEGACY_VERSION}`);
         var postData = JSON.parse(request.postData());
-        console.log(postData.operationName)
-        if (postData.operationName == "CreateDeployment") {
-            console.log(`overriding request to use v${LEGACY_VERSION}`);
-            postData.variables.mzVersion = `v${LEGACY_VERSION}`;
-            postData.query = `mutation CreateDeployment($tlsAuthorityId: UUID!, $mzVersion: String!) {
-                createDeployment(tlsAuthorityId: $tlsAuthorityId, mzVersion: $mzVersion) {
-                    deployment {
-                        id
-                        __typename
-                    }
-                    __typename
-                }
-            }`;
-
-            overrides.postData = JSON.stringify(postData);
-        }
+        postData.mzVersion = `v${LEGACY_VERSION}`;
+        overrides.postData = JSON.stringify(postData);
     }
     console.log("continuing request");
     request.continue(overrides);

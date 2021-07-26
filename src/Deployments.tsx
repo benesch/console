@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { gql, useQuery, useApolloClient, useMutation } from "@apollo/client";
 import { Formik } from "formik";
-import type { Deployment } from "./types";
 import DeploymentTable from "./DeploymentTable";
 import {
   Button,
@@ -17,153 +15,84 @@ import {
 import download from "downloadjs";
 import { groupBy } from "./util";
 import { TextConfirmModal } from "./components";
-
-const GET_DEPLOYMENTS = gql`
-  query GetDeployments {
-    defaultOrganization {
-      deployments {
-        id
-        name
-        state
-        hostname
-        mzVersion
-        orchestratorDeployment {
-          id
-          status
-        }
-        pendingMigration {
-          id
-          deadline
-          description
-        }
-      }
-      tlsAuthorities {
-        id
-        name
-      }
-      canCreateDeployment
-    }
-    mzVersion
-  }
-`;
-
-const DOWNLOAD_CERT = gql`
-  query DownloadCert($deploymentId: String!) {
-    downloadCert(deploymentId: $deploymentId)
-  }
-`;
-
-const CREATE_DEPLOYMENT = gql`
-  mutation CreateDeployment($tlsAuthorityId: UUID!) {
-    createDeployment(tlsAuthorityId: $tlsAuthorityId) {
-      deployment {
-        id
-      }
-    }
-  }
-`;
-
-const DESTROY_DEPLOYMENT = gql`
-  mutation DestroyDeployment($deploymentId: String!) {
-    destroyDeployment(deploymentId: $deploymentId) {
-      deployment {
-        id
-      }
-    }
-  }
-`;
-
-const UPGRADE_DEPLOYMENT = gql`
-  mutation UpgradeDeployment($deploymentId: String!) {
-    upgradeDeployment(deploymentId: $deploymentId) {
-      deployment {
-        id
-      }
-    }
-  }
-`;
-
-const DOWNLOAD_LOGS = gql`
-  query DownloadLogs($deploymentId: String!) {
-    downloadLogs(deploymentId: $deploymentId)
-  }
-`;
+import {
+  Deployment,
+  useDeploymentsCreate,
+  useDeploymentsDestroy,
+  useDeploymentsList,
+  useDeploymentsLogsRetrieve,
+  useDeploymentsPartialUpdate,
+  useMzVersionsList,
+} from "./api";
+import { useAuth } from "./auth/AuthProvider";
+import useInterval from "react-useinterval";
 
 function Deployments(): JSX.Element {
-  const { loading, data, refetch } = useQuery(GET_DEPLOYMENTS, {
-    pollInterval: 5000,
-  });
-  const [createDeployment] = useMutation(CREATE_DEPLOYMENT);
+  const { data: deployments, refetch } = useDeploymentsList({});
+  const { data: mzVersions } = useMzVersionsList({});
+  const { mutate: createDeployment } = useDeploymentsCreate({});
   const [creationError, setCreationError] = useState("");
   const [showConnectId, setShowConnectId] = useState("");
   const [showDestroyId, setShowDestroyId] = useState("");
   const [showUpgradeId, setShowUpgradeId] = useState("");
   const [showLogsId, setShowLogsId] = useState("");
+  useInterval(refetch, 5000);
 
-  if (loading)
+  if (deployments === null || mzVersions === null) {
     return (
       <Container>
-        <Dimmer active={loading} inverted>
+        <Dimmer active={true} inverted>
           <Loader size="large">Loading</Loader>
         </Dimmer>
       </Container>
     );
+  }
 
-  const deployments: Deployment[] = data.defaultOrganization.deployments;
+  const latestMzVersion = mzVersions[mzVersions.length - 1];
+
   let deploymentsByWarning = groupBy(deployments, (d) => d.pendingMigration);
   if (deploymentsByWarning.size == 0) {
     deploymentsByWarning = new Map([[null, []]]);
   }
 
-  const tlsAuthorities = data.defaultOrganization.tlsAuthorities;
-  const canCreateDeployment = data.defaultOrganization.canCreateDeployment;
+  // TODO(benesch): don't hardcode this.
+  const canCreateDeployment = deployments.length < 2;
 
   return (
     <React.Fragment>
       {showLogsId && (
         <LogsModal
-          deployment={deployments.find((d) => d.id == showLogsId) as Deployment}
+          deployment={deployments.find((d) => d.id == showLogsId)!}
           close={() => setShowLogsId("")}
         />
       )}
       {showConnectId && (
         <ConnectModal
-          deployment={
-            deployments.find((d) => d.id === showConnectId) as Deployment
-          }
+          deployment={deployments.find((d) => d.id === showConnectId)!}
           close={() => setShowConnectId("")}
         />
       )}
       {showDestroyId && (
         <DestroyModal
-          deployment={
-            deployments.find((d) => d.id === showDestroyId) as Deployment
-          }
+          deployment={deployments.find((d) => d.id === showDestroyId)!}
           close={() => setShowDestroyId("")}
           refetch={refetch}
         />
       )}
       {showUpgradeId && (
         <UpgradeModal
-          mzVersion={data.mzVersion}
-          deployment={
-            deployments.find((d) => d.id === showUpgradeId) as Deployment
-          }
+          mzVersion={latestMzVersion}
+          deployment={deployments.find((d) => d.id === showUpgradeId)!}
           close={() => setShowUpgradeId("")}
           refetch={refetch}
         />
       )}
       <Formik
-        initialValues={{
-          tlsAuthorityId:
-            tlsAuthorities.length === 1 ? tlsAuthorities[0].id : "",
-        }}
-        onSubmit={async ({ tlsAuthorityId }) => {
+        initialValues={{}}
+        onSubmit={async () => {
           setCreationError("");
           try {
-            await createDeployment({
-              variables: { tlsAuthorityId: tlsAuthorityId },
-            });
+            await createDeployment({ mzVersion: latestMzVersion });
             refetch();
           } catch (e) {
             setCreationError(e.message);
@@ -192,7 +121,7 @@ function Deployments(): JSX.Element {
         {Array.from(deploymentsByWarning).map(([warning, deployments]) => (
           <DeploymentTable
             deployments={deployments}
-            latestMzVersion={data.mzVersion}
+            latestMzVersion={latestMzVersion}
             warning={warning}
             setShowConnectId={setShowConnectId}
             setShowDestroyId={setShowDestroyId}
@@ -211,8 +140,8 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
     error: _,
     data,
     refetch,
-  } = useQuery(DOWNLOAD_LOGS, {
-    variables: { deploymentId: props.deployment.id },
+  } = useDeploymentsLogsRetrieve({
+    id: props.deployment.id,
   });
   return (
     <Modal open={true} size="fullscreen">
@@ -224,7 +153,7 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
           {loading ? (
             <Loader size="large">Loading</Loader>
           ) : (
-            <pre className="logs">{data.downloadLogs}</pre>
+            <pre className="logs">{data}</pre>
           )}
         </Modal.Description>
         <Modal.Actions>
@@ -238,17 +167,13 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   const [activeAccordion, setAccordion] = useState(0);
-  const apolloClient = useApolloClient();
+  const { fetchAuthed } = useAuth();
 
   const downloadCert = async () => {
-    const data = await apolloClient.query({
-      query: DOWNLOAD_CERT,
-      variables: { deploymentId: props.deployment.id },
-    });
-    const certData = Uint8Array.from(atob(data.data.downloadCert), (c) =>
-      c.charCodeAt(0)
+    const response = await fetchAuthed(
+      `/api/deployments/${props.deployment.id}/certs`
     );
-    const blob = new Blob([certData]);
+    const blob = await response.blob();
     download(blob, `${props.deployment.name}-certs.zip`, "application/zip");
   };
 
@@ -410,13 +335,11 @@ function DestroyModal(props: {
   close: () => void;
   refetch: () => void;
 }) {
-  const [destroyDeployment] = useMutation(DESTROY_DEPLOYMENT);
+  const { mutate: destroyDeployment } = useDeploymentsDestroy({});
 
   const doDestroy = async () => {
     try {
-      await destroyDeployment({
-        variables: { deploymentId: props.deployment.id },
-      });
+      await destroyDeployment(props.deployment.id);
       props.refetch();
       props.close();
     } catch (e) {
@@ -443,12 +366,14 @@ function UpgradeModal(props: {
   close: () => void;
   refetch: () => void;
 }) {
-  const [upgradeDeployment] = useMutation(UPGRADE_DEPLOYMENT);
+  const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
+    id: props.deployment.id,
+  });
 
   const doUpgrade = async () => {
     try {
-      await upgradeDeployment({
-        variables: { deploymentId: props.deployment.id },
+      await updateDeployment({
+        mzVersion: props.mzVersion,
       });
       props.refetch();
       props.close();
