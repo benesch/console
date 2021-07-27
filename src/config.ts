@@ -1,7 +1,5 @@
 interface Config {
-  cognitoRegion: string;
-  cognitoUserPoolId: string;
-  cognitoWebClientId: string;
+  fronteggUrl: string;
   segmentApiKey: string | null;
   sentryDsn: string | null;
   sentryEnvironment: string | null;

@@ -49,59 +49,6 @@ export interface PendingMigrationRequest {
 
 export type SizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
-export interface User {
-  /**
-   * The unique ID assigned to this user by AWS Cognito.
-   */
-  cognitoSub: string;
-  name: string;
-  email: string;
-}
-
-export interface AllowedEmailsRetrievePathParams {
-  email: string;
-}
-
-export type AllowedEmailsRetrieveProps = Omit<
-  GetProps<boolean, unknown, void, AllowedEmailsRetrievePathParams>,
-  "path"
-> &
-  AllowedEmailsRetrievePathParams;
-
-/**
- * Report whether the specified email address is allowed to sign up for
- * Materialize Cloud.
- */
-export const AllowedEmailsRetrieve = ({
-  email,
-  ...props
-}: AllowedEmailsRetrieveProps) => (
-  <Get<boolean, unknown, void, AllowedEmailsRetrievePathParams>
-    path={`/api/allowed-emails/${email}`}
-    {...props}
-  />
-);
-
-export type UseAllowedEmailsRetrieveProps = Omit<
-  UseGetProps<boolean, unknown, void, AllowedEmailsRetrievePathParams>,
-  "path"
-> &
-  AllowedEmailsRetrievePathParams;
-
-/**
- * Report whether the specified email address is allowed to sign up for
- * Materialize Cloud.
- */
-export const useAllowedEmailsRetrieve = ({
-  email,
-  ...props
-}: UseAllowedEmailsRetrieveProps) =>
-  useGet<boolean, unknown, void, AllowedEmailsRetrievePathParams>(
-    (paramsInPath: AllowedEmailsRetrievePathParams) =>
-      `/api/allowed-emails/${paramsInPath.email}`,
-    { pathParams: { email }, ...props }
-  );
-
 export type DeploymentsListProps = Omit<
   GetProps<Deployment[], unknown, void, void>,
   "path"
@@ -555,26 +502,3 @@ export const useSchemaRetrieve = (props: UseSchemaRetrieveProps) =>
     `/api/schema`,
     props
   );
-
-export type UserRetrieveProps = Omit<
-  GetProps<User, unknown, void, void>,
-  "path"
->;
-
-/**
- * Fetch details about the currently-authenticated user.
- */
-export const UserRetrieve = (props: UserRetrieveProps) => (
-  <Get<User, unknown, void, void> path={`/api/user`} {...props} />
-);
-
-export type UseUserRetrieveProps = Omit<
-  UseGetProps<User, unknown, void, void>,
-  "path"
->;
-
-/**
- * Fetch details about the currently-authenticated user.
- */
-export const useUserRetrieve = (props: UseUserRetrieveProps) =>
-  useGet<User, unknown, void, void>(`/api/user`, props);

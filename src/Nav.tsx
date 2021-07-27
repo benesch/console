@@ -1,17 +1,13 @@
 import React from "react";
 import { Container, Dropdown, Image, Menu } from "semantic-ui-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import logo from "./img/logo-symbol-primary.png";
-import { AuthStatus, useAuth } from "./auth/AuthProvider";
-import { assert } from "./util";
+import { AdminPortal, useAuth } from "@frontegg/react";
 
 function Nav() {
-  const auth = useAuth();
-
-  // The `Nav` component is only rendered for logged-in users.
-  assert(auth.state.status == AuthStatus.LoggedIn);
-
+  const history = useHistory();
+  const { user, routes: authRoutes } = useAuth();
   return (
     <React.Fragment>
       <Menu fixed="top" inverted>
@@ -21,7 +17,7 @@ function Nav() {
             Materialize Cloud
           </Menu.Item>
           <Menu.Item>
-            <Link to="/deployments">Deployments</Link>
+            <Link to="/">Deployments</Link>
           </Menu.Item>
 
           <Menu.Menu position="right">
@@ -50,9 +46,14 @@ function Nav() {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <Dropdown item simple text={auth.state.user.attributes.email}>
+            <Dropdown item simple text={user.email}>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => auth.logout()}>
+                <Dropdown.Item onClick={() => AdminPortal.show()}>
+                  Admin portal
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => history.push(authRoutes.logoutUrl)}
+                >
                   Log out
                 </Dropdown.Item>
               </Dropdown.Menu>

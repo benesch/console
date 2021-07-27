@@ -5,13 +5,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
-import { BrowserRouter } from "react-router-dom";
 import Router from "./Router";
-import { AuthProvider } from "./auth/AuthProvider";
+import { AuthedFetchProvider } from "./AuthedFetchProvider";
 import config from "./config";
 import Analytics from "@segment/analytics.js-core/build/analytics";
 import SegmentIntegration from "@segment/analytics.js-integration-segmentio";
-import { Auth } from "@aws-amplify/auth";
+import { FronteggProvider } from "@frontegg/react";
+import logo from "./img/logo-primary.png";
 
 // Configure Sentry error reporting.
 if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
@@ -37,23 +37,20 @@ if (config.segmentApiKey) {
   analytics.page();
 }
 
-// AWS Cognito configuration.
-Auth.configure({
-  region: config.cognitoRegion,
-  userPoolId: config.cognitoUserPoolId,
-  userPoolWebClientId: config.cognitoWebClientId,
-});
-
 const root = document.createElement("div");
 document.body.appendChild(root);
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
+    <FronteggProvider
+      contextOptions={{ baseUrl: config.fronteggUrl }}
+      authOptions={{ routes: { authenticatedUrl: "/deployments" } }}
+      headerImage={logo}
+    >
+      <AuthedFetchProvider>
         <Router />
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthedFetchProvider>
+    </FronteggProvider>
   </React.StrictMode>,
   root
 );

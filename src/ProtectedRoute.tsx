@@ -1,22 +1,23 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Route, RouteProps, useHistory } from "react-router-dom";
 
-import { AuthStatus, useAuth } from "./auth/AuthProvider";
+import { useAuth } from "@frontegg/react";
 
-function ProtectedRoute(props: any) {
-  const auth = useAuth();
-
-  switch (auth.state.status) {
-    case AuthStatus.LoggedIn:
-      return <Route {...props} />;
-    case AuthStatus.LoggedOut:
-      return <Redirect to="/login" />;
-    case AuthStatus.Loading:
-      // If the auth status is loading, just render nothing. The status will
-      // eventually update to `LoggedIn` or `LoggedOut`.
-      //
-      // TODO(benesch): we ought to display a loading indicator.
-      return null;
+function ProtectedRoute(props: RouteProps) {
+  const history = useHistory();
+  const { isAuthenticated, isLoading, routes: authRoutes } = useAuth();
+  if (isLoading) {
+    // Wait for authentication state to load before determining what to do.
+    return null;
+  } else if (isAuthenticated) {
+    return <Route {...props} />;
+  } else {
+    let loginRedirectUrl = authRoutes.loginUrl;
+    if (typeof props.path === "string") {
+      loginRedirectUrl += `?redirectUrl=${encodeURIComponent(props.path)}`;
+    }
+    history.push(loginRedirectUrl);
+    return null;
   }
 }
 

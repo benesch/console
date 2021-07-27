@@ -35,14 +35,19 @@ test(
     console.log("response status", response.status());
     expect(response.status()).toBe(200);
 
-    expect(page.url()).toEndWith("/login");
-    await page.waitForSelector("#login-form-email").then((el) => {
-      return el.type("matt@materialize.io");
+    await pollForSelector(page, "pierce/[name=email]");
+
+    await page.$("pierce/[name=email]").then((el) => {
+      return el.type("infra+cloud-integration-tests@materialize.com");
     });
-    await page.waitForSelector("#login-form-password").then((el) => {
-      return el.type("aoeuhtns");
+    await page.$("pierce/[name=password]").then((el) => {
+      // TODO(benesch): avoid hardcoding this password in the repository.
+      // There's nothing sensitive in the account, though, so the worst that
+      // could happen if leaked is that someone could spin up a bunch of
+      // deployments in this account.
+      return el.type("4PbT*fgq2fLNkNLLq3vnqqvj");
     });
-    await page.waitForXPath("//button[text()='Log in']").then((el) => {
+    await page.$("pierce/[data-testid=submit-btn]").then((el) => {
       return el.click();
     });
 
@@ -435,6 +440,19 @@ function waitForXPathDoesNotExist(page, xpathSelector) {
     {},
     xpathSelector
   );
+}
+
+/// Polls for a selector to exist. This is typically handled by
+/// `page.waitForSelector`, but that function doesn't work for elements in
+/// a shadow DOM, while the naive polling approach works fine.
+async function pollForSelector(page, selector) {
+  for (let i = 0; i < 30; i++) {
+    if (await page.$(selector)) {
+      return;
+    }
+    await page.waitForTimeout(1000);
+  }
+  throw new Error(`timed out waiting for ${selector}`);
 }
 
 // returns a Promise that resolves when a deployment has been

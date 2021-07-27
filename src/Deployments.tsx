@@ -24,7 +24,7 @@ import {
   useDeploymentsPartialUpdate,
   useMzVersionsList,
 } from "./api";
-import { useAuth } from "./auth/AuthProvider";
+import { useAuthedFetch } from "./AuthedFetchProvider";
 import useInterval from "react-useinterval";
 
 function Deployments(): JSX.Element {
@@ -143,7 +143,7 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
   } = useDeploymentsLogsRetrieve({
     id: props.deployment.id,
   });
-  const { fetchAuthed } = useAuth();
+  const { fetchAuthed } = useAuthedFetch();
   const downloadLogs = async () => {
     const response = await fetchAuthed(
       `/api/deployments/${props.deployment.id}/logs`
@@ -176,7 +176,7 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
 
 function ConnectModal(props: { deployment: Deployment; close: () => void }) {
   const [activeAccordion, setAccordion] = useState(0);
-  const { fetchAuthed } = useAuth();
+  const { fetchAuthed } = useAuthedFetch();
 
   const downloadCert = async () => {
     const response = await fetchAuthed(

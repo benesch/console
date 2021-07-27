@@ -10,12 +10,6 @@ module.exports = {
       "semantic-ui": path.join(__dirname, "semantic-ui"),
     },
     extensions: [ ".tsx", ".ts", ".js" ],
-    fallback: {
-      // amazon-cognito-identity-js attempts to require('crypto'). Webpack v4
-      // used to automatically provide a polyfill but from v5 onwards we need
-      // to specify the fallback explicitly
-      "crypto": false,
-    },
   },
   module: {
     rules: [
