@@ -32,7 +32,7 @@ if (config.fullStoryOrgId) {
 }
 
 // Snowplow configuration.
-newTracker("cg", "sp.materialize.com", {
+newTracker("cg", "https://sp.materialize.com", {
   appId: "materialize",
   plugins: [PerformanceTimingPlugin(), FormTrackingPlugin()],
 });
