@@ -1,22 +1,24 @@
-const path = require('path');
-const base = require('./webpack.config.js');
-const { merge } = require('webpack-merge');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const path = require("path");
+const base = require("./webpack.config.js");
+const { merge } = require("webpack-merge");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 module.exports = merge(base, {
-  mode: 'development',
+  mode: "development",
   devServer: {
-    contentBase: path.join(__dirname, 'dist', 'frontend'),
-    host: '0.0.0.0',
+    contentBase: path.join(__dirname, "dist", "frontend"),
+    host: "0.0.0.0",
     port: 3000,
     hot: true,
     allowedHosts: ["frontend", "localhost"],
-    publicPath: '/static/frontend/',
+    publicPath: "/static/frontend/",
   },
-  devtool: 'eval-cheap-module-source-map',
+  devtool: "inline-cheap-module-source-map",
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
-  plugins: [new ReactRefreshWebpackPlugin({
-    overlay: { sockPort: 3000 }
-  })]
+  plugins: [
+    new ReactRefreshWebpackPlugin({
+      overlay: { sockPort: 3000 },
+    }),
+  ],
 });
