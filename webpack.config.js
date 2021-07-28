@@ -38,7 +38,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.less$/i,
@@ -58,6 +58,18 @@ module.exports = {
     new ForkTsCheckerWebpackPlugin(),
     new MiniCssExtractPlugin(),
   ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: "styles",
+          type: "css/mini-extract",
+          chunks: "all",
+          enforce: true,
+        },
+      },
+    },
+  },
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist', 'frontend'),
