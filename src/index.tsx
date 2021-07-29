@@ -4,7 +4,6 @@ import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/react";
-import * as FullStory from "@fullstory/browser";
 import { Integrations } from "@sentry/tracing";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./Router";
@@ -25,10 +24,6 @@ if (config.sentryDsn) {
     release: config.sentryRelease,
     integrations: [new Integrations.BrowserTracing()],
   });
-}
-
-if (config.fullStoryOrgId) {
-  FullStory.init({ orgId: config.fullStoryOrgId });
 }
 
 // Snowplow configuration.
