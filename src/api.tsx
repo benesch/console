@@ -18,27 +18,23 @@ export interface Deployment {
   tlsAuthority: string;
   name: string;
   hostname: string;
-  state: "DQ" | "D" | "Q" | "U" | "R" | "E";
+  flaggedForDeletion: boolean;
+  flaggedForUpdate: boolean;
+  size?: "XS" | "S" | "M" | "L" | "XL";
   clusterId: string;
-  mzVersion?: string | null;
+  mzVersion: string;
   pendingMigration: PendingMigration | null;
-  orchestratorDeployment: OrchestratorDeployment;
+  statefulsetStatus: string;
 }
 
 export interface DeploymentRequest {
-  mzVersion?: string | null;
-}
-
-export interface OrchestratorDeployment {
-  status: string;
-}
-
-export interface OrchestratorDeploymentRequest {
-  status: string;
+  size?: "XS" | "S" | "M" | "L" | "XL";
+  mzVersion: string;
 }
 
 export interface PatchedDeploymentRequest {
-  mzVersion?: string | null;
+  size?: "XS" | "S" | "M" | "L" | "XL";
+  mzVersion?: string;
 }
 
 export interface PendingMigration {
@@ -71,7 +67,7 @@ export type AllowedEmailsRetrieveProps = Omit<
   AllowedEmailsRetrievePathParams;
 
 /**
- * Reports whether the specified email address is allowed to sign up for
+ * Report whether the specified email address is allowed to sign up for
  * Materialize Cloud.
  */
 export const AllowedEmailsRetrieve = ({
@@ -91,7 +87,7 @@ export type UseAllowedEmailsRetrieveProps = Omit<
   AllowedEmailsRetrievePathParams;
 
 /**
- * Reports whether the specified email address is allowed to sign up for
+ * Report whether the specified email address is allowed to sign up for
  * Materialize Cloud.
  */
 export const useAllowedEmailsRetrieve = ({
@@ -109,6 +105,9 @@ export type DeploymentsListProps = Omit<
   "path"
 >;
 
+/**
+ * List the available deployments.
+ */
 export const DeploymentsList = (props: DeploymentsListProps) => (
   <Get<Deployment[], unknown, void, void>
     path={`/api/deployments`}
@@ -121,6 +120,9 @@ export type UseDeploymentsListProps = Omit<
   "path"
 >;
 
+/**
+ * List the available deployments.
+ */
 export const useDeploymentsList = (props: UseDeploymentsListProps) =>
   useGet<Deployment[], unknown, void, void>(`/api/deployments`, props);
 
@@ -129,6 +131,9 @@ export type DeploymentsCreateProps = Omit<
   "path" | "verb"
 >;
 
+/**
+ * Create a new deployment.
+ */
 export const DeploymentsCreate = (props: DeploymentsCreateProps) => (
   <Mutate<Deployment, unknown, void, DeploymentRequest, void>
     verb="POST"
@@ -142,6 +147,9 @@ export type UseDeploymentsCreateProps = Omit<
   "path" | "verb"
 >;
 
+/**
+ * Create a new deployment.
+ */
 export const useDeploymentsCreate = (props: UseDeploymentsCreateProps) =>
   useMutate<Deployment, unknown, void, DeploymentRequest, void>(
     "POST",
@@ -159,6 +167,9 @@ export type DeploymentsRetrieveProps = Omit<
 > &
   DeploymentsRetrievePathParams;
 
+/**
+ * Fetch details about a single deployment.
+ */
 export const DeploymentsRetrieve = ({
   id,
   ...props
@@ -175,6 +186,9 @@ export type UseDeploymentsRetrieveProps = Omit<
 > &
   DeploymentsRetrievePathParams;
 
+/**
+ * Fetch details about a single deployment.
+ */
 export const useDeploymentsRetrieve = ({
   id,
   ...props
@@ -201,6 +215,9 @@ export type DeploymentsUpdateProps = Omit<
 > &
   DeploymentsUpdatePathParams;
 
+/**
+ * Update a deployment.
+ */
 export const DeploymentsUpdate = ({ id, ...props }: DeploymentsUpdateProps) => (
   <Mutate<
     Deployment,
@@ -227,6 +244,9 @@ export type UseDeploymentsUpdateProps = Omit<
 > &
   DeploymentsUpdatePathParams;
 
+/**
+ * Update a deployment.
+ */
 export const useDeploymentsUpdate = ({
   id,
   ...props
@@ -260,6 +280,9 @@ export type DeploymentsPartialUpdateProps = Omit<
 > &
   DeploymentsPartialUpdatePathParams;
 
+/**
+ * Partially update a deployment.
+ */
 export const DeploymentsPartialUpdate = ({
   id,
   ...props
@@ -289,6 +312,9 @@ export type UseDeploymentsPartialUpdateProps = Omit<
 > &
   DeploymentsPartialUpdatePathParams;
 
+/**
+ * Partially update a deployment.
+ */
 export const useDeploymentsPartialUpdate = ({
   id,
   ...props
@@ -311,6 +337,9 @@ export type DeploymentsDestroyProps = Omit<
   "path" | "verb"
 >;
 
+/**
+ * Destroy a deployment.
+ */
 export const DeploymentsDestroy = (props: DeploymentsDestroyProps) => (
   <Mutate<void, unknown, void, string, void>
     verb="DELETE"
@@ -324,6 +353,9 @@ export type UseDeploymentsDestroyProps = Omit<
   "path" | "verb"
 >;
 
+/**
+ * Destroy a deployment.
+ */
 export const useDeploymentsDestroy = (props: UseDeploymentsDestroyProps) =>
   useMutate<void, unknown, void, string, void>("DELETE", `/api/deployments`, {
     ...props,
@@ -339,6 +371,13 @@ export type DeploymentsCertsRetrieveProps = Omit<
 > &
   DeploymentsCertsRetrievePathParams;
 
+/**
+ * Retrieve a TLS certificate bundle for a deployment.
+ *
+ * The TLS certificate bundle is a ZIP file containing PEM and DER
+ * formatted keys that permit authenticating to the deployment as the
+ * `materialize` user.
+ */
 export const DeploymentsCertsRetrieve = ({
   id,
   ...props
@@ -355,6 +394,13 @@ export type UseDeploymentsCertsRetrieveProps = Omit<
 > &
   DeploymentsCertsRetrievePathParams;
 
+/**
+ * Retrieve a TLS certificate bundle for a deployment.
+ *
+ * The TLS certificate bundle is a ZIP file containing PEM and DER
+ * formatted keys that permit authenticating to the deployment as the
+ * `materialize` user.
+ */
 export const useDeploymentsCertsRetrieve = ({
   id,
   ...props
@@ -375,6 +421,9 @@ export type DeploymentsLogsRetrieveProps = Omit<
 > &
   DeploymentsLogsRetrievePathParams;
 
+/**
+ * Retrieve the logs for a deployment.
+ */
 export const DeploymentsLogsRetrieve = ({
   id,
   ...props
@@ -391,6 +440,9 @@ export type UseDeploymentsLogsRetrieveProps = Omit<
 > &
   DeploymentsLogsRetrievePathParams;
 
+/**
+ * Retrieve the logs for a deployment.
+ */
 export const useDeploymentsLogsRetrieve = ({
   id,
   ...props
@@ -437,6 +489,11 @@ export type MzVersionsListProps = Omit<
   "path"
 >;
 
+/**
+ * List the versions of Materialize known to Materialize Cloud.
+ *
+ * Versions are listed in order from oldest to newest.
+ */
 export const MzVersionsList = (props: MzVersionsListProps) => (
   <Get<string[], unknown, void, void> path={`/api/mz-versions`} {...props} />
 );
@@ -446,6 +503,11 @@ export type UseMzVersionsListProps = Omit<
   "path"
 >;
 
+/**
+ * List the versions of Materialize known to Materialize Cloud.
+ *
+ * Versions are listed in order from oldest to newest.
+ */
 export const useMzVersionsList = (props: UseMzVersionsListProps) =>
   useGet<string[], unknown, void, void>(`/api/mz-versions`, props);
 
@@ -497,6 +559,9 @@ export type UserRetrieveProps = Omit<
   "path"
 >;
 
+/**
+ * Fetch details about the currently-authenticated user.
+ */
 export const UserRetrieve = (props: UserRetrieveProps) => (
   <Get<User, unknown, void, void> path={`/api/user`} {...props} />
 );
@@ -506,5 +571,8 @@ export type UseUserRetrieveProps = Omit<
   "path"
 >;
 
+/**
+ * Fetch details about the currently-authenticated user.
+ */
 export const useUserRetrieve = (props: UseUserRetrieveProps) =>
   useGet<User, unknown, void, void>(`/api/user`, props);
