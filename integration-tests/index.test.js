@@ -334,8 +334,10 @@ test(
     while (true) {
         let versionElement = await (await connectButton.$x("./../../td[3]"))[0];
         let version = await page.evaluate(el => el.textContent, versionElement);
-        console.log(`Got version ${version}`);
-        if (version != `v${LEGACY_VERSION}`) {
+        let statusElement = await (await connectButton.$x("./../../td[2]"))[0];
+        let statusString = await page.evaluate(el => el.textContent, statusElement);
+        console.log(`Got version ${version} and status ${statusString}`);
+        if (version != `v${LEGACY_VERSION}` && statusString.includes("Healthy")) {
             break
         }
         // not updated yet, so wait and retry

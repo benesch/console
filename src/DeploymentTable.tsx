@@ -39,69 +39,74 @@ export default function DeploymentTable({
             ({
               id,
               name,
-              state,
+              flaggedForDeletion,
+              flaggedForUpdate,
               hostname,
               mzVersion,
-              orchestratorDeployment,
+              statefulsetStatus,
               pendingMigration,
-            }: Deployment) => (
-              <Table.Row
-                warning={pendingMigration != null}
-                key={id}
-                title={pendingMigration && pendingMigration.description}
-              >
-                <Table.Cell>{name}</Table.Cell>
-                <Table.Cell>
-                  {humanizeDeploymentState(
-                    state,
-                    orchestratorDeployment.status
-                  )}
-                  <Loader
-                    active={!["R", "E"].includes(state)}
-                    inline
-                    size="tiny"
-                    style={{ marginLeft: "0.5em" }}
-                  />
-                </Table.Cell>
-                <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
-                <Table.Cell>{hostname}</Table.Cell>
-                {/* TODO(benesch): avoid hardcoding a width here. */}
-                <Table.Cell style={{ width: "35%" }}>
-                  <Button
-                    primary
-                    onClick={() => setShowConnectId(id)}
-                    disabled={state !== "R"}
-                  >
-                    Connect
-                  </Button>
-                  {state === "R" && mzVersion !== latestMzVersion && (
+            }: Deployment) => {
+              const humanizedDeploymentState = humanizeDeploymentState(
+                flaggedForDeletion,
+                flaggedForUpdate,
+                statefulsetStatus
+              );
+              return (
+                <Table.Row
+                  warning={pendingMigration != null}
+                  key={id}
+                  title={pendingMigration && pendingMigration.description}
+                >
+                  <Table.Cell>{name}</Table.Cell>
+                  <Table.Cell>
+                    {humanizedDeploymentState}
+                    <Loader
+                      active={humanizedDeploymentState !== "Healthy"}
+                      inline
+                      size="tiny"
+                      style={{ marginLeft: "0.5em" }}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{mzVersion || "unknown"}</Table.Cell>
+                  <Table.Cell>{hostname}</Table.Cell>
+                  {/* TODO(benesch): avoid hardcoding a width here. */}
+                  <Table.Cell style={{ width: "35%" }}>
+                    <Button
+                      primary
+                      onClick={() => setShowConnectId(id)}
+                      disabled={statefulsetStatus !== "OK"}
+                    >
+                      Connect
+                    </Button>
+                    {mzVersion !== latestMzVersion && (
+                      <Button
+                        basic
+                        color="green"
+                        onClick={() => setShowUpgradeId(id)}
+                      >
+                        Upgrade
+                      </Button>
+                    )}
                     <Button
                       basic
-                      color="green"
-                      onClick={() => setShowUpgradeId(id)}
+                      color="orange"
+                      onClick={() => setShowDestroyId(id)}
+                      disabled={false}
                     >
-                      Upgrade
+                      Destroy
                     </Button>
-                  )}
-                  <Button
-                    basic
-                    color="orange"
-                    onClick={() => setShowDestroyId(id)}
-                    disabled={state !== "R"}
-                  >
-                    Destroy
-                  </Button>
-                  <Button
-                    basic
-                    color="blue"
-                    onClick={() => setShowLogsId(id)}
-                    disabled={["D", "E"].includes(state)}
-                  >
-                    Logs
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            )
+                    <Button
+                      basic
+                      color="blue"
+                      onClick={() => setShowLogsId(id)}
+                      disabled={false}
+                    >
+                      Logs
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              );
+            }
           )
         ) : (
           <Table.Row>
@@ -130,30 +135,23 @@ export default function DeploymentTable({
 }
 
 function humanizeDeploymentState(
-  deploymentState: string,
-  orchestrationState: string
+  flaggedForDeletion: boolean,
+  flaggedForUpdate: boolean,
+  statefulsetStatus: string
 ) {
-  switch (deploymentState) {
-    case "DQ":
-      return "Destroy queued";
-    case "D":
-      return "Destroying";
-    case "E":
-      return "Error";
-    case "R":
-      switch (orchestrationState) {
-        case "OK":
-          return "Healthy";
-        case "STARTING":
-          return "Starting";
-        case "DAMAGED":
-          return "Damaged";
-      }
-      return "Ready";
-    case "Q":
-      return "Update queued";
-    case "U":
-      return "Updating";
+  if (flaggedForDeletion) {
+    return "Destroying";
+  }
+  if (flaggedForUpdate) {
+    return "Updating";
+  }
+  switch (statefulsetStatus) {
+    case "OK":
+      return "Healthy";
+    case "STARTING":
+      return "Starting";
+    case "DAMAGED":
+      return "Degraded";
     default:
       return "Unknown";
   }
