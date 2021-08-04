@@ -143,6 +143,14 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
   } = useDeploymentsLogsRetrieve({
     id: props.deployment.id,
   });
+  const { fetchAuthed } = useAuth();
+  const downloadLogs = async () => {
+    const response = await fetchAuthed(
+      `/api/deployments/${props.deployment.id}/logs`
+    );
+    const blob = await response.blob();
+    download(blob, `${props.deployment.name}.log`, "text/plain");
+  };
   return (
     <Modal open={true} size="fullscreen">
       <Modal.Header>
@@ -158,6 +166,7 @@ function LogsModal(props: { deployment: Deployment; close: () => void }) {
         </Modal.Description>
         <Modal.Actions>
           <Button onClick={() => props.close()}>Done</Button>
+          <Button onClick={downloadLogs}>Download</Button>
           <Button onClick={() => refetch()}>Refresh</Button>
         </Modal.Actions>
       </Modal.Content>
