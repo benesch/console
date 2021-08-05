@@ -9,15 +9,12 @@ import { BrowserRouter } from "react-router-dom";
 import Router from "./Router";
 import { AuthProvider } from "./auth/AuthProvider";
 import config from "./config";
-import { newTracker, trackPageView } from "@snowplow/browser-tracker";
-import { PerformanceTimingPlugin } from "@snowplow/browser-plugin-performance-timing";
-import {
-  FormTrackingPlugin,
-  enableFormTracking,
-} from "@snowplow/browser-plugin-form-tracking";
+import Analytics from "@segment/analytics.js-core/build/analytics";
+import SegmentIntegration from "@segment/analytics.js-integration-segmentio";
 import { Auth } from "@aws-amplify/auth";
 
-if (config.sentryDsn) {
+// Configure Sentry error reporting.
+if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
   Sentry.init({
     dsn: config.sentryDsn,
     environment: config.sentryEnvironment,
@@ -26,13 +23,19 @@ if (config.sentryDsn) {
   });
 }
 
-// Snowplow configuration.
-newTracker("cg", "https://sp.materialize.com", {
-  appId: "materialize",
-  plugins: [PerformanceTimingPlugin(), FormTrackingPlugin()],
-});
-trackPageView();
-enableFormTracking();
+// Configure Segment analytics.
+if (config.segmentApiKey) {
+  const analytics = new Analytics();
+  analytics.use(SegmentIntegration);
+  analytics.initialize({
+    "Segment.io": {
+      apiKey: config.segmentApiKey,
+      retryQueue: true,
+      addBundledMetadata: true,
+    },
+  });
+  analytics.page();
+}
 
 // AWS Cognito configuration.
 Auth.configure({

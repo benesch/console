@@ -20,3 +20,14 @@ declare module "*.svg" {
   const src: string;
   export default src;
 }
+
+declare module "@segment/analytics.js-integration-segmentio";
+
+declare module "@segment/analytics.js-core/build/analytics" {
+  declare class Analytics {
+    initialize(any);
+    use(any);
+    page();
+  }
+  export default Analytics;
+}

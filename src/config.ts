@@ -2,10 +2,10 @@ interface Config {
   cognitoRegion: string;
   cognitoUserPoolId: string;
   cognitoWebClientId: string;
-  fullStoryOrgId: string;
-  sentryDsn: string;
-  sentryEnvironment: string;
-  sentryRelease: string;
+  segmentApiKey: string | null;
+  sentryDsn: string | null;
+  sentryEnvironment: string | null;
+  sentryRelease: string | null;
 }
 
 const config = (globalThis as any).CONFIG as Config;
