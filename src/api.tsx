@@ -20,7 +20,7 @@ export interface Deployment {
   hostname: string;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
-  size?: "XS" | "S" | "M" | "L" | "XL";
+  size?: SizeEnum;
   clusterId: string;
   mzVersion: string;
   pendingMigration: PendingMigration | null;
@@ -28,12 +28,12 @@ export interface Deployment {
 }
 
 export interface DeploymentRequest {
-  size?: "XS" | "S" | "M" | "L" | "XL";
+  size?: SizeEnum;
   mzVersion: string;
 }
 
 export interface PatchedDeploymentRequest {
-  size?: "XS" | "S" | "M" | "L" | "XL";
+  size?: SizeEnum;
   mzVersion?: string;
 }
 
@@ -46,6 +46,8 @@ export interface PendingMigrationRequest {
   description: string;
   deadline: string;
 }
+
+export type SizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
 export interface User {
   /**
