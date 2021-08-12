@@ -38,8 +38,13 @@ test(
     await pollForSelector(page, "pierce/[name=email]");
 
     await page.$("pierce/[name=email]").then((el) => {
-      return el.type("infra+cloud-integration-tests@materialize.com");
+      return el.type("infra+cloud-integration-tests@materialize.com\r");
     });
+
+    // TODO(benesch): no idea why this timeout is necessary, but otherwise the
+    // following code types into the email box instead of the password box.
+    await page.waitForTimeout(500);
+
     await page.$("pierce/[name=password]").then((el) => {
       // TODO(benesch): avoid hardcoding this password in the repository.
       // There's nothing sensitive in the account, though, so the worst that
