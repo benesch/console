@@ -32,6 +32,11 @@ export interface DeploymentRequest {
   mzVersion: string;
 }
 
+export interface Organization {
+  id: string;
+  deploymentLimit: number;
+}
+
 export interface PatchedDeploymentRequest {
   size?: SizeEnum;
   mzVersion?: string;
@@ -459,6 +464,51 @@ export type UseMzVersionsListProps = Omit<
  */
 export const useMzVersionsList = (props: UseMzVersionsListProps) =>
   useGet<string[], unknown, void, void>(`/api/mz-versions`, props);
+
+export interface OrganizationsRetrievePathParams {
+  /**
+   * A UUID string identifying this organization.
+   */
+  id: string;
+}
+
+export type OrganizationsRetrieveProps = Omit<
+  GetProps<Organization, unknown, void, OrganizationsRetrievePathParams>,
+  "path"
+> &
+  OrganizationsRetrievePathParams;
+
+/**
+ * Fetch details about a single organization.
+ */
+export const OrganizationsRetrieve = ({
+  id,
+  ...props
+}: OrganizationsRetrieveProps) => (
+  <Get<Organization, unknown, void, OrganizationsRetrievePathParams>
+    path={`/api/organizations/${id}`}
+    {...props}
+  />
+);
+
+export type UseOrganizationsRetrieveProps = Omit<
+  UseGetProps<Organization, unknown, void, OrganizationsRetrievePathParams>,
+  "path"
+> &
+  OrganizationsRetrievePathParams;
+
+/**
+ * Fetch details about a single organization.
+ */
+export const useOrganizationsRetrieve = ({
+  id,
+  ...props
+}: UseOrganizationsRetrieveProps) =>
+  useGet<Organization, unknown, void, OrganizationsRetrievePathParams>(
+    (paramsInPath: OrganizationsRetrievePathParams) =>
+      `/api/organizations/${paramsInPath.id}`,
+    { pathParams: { id }, ...props }
+  );
 
 export interface SchemaRetrieveResponse {
   [key: string]: any;

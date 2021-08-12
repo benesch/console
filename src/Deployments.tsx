@@ -23,13 +23,19 @@ import {
   useDeploymentsLogsRetrieve,
   useDeploymentsPartialUpdate,
   useMzVersionsList,
+  useOrganizationsRetrieve,
 } from "./api";
 import { useAuthedFetch } from "./AuthedFetchProvider";
+import { useAuth } from "@frontegg/react";
 import useInterval from "react-useinterval";
 
 function Deployments(): JSX.Element {
+  const { user } = useAuth();
   const { data: deployments, refetch } = useDeploymentsList({});
   const { data: mzVersions } = useMzVersionsList({});
+  const { data: organization } = useOrganizationsRetrieve({
+    id: user.tenantId,
+  });
   const { mutate: createDeployment } = useDeploymentsCreate({});
   const [creationError, setCreationError] = useState("");
   const [showConnectId, setShowConnectId] = useState("");
@@ -38,7 +44,7 @@ function Deployments(): JSX.Element {
   const [showLogsId, setShowLogsId] = useState("");
   useInterval(refetch, 5000);
 
-  if (deployments === null || mzVersions === null) {
+  if (deployments === null || mzVersions === null || organization === null) {
     return (
       <Container>
         <Dimmer active={true} inverted>
@@ -55,8 +61,7 @@ function Deployments(): JSX.Element {
     deploymentsByWarning = new Map([[null, []]]);
   }
 
-  // TODO(benesch): don't hardcode this.
-  const canCreateDeployment = deployments.length < 2;
+  const canCreateDeployment = deployments.length < organization.deploymentLimit;
 
   return (
     <React.Fragment>
