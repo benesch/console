@@ -20,10 +20,10 @@ export interface Deployment {
   hostname: string | null;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
-  size?: SizeEnum;
-  storageMb?: number;
+  size: SizeEnum;
+  storageMb: number;
   clusterId: string | null;
-  mzVersion?: string;
+  mzVersion: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
 }
