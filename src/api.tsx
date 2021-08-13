@@ -22,14 +22,14 @@ export interface Deployment {
   flaggedForUpdate: boolean;
   size?: SizeEnum;
   clusterId: string | null;
-  mzVersion: string;
+  mzVersion?: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
 }
 
 export interface DeploymentRequest {
   size?: SizeEnum;
-  mzVersion: string;
+  mzVersion?: string;
 }
 
 export interface Organization {
