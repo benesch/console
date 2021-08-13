@@ -21,15 +21,17 @@ export interface Deployment {
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
   size?: SizeEnum;
+  storageMb?: number;
   clusterId: string | null;
-  mzVersion: string;
+  mzVersion?: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
 }
 
 export interface DeploymentRequest {
   size?: SizeEnum;
-  mzVersion: string;
+  storageMb?: number;
+  mzVersion?: string;
 }
 
 export interface Organization {
@@ -39,6 +41,7 @@ export interface Organization {
 
 export interface PatchedDeploymentRequest {
   size?: SizeEnum;
+  storageMb?: number;
   mzVersion?: string;
 }
 
