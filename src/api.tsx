@@ -20,10 +20,11 @@ export interface Deployment {
   hostname: string | null;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
-  size?: SizeEnum;
-  storageMb?: number;
+  size: SizeEnum;
+  storageMb: number;
+  materializedExtraArgs: string[];
   clusterId: string | null;
-  mzVersion?: string;
+  mzVersion: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
 }
@@ -31,6 +32,7 @@ export interface Deployment {
 export interface DeploymentRequest {
   size?: SizeEnum;
   storageMb?: number;
+  materializedExtraArgs?: string[];
   mzVersion?: string;
 }
 
@@ -42,6 +44,7 @@ export interface Organization {
 export interface PatchedDeploymentRequest {
   size?: SizeEnum;
   storageMb?: number;
+  materializedExtraArgs?: string[];
   mzVersion?: string;
 }
 
