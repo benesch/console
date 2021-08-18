@@ -21,7 +21,7 @@ FROM node:16.2.0-buster AS frontend
 # hardcodes that path on ARM (!).
 # See: https://github.com/puppeteer/puppeteer/issues/6641
 RUN apt-get update \
-    && apt-get install -y chromium --no-install-recommends \
+    && apt-get install -y chromium iproute2 --no-install-recommends \
     && ln -s /usr/bin/chromium /usr/bin/chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
