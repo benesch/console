@@ -14,8 +14,6 @@ module.exports.XPATH = {
   deployments_logs: '//button[text()="Logs"]',
 };
 
-module.exports.LEGACY_VERSION = "0.7.3";
-
 // returns a Promise that resolves when xpathSelector no longer exists on the
 // page.
 function waitForXPathDoesNotExist(page, xpathSelector) {

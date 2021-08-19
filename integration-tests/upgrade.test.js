@@ -7,7 +7,6 @@ const {
   CONSOLE_ADDR,
   SCRATCH_DIR,
   XPATH,
-  LEGACY_VERSION,
   waitForXPathDoesNotExist,
   pollForSelector,
   destroyDeployment,
@@ -15,6 +14,8 @@ const {
 } = require("./util");
 
 testSetup();
+
+const LEGACY_VERSION = "0.7.3";
 
 function overrideDeploymentVersion(request) {
   console.log("page.on");
@@ -67,7 +68,6 @@ test(
     expect(await page.$x(XPATH.deployments_ready)).toBeEmpty();
 
     // Create a deployment.
-    const LEGACY_VERSION = "0.7.3";
     console.log(`Creating deployment for v${LEGACY_VERSION}`);
     page.setRequestInterception(true);
     page.on("request", overrideDeploymentVersion);

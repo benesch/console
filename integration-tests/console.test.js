@@ -7,7 +7,6 @@ const {
   CONSOLE_ADDR,
   SCRATCH_DIR,
   XPATH,
-  LEGACY_VERSION,
   waitForXPathDoesNotExist,
   pollForSelector,
   destroyDeployment,
