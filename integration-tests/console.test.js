@@ -37,7 +37,7 @@ test(
 
     // Create a deployment.
     const create = await page.waitForXPath(
-      module.exports.XPATH.deployments_create
+      XPATH.deployments_create
     );
     await create.click();
     console.log("creating deployment");
