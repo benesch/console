@@ -11,6 +11,7 @@ const {
   pollForSelector,
   destroyDeployment,
   testSetup,
+  loginToTestAccount,
 } = require("./util");
 
 testSetup();
@@ -21,37 +22,7 @@ test(
     fs.rmSync(SCRATCH_DIR, { recursive: true, force: true });
     fs.mkdirSync(SCRATCH_DIR, { recursive: true });
 
-    // Initial loading can take a while if the backend is spinning up.
-    const response = await page.goto(CONSOLE_ADDR, {
-      timeout: 1000 * 60 * 5 /* 5 minutes */,
-    });
-    console.log("response status", response.status());
-    expect(response.status()).toBe(200);
-
-    await pollForSelector(page, "pierce/[name=email]");
-
-    await page.$("pierce/[name=email]").then((el) => {
-      return el.type("infra+cloud-integration-tests@materialize.com\r");
-    });
-
-    // TODO(benesch): no idea why this timeout is necessary, but otherwise the
-    // following code types into the email box instead of the password box.
-    await page.waitForTimeout(500);
-
-    await page.$("pierce/[name=password]").then((el) => {
-      // TODO(benesch): avoid hardcoding this password in the repository.
-      // There's nothing sensitive in the account, though, so the worst that
-      // could happen if leaked is that someone could spin up a bunch of
-      // deployments in this account.
-      return el.type("4PbT*fgq2fLNkNLLq3vnqqvj");
-    });
-    await page.$("pierce/[data-testid=submit-btn]").then((el) => {
-      return el.click();
-    });
-
-    // Wait for the deployments page to load.
-    const create = await page.waitForXPath(XPATH.deployments_create);
-    expect(page.url()).toEndWith("/deployments");
+    await loginToTestAccount();
 
     // Delete any existing deployments.
     const destroyButtons = await page.$x(XPATH.deployments_destroy);
@@ -65,6 +36,9 @@ test(
     expect(await page.$x(XPATH.deployments_ready)).toBeEmpty();
 
     // Create a deployment.
+    const create = await page.waitForXPath(
+      module.exports.XPATH.deployments_create
+    );
     await create.click();
     console.log("creating deployment");
 

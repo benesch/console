@@ -11,6 +11,7 @@ const {
   pollForSelector,
   destroyDeployment,
   testSetup,
+  loginToTestAccount,
 } = require("./util");
 
 testSetup();
@@ -41,20 +42,7 @@ function overrideDeploymentVersion(request) {
 test(
   "upgrade",
   async () => {
-    fs.rmSync(SCRATCH_DIR, { recursive: true, force: true });
-    fs.mkdirSync(SCRATCH_DIR, { recursive: true });
-
-    // Initial loading can take a while if the backend is spinning up.
-    const response = await page.goto(CONSOLE_ADDR, {
-      timeout: 1000 * 60 * 5 /* 5 minutes */,
-    });
-    console.log("response status", response.status());
-    expect(response.status()).toBe(200);
-
-    // We are already logged in from the previous test.
-    // Wait for the deployments page to load.
-    const create = await page.waitForXPath(XPATH.deployments_create);
-    expect(page.url()).toEndWith("/deployments");
+    await loginToTestAccount();
 
     // Delete any existing deployments.
     const destroyButtons = await page.$x(XPATH.deployments_destroy);

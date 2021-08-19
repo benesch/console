@@ -86,9 +86,52 @@ module.exports.destroyDeployment = destroyDeployment;
 
 function testSetup() {
   beforeEach(async () => {
-    console.log("console address", module.exports.CONSOLE_ADDR);
     // 5 minute timeout waiting for elements.
     page.setDefaultTimeout(1000 * 60 * 5);
   });
 }
 module.exports.testSetup = testSetup;
+
+async function loginToTestAccount() {
+  console.log("Connecting to", module.exports.CONSOLE_ADDR);
+
+  // Initial loading can take a while if the backend is spinning up.
+  const response = await page.goto(module.exports.CONSOLE_ADDR, {
+    timeout: 1000 * 60 * 5 /* 5 minutes */,
+    waitUntil: "domcontentloaded",
+  });
+  console.log("response status", response.status());
+  expect(response.status()).toBe(200);
+
+  console.log("page url", page.url());
+  if (page.url().endsWith("/deployments")) {
+    // we're logged in!
+    return;
+  }
+
+  await pollForSelector(page, "pierce/[name=email]");
+
+  await page.$("pierce/[name=email]").then((el) => {
+    return el.type("infra+cloud-integration-tests@materialize.com\r");
+  });
+
+  // TODO(benesch): no idea why this timeout is necessary, but otherwise the
+  // following code types into the email box instead of the password box.
+  await page.waitForTimeout(500);
+
+  await page.$("pierce/[name=password]").then((el) => {
+    // TODO(benesch): avoid hardcoding this password in the repository.
+    // There's nothing sensitive in the account, though, so the worst that
+    // could happen if leaked is that someone could spin up a bunch of
+    // deployments in this account.
+    return el.type("4PbT*fgq2fLNkNLLq3vnqqvj");
+  });
+  await page.$("pierce/[data-testid=submit-btn]").then((el) => {
+    return el.click();
+  });
+
+  // Wait for the deployments page to load.
+  await page.waitForXPath(module.exports.XPATH.deployments_create);
+  expect(page.url()).toEndWith("/deployments");
+}
+module.exports.loginToTestAccount = loginToTestAccount;
