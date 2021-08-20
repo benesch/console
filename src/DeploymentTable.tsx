@@ -23,7 +23,7 @@ export default function DeploymentTable({
 }: DeploymentTableProps) {
   deployments.sort(deploymentOrder);
   const table = (
-    <Table warning={warning != null}>
+    <Table warning={warning != null} id="deployments">
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell>Name</Table.HeaderCell>
