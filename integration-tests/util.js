@@ -43,9 +43,9 @@ module.exports.waitForXPathDoesNotExist = waitForXPathDoesNotExist;
 async function pollForSelector(page, selector) {
   for (let i = 0; i < 30; i++) {
     if (await page.$(selector)) {
-      return;
+      return selector;
     }
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(200);
   }
   throw new Error(`timed out waiting for ${selector}`);
 }
@@ -104,12 +104,15 @@ async function loginToTestAccount() {
   expect(response.status()).toBe(200);
 
   console.log("page url", page.url());
-  if (page.url().endsWith("/deployments")) {
-    // we're logged in!
+
+  const found = await Promise.race([
+    pollForSelector(page, "pierce/[name=email]"), // login form
+    pollForSelector(page, "table#deployments"), // already logged in
+  ]);
+  if (found == "table#deployments") {
+    // We're logged in, short-circuit:
     return;
   }
-
-  await pollForSelector(page, "pierce/[name=email]");
 
   await page.$("pierce/[name=email]").then((el) => {
     return el.type("infra+cloud-integration-tests@materialize.com\r");
