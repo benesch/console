@@ -59,9 +59,7 @@ test(
     console.log(`Creating deployment for v${LEGACY_VERSION}`);
     page.setRequestInterception(true);
     page.on("request", overrideDeploymentVersion);
-    const create = await page.waitForXPath(
-      XPATH.deployments_create
-    );
+    const create = await page.waitForXPath(XPATH.deployments_create);
     await create.click();
     // This might actually log before sending the create request.
     console.log("Waiting for deployment to be 'Healthy'");
