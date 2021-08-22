@@ -444,20 +444,6 @@ export type UseHealthRetrieveProps = Omit<
 export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
 
-export type MzVersionsListProps = Omit<
-  GetProps<string[], unknown, void, void>,
-  "path"
->;
-
-/**
- * List the versions of Materialize known to Materialize Cloud.
- *
- * Versions are listed in order from oldest to newest.
- */
-export const MzVersionsList = (props: MzVersionsListProps) => (
-  <Get<string[], unknown, void, void> path={`/api/mz-versions`} {...props} />
-);
-
 export type UseMzVersionsListProps = Omit<
   UseGetProps<string[], unknown, void, void>,
   "path"
