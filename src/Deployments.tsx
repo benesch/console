@@ -374,12 +374,12 @@ function DestroyModal(props: {
 
 function UpgradeModal(props: {
   deployment: Deployment;
-  versionMap: { [track:string]: string };
+  versionMap: { [track: string]: string };
   close: () => void;
   refetch: () => void;
 }) {
-  var newMzVersion = props.versionMap[props.deployment.releaseTrack];
-  
+  const newMzVersion = props.versionMap[props.deployment.releaseTrack];
+
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: props.deployment.id,
   });

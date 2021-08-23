@@ -4,7 +4,7 @@ import { Button, Header, Segment, Loader, Table } from "semantic-ui-react";
 
 type DeploymentTableProps = {
   deployments: Deployment[];
-  versionMap: { [track: string]: string; };
+  versionMap: { [track: string]: string };
   warning: PendingMigration | null;
   setShowConnectId: (id: string) => any;
   setShowDestroyId: (id: string) => any;

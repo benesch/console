@@ -446,7 +446,7 @@ export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
 
 export type UseReleaseTracksProps = Omit<
-  UseGetProps<{ [track: string]: string; }, unknown, void, void>,
+  UseGetProps<{ [track: string]: string }, unknown, void, void>,
   "path"
 >;
 
@@ -454,7 +454,10 @@ export type UseReleaseTracksProps = Omit<
  * Find the latest version for all release tracks used with Materialize Cloud.
  */
 export const useReleaseTracks = (props: UseReleaseTracksProps) =>
-  useGet<{ [track: string]: string; }, unknown, void, void>(`/api/release-tracks`, props);
+  useGet<{ [track: string]: string }, unknown, void, void>(
+    `/api/release-tracks`,
+    props
+  );
 
 export type UseMzVersionsListProps = Omit<
   UseGetProps<string[], unknown, void, void>,
