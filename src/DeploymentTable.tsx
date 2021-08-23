@@ -4,7 +4,7 @@ import { Button, Header, Segment, Loader, Table } from "semantic-ui-react";
 
 type DeploymentTableProps = {
   deployments: Deployment[];
-  latestMzVersion: string;
+  versionMap: { [track: string]: string; };
   warning: PendingMigration | null;
   setShowConnectId: (id: string) => any;
   setShowDestroyId: (id: string) => any;
@@ -14,7 +14,7 @@ type DeploymentTableProps = {
 
 export default function DeploymentTable({
   deployments,
-  latestMzVersion,
+  versionMap,
   warning,
   setShowConnectId,
   setShowDestroyId,
@@ -42,6 +42,7 @@ export default function DeploymentTable({
               flaggedForDeletion,
               flaggedForUpdate,
               hostname,
+              releaseTrack,
               mzVersion,
               statefulsetStatus,
               pendingMigration,
@@ -78,7 +79,7 @@ export default function DeploymentTable({
                     >
                       Connect
                     </Button>
-                    {mzVersion !== latestMzVersion && (
+                    {mzVersion !== versionMap[releaseTrack] && (
                       <Button
                         basic
                         color="green"

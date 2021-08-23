@@ -24,6 +24,7 @@ export interface Deployment {
   storageMb: number;
   materializedExtraArgs: string[];
   clusterId: string | null;
+  releaseTrack: string;
   mzVersion: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
@@ -443,6 +444,17 @@ export type UseHealthRetrieveProps = Omit<
  */
 export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
+
+export type UseReleaseTracksProps = Omit<
+  UseGetProps<{ [track: string]: string; }, unknown, void, void>,
+  "path"
+>;
+
+/**
+ * Find the latest version for all release tracks used with Materialize Cloud.
+ */
+export const useReleaseTracks = (props: UseReleaseTracksProps) =>
+  useGet<{ [track: string]: string; }, unknown, void, void>(`/api/release-tracks`, props);
 
 export type UseMzVersionsListProps = Omit<
   UseGetProps<string[], unknown, void, void>,
