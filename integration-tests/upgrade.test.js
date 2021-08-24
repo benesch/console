@@ -210,7 +210,7 @@ test(
         break;
       } catch (error) {
         console.log(error);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(500);
       }
     }
     console.log("querying version");

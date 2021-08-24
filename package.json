@@ -65,7 +65,7 @@
     "start": "cd frontend && webpack serve --config=webpack.dev.js",
     "build": "cd frontend && NODE_ENV=production webpack",
     "test:unit": "cd frontend/src && jest",
-    "test:integration": "cd frontend/integration-tests && jest --runInBand",
+    "test:integration": "cd frontend/integration-tests && jest --runInBand --verbose",
     "eslint": "eslint --max-warnings 0 frontend/src",
     "eslint:fix": "eslint --fix frontend/src",
     "pyright": "pyright",
