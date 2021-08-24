@@ -1,10 +1,21 @@
-import React from "react";
-import { Redirect, Switch, useHistory } from "react-router-dom";
-
-import Deployments from "./Deployments";
-import ProtectedRoute from "./ProtectedRoute";
-import LoggedInLayout from "./LoggedInLayout";
 import { useAuth } from "@frontegg/react";
+import React from "react";
+import {
+  Redirect,
+  Route,
+  RouteProps,
+  Switch,
+  useHistory,
+} from "react-router-dom";
+
+export function Router() {
+  return (
+    <Switch>
+      <ProtectedRoute path="/deployments">TODO</ProtectedRoute>
+      <RedirectIfNotAuthRoute />
+    </Switch>
+  );
+}
 
 function RedirectIfNotAuthRoute() {
   const history = useHistory();
@@ -21,17 +32,22 @@ function RedirectIfNotAuthRoute() {
   }
 }
 
-function Router() {
-  return (
-    <Switch>
-      <ProtectedRoute path="/deployments">
-        <LoggedInLayout>
-          <Deployments />
-        </LoggedInLayout>
-      </ProtectedRoute>
-      <RedirectIfNotAuthRoute />
-    </Switch>
-  );
+function ProtectedRoute(props: RouteProps) {
+  const history = useHistory();
+  const { isAuthenticated, isLoading, routes: authRoutes } = useAuth();
+  if (isLoading) {
+    // Wait for authentication state to load before determining what to do.
+    return null;
+  } else if (isAuthenticated) {
+    return <Route {...props} />;
+  } else {
+    let loginRedirectUrl = authRoutes.loginUrl;
+    if (typeof props.path === "string") {
+      loginRedirectUrl += `?redirectUrl=${encodeURIComponent(
+        history.location.pathname
+      )}`;
+    }
+    history.push(loginRedirectUrl);
+    return null;
+  }
 }
-
-export default Router;

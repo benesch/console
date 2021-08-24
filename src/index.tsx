@@ -1,18 +1,26 @@
-import "semantic-ui/semantic.less";
-import "./index.css";
-
-import React from "react";
-import ReactDOM from "react-dom";
-import * as Sentry from "@sentry/react";
-import { Integrations } from "@sentry/tracing";
-import Router from "./Router";
-import { BrowserRouter } from "react-router-dom";
-import { AuthedFetchProvider } from "./AuthedFetchProvider";
-import config from "./config";
+import { FronteggProvider } from "@frontegg/react";
 import Analytics from "@segment/analytics.js-core/build/analytics";
 import SegmentIntegration from "@segment/analytics.js-integration-segmentio";
-import { FronteggProvider } from "@frontegg/react";
-import logo from "./img/logo-primary.png";
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+
+import logo from "../img/logo-primary.png";
+import { AuthedFetchProvider } from "./api/fetch";
+import { Router } from "./router";
+
+/** Required configuration properties for the frontend. */
+interface Config {
+  fronteggUrl: string;
+  segmentApiKey: string | null;
+  sentryDsn: string | null;
+  sentryEnvironment: string | null;
+  sentryRelease: string | null;
+}
+
+const config = (globalThis as any).CONFIG as Config;
 
 // Configure Sentry error reporting.
 if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
