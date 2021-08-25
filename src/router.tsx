@@ -1,3 +1,8 @@
+/**
+ * @module
+ * URL routing.
+ */
+
 import { useAuth } from "@frontegg/react";
 import React from "react";
 import {
@@ -8,10 +13,19 @@ import {
   useHistory,
 } from "react-router-dom";
 
+import { DeploymentDetailPage } from "./deployments/detail";
+import { DeploymentListPage } from "./deployments/list";
+
+/** The root router for the application. */
 export function Router() {
   return (
     <Switch>
-      <ProtectedRoute path="/deployments">TODO</ProtectedRoute>
+      <ProtectedRoute path="/deployments/:id">
+        <DeploymentDetailPage />
+      </ProtectedRoute>
+      <ProtectedRoute path="/deployments">
+        <DeploymentListPage />
+      </ProtectedRoute>
       <RedirectIfNotAuthRoute />
     </Switch>
   );

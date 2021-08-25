@@ -46,7 +46,6 @@ const config: Configuration = {
     path: path.resolve(__dirname, "dist", "frontend"),
     publicPath: "/static/frontend/",
   },
-  cache: { type: "filesystem" },
 };
 
 export default config;
