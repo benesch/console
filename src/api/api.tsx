@@ -37,6 +37,8 @@ export interface DeploymentRequest {
   disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
+  enableTailscale?: boolean;
+  tailscaleAuthKey?: string;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
@@ -66,6 +68,8 @@ export interface PatchedDeploymentRequest {
   disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
+  enableTailscale?: boolean;
+  tailscaleAuthKey?: string;
 }
 
 export interface PendingMigration {
