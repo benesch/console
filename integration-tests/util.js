@@ -1,10 +1,16 @@
+const fs = require("fs");
+const path = require("path");
+const extract = require("extract-zip");
+const { Client } = require("pg");
+
 module.exports = {};
 
-module.exports.CONSOLE_ADDR =
-  process.env.CONSOLE_ADDR || "http://localhost:8000";
-module.exports.SCRATCH_DIR = "scratch";
+const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
+module.exports.CONSOLE_ADDR = CONSOLE_ADDR;
+const SCRATCH_DIR = "scratch";
+module.exports.SCRATCH_DIR = SCRATCH_DIR;
 
-module.exports.XPATH = {
+const XPATH = {
   deployments_create: '//button[text()="Create deployment"]',
   deployments_destroy: '//td/button[contains(text(), "Destroy")]',
   deployments_connect: '//td/button[contains(text(), "Connect")]',
@@ -13,6 +19,7 @@ module.exports.XPATH = {
   deployments_upgrading: '//td[contains(text(), "Upgrading")]',
   deployments_logs: '//button[text()="Logs"]',
 };
+module.exports.XPATH = XPATH;
 
 // returns a Promise that resolves when xpathSelector no longer exists on the
 // page.
@@ -92,11 +99,16 @@ function testSetup() {
 }
 module.exports.testSetup = testSetup;
 
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+module.exports.sleep = sleep;
+
 async function loginToTestAccount() {
-  console.log("Connecting to", module.exports.CONSOLE_ADDR);
+  console.log("Connecting to", CONSOLE_ADDR);
 
   // Initial loading can take a while if the backend is spinning up.
-  const response = await page.goto(module.exports.CONSOLE_ADDR, {
+  const response = await page.goto(CONSOLE_ADDR, {
     timeout: 1000 * 60 * 5 /* 5 minutes */,
     waitUntil: "domcontentloaded",
   });
@@ -134,7 +146,89 @@ async function loginToTestAccount() {
   });
 
   // Wait for the deployments page to load.
-  await page.waitForXPath(module.exports.XPATH.deployments_create);
+  await page.waitForXPath(XPATH.deployments_create);
   expect(page.url()).toEndWith("/deployments");
 }
 module.exports.loginToTestAccount = loginToTestAccount;
+
+async function connectPostgresql() {
+  const statusCell = await page.waitForXPath(XPATH.deployments_ready);
+  const deploymentName = await (
+    await statusCell.$x("../td[1]")
+  )[0].evaluate((e) => e.textContent);
+  console.log("download certs");
+  const connectButton = await page.waitForXPath(XPATH.deployments_connect);
+  await connectButton.click();
+  const psql = await page
+    .waitForSelector(".connection-string")
+    .then((el) => el.evaluate((el) => el.textContent));
+  console.log(psql);
+  const matches = psql.match(
+    /psql "postgresql:\/\/(.*)@(.*):(.*)\/(.*)\?ssl.*"/
+  );
+  await page
+    .waitForXPath('//button[text()="Download certificates"]')
+    .then((el) => {
+      return el.click();
+    });
+  console.log("downloading certs");
+  // Puppeteer only has hacky support for downloads.
+  // https://github.com/puppeteer/puppeteer/issues/299
+  await page._client.send("Page.setDownloadBehavior", {
+    behavior: "allow",
+    downloadPath: SCRATCH_DIR,
+  });
+  await page.waitForXPath('//button[text()="Done"]').then((el) => {
+    return el.click();
+  });
+  const certZip = path.join(SCRATCH_DIR, `${deploymentName}-certs.zip`);
+  console.log("download started for", certZip);
+  // Wait until we can see the download.
+  while (true) {
+    try {
+      fs.accessSync(certZip);
+      // Can see.
+      break;
+    } catch {
+      // Does not exist, wait and retry.
+      await page.waitForTimeout(50);
+    }
+  }
+  await extract(certZip, { dir: path.resolve(SCRATCH_DIR) });
+
+  const client_params = {
+    user: matches[1],
+    host: matches[2],
+    port: matches[3],
+    database: matches[4],
+    ssl: {
+      ca: fs.readFileSync(path.join(SCRATCH_DIR, "ca.crt"), "utf8"),
+      key: fs.readFileSync(path.join(SCRATCH_DIR, "materialize.key"), "utf8"),
+      cert: fs.readFileSync(path.join(SCRATCH_DIR, "materialize.crt"), "utf8"),
+      rejectUnauthorized: false,
+    },
+    connectionTimeoutMillis: 1000,
+    query_timeout: 1000,
+  };
+
+  // wait 10s before we try to connect to the DB, so that the DNS
+  // record has a chance of being created before we query it
+  // initially. Theoretically, the negative 1s TTL we set on the SOA
+  // should protect us from that, but historically there has been a
+  // 60s delay before we could resolve the hostnames if timings
+  // happened to work out badly.
+  console.log("Waiting for the DNS record to appear");
+  await sleep(10000);
+  console.log("Connecting with the PostgreSQL client");
+  while (true) {
+    try {
+      const client = new Client(client_params);
+      await client.connect();
+      return client;
+    } catch (error) {
+      console.log(error);
+      await page.waitForTimeout(500);
+    }
+  }
+}
+module.exports.connectPostgresql = connectPostgresql;
