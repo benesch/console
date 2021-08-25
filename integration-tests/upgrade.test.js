@@ -38,6 +38,54 @@ function overrideDeploymentVersion(request) {
   request.continue(overrides);
 }
 
+async function requestAndConfirmUpgrade(deploymentName) {
+  console.log("Beginning upgrade");
+  const upgradeButton = await page.waitForXPath(XPATH.deployments_upgrade);
+  await upgradeButton.click();
+
+  console.log("Entering confirmation text");
+  await page.waitForSelector(".modal .content input").then((el) => {
+    return el.type(deploymentName);
+  });
+  console.log("Clicking upgrade confirmation button");
+  await page
+    .waitForXPath("//button[text()='Yes, upgrade and restart'][not(@disabled)]")
+    .then((el) => {
+      return el.click();
+    });
+  console.log("Waiting for upgrade to begin");
+  const connectButton = await page.waitForXPath(XPATH.deployments_connect);
+
+  const noActionTimeout = 10000; // after 10s, try hitting the upgrade button again.
+  const deadline = Date.now() + noActionTimeout;
+  while (true) {
+    let versionElement = await (await connectButton.$x("./../../td[3]"))[0];
+    let version = await page.evaluate((el) => el.textContent, versionElement);
+    let statusElement = await (await connectButton.$x("./../../td[2]"))[0];
+    let statusString = await page.evaluate(
+      (el) => el.textContent,
+      statusElement
+    );
+    console.log(`Got version ${version} and status ${statusString}`);
+    if (version != `v${LEGACY_VERSION}` && statusString.includes("Healthy")) {
+      return true;
+    }
+    if (
+      version == `v${LEGACY_VERSION}` &&
+      statusString.includes("Healthy") &&
+      page.$x(XPATH.deployments_upgrade) &&
+      Date.now() >= deadline
+    ) {
+      // We have been sitting at an unactioned deploy for 10s. Tell
+      // our caller so that they may retry.
+      return false;
+    }
+    // not updated yet, so wait and retry
+    await page.waitForTimeout(1000);
+  }
+  return false;
+}
+
 test(
   "upgrade",
   async () => {
@@ -74,40 +122,13 @@ test(
     )[0].evaluate((e) => e.textContent);
     console.log("got deployment", deploymentName);
 
-    // Upgrade
-    console.log("Beginning upgrade");
-    const upgradeButton = await page.waitForXPath(XPATH.deployments_upgrade);
-    await upgradeButton.click();
-
-    console.log("Entering confirmation text");
-    await page.waitForSelector(".modal .content input").then((el) => {
-      return el.type(deploymentName);
-    });
-    console.log("Clicking upgrade confirmation button");
-    await page
-      .waitForXPath(
-        "//button[text()='Yes, upgrade and restart'][not(@disabled)]"
-      )
-      .then((el) => {
-        return el.click();
-      });
-    console.log("Waiting for upgrade to begin");
-    const connectButton = await page.waitForXPath(XPATH.deployments_connect);
-    while (true) {
-      let versionElement = await (await connectButton.$x("./../../td[3]"))[0];
-      let version = await page.evaluate((el) => el.textContent, versionElement);
-      let statusElement = await (await connectButton.$x("./../../td[2]"))[0];
-      let statusString = await page.evaluate(
-        (el) => el.textContent,
-        statusElement
-      );
-      console.log(`Got version ${version} and status ${statusString}`);
-      if (version != `v${LEGACY_VERSION}` && statusString.includes("Healthy")) {
-        break;
-      }
-      // not updated yet, so wait and retry
-      await page.waitForTimeout(1000);
+    // Upgrade - sometimes the request doesn't make it to the backend, so retry it after a litle while.
+    let didUpgrade = false;
+    while (!didUpgrade) {
+      didUpgrade = await requestAndConfirmUpgrade(deploymentName);
+      console.log("Upgrade request success:", didUpgrade);
     }
+    const connectButton = await page.waitForXPath(XPATH.deployments_connect);
     console.log("Waiting for upgrade to complete");
     while (true) {
       let stateElement = await (await connectButton.$x("./../../td[2]"))[0];
