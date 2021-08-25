@@ -99,11 +99,6 @@ function testSetup() {
 }
 module.exports.testSetup = testSetup;
 
-async function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-module.exports.sleep = sleep;
-
 async function loginToTestAccount() {
   console.log("Connecting to", CONSOLE_ADDR);
 
@@ -218,7 +213,7 @@ async function connectPostgresql() {
   // 60s delay before we could resolve the hostnames if timings
   // happened to work out badly.
   console.log("Waiting for the DNS record to appear");
-  await sleep(10000);
+  await page.waitForTimeout(10000);
   console.log("Connecting with the PostgreSQL client");
   while (true) {
     try {
