@@ -44,7 +44,11 @@ function Deployments(): JSX.Element {
   const [showLogsId, setShowLogsId] = useState("");
   useInterval(refetch, 5000);
 
-  if (deployments === null || latestMzVersion === null || organization === null) {
+  if (
+    deployments === null ||
+    latestMzVersion === null ||
+    organization === null
+  ) {
     return (
       <Container>
         <Dimmer active={true} inverted>
