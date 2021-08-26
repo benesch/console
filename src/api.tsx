@@ -17,14 +17,13 @@ export interface Deployment {
   organization: string;
   tlsAuthority: string;
   name: string;
-  hostname: string | null;
+  hostname: string;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
   size: SizeEnum;
   storageMb: number;
   materializedExtraArgs: string[];
-  clusterId: string | null;
-  releaseTrack: ReleaseTrackEnum;
+  clusterId: string;
   mzVersion: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
@@ -34,7 +33,6 @@ export interface DeploymentRequest {
   size?: SizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
-  releaseTrack?: ReleaseTrackEnum;
   mzVersion?: string;
 }
 
@@ -47,7 +45,6 @@ export interface PatchedDeploymentRequest {
   size?: SizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
-  releaseTrack?: ReleaseTrackEnum;
   mzVersion?: string;
 }
 
@@ -60,8 +57,6 @@ export interface PendingMigrationRequest {
   description: string;
   deadline: string;
 }
-
-export type ReleaseTrackEnum = "canary" | "stable";
 
 export type SizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
@@ -449,6 +444,41 @@ export type UseHealthRetrieveProps = Omit<
 export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
 
+export interface LatestVersionRetrieveQueryParams {
+  track?: string;
+}
+
+export type LatestVersionRetrieveProps = Omit<
+  GetProps<string, unknown, LatestVersionRetrieveQueryParams, void>,
+  "path"
+>;
+
+/**
+ * Returns the latest version of Materialize.
+ */
+export const LatestVersionRetrieve = (props: LatestVersionRetrieveProps) => (
+  <Get<string, unknown, LatestVersionRetrieveQueryParams, void>
+    path={`/api/latest-version`}
+    {...props}
+  />
+);
+
+export type UseLatestVersionRetrieveProps = Omit<
+  UseGetProps<string, unknown, LatestVersionRetrieveQueryParams, void>,
+  "path"
+>;
+
+/**
+ * Returns the latest version of Materialize.
+ */
+export const useLatestVersionRetrieve = (
+  props: UseLatestVersionRetrieveProps
+) =>
+  useGet<string, unknown, LatestVersionRetrieveQueryParams, void>(
+    `/api/latest-version`,
+    props
+  );
+
 export type MzVersionsListProps = Omit<
   GetProps<string[], unknown, void, void>,
   "path"
@@ -519,41 +549,6 @@ export const useOrganizationsRetrieve = ({
     (paramsInPath: OrganizationsRetrievePathParams) =>
       `/api/organizations/${paramsInPath.id}`,
     { pathParams: { id }, ...props }
-  );
-
-export interface ReleaseTracksRetrieveResponse {
-  [key: string]: any;
-}
-
-export type ReleaseTracksRetrieveProps = Omit<
-  GetProps<ReleaseTracksRetrieveResponse, unknown, void, void>,
-  "path"
->;
-
-/**
- * List the mapping of release tracks to Materialize versions.
- */
-export const ReleaseTracksRetrieve = (props: ReleaseTracksRetrieveProps) => (
-  <Get<ReleaseTracksRetrieveResponse, unknown, void, void>
-    path={`/api/release-tracks`}
-    {...props}
-  />
-);
-
-export type UseReleaseTracksRetrieveProps = Omit<
-  UseGetProps<ReleaseTracksRetrieveResponse, unknown, void, void>,
-  "path"
->;
-
-/**
- * List the mapping of release tracks to Materialize versions.
- */
-export const useReleaseTracksRetrieve = (
-  props: UseReleaseTracksRetrieveProps
-) =>
-  useGet<ReleaseTracksRetrieveResponse, unknown, void, void>(
-    `/api/release-tracks`,
-    props
   );
 
 export interface SchemaRetrieveResponse {

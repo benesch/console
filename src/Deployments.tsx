@@ -22,7 +22,7 @@ import {
   useDeploymentsList,
   useDeploymentsLogsRetrieve,
   useDeploymentsPartialUpdate,
-  useReleaseTracksRetrieve,
+  useLatestVersionRetrieve,
   useOrganizationsRetrieve,
 } from "./api";
 import { useAuthedFetch } from "./AuthedFetchProvider";
@@ -32,7 +32,7 @@ import useInterval from "react-useinterval";
 function Deployments(): JSX.Element {
   const { user } = useAuth();
   const { data: deployments, refetch } = useDeploymentsList({});
-  const { data: versionMap } = useReleaseTracksRetrieve({});
+  const { data: latestMzVersion } = useLatestVersionRetrieve({});
   const { data: organization } = useOrganizationsRetrieve({
     id: user.tenantId,
   });
@@ -44,7 +44,7 @@ function Deployments(): JSX.Element {
   const [showLogsId, setShowLogsId] = useState("");
   useInterval(refetch, 5000);
 
-  if (deployments === null || versionMap === null || organization === null) {
+  if (deployments === null || latestMzVersion === null || organization === null) {
     return (
       <Container>
         <Dimmer active={true} inverted>
@@ -84,8 +84,8 @@ function Deployments(): JSX.Element {
       )}
       {showUpgradeId && (
         <UpgradeModal
+          mzVersion={latestMzVersion}
           deployment={deployments.find((d) => d.id === showUpgradeId)!}
-          versionMap={versionMap}
           close={() => setShowUpgradeId("")}
           refetch={refetch}
         />
@@ -95,7 +95,7 @@ function Deployments(): JSX.Element {
         onSubmit={async () => {
           setCreationError("");
           try {
-            await createDeployment({ mzVersion: versionMap["stable"] });
+            await createDeployment({ mzVersion: latestMzVersion });
             refetch();
           } catch (e) {
             setCreationError(e.message);
@@ -124,7 +124,7 @@ function Deployments(): JSX.Element {
         {Array.from(deploymentsByWarning).map(([warning, deployments]) => (
           <DeploymentTable
             deployments={deployments}
-            versionMap={versionMap}
+            latestMzVersion={latestMzVersion}
             warning={warning}
             setShowConnectId={setShowConnectId}
             setShowDestroyId={setShowDestroyId}
@@ -373,13 +373,11 @@ function DestroyModal(props: {
 }
 
 function UpgradeModal(props: {
+  mzVersion: string;
   deployment: Deployment;
-  versionMap: { [track: string]: string };
   close: () => void;
   refetch: () => void;
 }) {
-  const newMzVersion = props.versionMap[props.deployment.releaseTrack];
-
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: props.deployment.id,
   });
@@ -387,7 +385,7 @@ function UpgradeModal(props: {
   const doUpgrade = async () => {
     try {
       await updateDeployment({
-        mzVersion: newMzVersion,
+        mzVersion: props.mzVersion,
       });
       props.refetch();
       props.close();
@@ -402,7 +400,7 @@ function UpgradeModal(props: {
       confirmButtonText="Yes, upgrade and restart"
       description={`Upgrade from ${
         props.deployment.mzVersion || "an unknown version"
-      } to ${newMzVersion}. This will restart materialize.
+      } to ${props.mzVersion}. This will restart materialize.
       All data will be preserved, but clients will need
       to reconnect.`}
       textConfirmation={props.deployment.name}
