@@ -17,13 +17,13 @@ export interface Deployment {
   organization: string;
   tlsAuthority: string;
   name: string;
-  hostname: string;
+  hostname: string | null;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
   size: SizeEnum;
   storageMb: number;
   materializedExtraArgs: string[];
-  clusterId: string;
+  clusterId: string | null;
   mzVersion: string;
   pendingMigration: PendingMigration | null;
   statefulsetStatus: string;
