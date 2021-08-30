@@ -22,7 +22,7 @@
     "react-router": "5.2.0",
     "react-router-dom": "^5.2.0",
     "react-useinterval": "^1.0.2",
-    "restful-react": "^15.7.0",
+    "restful-react": "^15.9.0",
     "semantic-ui-react": "^2.0.3",
     "style-loader": "^3.2.1",
     "ts-loader": "^9.2.5",
