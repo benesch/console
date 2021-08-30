@@ -444,41 +444,6 @@ export type UseHealthRetrieveProps = Omit<
 export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
 
-export interface LatestVersionRetrieveQueryParams {
-  track?: string;
-}
-
-export type LatestVersionRetrieveProps = Omit<
-  GetProps<string, unknown, LatestVersionRetrieveQueryParams, void>,
-  "path"
->;
-
-/**
- * Returns the latest version of Materialize.
- */
-export const LatestVersionRetrieve = (props: LatestVersionRetrieveProps) => (
-  <Get<string, unknown, LatestVersionRetrieveQueryParams, void>
-    path={`/api/latest-version`}
-    {...props}
-  />
-);
-
-export type UseLatestVersionRetrieveProps = Omit<
-  UseGetProps<string, unknown, LatestVersionRetrieveQueryParams, void>,
-  "path"
->;
-
-/**
- * Returns the latest version of Materialize.
- */
-export const useLatestVersionRetrieve = (
-  props: UseLatestVersionRetrieveProps
-) =>
-  useGet<string, unknown, LatestVersionRetrieveQueryParams, void>(
-    `/api/latest-version`,
-    props
-  );
-
 export type MzVersionsListProps = Omit<
   GetProps<string[], unknown, void, void>,
   "path"
@@ -505,6 +470,43 @@ export type UseMzVersionsListProps = Omit<
  */
 export const useMzVersionsList = (props: UseMzVersionsListProps) =>
   useGet<string[], unknown, void, void>(`/api/mz-versions`, props);
+
+export interface MzVersionsLatestRetrieveQueryParams {
+  track?: string;
+}
+
+export type MzVersionsLatestRetrieveProps = Omit<
+  GetProps<string, unknown, MzVersionsLatestRetrieveQueryParams, void>,
+  "path"
+>;
+
+/**
+ * Returns the latest version of Materialize.
+ */
+export const MzVersionsLatestRetrieve = (
+  props: MzVersionsLatestRetrieveProps
+) => (
+  <Get<string, unknown, MzVersionsLatestRetrieveQueryParams, void>
+    path={`/api/mz-versions/latest`}
+    {...props}
+  />
+);
+
+export type UseMzVersionsLatestRetrieveProps = Omit<
+  UseGetProps<string, unknown, MzVersionsLatestRetrieveQueryParams, void>,
+  "path"
+>;
+
+/**
+ * Returns the latest version of Materialize.
+ */
+export const useMzVersionsLatestRetrieve = (
+  props: UseMzVersionsLatestRetrieveProps
+) =>
+  useGet<string, unknown, MzVersionsLatestRetrieveQueryParams, void>(
+    `/api/mz-versions/latest`,
+    props
+  );
 
 export interface OrganizationsRetrievePathParams {
   /**

@@ -22,7 +22,7 @@ import {
   useDeploymentsList,
   useDeploymentsLogsRetrieve,
   useDeploymentsPartialUpdate,
-  useLatestVersionRetrieve,
+  useMzVersionsLatestRetrieve,
   useOrganizationsRetrieve,
 } from "./api";
 import { useAuthedFetch } from "./AuthedFetchProvider";
@@ -32,7 +32,7 @@ import useInterval from "react-useinterval";
 function Deployments(): JSX.Element {
   const { user } = useAuth();
   const { data: deployments, refetch } = useDeploymentsList({});
-  const { data: latestMzVersion } = useLatestVersionRetrieve({});
+  const { data: latestMzVersion } = useMzVersionsLatestRetrieve({});
   const { data: organization } = useOrganizationsRetrieve({
     id: user.tenantId,
   });
