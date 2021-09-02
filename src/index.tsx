@@ -47,15 +47,6 @@ ReactDOM.render(
       authOptions={{
         routes: {
           authenticatedUrl: "/deployments",
-          // These URLs need to be specified due to a missing default in frontegg.
-          // TODO: remove when upgraded to frontegg 3.0.2+
-          loginUrl: "/account/login",
-          logoutUrl: "/account/logout",
-          activateUrl: "/account/activate",
-          acceptInvitationUrl: "/account/invitation/accept",
-          forgetPasswordUrl: "/account/forget-password",
-          resetPasswordUrl: "/account/reset-password",
-          signUpUrl: "/account/sign-up",
         },
       }}
       headerImage={logo}
