@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import Router from "./Router";
+import { BrowserRouter } from "react-router-dom";
 import { AuthedFetchProvider } from "./AuthedFetchProvider";
 import config from "./config";
 import Analytics from "@segment/analytics.js-core/build/analytics";
@@ -41,7 +42,7 @@ const root = document.createElement("div");
 document.body.appendChild(root);
 
 ReactDOM.render(
-  <React.StrictMode>
+  <BrowserRouter>
     <FronteggProvider
       contextOptions={{ baseUrl: config.fronteggUrl }}
       authOptions={{
@@ -55,6 +56,6 @@ ReactDOM.render(
         <Router />
       </AuthedFetchProvider>
     </FronteggProvider>
-  </React.StrictMode>,
+  </BrowserRouter>,
   root
 );
