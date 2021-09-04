@@ -30,6 +30,7 @@ export interface Deployment {
 }
 
 export interface DeploymentRequest {
+  name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
@@ -44,6 +45,7 @@ export interface Organization {
 }
 
 export interface PatchedDeploymentRequest {
+  name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
