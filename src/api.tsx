@@ -26,7 +26,7 @@ export interface Deployment {
   clusterId: string | null;
   mzVersion: string;
   pendingMigration: PendingMigration | null;
-  statefulsetStatus: string;
+  status: string;
 }
 
 export interface DeploymentRequest {

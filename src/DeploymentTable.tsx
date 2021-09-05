@@ -43,13 +43,13 @@ export default function DeploymentTable({
               flaggedForUpdate,
               hostname,
               mzVersion,
-              statefulsetStatus,
+              status,
               pendingMigration,
             }: Deployment) => {
               const humanizedDeploymentState = humanizeDeploymentState(
                 flaggedForDeletion,
                 flaggedForUpdate,
-                statefulsetStatus
+                status
               );
               return (
                 <Table.Row
@@ -74,7 +74,7 @@ export default function DeploymentTable({
                     <Button
                       primary
                       onClick={() => setShowConnectId(id)}
-                      disabled={statefulsetStatus !== "OK"}
+                      disabled={status !== "OK"}
                     >
                       Connect
                     </Button>
@@ -137,7 +137,7 @@ export default function DeploymentTable({
 function humanizeDeploymentState(
   flaggedForDeletion: boolean,
   flaggedForUpdate: boolean,
-  statefulsetStatus: string
+  status: string
 ) {
   if (flaggedForDeletion) {
     return "Destroying";
@@ -145,7 +145,7 @@ function humanizeDeploymentState(
   if (flaggedForUpdate) {
     return "Updating";
   }
-  switch (statefulsetStatus) {
+  switch (status) {
     case "OK":
       return "Healthy";
     case "STARTING":
