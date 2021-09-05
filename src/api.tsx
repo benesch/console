@@ -20,7 +20,7 @@ export interface Deployment {
   hostname: string | null;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
-  size: SizeEnum;
+  size: DeploymentSizeEnum;
   storageMb: number;
   materializedExtraArgs: string[];
   clusterId: string | null;
@@ -30,11 +30,13 @@ export interface Deployment {
 }
 
 export interface DeploymentRequest {
-  size?: SizeEnum;
+  size?: DeploymentSizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
   mzVersion?: string;
 }
+
+export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
 export interface Organization {
   id: string;
@@ -42,7 +44,7 @@ export interface Organization {
 }
 
 export interface PatchedDeploymentRequest {
-  size?: SizeEnum;
+  size?: DeploymentSizeEnum;
   storageMb?: number;
   materializedExtraArgs?: string[];
   mzVersion?: string;
@@ -57,8 +59,6 @@ export interface PendingMigrationRequest {
   description: string;
   deadline: string;
 }
-
-export type SizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
 export type DeploymentsListProps = Omit<
   GetProps<Deployment[], unknown, void, void>,
