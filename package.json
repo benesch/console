@@ -59,7 +59,7 @@
     "prettier": "^2.3.2",
     "puppeteer": "^10.1.0",
     "pyright": "^1.1.163",
-    "ts-jest": "^27.0.3",
+    "ts-jest": "^27.0.5",
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
