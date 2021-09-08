@@ -132,6 +132,13 @@ export class TestContext {
     return await field.evaluate((e) => e.nextSibling.textContent);
   }
 
+  /** Wait for a deployment to have reached the given version. */
+  async waitForDeploymentVersion(version: string) {
+    await this.page.waitForSelector(
+      `css=[data-card-field-name="Version"] >> text=${version}`
+    );
+  }
+
   /**
    * Waits for a deployment to be healthy.
    *
