@@ -88,7 +88,7 @@ export interface CardFieldProps {
 /** A name–value pair for display in a `Card`. */
 export function CardField(props: CardFieldProps) {
   return (
-    <Box>
+    <Box data-card-field-name={props.name}>
       <Text fontSize="sm" color="grey">
         {props.name}
       </Text>
