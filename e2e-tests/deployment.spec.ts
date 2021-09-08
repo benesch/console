@@ -14,7 +14,7 @@ test("create deployment", async ({ page }) => {
 
   // Verify deployment health and properties.
   await context.waitForDeploymentHealthy();
-  await context.assertDeploymentMzVersion("v0.9.2");
+  await context.assertDeploymentMzVersion(latestVersion);
   await context.assertDeploymentSize("XS");
 
   // Verify that the deployment logs are visible.
@@ -68,6 +68,7 @@ test("upgrade deployment", async ({ page }) => {
   ]);
 
   // Verify deployment health and properties again.
+  await context.waitForDeploymentVersion(latestVersion);
   await context.waitForDeploymentHealthy();
   await context.assertDeploymentMzVersion(latestVersion);
 
