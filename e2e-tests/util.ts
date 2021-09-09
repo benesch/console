@@ -15,6 +15,11 @@ export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
 
 export const LEGACY_VERSION = "v0.7.3";
 
+interface ContextWaitForSelectorOptions {
+  /** Number of milliseconds to wait for the selector to appear. */
+  timeout?: number;
+}
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -88,7 +93,7 @@ export class TestContext {
    */
   async pgConnect() {
     // Determine hostname.
-    const hostname = await this.readDeploymentField("hostname");
+    const hostname = await this.readDeploymentField("Hostname");
 
     // Download certificates.
     const [download] = await Promise.all([
@@ -128,15 +133,30 @@ export class TestContext {
 
   /** Read a deployment field from the deployment detail page. */
   async readDeploymentField(name: string) {
-    const field = await this.page.waitForSelector(`text=${name}`);
+    const field = await this.page.waitForSelector(
+      `css=[data-field-name="${name}"] >> text=${name}`
+    );
     return await field.evaluate((e) => e.nextSibling.textContent);
   }
 
-  /** Wait for a deployment to have reached the given version. */
-  async waitForDeploymentVersion(version: string) {
+  /** Wait until a deployment details field has the given value. */
+  async waitForDeploymentFieldValue(
+    name: string,
+    value: string,
+    options?: ContextWaitForSelectorOptions
+  ) {
     await this.page.waitForSelector(
-      `css=[data-card-field-name="Version"] >> text=${version}`
+      `css=[data-field-name="${name}"] >> text=${value}`,
+      options
     );
+  }
+
+  /** Wait for a deployment to have reached the given version. */
+  async waitForDeploymentVersion(
+    version: string,
+    options?: ContextWaitForSelectorOptions
+  ) {
+    await this.waitForDeploymentFieldValue("Version", version, options);
   }
 
   /**
@@ -145,7 +165,7 @@ export class TestContext {
    * Assumes that the browser is nativated to a deployment detail page.
    */
   async waitForDeploymentHealthy() {
-    await this.page.waitForSelector("text=Healthy", {
+    await this.waitForDeploymentFieldValue("Status", "Healthy", {
       timeout: 180000 /* 3 minutes */,
     });
   }
@@ -168,7 +188,7 @@ export class TestContext {
 
     // Check the version reported on the page.
     {
-      const version = await this.readDeploymentField("version");
+      const version = await this.readDeploymentField("Version");
       expect(version).toEqual(expectedVersion);
     }
   }
@@ -179,7 +199,7 @@ export class TestContext {
    * Assumes that the browser is navigated to a deployment detail page.
    */
   async assertDeploymentSize(expectedSize: string) {
-    const size = await this.readDeploymentField("size");
+    const size = await this.readDeploymentField("Size");
     expect(size).toEqual(expectedSize);
   }
 }
