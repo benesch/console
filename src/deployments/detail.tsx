@@ -228,7 +228,7 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
                 Open a terminal and run psql from the directory containing the
                 certificates:
                 <CodeBlock
-                  contents={`psql "postgresql://materialize@${deployment.hostname}/materialize?sslcert=materialize.crt&sslkey=materialize.key&sslrootcert=ca.crt"`}
+                  contents={`psql "postgresql://materialize@${deployment.hostname}:6875/materialize?sslcert=materialize.crt&sslkey=materialize.key&sslrootcert=ca.crt"`}
                 ></CodeBlock>
               </ListItem>
             </OrderedList>
