@@ -338,6 +338,11 @@ function DeploymentLogsButton({
   });
   const [wrap, setWrap] = React.useState(false);
 
+  const handleOpen = () => {
+    refetch();
+    onOpen();
+  };
+
   const downloadLogs = async () => {
     const response = await fetchAuthed(
       `/api/deployments/${deployment.id}/logs`
@@ -363,7 +368,7 @@ function DeploymentLogsButton({
 
   return (
     <>
-      <Button onClick={onOpen} {...props}>
+      <Button onClick={handleOpen} {...props}>
         View logs
       </Button>
 
@@ -385,7 +390,12 @@ function DeploymentLogsButton({
               <Button isLoading={loading} onClick={() => refetch()} size="sm">
                 Refresh
               </Button>
-              <Button onClick={downloadLogs} colorScheme="purple" size="sm">
+              <Button
+                onClick={downloadLogs}
+                disabled={!data}
+                colorScheme="purple"
+                size="sm"
+              >
                 Download
               </Button>
             </HStack>
