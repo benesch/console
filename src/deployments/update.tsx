@@ -26,7 +26,8 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { SelectField, SubmitButton, TextField } from "../components/form";
+import { SubmitButton, TextField } from "../components/form";
+import { DeploymentSizeField } from "./util";
 
 interface UpdateDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;
@@ -91,13 +92,7 @@ export function UpdateDeploymentButton({
                   <Box ref={initialFocusRef} tabindex="-1" />
                   <VStack spacing="5">
                     <TextField name="name" label="Name" size="sm" />
-                    <SelectField name="size" label="Size" size="sm">
-                      <option value="XS">Extra small</option>
-                      <option value="S">Small</option>
-                      <option value="M">Medium</option>
-                      <option value="L">Large</option>
-                      <option value="XL">Extra large</option>
-                    </SelectField>
+                    <DeploymentSizeField />
                     {deployment.size !== form.values.size && (
                       <Alert status="warning">
                         <AlertIcon />

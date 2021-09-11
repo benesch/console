@@ -60,7 +60,7 @@ test("upgrade deployment", async ({ page }) => {
   await context.assertDeploymentMzVersion(LEGACY_VERSION);
 
   // Upgrade to the latest version of Materialize.
-  await page.click("text=Upgrade");
+  await page.click("button:text('Upgrade')");
   await page.type("[aria-modal] input", deployment.name);
   await Promise.all([
     page.waitForSelector("[aria-modal]", { state: "detached" }),

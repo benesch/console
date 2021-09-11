@@ -22,16 +22,13 @@ import {
   useInterval,
   VStack,
 } from "@chakra-ui/react";
-import { useAuth } from "@frontegg/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import cloudOutline from "../../img/cloud-outline.svg";
-import {
-  Deployment,
-  useDeploymentsList,
-  useOrganizationsRetrieve,
-} from "../api/api";
+import { Deployment, useDeploymentsList } from "../api/api";
+import { useAuth } from "../api/auth";
+import { SupportLink } from "../components/cta";
 import {
   BaseLayout,
   PageBreadcrumbs,
@@ -42,11 +39,8 @@ import { CreateDeploymentButton } from "./create";
 import { DeploymentStateBadge } from "./util";
 
 export function DeploymentListPage() {
-  const { user } = useAuth();
+  const { organization } = useAuth();
   const { data: deployments, refetch } = useDeploymentsList({});
-  const { data: organization } = useOrganizationsRetrieve({
-    id: user.tenantId,
-  });
   useInterval(refetch, 5000);
 
   let deploymentsView;
@@ -85,11 +79,8 @@ function DeploymentLimitWarning() {
     <Alert status="warning" mb="5">
       <AlertIcon />
       <Text>
-        You've reached your deployment limit.{" "}
-        <Link href="mailto:support@materialize.com" color="purple">
-          Contact us
-        </Link>{" "}
-        to increase your limit.
+        Deployment limit reached. Need more deployments?{" "}
+        <SupportLink>Contact us.</SupportLink>
       </Text>
     </Alert>
   );

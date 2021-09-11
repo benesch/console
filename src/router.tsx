@@ -3,23 +3,30 @@
  * URL routing.
  */
 
-import { useAuth } from "@frontegg/react";
+import { useAuth as useFronteggAuth } from "@frontegg/react";
 import React from "react";
 import {
   Redirect,
   Route,
   RouteProps,
   Switch,
-  useHistory,
+  useLocation,
 } from "react-router-dom";
 
+import { useOrganizationsRetrieve } from "./api/api";
+import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";
 import { DeploymentListPage } from "./deployments/list";
+import { assert } from "./util";
+import { WelcomePage } from "./welcome";
 
 /** The root router for the application. */
 export function Router() {
   return (
     <Switch>
+      <ProtectedRoute allowUnadmitted={true} path="/welcome">
+        <WelcomePage />
+      </ProtectedRoute>
       <ProtectedRoute path="/deployments/:id">
         <DeploymentDetailPage />
       </ProtectedRoute>
@@ -32,9 +39,9 @@ export function Router() {
 }
 
 function RedirectIfNotAuthRoute() {
-  const history = useHistory();
-  const { routes: authRoutes } = useAuth();
-  if (Object.values(authRoutes).includes(history.location.pathname)) {
+  const location = useLocation();
+  const { routes: authRoutes } = useFronteggAuth((state) => state);
+  if (Object.values(authRoutes).includes(location.pathname)) {
     // Suppress the redirect to give Frontegg time to notice that it is
     // responsible for handling the URL. Otherwise we get stuck in a redirect
     // loop.
@@ -46,22 +53,62 @@ function RedirectIfNotAuthRoute() {
   }
 }
 
-function ProtectedRoute(props: RouteProps) {
-  const history = useHistory();
-  const { isAuthenticated, isLoading, routes: authRoutes } = useAuth();
+interface ProtectedRouteProps extends RouteProps {
+  allowUnadmitted?: boolean;
+}
+
+function ProtectedRoute(props: ProtectedRouteProps) {
+  const location = useLocation();
+
+  // Consume Frontegg authentication state.
+  const {
+    isAuthenticated,
+    isLoading: isFronteggLoading,
+    routes: authRoutes,
+    user,
+  } = useFronteggAuth((state) => state);
+
+  // Load Materialize Cloud's metadata about the authenticated organization.
+  const { data: organization, loading: isOrganizationLoading } =
+    useOrganizationsRetrieve({
+      // Only fetch the organization metadata if we have a valid access token...
+      lazy: !isAuthenticated,
+      // ...but we still need to invent a non-null organization ID if we
+      // haven't authenticated yet to keep TypeScript happy.
+      id: user?.tenantId || "",
+    });
+
+  const isLoading = isFronteggLoading || isOrganizationLoading;
+
+  // Wait for authentication state to load before determining what to do.
   if (isLoading) {
-    // Wait for authentication state to load before determining what to do.
-    return null;
-  } else if (isAuthenticated) {
-    return <Route {...props} />;
-  } else {
-    let loginRedirectUrl = authRoutes.loginUrl;
-    if (typeof props.path === "string") {
-      loginRedirectUrl += `?redirectUrl=${encodeURIComponent(
-        history.location.pathname
-      )}`;
-    }
-    history.push(loginRedirectUrl);
     return null;
   }
+
+  // If unauthenticated, redirect to login page, remembering what page the user
+  // was trying to access.
+  if (!isAuthenticated) {
+    const redirectUrl = encodeURIComponent(location.pathname);
+    const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
+    return <Redirect to={loginUrl} />;
+  }
+
+  // If we're here, `isLoading` is `false` and `isAuthenticated` is true, which
+  // guarantees that `user` and `organization` are non-null. TypeScript can't
+  // infer this, so help it along.
+  assert(organization);
+  assert(user);
+
+  // Unless this page allows unadmitted organizations, redirect to the welcome
+  // page if the organization hasn't been admitted.
+  if (!props.allowUnadmitted && !organization.admitted) {
+    return <Redirect to="/welcome" />;
+  }
+
+  //
+  return (
+    <AuthProvider organization={organization} user={user}>
+      <Route {...props} />
+    </AuthProvider>
+  );
 }
