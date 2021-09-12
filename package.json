@@ -62,7 +62,7 @@
     "prettier": "^2.3.2",
     "pyright": "^1.1.163",
     "ts-jest": "^27.0.5",
-    "webpack-dev-server": "^4.1.0"
+    "webpack-dev-server": "^4.2.0"
   },
   "scripts": {
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
