@@ -41,7 +41,15 @@ export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
 export interface Organization {
   id: string;
+  /**
+   * Whether this organization has been admitted to Materialize Cloud.
+   */
+  admitted: boolean;
   deploymentLimit: number;
+  /**
+   * When this organization's trial period expires. If empty, the organization is on an enterprise plan.
+   */
+  trialExpiresAt: string | null;
 }
 
 export interface PatchedDeploymentRequest {

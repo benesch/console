@@ -27,6 +27,7 @@ import React, { useRef } from "react";
 import { DeploymentSizeEnum, useDeploymentsCreate } from "../api/api";
 import { SelectField, SubmitButton, TextField } from "../components/form";
 import { petname } from "../util";
+import { DeploymentSizeField } from "./util";
 
 interface CreateDeploymentButton extends ButtonProps {
   refetch: () => Promise<void>;
@@ -88,13 +89,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                 <Box ref={initialFocusRef} tabindex="-1" />
                 <VStack spacing="5">
                   <TextField name="name" label="Name" size="sm" />
-                  <SelectField name="size" label="Size" size="sm">
-                    <option value="XS">Extra small</option>
-                    <option value="S">Small</option>
-                    <option value="M">Medium</option>
-                    <option value="L">Large</option>
-                    <option value="XL">Extra large</option>
-                  </SelectField>
+                  <DeploymentSizeField />
                   <HStack width="100%">
                     <SelectField
                       name="cloud-provider"

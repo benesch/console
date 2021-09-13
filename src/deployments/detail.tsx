@@ -42,7 +42,7 @@ import {
   useDeploymentsRetrieve,
   useMzVersionsLatestRetrieve,
 } from "../api/api";
-import { useAuthedFetch } from "../api/fetch";
+import { useAuth } from "../api/auth";
 import {
   Card,
   CardContent,
@@ -190,7 +190,7 @@ interface DeploymentConnectCardProps {
 }
 
 function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
-  const { fetchAuthed } = useAuthedFetch();
+  const { fetchAuthed } = useAuth();
   const handleDownloadCerts = async () => {
     const response = await fetchAuthed(
       `/api/deployments/${deployment.id}/certs`
@@ -332,7 +332,7 @@ function DeploymentLogsButton({
   ...props
 }: DeploymentLogsButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { fetchAuthed } = useAuthedFetch();
+  const { fetchAuthed } = useAuth();
   const { loading, data, refetch } = useDeploymentsLogsRetrieve({
     id: deployment.id,
   });

@@ -16,7 +16,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import logo from "../img/wordmark.svg";
-import { AuthedFetchProvider } from "./api/fetch";
+import { RestfulProvider } from "./api/auth";
 import { Router } from "./router";
 import * as theme from "./theme";
 
@@ -77,9 +77,9 @@ ReactDOM.render(
         themeOptions={theme.fronteggTheme}
         customStyles={theme.fronteggCustomStyles}
       >
-        <AuthedFetchProvider>
+        <RestfulProvider>
           <Router />
-        </AuthedFetchProvider>
+        </RestfulProvider>
       </FronteggProvider>
     </ChakraProvider>
   </BrowserRouter>,

@@ -11,6 +11,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Link,
   Menu,
   MenuButton,
   MenuDivider,
@@ -19,11 +20,15 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { AdminPortal, useAuth } from "@frontegg/react";
+import { AdminPortal } from "@frontegg/react";
+import { differenceInDays } from "date-fns";
 import * as React from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 
 import logo from "../../img/logo-reverse.svg";
+import { useAuth } from "../api/auth";
+import { SUPPORT_HREF } from "../components/cta";
+import { assert } from "../util";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
@@ -72,10 +77,11 @@ export function BaseLayout(props: BaseLayoutProps) {
 }
 
 function NavBar() {
+  const { organization } = useAuth();
   return (
     <Flex justify="space-around" bg="purple.600" color="white" minH="14">
       <Flex justify="space-between" align="center" w="full" maxW="7xl" px="5">
-        <HStack as={Link} to="/" mr="3rem">
+        <HStack as={RouterLink} to="/" mr="3rem">
           <chakra.img src={logo} height="9" mr="4"></chakra.img>
           <VStack spacing="-7px" align="left">
             <Text fontWeight="700" fontSize="md">
@@ -94,10 +100,17 @@ function NavBar() {
           alignSelf="stretch"
           alignItems="stretch"
         >
-          <NavItem active label="Deployments" href="/deployments" />
+          {organization.admitted ? (
+            <NavItem label="Deployments" href="/deployments" />
+          ) : (
+            <NavItem label="Welcome" href="/welcome" />
+          )}
         </HStack>
 
         <HStack spacing="5">
+          {organization.admitted && organization.trialExpiresAt && (
+            <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
+          )}
           <HelpDropdown />
           <ProfileDropdown />
         </HStack>
@@ -108,16 +121,18 @@ function NavBar() {
 
 interface NavItemProps {
   href?: string;
-  active?: boolean;
   label: string;
 }
 
 function NavItem(props: NavItemProps) {
+  const location = useLocation();
+  const href = props.href || "#";
+  const active = location.pathname.startsWith(href);
   return (
     <HStack
-      as={Link}
-      to={props.href || "#"}
-      aria-current={props.active ? "page" : undefined}
+      as={RouterLink}
+      to={href}
+      aria-current={active ? "page" : undefined}
       spacing="2"
       px="6"
       transition="all 0.2s"
@@ -150,11 +165,46 @@ function HelpDropdown() {
         <HelpDropdownLink href="https://materialize.com/s/chat/">
           Join us on Slack
         </HelpDropdownLink>
-        <HelpDropdownLink href="mailto:support@materialize.com">
-          Email us
-        </HelpDropdownLink>
+        <HelpDropdownLink href={SUPPORT_HREF}>Email us</HelpDropdownLink>
       </MenuList>
     </Menu>
+  );
+}
+
+interface TrialBubble {
+  trialExpiresAt: string;
+}
+
+function TrialBubble(props: TrialBubble) {
+  const trialExpiresAt = Date.parse(props.trialExpiresAt);
+  const now = Date.now();
+  const expired = trialExpiresAt < now;
+  const daysRemaining = differenceInDays(trialExpiresAt, now) + 1;
+  let daysRemainingText;
+  if (expired) {
+    daysRemainingText = "Expired";
+  } else if (daysRemaining == 1) {
+    daysRemainingText = "1 day left";
+  } else {
+    daysRemainingText = `${daysRemaining} days left`;
+  }
+  return (
+    <HStack
+      spacing="4"
+      bg={expired ? "red.500" : "whiteAlpha.300"}
+      borderRadius="md"
+      px="3"
+      py="1"
+      fontSize="sm"
+    >
+      <VStack spacing="-1">
+        <Text>Free trial</Text>
+        <Text fontWeight="600">{daysRemainingText}</Text>
+      </VStack>
+      <Link color={expired ? "white" : "blue.200"} href={SUPPORT_HREF}>
+        Upgrade
+      </Link>
+    </HStack>
   );
 }
 
@@ -174,6 +224,9 @@ function HelpDropdownLink(props: HelpDropdownLinkProps) {
 function ProfileDropdown() {
   const history = useHistory();
   const { user, routes: authRoutes } = useAuth();
+
+  assert(user); // This component is only rendered for logged-in users.
+
   return (
     <Menu>
       <MenuButton>
