@@ -59,6 +59,14 @@ test("upgrade deployment", async ({ page }) => {
   await context.waitForDeploymentHealthy();
   await context.assertDeploymentMzVersion(LEGACY_VERSION);
 
+  // Put a table in it to ensure it's still there after the upgrade.
+  const before_data = await context.withPostgres(async function (pgConn) {
+    await pgConn.query("CREATE TABLE t (a int)");
+    await pgConn.query("INSERT INTO t VALUES (1)");
+    return pgConn.query("SELECT * FROM t");
+  });
+  expect(before_data.rows[0].a).toEqual(1);
+
   // Upgrade to the latest version of Materialize.
   await page.click("button:text('Upgrade')");
   await page.type("[aria-modal] input", deployment.name);
@@ -71,6 +79,14 @@ test("upgrade deployment", async ({ page }) => {
   await context.waitForDeploymentVersion(latestVersion);
   await context.waitForDeploymentHealthy();
   await context.assertDeploymentMzVersion(latestVersion);
+
+  // Verify the table is still there.
+  const after_data = await context.withPostgres(async function (pgConn) {
+    await pgConn.query("INSERT INTO t VALUES (2)");
+    return pgConn.query("SELECT * FROM t ORDER BY a");
+  });
+  // TODO after persistence exists, verify that the original value is there too.
+  expect(after_data.rows[0].a).toEqual(2);
 
   // Delete the deployment.
   await context.deleteAllDeployments();

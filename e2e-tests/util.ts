@@ -171,6 +171,16 @@ export class TestContext {
   }
 
   /**
+   * Connects to postgres, runs your function, and cleans up the connection.
+   */
+  async withPostgres(f: (pgConn: Client) => Promise<any>) {
+    const pgConn = await this.pgConnect();
+    const result = await f(pgConn);
+    await pgConn.end();
+    return result;
+  }
+
+  /**
    * Assert the expected version number of a Materialize deployment.
    *
    * Assumes that the browser is navigated to a deployment detail page.
