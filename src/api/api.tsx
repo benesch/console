@@ -22,6 +22,7 @@ export interface Deployment {
   flaggedForUpdate: boolean;
   size: DeploymentSizeEnum;
   storageMb: number;
+  disableUserIndexes: boolean;
   materializedExtraArgs: string[];
   clusterId: string | null;
   mzVersion: string;
@@ -33,6 +34,7 @@ export interface DeploymentRequest {
   name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
+  disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
 }
@@ -61,6 +63,7 @@ export interface PatchedDeploymentRequest {
   name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
+  disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
 }
