@@ -14,6 +14,8 @@ import { extendTheme } from "@chakra-ui/react";
 import { StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { ThemeOptions } from "@frontegg/react";
 
+import { SignupFooter } from "./components/signup_footer";
+
 // Colors shared between the Chakra UI and Frontegg themes.
 const colorPrimary = "#472f85";
 const colorPrimaryActive = "#1b164c";
@@ -131,6 +133,11 @@ export const fronteggTheme: ThemeOptions = {
       // directly, not nested in `loginBox`, so ignore the type error.
       // @ts-ignore
       backgroundCard: "white",
+    },
+  },
+  loginBox: {
+    signup: {
+      footer: SignupFooter,
     },
   },
   palette: {
