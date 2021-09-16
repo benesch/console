@@ -118,14 +118,14 @@ export class TestContext {
       connectionTimeoutMillis: 1000,
       query_timeout: 1000,
     };
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 600; i++) {
       try {
         const client = new Client(pgParams);
         await client.connect();
         return client;
       } catch (error) {
         console.log(error);
-        await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(1000);
       }
     }
     throw new Error("unable to connect");
@@ -166,7 +166,7 @@ export class TestContext {
    */
   async waitForDeploymentHealthy() {
     await this.waitForDeploymentFieldValue("Status", "Healthy", {
-      timeout: 300000 /* 5 minutes */,
+      timeout: 600000 /* 10 minutes */,
     });
   }
 

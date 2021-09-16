@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   globalSetup: "./global-setup",
-  timeout: 300000, // 5 minutes
+  timeout: 900000, // 15 minutes
   use: {
     acceptDownloads: true,
     storageState: "state.json",
