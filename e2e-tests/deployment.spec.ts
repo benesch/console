@@ -31,11 +31,21 @@ test("create deployment", async ({ page }) => {
     page.waitForSelector("[aria-modal]", { state: "detached" }),
     page.click("[aria-modal] button:text('Update')"),
   ]);
-
   // Verify that the deployment has been updated accordingly.
   await context.waitForDeploymentHealthy();
-  await context.assertDeploymentMzVersion(latestVersion);
   await context.assertDeploymentSize("S");
+
+  // Update the deployment index mode.
+  await page.click("text=Update");
+  await page.click('[aria-modal] button:has-text("Advanced")');
+  await page.click('[aria-modal] label:has-text("Disable user indexes")');
+  await Promise.all([
+    page.waitForSelector("[aria-modal]", { state: "detached" }),
+    page.click("[aria-modal] button:text('Update')"),
+  ]);
+  await context.waitForDeploymentFieldValue("Status", "User Indexes Disabled", {
+    timeout: 600000 /* 10 minutes */,
+  });
 
   // Destroy the deployment.
   await page.click("text=Destroy");

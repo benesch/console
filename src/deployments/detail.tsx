@@ -5,7 +5,9 @@
 
 import {
   Alert,
+  AlertDescription,
   AlertIcon,
+  AlertTitle,
   Button,
   ButtonProps,
   Checkbox,
@@ -148,6 +150,9 @@ function DeploymentDetail({
               refetch={refetch}
             />
           )}
+          {deployment.disableUserIndexes && deployment.status === "OK" && (
+            <UserIndexesDisabledAlert />
+          )}
           <DeploymentConnectCard deployment={deployment} />
           <DeploymentIntegrationsCard deployment={deployment} />
         </VStack>
@@ -181,6 +186,20 @@ function DeploymentUpgradeAlert({
         refetch={refetch}
         size="sm"
       />
+    </Alert>
+  );
+}
+
+function UserIndexesDisabledAlert() {
+  return (
+    <Alert status="info">
+      <AlertIcon />
+      <AlertTitle mr={2}>User indexes are disabled</AlertTitle>
+      <AlertDescription>
+        Your deployment is healthy, but in "disable user indexes" mode no data
+        will be ingested. You can connect to your Materialize deployment to
+        debug OOM or other crash loops.
+      </AlertDescription>
     </Alert>
   );
 }

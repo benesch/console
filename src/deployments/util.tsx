@@ -25,6 +25,16 @@ export function DeploymentStateBadge({
   if (deployment.flaggedForUpdate) {
     return <Badge colorScheme="yellow">Updating</Badge>;
   }
+  if (deployment.status === "OK" && deployment.disableUserIndexes) {
+    return (
+      <Badge
+        colorScheme="blue"
+        title="Deployment is healthy, but user indexes are disabled. Use this mode to troubleshoot your Materialize deployment."
+      >
+        User Indexes Disabled
+      </Badge>
+    );
+  }
   switch (deployment.status) {
     case "OK":
       return <Badge colorScheme="green">Healthy</Badge>;

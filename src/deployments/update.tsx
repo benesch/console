@@ -10,6 +10,8 @@ import {
   Box,
   Button,
   ButtonProps,
+  FormControl,
+  FormHelperText,
   HStack,
   Modal,
   ModalBody,
@@ -26,7 +28,8 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { SubmitButton, TextField } from "../components/form";
+import TextCollapse from "../components/collapse";
+import { SubmitButton, SwitchField, TextField } from "../components/form";
 import { DeploymentSizeField } from "./util";
 
 interface UpdateDeploymentButtonProps extends ButtonProps {
@@ -68,12 +71,14 @@ export function UpdateDeploymentButton({
             initialValues={{
               name: deployment.name,
               size: deployment.size,
+              disableUserIndexes: deployment.disableUserIndexes,
             }}
             onSubmit={async (values, actions) => {
               try {
                 await updateDeployment({
                   name: values.name,
                   size: values.size,
+                  disableUserIndexes: values.disableUserIndexes,
                 });
                 await refetch();
                 onClose();
@@ -88,17 +93,49 @@ export function UpdateDeploymentButton({
               <Form>
                 <ModalHeader>Update deployment</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody pt="3" pb="6">
-                  <Box ref={initialFocusRef} tabindex="-1" />
+                <ModalBody pt="3" pb="3">
+                  <Box ref={initialFocusRef} tabIndex={-1} />
                   <VStack spacing="5">
                     <TextField name="name" label="Name" size="sm" />
                     <DeploymentSizeField />
-                    {deployment.size !== form.values.size && (
+                    <TextCollapse title="Advanced settings">
+                      <SwitchField
+                        display="flex"
+                        alignItems="center"
+                        pt="1"
+                        id="disableUserIndexes"
+                        label="Disable user indexes"
+                        fontSize="sm"
+                        size="sm"
+                      />
+                      <FormControl>
+                        <FormHelperText>
+                          Use this mode to troubleshoot a Materialize deployment
+                          that is running out of memory.
+                        </FormHelperText>
+                      </FormControl>
+                    </TextCollapse>
+                    {(deployment.size !== form.values.size ||
+                      deployment.disableUserIndexes !==
+                        form.values.disableUserIndexes) && (
                       <Alert status="warning">
                         <AlertIcon />
                         <Text fontSize="sm" flex="1">
-                          Changing your deployment's size will restart your
-                          deployment.
+                          {`Changing your deployment's ${
+                            deployment.size !== form.values.size ? "size" : ""
+                          }${
+                            deployment.size !== form.values.size &&
+                            deployment.disableUserIndexes !==
+                              form.values.disableUserIndexes
+                              ? " and "
+                              : ""
+                          }${
+                            deployment.disableUserIndexes !==
+                            form.values.disableUserIndexes
+                              ? "index mode"
+                              : ""
+                          } will restart your
+                          deployment.`}
                         </Text>
                       </Alert>
                     )}
