@@ -63,7 +63,7 @@ export function ConfirmModal(props: ConfirmModalProps) {
         {props.actionText}
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{props.title}</ModalHeader>
@@ -82,7 +82,7 @@ export function ConfirmModal(props: ConfirmModalProps) {
           </ModalBody>
           <ModalFooter>
             <HStack>
-              <Button size="sm" onClick={onClose}>
+              <Button size="sm" onClick={onClose} variant="outline">
                 Cancel
               </Button>
               <Button

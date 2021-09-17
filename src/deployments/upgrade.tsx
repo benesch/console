@@ -7,7 +7,7 @@ import { ButtonProps, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { ConfirmModal } from "../components/modal";
+import { ConfirmModal } from "../components/confirmModal";
 
 interface UpgradeDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;

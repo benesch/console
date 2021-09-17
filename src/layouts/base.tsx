@@ -18,6 +18,7 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
 import { AdminPortal } from "@frontegg/react";
@@ -67,8 +68,18 @@ export function BaseLayout(props: BaseLayoutProps) {
 
 function NavBar() {
   const { organization } = useAuth();
+  const borderWidth = useColorModeValue("0", "1px");
+  const borderColor = useColorModeValue("transparent", "gray.700");
+
   return (
-    <Flex justify="space-around" bg="purple.600" color="white" minH="14">
+    <Flex
+      justify="space-around"
+      bg="purple.900"
+      color="white"
+      minH="14"
+      borderBottom={borderWidth}
+      borderColor={borderColor}
+    >
       <Flex justify="space-between" align="center" w="full" maxW="7xl" px="5">
         <HStack as={RouterLink} to="/" mr="3rem">
           <chakra.img src={logo} height="9" mr="4"></chakra.img>
@@ -76,7 +87,7 @@ function NavBar() {
             <Text fontWeight="700" fontSize="md">
               Materialize Cloud
             </Text>
-            <Text fontWeight="400" fontSize="sm" color="gray.300">
+            <Text fontWeight="400" fontSize="sm" color="gray.200">
               open beta
             </Text>
           </VStack>
@@ -144,10 +155,21 @@ function NavItem(props: NavItemProps) {
 function HelpDropdown() {
   return (
     <Menu>
-      <MenuButton bg="white" rounded="full" h="5" w="5" color="purple.900">
-        ?
+      <MenuButton>
+        <Box
+          bg="white"
+          rounded="full"
+          h="5"
+          w="5"
+          color="purple.900"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          ?
+        </Box>
       </MenuButton>
-      <MenuList rounded="md" shadow="lg" py="1" color="gray.600" fontSize="sm">
+      <MenuList>
         <HelpDropdownLink href="https://materialize.com/docs/cloud/">
           Documentation
         </HelpDropdownLink>
@@ -213,6 +235,8 @@ function HelpDropdownLink(props: HelpDropdownLinkProps) {
 function ProfileDropdown() {
   const history = useHistory();
   const { user, routes: authRoutes } = useAuth();
+  const emailColor = useColorModeValue("gray.500", "gray.200");
+  const signoutColor = useColorModeValue("red.500", "red.300");
 
   assert(user); // This component is only rendered for logged-in users.
 
@@ -225,10 +249,10 @@ function ProfileDropdown() {
           name={user.name}
         />
       </MenuButton>
-      <MenuList rounded="md" shadow="lg" py="1" color="gray.600" fontSize="sm">
-        <VStack px="3" pt="4" pb="2" align="left" lineHeight="1.3" spacing="0">
+      <MenuList>
+        <VStack px="3" pt="3" pb="2" align="left" lineHeight="1.3" spacing="0">
           <Text fontWeight="semibold">{user.name}</Text>
-          <Text mt="1" fontSize="xs" color="gray.500">
+          <Text mt="1" fontSize="xs" color={emailColor}>
             {user.email}
           </Text>
         </VStack>
@@ -238,7 +262,7 @@ function ProfileDropdown() {
         </MenuItem>
         <MenuItem
           fontWeight="medium"
-          color="red.500"
+          color={signoutColor}
           onClick={() => history.push(authRoutes.logoutUrl)}
         >
           Sign out

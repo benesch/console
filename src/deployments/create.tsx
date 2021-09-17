@@ -59,7 +59,6 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
         isOpen={isOpen}
         onClose={onClose}
         initialFocusRef={initialFocusRef}
-        size="xl"
       >
         <ModalOverlay />
         <ModalContent>
@@ -127,7 +126,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
               </ModalBody>
               <ModalFooter>
                 <HStack>
-                  <Button size="sm" onClick={onClose}>
+                  <Button size="sm" onClick={onClose} variant="outline">
                     Cancel
                   </Button>
                   <SubmitButton size="sm">Create</SubmitButton>
