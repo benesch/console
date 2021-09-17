@@ -182,7 +182,7 @@ function DeploymentTable(props: DeploymentTableProps) {
               }
 
               return (
-                <Tr {...trProps} data-testid="deployment-line">
+                <Tr key={d.id} data-testid="deployment-line" {...trProps}>
                   <Td>
                     {/* This link is for accessibility only, so we disable its
                         link styling, as the tr already has a hover state. */}

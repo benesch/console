@@ -86,7 +86,7 @@ export function CodeBlock({
         fontSize="sm"
         p="3"
         overflow="scroll"
-        sx={{ "word-wrap": "normal" }}
+        sx={{ wordWrap: "normal" }}
         {...preProps}
       >
         {children}
@@ -113,7 +113,7 @@ function Line(props: LineProps) {
         textAlign: "right",
         "user-select": "none",
       }}
-      sx={{ "counter-increment": "line", "word-wrap": "normal" }}
+      sx={{ "counter-increment": "line", wordWrap: "normal" }}
     >
       {props.children}
     </chakra.span>

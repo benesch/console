@@ -34,6 +34,7 @@ interface CreateDeploymentButton extends ButtonProps {
 }
 
 export function CreateDeploymentButton(props: CreateDeploymentButton) {
+  const { refetch, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate: createDeployment } = useDeploymentsCreate({});
   const toast = useToast();
@@ -45,7 +46,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
         leftIcon={<AddIcon />}
         colorScheme="purple"
         onClick={onOpen}
-        {...props}
+        {...buttonProps}
       >
         Create deployment
       </Button>
@@ -69,7 +70,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                   name: values.name,
                   size: values.size,
                 });
-                await props.refetch();
+                await refetch();
                 onClose();
                 toast({
                   title: "Deployment created.",
@@ -86,7 +87,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
               <ModalHeader>Create deployment</ModalHeader>
               <ModalCloseButton />
               <ModalBody pt="3" pb="6">
-                <Box ref={initialFocusRef} tabindex="-1" />
+                <Box ref={initialFocusRef} tabIndex={-1} />
                 <VStack spacing="5">
                   <TextField name="name" label="Name" size="sm" />
                   <DeploymentSizeField />
