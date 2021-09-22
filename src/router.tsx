@@ -12,8 +12,8 @@ import {
   Switch,
   useLocation,
 } from "react-router-dom";
-import { analyticsClient, AnalyticsOnEveryPage } from "./analytics";
 
+import { analyticsClient, AnalyticsOnEveryPage } from "./analytics";
 import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";

@@ -4,6 +4,7 @@
  */
 
 import "@fontsource/inter/variable-full.css";
+import "./types";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { FronteggProvider } from "@frontegg/react";
@@ -12,12 +13,12 @@ import { Integrations } from "@sentry/tracing";
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import "./types";
+
 import logo from "../img/wordmark.svg";
+import { initAnalytics } from "./analytics";
 import { RestfulProvider } from "./api/auth";
 import { Router } from "./router";
 import * as theme from "./theme";
-import { initAnalytics } from "./analytics";
 
 /** global config injected from the django template */
 export const config = window.CONFIG;
