@@ -12,6 +12,7 @@ import {
   Switch,
   useLocation,
 } from "react-router-dom";
+import { analyticsClient, AnalyticsOnEveryPage } from "./analytics";
 
 import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
@@ -23,18 +24,21 @@ import { WelcomePage } from "./welcome";
 /** The root router for the application. */
 export function Router() {
   return (
-    <Switch>
-      <ProtectedRoute allowUnadmitted={true} path="/welcome">
-        <WelcomePage />
-      </ProtectedRoute>
-      <ProtectedRoute path="/deployments/:id">
-        <DeploymentDetailPage />
-      </ProtectedRoute>
-      <ProtectedRoute path="/deployments">
-        <DeploymentListPage />
-      </ProtectedRoute>
-      <RedirectIfNotAuthRoute />
-    </Switch>
+    <>
+      <Switch>
+        <ProtectedRoute allowUnadmitted={true} path="/welcome">
+          <WelcomePage />
+        </ProtectedRoute>
+        <ProtectedRoute path="/deployments/:id">
+          <DeploymentDetailPage />
+        </ProtectedRoute>
+        <ProtectedRoute path="/deployments">
+          <DeploymentListPage />
+        </ProtectedRoute>
+        <RedirectIfNotAuthRoute />
+      </Switch>
+      <AnalyticsOnEveryPage analytics={analyticsClient} />
+    </>
   );
 }
 
