@@ -13,6 +13,7 @@ import {
   Spacer,
   Spinner,
   Table,
+  TableRowProps,
   Tbody,
   Td,
   Text,
@@ -125,9 +126,10 @@ function DeploymentTable(props: DeploymentTableProps) {
           </Thead>
           <Tbody>
             {props.deployments.map((d) => {
-              let trProps = {};
+              let trProps: TableRowProps = { key: d.id };
               if (!d.flaggedForDeletion) {
                 trProps = {
+                  ...trProps,
                   cursor: "pointer",
                   _hover: { background: "gray.100" },
                   onClick: () => history.push(`/deployments/${d.id}`),
