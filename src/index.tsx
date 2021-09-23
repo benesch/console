@@ -4,11 +4,10 @@
  */
 
 import "@fontsource/inter/variable-full.css";
+import "./types";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { FronteggProvider } from "@frontegg/react";
-import Analytics from "@segment/analytics.js-core/build/analytics";
-import SegmentIntegration from "@segment/analytics.js-integration-segmentio";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import React from "react";
@@ -16,25 +15,13 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import logo from "../img/wordmark.svg";
+import { initAnalytics } from "./analytics";
 import { RestfulProvider } from "./api/auth";
 import { Router } from "./router";
 import * as theme from "./theme";
 
-/**
- * Required configuration properties for the frontend.
- *
- * These are set by the backend on `window.CONFIG`.
- */
-interface Config {
-  fronteggUrl: string;
-  segmentApiKey: string | null;
-  sentryDsn: string | null;
-  sentryEnvironment: string | null;
-  sentryRelease: string | null;
-}
-
-export const config = (globalThis as any).CONFIG as Config;
-
+/** global config injected from the django template */
+export const config = window.CONFIG;
 // Configure Sentry error reporting.
 if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
   Sentry.init({
@@ -45,19 +32,8 @@ if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
   });
 }
 
-// Configure Segment analytics.
-if (config.segmentApiKey) {
-  const analytics = new Analytics();
-  analytics.use(SegmentIntegration);
-  analytics.initialize({
-    "Segment.io": {
-      apiKey: config.segmentApiKey,
-      retryQueue: true,
-      addBundledMetadata: true,
-    },
-  });
-  analytics.page();
-}
+// config segment analytics
+initAnalytics(config);
 
 const root = document.createElement("div");
 document.body.appendChild(root);
