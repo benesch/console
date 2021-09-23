@@ -3,28 +3,16 @@
  * Components and utils display at the bottom of layouts
  */
 
-import { Box, LinkProps } from "@chakra-ui/layout";
-import { Link } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/layout";
 import React from "react";
+
+import { SystemStatusLink } from "../systemStatus/SystemStatusLink";
 
 /**
  * the current year as four digit
  * @returns the current year
  */
 export const getCurrentYear = () => new Date().getFullYear();
-
-/**
- * A link to our jira status page
- * @returns
- */
-
-export const StatusPageLink: React.FC<LinkProps> = (props) => {
-  return (
-    <Link {...props} href="https://status.materialize.com/" target="_blank">
-      System Status
-    </Link>
-  );
-};
 
 /** A footer component */
 export const PageFooter: React.FC = () => {
@@ -40,7 +28,7 @@ export const PageFooter: React.FC = () => {
       display="relative"
     >
       © {getCurrentYear()} Materialize
-      <StatusPageLink position="absolute" right={4} />
+      <SystemStatusLink position="absolute" right={4} />
     </Box>
   );
 };
