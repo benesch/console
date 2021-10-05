@@ -55,7 +55,7 @@ export const useDeploymentsList = () => {
     error,
   } = useDeploymentListApi({});
 
-  const { cache: deploymentsLocalCopy } = useCache(deployments);
+  const deploymentsLocalCopy = useCache(deployments);
 
   useInterval(refetch, 5000);
 
