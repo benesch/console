@@ -8,6 +8,7 @@ import {
   AlertIcon,
   Box,
   Heading,
+  HStack,
   Image,
   Link,
   Spacer,
@@ -68,7 +69,7 @@ export const useDeploymentsList = () => {
 
 export function DeploymentListPage() {
   const { organization } = useAuth();
-  const { deployments, refetch } = useDeploymentsList();
+  const { deployments, refetch, error } = useDeploymentsList();
 
   let deploymentsView;
   let canCreateDeployments = null;
@@ -89,7 +90,10 @@ export function DeploymentListPage() {
     <BaseLayout>
       <PageBreadcrumbs></PageBreadcrumbs>
       <PageHeader>
-        <PageHeading>Deployments</PageHeading>
+        <HStack spacing={4} alignItems="center" justifyContent="flex-start">
+          <PageHeading>Deployments</PageHeading>
+          {error && <DeploymentListFetchErrorWarning />}
+        </HStack>
         <Spacer />
         <CreateDeploymentButton
           refetch={refetch}
@@ -114,6 +118,15 @@ function DeploymentLimitWarning() {
     </Alert>
   );
 }
+
+const DeploymentListFetchErrorWarning: React.FC = () => {
+  return (
+    <Alert status="warning" p={1} px={2}>
+      <AlertIcon />
+      <Text>The deployment list cannot be retrieved as the moment</Text>
+    </Alert>
+  );
+};
 
 function EmptyDeploymentList() {
   return (
