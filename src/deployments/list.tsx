@@ -27,7 +27,10 @@ import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import cloudOutline from "../../img/cloud-outline.svg";
-import { Deployment, useDeploymentsList } from "../api/api";
+import {
+  Deployment,
+  useDeploymentsList as useDeploymentListApi,
+} from "../api/api";
 import { useAuth } from "../api/auth";
 import { SupportLink } from "../components/cta";
 import {
@@ -36,17 +39,42 @@ import {
   PageHeader,
   PageHeading,
 } from "../layouts/base";
+import { useCache } from "../utils/useCache";
 import { CreateDeploymentButton } from "./create";
 import { DeploymentStateBadge } from "./util";
 
+/** the hook managing data for the deployements list page
+ * TODO: replace caching logic with `use-swr
+ */
+export const useDeploymentsList = () => {
+  const {
+    data: deployments,
+    refetch,
+    loading,
+    error,
+  } = useDeploymentListApi({});
+
+  const { cache: deploymentsLocalCopy } = useCache(deployments);
+
+  useInterval(refetch, 5000);
+
+  return {
+    deployments: deployments || deploymentsLocalCopy,
+    error,
+    loading,
+    refetch,
+  };
+};
+
 export function DeploymentListPage() {
   const { organization } = useAuth();
-  const { data: deployments, refetch } = useDeploymentsList({});
-  useInterval(refetch, 5000);
+  const { deployments, refetch } = useDeploymentsList();
 
   let deploymentsView;
   let canCreateDeployments = null;
-  if (deployments === null || organization === null) {
+  // FIXME: add error handling and message to the user
+  // FIXME: flatten the conditional branches by extracting returned components
+  if (!deployments || organization === null) {
     deploymentsView = <Spinner />;
   } else {
     canCreateDeployments = deployments.length < organization.deploymentLimit;
