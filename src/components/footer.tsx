@@ -3,10 +3,8 @@
  * Components and utils display at the bottom of layouts
  */
 
-import { Box } from "@chakra-ui/layout";
+import { Box, Link } from "@chakra-ui/layout";
 import React from "react";
-
-import { SystemStatusLink } from "../systemStatus/SystemStatusLink";
 
 /**
  * the current year as four digit
@@ -28,7 +26,14 @@ export const PageFooter: React.FC = () => {
       display="relative"
     >
       © {getCurrentYear()} Materialize
-      <SystemStatusLink position="absolute" right={4} />
+      <Link
+        href="https://status.materialize.com/"
+        target="_blank"
+        position="absolute"
+        right={4}
+      >
+        System Status
+      </Link>
     </Box>
   );
 };
