@@ -56,7 +56,6 @@ export const useDeploymentsList = () => {
   } = useDeploymentListApi({});
 
   const deploymentsLocalCopy = useCache(deployments);
-
   useInterval(refetch, 5000);
 
   return {
@@ -75,8 +74,9 @@ export function DeploymentListPage() {
   let canCreateDeployments = null;
   // FIXME: add error handling and message to the user
   // FIXME: flatten the conditional branches by extracting returned components
+
   if (!deployments || organization === null) {
-    deploymentsView = <Spinner />;
+    deploymentsView = <Spinner data-testid="loading-spinner" />;
   } else {
     canCreateDeployments = deployments.length < organization.deploymentLimit;
     if (deployments.length === 0) {
@@ -85,7 +85,6 @@ export function DeploymentListPage() {
       deploymentsView = <DeploymentTable deployments={deployments} />;
     }
   }
-
   return (
     <BaseLayout>
       <PageBreadcrumbs></PageBreadcrumbs>
@@ -121,7 +120,12 @@ function DeploymentLimitWarning() {
 
 const DeploymentListFetchErrorWarning: React.FC = () => {
   return (
-    <Alert status="warning" p={1} px={2}>
+    <Alert
+      status="warning"
+      p={1}
+      px={2}
+      data-testid="fetch-deployment-issue-alert"
+    >
       <AlertIcon />
       <Text>The deployment list cannot be retrieved as the moment</Text>
     </Alert>
@@ -176,8 +180,9 @@ function DeploymentTable(props: DeploymentTableProps) {
                   onClick: () => history.push(`/deployments/${d.id}`),
                 };
               }
+
               return (
-                <Tr {...trProps}>
+                <Tr {...trProps} data-testid="deployment-line">
                   <Td>
                     {/* This link is for accessibility only, so we disable its
                         link styling, as the tr already has a hover state. */}
