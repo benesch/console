@@ -28,6 +28,7 @@ import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import { SUPPORT_HREF } from "../components/cta";
+import { PageFooter } from "../components/footer";
 import { assert } from "../util";
 
 export interface BaseLayoutProps {
@@ -54,24 +55,12 @@ export function BaseLayout(props: BaseLayoutProps) {
   return (
     <Flex direction="column" height="100vh">
       <NavBar />
-
       <Box as="main" py="3" flex="1">
         <Container maxW="7xl" px="5">
           {props.children}
         </Container>
       </Box>
-
-      <Box
-        bg="white"
-        color="gray.500"
-        textAlign="center"
-        py="3"
-        fontWeight="400"
-        fontSize="sm"
-        boxShadow="footer"
-      >
-        © {new Date().getFullYear()} Materialize
-      </Box>
+      <PageFooter />
     </Flex>
   );
 }
