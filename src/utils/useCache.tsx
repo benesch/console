@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * a react compatible cache for a value
@@ -7,11 +7,7 @@ import { useEffect, useRef } from "react";
  */
 export const useCache = <T,>(value: T): T | undefined => {
   // we use a ref because it does not cause a rerender when the inner value changes
-  const cache = useRef<T | undefined>(value);
-
-  const setCache = (value: T) => {
-    cache.current = value;
-  };
+  const [cache, setCache] = useState<T | undefined>(value);
 
   useEffect(() => {
     // if a new value is emitted, updates local cache
@@ -20,5 +16,5 @@ export const useCache = <T,>(value: T): T | undefined => {
     }
   }, [value]);
 
-  return cache.current;
+  return cache;
 };
