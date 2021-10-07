@@ -1,5 +1,4 @@
 import { GlobalConfig } from "../types";
-import { AnalyticsClient } from "./types";
 
 export const globalConfigStub: GlobalConfig = {
   fronteggUrl: "https://frontegg.com",
