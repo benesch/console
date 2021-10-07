@@ -11,6 +11,7 @@ export interface GlobalConfig {
   sentryDsn: string | null;
   sentryEnvironment: string | null;
   sentryRelease: string | null;
+  googleAnalyticsId: string | null;
 }
 
 declare global {

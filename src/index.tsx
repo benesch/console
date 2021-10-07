@@ -15,7 +15,6 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import logo from "../img/wordmark.svg";
-import { initAnalytics } from "./analytics";
 import { RestfulProvider } from "./api/auth";
 import { Router } from "./router";
 import * as theme from "./theme";
@@ -31,9 +30,6 @@ if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
     integrations: [new Integrations.BrowserTracing()],
   });
 }
-
-// config segment analytics
-initAnalytics(config);
 
 const root = document.createElement("div");
 document.body.appendChild(root);
