@@ -41,8 +41,9 @@ describe("analytics/segment", () => {
       const client = makeSegmentAnalyticsClientWithNoApiKey();
       expect(client.segmentNativeClient).toBeNull();
     });
-    it("calling page should trigger a segment event emission", () => {
+    it("calling page should emit a segment event", () => {
       const client = makeSegmentAnalyticsClient();
+      (client.segmentNativeClient?.page as jest.Mock).mockClear();
       client.page();
       expect(client.segmentNativeClient?.page).toHaveBeenCalledTimes(1);
     });
