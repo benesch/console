@@ -21,6 +21,8 @@ declare module "@segment/analytics.js-core/build/analytics" {
     initialize(any);
     use(any);
     page();
+    identify(string);
+    reset();
   }
   export default Analytics;
 }

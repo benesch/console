@@ -13,7 +13,8 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { analyticsClient, AnalyticsOnEveryPage } from "./analytics";
+import { analyticsClients } from "./analytics";
+import { AnalyticsOnEveryPage } from "./analytics/AnalyticsOnEveryPage";
 import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";
@@ -37,7 +38,7 @@ export function Router() {
         </ProtectedRoute>
         <RedirectIfNotAuthRoute />
       </Switch>
-      <AnalyticsOnEveryPage analytics={analyticsClient} />
+      <AnalyticsOnEveryPage clients={analyticsClients} />
     </>
   );
 }
