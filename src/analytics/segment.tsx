@@ -23,7 +23,6 @@ export class SegmentAnalyticsClient extends AnalyticsClient {
           addBundledMetadata: true,
         },
       });
-      this.segmentNativeClient.page();
     }
   }
 

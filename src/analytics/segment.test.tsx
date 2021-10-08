@@ -34,8 +34,6 @@ describe("analytics/segment", () => {
         },
       });
       expect(client.segmentNativeClient?.use).toHaveBeenCalledWith({});
-      // we send an analytics event at least once:
-      expect(client.segmentNativeClient?.page).toHaveBeenCalledTimes(1);
     });
     it("constructor should not attempt to build a segment client if the config is not present", () => {
       const client = makeSegmentAnalyticsClientWithNoApiKey();
@@ -43,7 +41,6 @@ describe("analytics/segment", () => {
     });
     it("calling page should trigger a segment event emission", () => {
       const client = makeSegmentAnalyticsClient();
-      (client.segmentNativeClient?.page as jest.Mock).mockReset();
       client.page();
       expect(client.segmentNativeClient?.page).toHaveBeenCalledTimes(1);
     });

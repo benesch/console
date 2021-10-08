@@ -4,15 +4,15 @@ import React from "react";
 import { Router } from "react-router";
 
 import { GlobalConfig } from "../types";
-import { AnalyticsOnEveryPage } from ".";
 import { globalConfigStub } from "./__mocks__";
+import { AnalyticsOnEveryPage } from "./AnalyticsOnEveryPage";
 import { AnalyticsClient } from "./types";
 
 export class ShimAnalyticsClient extends AnalyticsClient {
   constructor(config: GlobalConfig) {
     super(config);
   }
-  page = jest.fn(() => console.log("called"));
+  page = jest.fn();
 }
 
 export const makeShimAnalyticsClient = () => {
@@ -52,13 +52,16 @@ describe("analytics/AnalyticsOnEveryPage", () => {
       shimAnalyticsClients: [client1, client2],
       history,
     } = setupRenderTree();
+    // initial page
+
     history.push("/somewhere");
 
-    //So we have a component without any kind of returned node,
+    // So we have a component without any kind of returned node,
     // so testing library is not helpful, as it cannot target a "visible element"
     // we use wait for as an escape hatch to "retry" the condition until it succeeds or a predefined timer expires
-    await waitFor(() => expect(client1.page).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(client2.page).toHaveBeenCalledTimes(1));
+    // the page event is called twice, once at page load and once at page change
+    await waitFor(() => expect(client1.page).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(client2.page).toHaveBeenCalledTimes(2));
   });
   it("should do nothing if no analytics client are provided", async () => {
     const {
@@ -68,18 +71,15 @@ describe("analytics/AnalyticsOnEveryPage", () => {
       passAnalyticsClient: false,
     });
 
-    expect(client1.page).toHaveBeenCalledTimes(0);
-    expect(client2.page).toHaveBeenCalledTimes(0);
-
     history.push("/somewhere");
-    const client1Emitted = await waitFor(
-      () => (client1.page as jest.Mock).mock.calls.length > 0
+    const client1SentEventAnotherTime = await waitFor(
+      () => (client1.page as jest.Mock).mock.calls.length > 1
     );
 
-    const client2Emitted = await waitFor(
-      () => (client2.page as jest.Mock).mock.calls.length > 0
+    const client2SentEventAnotherTime = await waitFor(
+      () => (client2.page as jest.Mock).mock.calls.length > 1
     );
-    expect(client1Emitted).toBe(false);
-    expect(client2Emitted).toBe(false);
+    expect(client1SentEventAnotherTime).toBe(false);
+    expect(client2SentEventAnotherTime).toBe(false);
   });
 });
