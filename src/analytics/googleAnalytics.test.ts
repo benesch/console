@@ -32,9 +32,10 @@ describe("analytics/googleanalytics", () => {
       makeGAClientWithNoApiKey();
       expect(ReactGA.initialize).not.toHaveBeenCalled();
     });
-    it("calling page should trigger a segment event emission", () => {
+    it("calling page should trigger a GA event emission", () => {
       window.location.pathname = "/an-url";
       const client = makeGAClient();
+      (ReactGA.pageview as jest.Mock).mockClear();
       client.page();
       expect(ReactGA.pageview).toHaveBeenCalledTimes(1);
     });

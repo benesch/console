@@ -8,6 +8,7 @@ export class GAAnalyticsClient extends AnalyticsClient {
     super(config);
     if (config.googleAnalyticsId) {
       ReactGA.initialize(config.googleAnalyticsId);
+      this.page();
     }
   }
 
