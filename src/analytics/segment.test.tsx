@@ -15,6 +15,8 @@ jest.mock("@segment/analytics.js-core/build/analytics", () => {
     initialize = jest.fn();
     use = jest.fn();
     page = jest.fn();
+    identify = jest.fn();
+    reset = jest.fn();
   }
   return AnalyticsMock;
 });
@@ -43,6 +45,19 @@ describe("analytics/segment", () => {
       const client = makeSegmentAnalyticsClient();
       client.page();
       expect(client.segmentNativeClient?.page).toHaveBeenCalledTimes(1);
+    });
+
+    it("calling identify should use segment native method", () => {
+      const client = makeSegmentAnalyticsClient();
+      client.identify("user-1");
+      expect(client.segmentNativeClient?.identify).toHaveBeenCalledWith(
+        "user-1"
+      );
+    });
+    it("calling reset should use segment native method", () => {
+      const client = makeSegmentAnalyticsClient();
+      client.reset();
+      expect(client.segmentNativeClient?.reset).toHaveBeenCalled();
     });
   });
 });

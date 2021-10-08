@@ -1,3 +1,4 @@
+import { useAuth } from "@frontegg/react";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 
@@ -12,6 +13,8 @@ import { AnalyticsClient } from "./types";
 export const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
   clients,
 }) => {
+  const auth = useAuth((state) => state);
+
   const location = useLocation();
   useEffect(() => {
     clients.forEach((client) => {
@@ -19,5 +22,18 @@ export const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
     });
   }, [location]);
 
+  // once we have valid auth, identify the further analytics events
+  // otherwise, logout
+  useEffect(() => {
+    if (auth.user) {
+      clients.forEach((client) => {
+        client.identify(auth.user?.id ?? "");
+      });
+    } else {
+      clients.forEach((client) => {
+        client.reset();
+      });
+    }
+  }, [auth]);
   return null;
 };

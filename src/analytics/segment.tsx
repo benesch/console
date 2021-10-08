@@ -26,10 +26,15 @@ export class SegmentAnalyticsClient extends AnalyticsClient {
     }
   }
 
-  /**
-   * track a page view
-   */
   page() {
     this.segmentNativeClient?.page();
+  }
+
+  identify(userId: string) {
+    this.segmentNativeClient?.identify(userId);
+  }
+
+  reset() {
+    this.segmentNativeClient?.reset();
   }
 }

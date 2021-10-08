@@ -1,3 +1,4 @@
+import { useAuth } from "@frontegg/react";
 import { render, waitFor } from "@testing-library/react";
 import { createMemoryHistory } from "history";
 import React from "react";
@@ -13,6 +14,8 @@ export class ShimAnalyticsClient extends AnalyticsClient {
     super(config);
   }
   page = jest.fn();
+  identify = jest.fn();
+  reset = jest.fn();
 }
 
 export const makeShimAnalyticsClient = () => {
@@ -45,6 +48,10 @@ const setupRenderTree = ({
     wrapper,
   };
 };
+
+jest.mock("@frontegg/react", () => ({
+  useAuth: jest.fn(() => ({ user: { id: "123" } })),
+}));
 
 describe("analytics/AnalyticsOnEveryPage", () => {
   it("should emit an analytics `page` event when the router's location changes for every provided analytics client", async () => {
@@ -81,5 +88,21 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     );
     expect(client1SentEventAnotherTime).toBe(false);
     expect(client2SentEventAnotherTime).toBe(false);
+  });
+
+  it("should identify the user if valid auth is available", () => {
+    const {
+      shimAnalyticsClients: [client],
+    } = setupRenderTree();
+    expect(client.identify).toHaveBeenCalledTimes(1);
+    expect(client.identify).toHaveBeenCalledWith("123");
+  });
+
+  it("should reset user tracking if authentication is not valid anymore", () => {
+    (useAuth as jest.Mock).mockImplementationOnce(() => ({ user: null }));
+    const {
+      shimAnalyticsClients: [client],
+    } = setupRenderTree();
+    expect(client.reset).toHaveBeenCalledTimes(1);
   });
 });
