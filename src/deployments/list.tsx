@@ -127,7 +127,7 @@ const DeploymentListFetchErrorWarning: React.FC = () => {
       data-testid="fetch-deployment-issue-alert"
     >
       <AlertIcon />
-      <Text>The deployment list cannot be retrieved at this time.</Text>
+      <Text>Failed to load list of deployments</Text>
     </Alert>
   );
 };

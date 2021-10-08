@@ -11,14 +11,20 @@ const TestComponent: React.FC<{ value?: string }> = ({ value }) => {
 };
 
 describe("utils/useCache", () => {
-  it("should return the freshest version when new input is provided", () => {
+  it("should save the initial input in the internal cache", () => {
     render(<TestComponent value="hello" />);
-    expect(screen.getByText("hello").innerHTML).toBe("hello");
+    expect(screen.getByText("hello")).toBeDefined();
+  });
+
+  it("should return the freshest version when new input is provided", () => {
+    const { rerender } = render(<TestComponent value="hello" />);
+    rerender(<TestComponent value="hella" />);
+    expect(screen.getByText("hella")).toBeDefined();
   });
 
   it("should return the cached value if the new input is not defined ", () => {
     const { rerender } = render(<TestComponent value="hello" />);
     rerender(<TestComponent />);
-    expect(screen.getByText("hello").innerHTML).toBe("hello");
+    expect(screen.getByText("hello")).toBeDefined();
   });
 });
