@@ -63,7 +63,7 @@
     "jest": "^27.0.5",
     "pg": "^8.7.1",
     "prettier": "^2.3.2",
-    "pyright": "^1.1.163",
+    "pyright": "^1.1.177",
     "ts-jest": "^27.0.5",
     "webpack-dev-server": "^4.2.0"
   },
