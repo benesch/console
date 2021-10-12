@@ -38,6 +38,8 @@ export function DeploymentStateBadge({
   switch (deployment.status) {
     case "OK":
       return <Badge colorScheme="green">Healthy</Badge>;
+    case "WAITING_FOR_DNS":
+      return <Badge colorScheme="yellow">Waiting for DNS</Badge>;
     case "STARTING":
       return <Badge colorScheme="yellow">Starting</Badge>;
     case "DAMAGED":
