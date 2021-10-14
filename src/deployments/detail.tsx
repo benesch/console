@@ -13,6 +13,7 @@ import {
   Checkbox,
   Heading,
   HStack,
+  Link,
   ListItem,
   Modal,
   ModalCloseButton,
@@ -36,7 +37,7 @@ import {
 } from "@chakra-ui/react";
 import download from "downloadjs";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 
 import {
   Deployment,
@@ -92,7 +93,7 @@ export function DeploymentDetailPage() {
   return (
     <BaseLayout>
       <PageBreadcrumbs>
-        <Link to="/deployments">Deployments</Link> /
+        <RouterLink to="/deployments">Deployments</RouterLink> /
       </PageBreadcrumbs>
       {deploymentView}
     </BaseLayout>
@@ -242,7 +243,12 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
                   </ListItem>
                 </UnorderedList>
               </ListItem>
-              <ListItem>Download and unzip certificates.</ListItem>
+              <ListItem>
+                <Link textDecoration="underline" onClick={handleDownloadCerts}>
+                  Download
+                </Link>{" "}
+                and unzip certificates.
+              </ListItem>
               <ListItem>
                 Open a terminal and run psql from the directory containing the
                 certificates:
