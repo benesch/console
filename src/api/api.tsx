@@ -435,6 +435,53 @@ export const useDeploymentsLogsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsTailscaleLogsRetrievePathParams {
+  id: string;
+}
+
+export type DeploymentsTailscaleLogsRetrieveProps = Omit<
+  GetProps<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>,
+  "path"
+> &
+  DeploymentsTailscaleLogsRetrievePathParams;
+
+/**
+ * Retrieve the logs for a Tailscale container.
+ */
+export const DeploymentsTailscaleLogsRetrieve = ({
+  id,
+  ...props
+}: DeploymentsTailscaleLogsRetrieveProps) => (
+  <Get<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>
+    path={`/api/deployments/${id}/tailscale_logs`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsTailscaleLogsRetrieveProps = Omit<
+  UseGetProps<
+    string,
+    unknown,
+    void,
+    DeploymentsTailscaleLogsRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsTailscaleLogsRetrievePathParams;
+
+/**
+ * Retrieve the logs for a Tailscale container.
+ */
+export const useDeploymentsTailscaleLogsRetrieve = ({
+  id,
+  ...props
+}: UseDeploymentsTailscaleLogsRetrieveProps) =>
+  useGet<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>(
+    (paramsInPath: DeploymentsTailscaleLogsRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/tailscale_logs`,
+    { pathParams: { id }, ...props }
+  );
+
 export type HealthRetrieveProps = Omit<
   GetProps<void, unknown, void, void>,
   "path"
