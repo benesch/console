@@ -393,12 +393,21 @@ export const useDeploymentsCertsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsLogsRetrieveQueryParams {
+  previous?: boolean;
+}
+
 export interface DeploymentsLogsRetrievePathParams {
   id: string;
 }
 
 export type DeploymentsLogsRetrieveProps = Omit<
-  GetProps<string, unknown, void, DeploymentsLogsRetrievePathParams>,
+  GetProps<
+    string,
+    unknown,
+    DeploymentsLogsRetrieveQueryParams,
+    DeploymentsLogsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsLogsRetrievePathParams;
@@ -410,14 +419,24 @@ export const DeploymentsLogsRetrieve = ({
   id,
   ...props
 }: DeploymentsLogsRetrieveProps) => (
-  <Get<string, unknown, void, DeploymentsLogsRetrievePathParams>
+  <Get<
+    string,
+    unknown,
+    DeploymentsLogsRetrieveQueryParams,
+    DeploymentsLogsRetrievePathParams
+  >
     path={`/api/deployments/${id}/logs`}
     {...props}
   />
 );
 
 export type UseDeploymentsLogsRetrieveProps = Omit<
-  UseGetProps<string, unknown, void, DeploymentsLogsRetrievePathParams>,
+  UseGetProps<
+    string,
+    unknown,
+    DeploymentsLogsRetrieveQueryParams,
+    DeploymentsLogsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsLogsRetrievePathParams;
@@ -429,18 +448,32 @@ export const useDeploymentsLogsRetrieve = ({
   id,
   ...props
 }: UseDeploymentsLogsRetrieveProps) =>
-  useGet<string, unknown, void, DeploymentsLogsRetrievePathParams>(
+  useGet<
+    string,
+    unknown,
+    DeploymentsLogsRetrieveQueryParams,
+    DeploymentsLogsRetrievePathParams
+  >(
     (paramsInPath: DeploymentsLogsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/logs`,
     { pathParams: { id }, ...props }
   );
+
+export interface DeploymentsTailscaleLogsRetrieveQueryParams {
+  previous?: boolean;
+}
 
 export interface DeploymentsTailscaleLogsRetrievePathParams {
   id: string;
 }
 
 export type DeploymentsTailscaleLogsRetrieveProps = Omit<
-  GetProps<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>,
+  GetProps<
+    string,
+    unknown,
+    DeploymentsTailscaleLogsRetrieveQueryParams,
+    DeploymentsTailscaleLogsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsTailscaleLogsRetrievePathParams;
@@ -452,7 +485,12 @@ export const DeploymentsTailscaleLogsRetrieve = ({
   id,
   ...props
 }: DeploymentsTailscaleLogsRetrieveProps) => (
-  <Get<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>
+  <Get<
+    string,
+    unknown,
+    DeploymentsTailscaleLogsRetrieveQueryParams,
+    DeploymentsTailscaleLogsRetrievePathParams
+  >
     path={`/api/deployments/${id}/tailscale_logs`}
     {...props}
   />
@@ -462,7 +500,7 @@ export type UseDeploymentsTailscaleLogsRetrieveProps = Omit<
   UseGetProps<
     string,
     unknown,
-    void,
+    DeploymentsTailscaleLogsRetrieveQueryParams,
     DeploymentsTailscaleLogsRetrievePathParams
   >,
   "path"
@@ -476,7 +514,12 @@ export const useDeploymentsTailscaleLogsRetrieve = ({
   id,
   ...props
 }: UseDeploymentsTailscaleLogsRetrieveProps) =>
-  useGet<string, unknown, void, DeploymentsTailscaleLogsRetrievePathParams>(
+  useGet<
+    string,
+    unknown,
+    DeploymentsTailscaleLogsRetrieveQueryParams,
+    DeploymentsTailscaleLogsRetrievePathParams
+  >(
     (paramsInPath: DeploymentsTailscaleLogsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/tailscale_logs`,
     { pathParams: { id }, ...props }
