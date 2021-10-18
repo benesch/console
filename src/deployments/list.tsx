@@ -8,6 +8,7 @@ import {
   AlertIcon,
   Box,
   Heading,
+  HStack,
   Image,
   Link,
   Spacer,
@@ -27,7 +28,10 @@ import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import cloudOutline from "../../img/cloud-outline.svg";
-import { Deployment, useDeploymentsList } from "../api/api";
+import {
+  Deployment,
+  useDeploymentsList as useDeploymentListApi,
+} from "../api/api";
 import { useAuth } from "../api/auth";
 import { SupportLink } from "../components/cta";
 import {
@@ -36,18 +40,43 @@ import {
   PageHeader,
   PageHeading,
 } from "../layouts/base";
+import { useCache } from "../utils/useCache";
 import { CreateDeploymentButton } from "./create";
 import { DeploymentStateBadge } from "./util";
 
+/** the hook managing data for the deployements list page
+ * TODO: replace caching logic with `use-swr
+ */
+export const useDeploymentsList = () => {
+  const {
+    data: deployments,
+    refetch,
+    loading,
+    error,
+  } = useDeploymentListApi({});
+
+  const deploymentsLocalCopy = useCache(deployments);
+  useInterval(refetch, 5000);
+
+  return {
+    deployments: deployments || deploymentsLocalCopy,
+    error,
+    loading,
+    refetch,
+  };
+};
+
 export function DeploymentListPage() {
   const { organization } = useAuth();
-  const { data: deployments, refetch } = useDeploymentsList({});
-  useInterval(refetch, 5000);
+  const { deployments, refetch, error } = useDeploymentsList();
 
   let deploymentsView;
   let canCreateDeployments = null;
-  if (deployments === null || organization === null) {
-    deploymentsView = <Spinner />;
+  // FIXME: add error handling and message to the user
+  // FIXME: flatten the conditional branches by extracting returned components
+
+  if (!deployments || organization === null) {
+    deploymentsView = <Spinner data-testid="loading-spinner" />;
   } else {
     canCreateDeployments = deployments.length < organization.deploymentLimit;
     if (deployments.length === 0) {
@@ -56,12 +85,14 @@ export function DeploymentListPage() {
       deploymentsView = <DeploymentTable deployments={deployments} />;
     }
   }
-
   return (
     <BaseLayout>
       <PageBreadcrumbs></PageBreadcrumbs>
       <PageHeader>
-        <PageHeading>Deployments</PageHeading>
+        <HStack spacing={4} alignItems="center" justifyContent="flex-start">
+          <PageHeading>Deployments</PageHeading>
+          {error && <DeploymentListFetchErrorWarning />}
+        </HStack>
         <Spacer />
         <CreateDeploymentButton
           refetch={refetch}
@@ -86,6 +117,20 @@ function DeploymentLimitWarning() {
     </Alert>
   );
 }
+
+const DeploymentListFetchErrorWarning: React.FC = () => {
+  return (
+    <Alert
+      status="warning"
+      p={1}
+      px={2}
+      data-testid="fetch-deployment-issue-alert"
+    >
+      <AlertIcon />
+      <Text>Failed to load list of deployments</Text>
+    </Alert>
+  );
+};
 
 function EmptyDeploymentList() {
   return (
@@ -135,8 +180,9 @@ function DeploymentTable(props: DeploymentTableProps) {
                   onClick: () => history.push(`/deployments/${d.id}`),
                 };
               }
+
               return (
-                <Tr {...trProps}>
+                <Tr {...trProps} data-testid="deployment-line">
                   <Td>
                     {/* This link is for accessibility only, so we disable its
                         link styling, as the tr already has a hover state. */}
