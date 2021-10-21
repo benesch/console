@@ -17,7 +17,6 @@ describe("Copyable", () => {
   monkeyPatchClipboard();
   afterEach(jest.resetAllMocks);
   it("should copy the inner text in the clipboard on click", () => {
-    // monkey patch a native implementation with a
     const { getByTestId } = render(
       <CopyableText data-testid="copyable">Hello World</CopyableText>
     );
@@ -27,7 +26,6 @@ describe("Copyable", () => {
   });
 
   it("should showed a visual indicator for a second after the text has been successfully copied", async () => {
-    // monkey patch a native implementation with a
     const { getByTestId, findByTestId } = render(
       <CopyableText data-testid="copyable">Hello World</CopyableText>
     );
