@@ -24,7 +24,7 @@ export const PageFooter: React.FC = () => {
       fontSize="sm"
       boxShadow="footer"
     >
-      © {getCurrentYear()} Materialize.
+      © {getCurrentYear()} Materialize, Inc.
       <Link
         href="https://materialize.com/privacy-policy"
         target="_blank"
