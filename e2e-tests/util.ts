@@ -64,14 +64,33 @@ export class TestContext {
     };
     // TODO(benesch): upgrade to Playwright's native support for this when it is
     // released.
+
     // See: https://github.com/microsoft/playwright/issues/5999
     return this.page.evaluate(
       async ({ url, request }) => {
         const response = await fetch(url, request);
+
+        // rethrowing the error here if the response is not ok.
+        // we also try to attach useful req/res info to the error.
+        // this should be extracted to a helper function, but the evaluate method cannot access a variable out of scope.
+        let responsePayload = undefined;
+        try {
+          responsePayload = await response.text();
+        } finally {
+          if (!response.ok)
+            // eslint-disable-next-line no-unsafe-finally
+            throw new Error(
+              `API Error ${response.status}  ${url}, req: ${
+                request.body ?? "No request body"
+              }, res: ${responsePayload ?? "No response body"}`
+            );
+        }
+
         if (response.status === 204) {
           return null;
         } else {
-          return await response.json();
+          // we already consume the body as text, so we need to parse manually
+          return JSON.parse(responsePayload);
         }
       },
       { url: `${CONSOLE_ADDR}/api${url}`, request }

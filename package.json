@@ -72,7 +72,7 @@
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
     "build": "cd frontend && NODE_ENV=production webpack",
     "test:unit": "cd frontend && jest",
-    "test:e2e": "cd e2e-tests && playwright test",
+    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",
