@@ -17,4 +17,5 @@ export const validDeployment: Deployment = {
   mzVersion: "1.0.0",
   pendingMigration: null,
   status: "pending",
+  region: "us-east-1",
 };
