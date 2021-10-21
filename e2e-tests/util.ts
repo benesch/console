@@ -32,12 +32,20 @@ export class TestContext {
 
   /** Start a new test. */
   static async start(page: Page) {
+    const refreshTokenUrl = "**/identity/resources/auth/v1/user/token/refresh";
     // Squirrel away the access token for later.
     const [response] = await Promise.all([
-      page.waitForResponse("**/identity/resources/auth/v1/user/token/refresh"),
+      page.waitForResponse(refreshTokenUrl),
       page.goto(CONSOLE_ADDR),
     ]);
-    const accessToken = (await response.json())["accessToken"];
+    const text = await response.text();
+    let accessToken;
+    try {
+      accessToken = JSON.parse(text)["accessToken"];
+    } catch (e: SyntaxError) {
+      console.error(`Invalid json from ${refreshTokenUrl}:\n${text}`);
+      throw e;
+    }
     const context = new TestContext(page, accessToken);
 
     // Update the refresh token for future tests.
