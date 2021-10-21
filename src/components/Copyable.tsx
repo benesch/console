@@ -1,0 +1,67 @@
+/**
+ * This component offers a convenient interface to text that can be copied.
+ * It does not enforce any formatting and exposes styling props via the `@chakra-ui`'s text interface.
+ */
+
+import { Button } from "@chakra-ui/button";
+import { CheckIcon, CopyIcon, IconProps } from "@chakra-ui/icons";
+import { HStack, Text, TextProps } from "@chakra-ui/layout";
+import React from "react";
+
+/** A hook that manage the copy mechanism and the icon state */
+export const useCopyableText = (text: string) => {
+  const [copied, setCopied] = React.useState(false);
+
+  /** After 1s, we revert to the default state */
+  const setCopiedState = React.useCallback(() => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+  }, [setCopied]);
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopiedState();
+  };
+
+  const shouldDisplayIcon = text !== "";
+
+  return {
+    onCopy,
+    copied,
+    shouldDisplayIcon,
+  };
+};
+
+export const CopyStateIcon: React.FC<{ copied: boolean } & IconProps> = ({
+  copied,
+}) => {
+  if (copied)
+    return (
+      <CheckIcon
+        data-testid="copyable-checkicon"
+        aria-label="Text has been copied"
+      />
+    );
+  return <CopyIcon data-testid="copyable-copyicon" aria-label="Copy text" />;
+};
+
+/** A component that enable the children text to be copied */
+export const CopyableText: React.FC<TextProps & { children: string }> = (
+  props
+) => {
+  const content = props.children ?? "";
+  const { onCopy, copied, shouldDisplayIcon } = useCopyableText(content);
+  return (
+    <Button
+      variant="link"
+      onClick={onCopy}
+      fontWeight="normal"
+      textColor="normal"
+    >
+      <HStack>
+        <Text color="inherit" {...props}></Text>
+        {shouldDisplayIcon && <CopyStateIcon copied={copied} />}
+      </HStack>
+    </Button>
+  );
+};

@@ -54,6 +54,7 @@ import {
   CardHeader,
 } from "../components/card";
 import { CodeBlock } from "../components/codeblock";
+import { CopyableText } from "../components/Copyable";
 import {
   BaseLayout,
   PageBreadcrumbs,
@@ -332,7 +333,9 @@ function DeploymentDetailCard({ deployment }: DeploymentDetailCardProps) {
           <CardField name="Status">
             <DeploymentStateBadge deployment={deployment} />
           </CardField>
-          <CardField name="Hostname">{deployment.hostname}</CardField>
+          <CardField name="Hostname">
+            <CopyableText>{deployment.hostname ?? ""}</CopyableText>
+          </CardField>
           <CardField name="Version">{deployment.mzVersion}</CardField>
           <CardField name="Size">{deployment.size}</CardField>
           <CardField name="Cloud provider">AWS</CardField>
