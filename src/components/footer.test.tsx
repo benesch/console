@@ -18,7 +18,7 @@ describe("components/footer", () => {
   describe("PageFooter", () => {
     it("should display the current year", () => {
       render(<PageFooter />);
-      expect(screen.getByText("© 2020 Materialize")).toBeDefined();
+      expect(screen.getByText("© 2020 Materialize, Inc.")).toBeDefined();
     });
     it("should display a link to the jira status page", () => {
       render(<PageFooter />);

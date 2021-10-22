@@ -18,19 +18,32 @@ export const PageFooter: React.FC = () => {
     <Box
       bg="white"
       color="gray.500"
-      textAlign="center"
+      textAlign="right"
       py="3"
       fontWeight="400"
       fontSize="sm"
       boxShadow="footer"
-      display="relative"
     >
-      © {getCurrentYear()} Materialize
+      © {getCurrentYear()} Materialize, Inc.
+      <Link
+        href="https://materialize.com/privacy-policy"
+        target="_blank"
+        pl="1.5em"
+      >
+        Privacy Policy
+      </Link>
+      <Link
+        href="https://materialize.com/terms-and-conditions"
+        target="_blank"
+        pl="1.5em"
+      >
+        Terms &amp; Conditions
+      </Link>
       <Link
         href="https://status.materialize.com/"
         target="_blank"
-        position="absolute"
-        right={4}
+        pl="1.5em"
+        pr="1.5em"
       >
         System Status
       </Link>
