@@ -4,14 +4,20 @@
  */
 
 import {
+  ExternalLinkIcon,
   HStack,
   Link,
   ListItem,
   OrderedList,
+  Table,
   TabPanel,
   TabPanels,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Tr,
   UnorderedList,
-  Table, Th, Td, Text, Tbody, Tr,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -72,8 +78,9 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
                 <CodeBlock
                   contents={`psql "postgresql://${encodeURIComponent(
                     user.email
-                  )}@${deployment.hostname}:${deployment.port
-                    }/materialize?sslmode=verify-full&sslrootcert=/etc/ssl/certs/ca-certificates.crt"`}
+                  )}@${deployment.hostname}:${
+                    deployment.port
+                  }/materialize?sslmode=verify-full&sslrootcert=/etc/ssl/certs/ca-certificates.crt"`}
                 ></CodeBlock>
               </ListItem>
               <ListItem>

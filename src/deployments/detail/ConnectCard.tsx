@@ -5,15 +5,21 @@
 
 import {
   Button,
+  ExternalLinkIcon,
   HStack,
   Link,
   ListItem,
   OrderedList,
   Spacer,
+  Table,
   TabPanel,
   TabPanels,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Tr,
   UnorderedList,
-  Table, Th, Td, Text, Tbody, Tr,
 } from "@chakra-ui/react";
 import download from "downloadjs";
 import React from "react";
