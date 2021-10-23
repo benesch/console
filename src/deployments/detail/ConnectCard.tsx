@@ -13,6 +13,7 @@ import {
   TabPanel,
   TabPanels,
   UnorderedList,
+  Table, Th, Td, Text, Tbody, Tr,
 } from "@chakra-ui/react";
 import download from "downloadjs";
 import React from "react";
@@ -122,7 +123,96 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
             </OrderedList>
           </TabPanel>
           <TabPanel>
-            <p>Metabase connection instructions coming soon.</p>
+            <Text pb="10px">
+              To connect to this deployment using a{" "}
+              <Link href="https://www.metabase.com/">Metabase</Link> client:
+            </Text>
+            <OrderedList ml="6" spacing="3">
+              <ListItem>
+                <Text>
+                  Ensure Metabase runs on your local machine or on a machine you
+                  control. This is necessary to support the certificate-based
+                  authentication used by Materialize Cloud.
+                </Text>
+                <Text>
+                  Follow the{" "}
+                  <Link
+                    href="https://www.metabase.com/docs/latest/operations-guide/installing-metabase.html"
+                    textDecoration="underline"
+                    isExternal
+                  >
+                    official installation instructions
+                  </Link>{" "}
+                  <ExternalLinkIcon /> to get Metabase set up.
+                </Text>
+              </ListItem>
+              <ListItem>
+                Click{" "}
+                <Link onClick={handleDownloadCerts} textDecoration="underline">
+                  Download certificates
+                </Link>
+                , below.
+              </ListItem>
+              <ListItem>
+                Unzip the certificate ZIP file and ensure the directory is
+                reachable by Metabase. Here we assume they got unpacked to{" "}
+                <Text as="kbd">$PATH</Text>.
+              </ListItem>
+              <ListItem>
+                In Metabase, create a new database with the following settings:
+                <Table>
+                  <Tbody>
+                    <Tr>
+                      <Th>Datatbase Type</Th>
+                      <Td>PostgreSQL</Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Host</Th>
+                      <Td>
+                        <Text as="kbd">{deployment.hostname}</Text>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Port</Th>
+                      <Td>
+                        <Text as="kbd">6875</Text>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Database Name</Th>
+                      <Td>
+                        <Text as="kbd">materialize</Text>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Username</Th>
+                      <Td>
+                        <Text as="kbd">materialize</Text>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Password</Th>
+                      <Td>(leave empty)</Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Use a secure connection (SSL)</Th>
+                      <Td>(checked)</Td>
+                    </Tr>
+                    <Tr>
+                      <Th>Additional JDBC connection string options</Th>
+                      <Td>
+                        <CodeBlock
+                          wordBreak="break-all"
+                          contents={`sslcert=$PATH/materialize.crt&sslkey=$PATH/materialize.der.key&sslrootcert=$PATH/ca.crt&sslmode=verify-full`}
+                        />
+                        replacing <Text as="kbd">$PATH</Text> with the location
+                        where Metabase can reach your certificates.
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </ListItem>
+            </OrderedList>
           </TabPanel>
         </TabPanels>
       </CardTabs>
