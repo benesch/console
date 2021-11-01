@@ -28,6 +28,7 @@ export interface Deployment {
   mzVersion: string;
   pendingMigration: PendingMigration | null;
   status: string;
+  enableTailscale: boolean;
 }
 
 export interface DeploymentRequest {

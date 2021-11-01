@@ -11,6 +11,7 @@ export const validDeployment: Deployment = {
   size: "S",
   storageMb: 1000,
   disableUserIndexes: false,
+  enableTailscale: false,
   materializedExtraArgs: [],
   clusterId: "cluster",
   mzVersion: "1.0.0",
