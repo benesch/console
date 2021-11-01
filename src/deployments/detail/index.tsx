@@ -44,27 +44,28 @@ import {
   useDeploymentsLogsRetrieve,
   useDeploymentsRetrieve,
   useMzVersionsLatestRetrieve,
-} from "../api/api";
-import { useAuth } from "../api/auth";
+} from "../../api/api";
+import { useAuth } from "../../api/auth";
 import {
   Card,
   CardContent,
   CardField,
   CardFooter,
   CardHeader,
-} from "../components/card";
-import { CodeBlock } from "../components/codeblock";
-import { CopyableText } from "../components/Copyable";
+} from "../../components/card";
+import { CodeBlock } from "../../components/codeblock";
+import { CopyableText } from "../../components/Copyable";
 import {
   BaseLayout,
   PageBreadcrumbs,
   PageHeader,
   PageHeading,
-} from "../layouts/base";
-import { DestroyDeploymentButton } from "./destroy";
-import { UpdateDeploymentButton } from "./update";
-import { UpgradeDeploymentButton } from "./upgrade";
-import { DeploymentStateBadge } from "./util";
+} from "../../layouts/base";
+import { DestroyDeploymentButton } from "../destroy";
+import { UpdateDeploymentButton } from "../update";
+import { UpgradeDeploymentButton } from "../upgrade";
+import { DeploymentStateBadge } from "../util";
+import { DeploymentMetricsCard } from "./metrics";
 
 export function DeploymentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -157,6 +158,7 @@ function DeploymentDetail({
           )}
           <DeploymentConnectCard deployment={deployment} />
           <DeploymentIntegrationsCard deployment={deployment} />
+          <DeploymentMetricsCard deployment={deployment} />
         </VStack>
         <VStack width="400px">
           <DeploymentDetailCard deployment={deployment} />

@@ -459,6 +459,48 @@ export const useDeploymentsLogsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsMetricsRetrievePathParams {
+  id: string;
+}
+
+export type DeploymentsMetricsRetrieveProps = Omit<
+  GetProps<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>,
+  "path"
+> &
+  DeploymentsMetricsRetrievePathParams;
+
+/**
+ * Retrieve metrics for a deployment.
+ */
+export const DeploymentsMetricsRetrieve = ({
+  id,
+  ...props
+}: DeploymentsMetricsRetrieveProps) => (
+  <Get<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>
+    path={`/api/deployments/${id}/metrics`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsMetricsRetrieveProps = Omit<
+  UseGetProps<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>,
+  "path"
+> &
+  DeploymentsMetricsRetrievePathParams;
+
+/**
+ * Retrieve metrics for a deployment.
+ */
+export const useDeploymentsMetricsRetrieve = ({
+  id,
+  ...props
+}: UseDeploymentsMetricsRetrieveProps) =>
+  useGet<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>(
+    (paramsInPath: DeploymentsMetricsRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/metrics`,
+    { pathParams: { id }, ...props }
+  );
+
 export interface DeploymentsTailscaleLogsRetrieveQueryParams {
   previous?: boolean;
 }
