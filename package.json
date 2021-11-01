@@ -8,7 +8,7 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/inter": "^4.5.0",
-    "@frontegg/react": "^3.0.12",
+    "@frontegg/react": "^3.0.17",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
