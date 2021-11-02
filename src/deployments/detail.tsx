@@ -257,13 +257,26 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
                   contents={`psql "postgresql://materialize@${deployment.hostname}:6875/materialize?sslmode=require&sslcert=materialize.crt&sslkey=materialize.key&sslrootcert=ca.crt"`}
                 ></CodeBlock>
               </ListItem>
+              <ListItem>
+                If this is your first time using Materialize, check out{" "}
+                <Link
+                  href="https://materialize.com/docs/cloud/get-started-with-cloud/"
+                  textDecoration="underline"
+                >
+                  our getting started guide
+                </Link>
+                !
+              </ListItem>
             </OrderedList>
           </TabPanel>
           <TabPanel>
             <OrderedList ml="6" spacing="3">
               <ListItem>
-                Download and unzip certificates in a location that is accessible
-                to your Prometheus deployment.
+                <Link textDecoration="underline" onClick={handleDownloadCerts}>
+                  Download
+                </Link>{" "}
+                and unzip certificates in a location that is accessible to your
+                Prometheus deployment.
               </ListItem>
               <ListItem>
                 Add the following configuration to <code>prometheus.yml</code>:
