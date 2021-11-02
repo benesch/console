@@ -1,16 +1,22 @@
 import { Alert, AlertIcon } from "@chakra-ui/alert";
 import { useInterval } from "@chakra-ui/hooks";
-import { Spacer, Text, VStack } from "@chakra-ui/layout";
+import { HStack, Spacer, Text, VStack } from "@chakra-ui/layout";
+import { Select } from "@chakra-ui/select";
 import { useTheme } from "@chakra-ui/system";
-import React from "react";
+import React, { useEffect } from "react";
 import {
+  VictoryAxis,
   VictoryChart,
   VictoryLine,
   VictoryTheme,
   VictoryVoronoiContainer,
 } from "victory";
 
-import { Deployment, useDeploymentsMetricsRetrieve } from "../../api/api";
+import {
+  Deployment,
+  PrometheusMetric,
+  useDeploymentsMetricsMemoryRetrieve,
+} from "../../api/api";
 import {
   Card,
   CardContent,
@@ -20,24 +26,30 @@ import {
 import { timestampToReadableTime } from "../../utils/transformers";
 import { DeploymentLogsButton } from "./deploymentLogsButton";
 
-export interface Metric {
-  name: string;
-  values: [string, number][];
-}
-
 /** formatting data to be readable for display on bi-directional graph */
-export const metricToVictoryCoordinates = (values: Metric["values"]) => {
+export const metricToVictoryCoordinates = (
+  values: PrometheusMetric["values"]
+) => {
   return values.map(([timestamp, value]) => {
-    return { x: timestampToReadableTime(timestamp), y: value / 1_000_000 };
+    return {
+      x: timestampToReadableTime(parseFloat(timestamp)),
+      y: parseFloat(value) / 1_000_000,
+    };
   });
 };
 
 export const useDeploymentMetric = (id: string) => {
-  const operation = useDeploymentsMetricsRetrieve({ id });
+  const [period, setPeriod] = React.useState<number>(5);
+  const operation = useDeploymentsMetricsMemoryRetrieve({ id, period });
   useInterval(operation.refetch, 5000);
+
+  useEffect(() => {
+    operation.refetch();
+  }, [period]);
+
   return {
-    ...operation,
-    data: operation.data as unknown as Metric[] | undefined,
+    operation,
+    setPeriod,
   };
 };
 
@@ -55,10 +67,28 @@ export const DeploymentMetricsRetrieveError = () => {
   );
 };
 
+export const MetricPeriodSelector = (props: {
+  onSelect: (period: number) => void;
+}) => (
+  <HStack>
+    <Text>last&nbsp;</Text>
+    <Select onChange={(e) => props.onSelect(parseInt(e.target.value))}>
+      <option value={5}>5 minutes</option>
+      <option value={15}>15 minutes</option>
+      <option value={30}>30 minutes</option>
+      <option value={60}>hour</option>
+      <option value={60}>2 hours</option>
+    </Select>
+  </HStack>
+);
+
 export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
-  const { data: graphs, error } = useDeploymentMetric(deployment.id);
+  const {
+    setPeriod,
+    operation: { data, error },
+  } = useDeploymentMetric(deployment.id);
   const chakraTheme = useTheme();
   return (
     <Card>
@@ -66,9 +96,9 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
       <CardContent>
         <VStack spacing="3" align="left">
           {error && <DeploymentMetricsRetrieveError />}
-          {graphs && (
+          <MetricPeriodSelector onSelect={(period) => setPeriod(period)} />
+          {data && (
             <VictoryChart
-              theme={VictoryTheme.material}
               height={200}
               padding={{ top: 50, bottom: 50, left: 50, right: 50 }}
               containerComponent={
@@ -79,13 +109,19 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
                 />
               }
             >
-              {(graphs ?? []).map((graph) => (
-                <VictoryLine
-                  style={{
-                    data: { stroke: chakraTheme.colors.blue[400] },
-                  }}
-                  data={metricToVictoryCoordinates(graph.values)}
-                />
+              {(data.metrics ?? []).map((metric) => (
+                <>
+                  <VictoryLine
+                    style={{
+                      data: { stroke: chakraTheme.colors.blue[400] },
+                    }}
+                    data={metricToVictoryCoordinates(metric.values)}
+                  />
+                  {/* <VictoryAxis
+                    tickValues={metric.values.map(([timestamp]) => timestamp)}
+                    tickFormat={(t: any) => `${Math.round(t)}k`}
+                  /> */}
+                </>
               ))}
             </VictoryChart>
           )}

@@ -82,6 +82,18 @@ export interface PendingMigrationRequest {
   deadline: string;
 }
 
+export interface PrometheusMetric {
+  name: string;
+  values: string[][];
+}
+
+/**
+ * Serializer for the prometheus metrics.
+ */
+export interface PrometheusMetrics {
+  metrics: PrometheusMetric[];
+}
+
 export type DeploymentsListProps = Omit<
   GetProps<Deployment[], unknown, void, void>,
   "path"
@@ -459,46 +471,69 @@ export const useDeploymentsLogsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
-export interface DeploymentsMetricsRetrievePathParams {
+export interface DeploymentsMetricsMemoryRetrievePathParams {
   id: string;
+  period: number;
 }
 
-export type DeploymentsMetricsRetrieveProps = Omit<
-  GetProps<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>,
+export type DeploymentsMetricsMemoryRetrieveProps = Omit<
+  GetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >,
   "path"
 > &
-  DeploymentsMetricsRetrievePathParams;
+  DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
  * Retrieve metrics for a deployment.
  */
-export const DeploymentsMetricsRetrieve = ({
+export const DeploymentsMetricsMemoryRetrieve = ({
   id,
+  period,
   ...props
-}: DeploymentsMetricsRetrieveProps) => (
-  <Get<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>
-    path={`/api/deployments/${id}/metrics`}
+}: DeploymentsMetricsMemoryRetrieveProps) => (
+  <Get<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >
+    path={`/api/deployments/${id}/metrics/memory/${period}`}
     {...props}
   />
 );
 
-export type UseDeploymentsMetricsRetrieveProps = Omit<
-  UseGetProps<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>,
+export type UseDeploymentsMetricsMemoryRetrieveProps = Omit<
+  UseGetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >,
   "path"
 > &
-  DeploymentsMetricsRetrievePathParams;
+  DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
  * Retrieve metrics for a deployment.
  */
-export const useDeploymentsMetricsRetrieve = ({
+export const useDeploymentsMetricsMemoryRetrieve = ({
   id,
+  period,
   ...props
-}: UseDeploymentsMetricsRetrieveProps) =>
-  useGet<Deployment, unknown, void, DeploymentsMetricsRetrievePathParams>(
-    (paramsInPath: DeploymentsMetricsRetrievePathParams) =>
-      `/api/deployments/${paramsInPath.id}/metrics`,
-    { pathParams: { id }, ...props }
+}: UseDeploymentsMetricsMemoryRetrieveProps) =>
+  useGet<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >(
+    (paramsInPath: DeploymentsMetricsMemoryRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/metrics/memory/${paramsInPath.period}`,
+    { pathParams: { id, period }, ...props }
   );
 
 export interface DeploymentsTailscaleLogsRetrieveQueryParams {
