@@ -29,6 +29,7 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
+  cloudProviderRegion: number | null;
 }
 
 export interface DeploymentRequest {
@@ -140,12 +141,22 @@ export const useDeploymentsCreate = (props: UseDeploymentsCreateProps) =>
     props
   );
 
+export interface DeploymentsRetrieveQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
+}
+
 export interface DeploymentsRetrievePathParams {
   id: string;
 }
 
 export type DeploymentsRetrieveProps = Omit<
-  GetProps<Deployment, unknown, void, DeploymentsRetrievePathParams>,
+  GetProps<
+    Deployment,
+    unknown,
+    DeploymentsRetrieveQueryParams,
+    DeploymentsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsRetrievePathParams;
@@ -157,14 +168,24 @@ export const DeploymentsRetrieve = ({
   id,
   ...props
 }: DeploymentsRetrieveProps) => (
-  <Get<Deployment, unknown, void, DeploymentsRetrievePathParams>
+  <Get<
+    Deployment,
+    unknown,
+    DeploymentsRetrieveQueryParams,
+    DeploymentsRetrievePathParams
+  >
     path={`/api/deployments/${id}`}
     {...props}
   />
 );
 
 export type UseDeploymentsRetrieveProps = Omit<
-  UseGetProps<Deployment, unknown, void, DeploymentsRetrievePathParams>,
+  UseGetProps<
+    Deployment,
+    unknown,
+    DeploymentsRetrieveQueryParams,
+    DeploymentsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsRetrievePathParams;
@@ -176,11 +197,21 @@ export const useDeploymentsRetrieve = ({
   id,
   ...props
 }: UseDeploymentsRetrieveProps) =>
-  useGet<Deployment, unknown, void, DeploymentsRetrievePathParams>(
+  useGet<
+    Deployment,
+    unknown,
+    DeploymentsRetrieveQueryParams,
+    DeploymentsRetrievePathParams
+  >(
     (paramsInPath: DeploymentsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}`,
     { pathParams: { id }, ...props }
   );
+
+export interface DeploymentsUpdateQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
+}
 
 export interface DeploymentsUpdatePathParams {
   id: string;
@@ -190,7 +221,7 @@ export type DeploymentsUpdateProps = Omit<
   MutateProps<
     Deployment,
     unknown,
-    void,
+    DeploymentsUpdateQueryParams,
     DeploymentRequest,
     DeploymentsUpdatePathParams
   >,
@@ -205,7 +236,7 @@ export const DeploymentsUpdate = ({ id, ...props }: DeploymentsUpdateProps) => (
   <Mutate<
     Deployment,
     unknown,
-    void,
+    DeploymentsUpdateQueryParams,
     DeploymentRequest,
     DeploymentsUpdatePathParams
   >
@@ -219,7 +250,7 @@ export type UseDeploymentsUpdateProps = Omit<
   UseMutateProps<
     Deployment,
     unknown,
-    void,
+    DeploymentsUpdateQueryParams,
     DeploymentRequest,
     DeploymentsUpdatePathParams
   >,
@@ -237,7 +268,7 @@ export const useDeploymentsUpdate = ({
   useMutate<
     Deployment,
     unknown,
-    void,
+    DeploymentsUpdateQueryParams,
     DeploymentRequest,
     DeploymentsUpdatePathParams
   >(
@@ -247,6 +278,11 @@ export const useDeploymentsUpdate = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsPartialUpdateQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
+}
+
 export interface DeploymentsPartialUpdatePathParams {
   id: string;
 }
@@ -255,7 +291,7 @@ export type DeploymentsPartialUpdateProps = Omit<
   MutateProps<
     Deployment,
     unknown,
-    void,
+    DeploymentsPartialUpdateQueryParams,
     PatchedDeploymentRequest,
     DeploymentsPartialUpdatePathParams
   >,
@@ -273,7 +309,7 @@ export const DeploymentsPartialUpdate = ({
   <Mutate<
     Deployment,
     unknown,
-    void,
+    DeploymentsPartialUpdateQueryParams,
     PatchedDeploymentRequest,
     DeploymentsPartialUpdatePathParams
   >
@@ -287,7 +323,7 @@ export type UseDeploymentsPartialUpdateProps = Omit<
   UseMutateProps<
     Deployment,
     unknown,
-    void,
+    DeploymentsPartialUpdateQueryParams,
     PatchedDeploymentRequest,
     DeploymentsPartialUpdatePathParams
   >,
@@ -305,7 +341,7 @@ export const useDeploymentsPartialUpdate = ({
   useMutate<
     Deployment,
     unknown,
-    void,
+    DeploymentsPartialUpdateQueryParams,
     PatchedDeploymentRequest,
     DeploymentsPartialUpdatePathParams
   >(
@@ -315,8 +351,13 @@ export const useDeploymentsPartialUpdate = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsDestroyQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
+}
+
 export type DeploymentsDestroyProps = Omit<
-  MutateProps<void, unknown, void, string, void>,
+  MutateProps<void, unknown, DeploymentsDestroyQueryParams, string, void>,
   "path" | "verb"
 >;
 
@@ -324,7 +365,7 @@ export type DeploymentsDestroyProps = Omit<
  * Destroy a deployment.
  */
 export const DeploymentsDestroy = (props: DeploymentsDestroyProps) => (
-  <Mutate<void, unknown, void, string, void>
+  <Mutate<void, unknown, DeploymentsDestroyQueryParams, string, void>
     verb="DELETE"
     path={`/api/deployments`}
     {...props}
@@ -332,7 +373,7 @@ export const DeploymentsDestroy = (props: DeploymentsDestroyProps) => (
 );
 
 export type UseDeploymentsDestroyProps = Omit<
-  UseMutateProps<void, unknown, void, string, void>,
+  UseMutateProps<void, unknown, DeploymentsDestroyQueryParams, string, void>,
   "path" | "verb"
 >;
 
@@ -340,16 +381,28 @@ export type UseDeploymentsDestroyProps = Omit<
  * Destroy a deployment.
  */
 export const useDeploymentsDestroy = (props: UseDeploymentsDestroyProps) =>
-  useMutate<void, unknown, void, string, void>("DELETE", `/api/deployments`, {
-    ...props,
-  });
+  useMutate<void, unknown, DeploymentsDestroyQueryParams, string, void>(
+    "DELETE",
+    `/api/deployments`,
+    { ...props }
+  );
+
+export interface DeploymentsCertsRetrieveQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
+}
 
 export interface DeploymentsCertsRetrievePathParams {
   id: string;
 }
 
 export type DeploymentsCertsRetrieveProps = Omit<
-  GetProps<string, unknown, void, DeploymentsCertsRetrievePathParams>,
+  GetProps<
+    string,
+    unknown,
+    DeploymentsCertsRetrieveQueryParams,
+    DeploymentsCertsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsCertsRetrievePathParams;
@@ -365,14 +418,24 @@ export const DeploymentsCertsRetrieve = ({
   id,
   ...props
 }: DeploymentsCertsRetrieveProps) => (
-  <Get<string, unknown, void, DeploymentsCertsRetrievePathParams>
+  <Get<
+    string,
+    unknown,
+    DeploymentsCertsRetrieveQueryParams,
+    DeploymentsCertsRetrievePathParams
+  >
     path={`/api/deployments/${id}/certs`}
     {...props}
   />
 );
 
 export type UseDeploymentsCertsRetrieveProps = Omit<
-  UseGetProps<string, unknown, void, DeploymentsCertsRetrievePathParams>,
+  UseGetProps<
+    string,
+    unknown,
+    DeploymentsCertsRetrieveQueryParams,
+    DeploymentsCertsRetrievePathParams
+  >,
   "path"
 > &
   DeploymentsCertsRetrievePathParams;
@@ -388,13 +451,20 @@ export const useDeploymentsCertsRetrieve = ({
   id,
   ...props
 }: UseDeploymentsCertsRetrieveProps) =>
-  useGet<string, unknown, void, DeploymentsCertsRetrievePathParams>(
+  useGet<
+    string,
+    unknown,
+    DeploymentsCertsRetrieveQueryParams,
+    DeploymentsCertsRetrievePathParams
+  >(
     (paramsInPath: DeploymentsCertsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/certs`,
     { pathParams: { id }, ...props }
   );
 
 export interface DeploymentsLogsRetrieveQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
   previous?: boolean;
 }
 
@@ -461,6 +531,8 @@ export const useDeploymentsLogsRetrieve = ({
   );
 
 export interface DeploymentsTailscaleLogsRetrieveQueryParams {
+  cloud_provider?: string;
+  cloud_provider_region?: string;
   previous?: boolean;
 }
 
