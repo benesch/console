@@ -3,9 +3,9 @@ import { useInterval } from "@chakra-ui/hooks";
 import { HStack, Spacer, Text, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import { useTheme } from "@chakra-ui/system";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import React, { useEffect } from "react";
 import {
-  VictoryAxis,
   VictoryChart,
   VictoryLine,
   VictoryTheme,
@@ -17,12 +17,7 @@ import {
   PrometheusMetric,
   useDeploymentsMetricsMemoryRetrieve,
 } from "../../api/api";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "../../components/card";
+import { Card, CardFooter, CardHeader } from "../../components/card";
 import { timestampToReadableTime } from "../../utils/transformers";
 import { DeploymentLogsButton } from "./deploymentLogsButton";
 
@@ -82,7 +77,7 @@ export const MetricPeriodSelector = (props: {
   </HStack>
 );
 
-export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
+export const MemoryMetrics: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
   const {
@@ -90,43 +85,63 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
     operation: { data, error },
   } = useDeploymentMetric(deployment.id);
   const chakraTheme = useTheme();
+
+  console.log(data, error);
   return (
-    <Card>
-      <CardHeader>Metrics</CardHeader>
-      <CardContent>
-        <VStack spacing="3" align="left">
-          {error && <DeploymentMetricsRetrieveError />}
-          <MetricPeriodSelector onSelect={(period) => setPeriod(period)} />
-          {data && (
-            <VictoryChart
-              height={200}
-              padding={{ top: 50, bottom: 50, left: 50, right: 50 }}
-              containerComponent={
-                <VictoryVoronoiContainer
-                  labels={({ datum }: { datum: { x: string; y: number } }) =>
-                    `${datum.x}, ${datum.y}`
-                  }
-                />
+    <VStack spacing="3" align="left">
+      {error && <DeploymentMetricsRetrieveError />}
+      <MetricPeriodSelector onSelect={(period) => setPeriod(period)} />
+      {data && (
+        <VictoryChart
+          height={200}
+          padding={{ top: 50, bottom: 50, left: 50, right: 50 }}
+          theme={VictoryTheme.grayscale}
+          containerComponent={
+            <VictoryVoronoiContainer
+              labels={({ datum }: { datum: { x: string; y: number } }) =>
+                `${datum.x}, ${datum.y}`
               }
-            >
-              {(data.metrics ?? []).map((metric) => (
-                <>
-                  <VictoryLine
-                    style={{
-                      data: { stroke: chakraTheme.colors.blue[400] },
-                    }}
-                    data={metricToVictoryCoordinates(metric.values)}
-                  />
-                  {/* <VictoryAxis
+            />
+          }
+        >
+          {(data.metrics ?? []).map((metric) => (
+            <>
+              <VictoryLine
+                style={{
+                  data: { stroke: chakraTheme.colors.blue[400] },
+                }}
+                data={metricToVictoryCoordinates(metric.values)}
+              />
+              {/* <VictoryAxis
                     tickValues={metric.values.map(([timestamp]) => timestamp)}
                     tickFormat={(t: any) => `${Math.round(t)}k`}
                   /> */}
-                </>
-              ))}
-            </VictoryChart>
-          )}
-        </VStack>
-      </CardContent>
+            </>
+          ))}
+        </VictoryChart>
+      )}
+    </VStack>
+  );
+};
+
+export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
+  deployment,
+}) => {
+  return (
+    <Card>
+      <CardHeader>Integrations</CardHeader>
+      <Tabs colorScheme="purple">
+        <TabList px="4">
+          <Tab>Memory</Tab>
+          <Tab>vCPU</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <MemoryMetrics deployment={deployment} />
+          </TabPanel>
+          <TabPanel>Datadog integration coming soon.</TabPanel>
+        </TabPanels>
+      </Tabs>
       <CardFooter>
         <Spacer />
         <DeploymentLogsButton deployment={deployment} size="sm" />
