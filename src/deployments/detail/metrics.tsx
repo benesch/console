@@ -1,6 +1,14 @@
 import { Alert, AlertIcon } from "@chakra-ui/alert";
+import { useInterval } from "@chakra-ui/hooks";
 import { Spacer, Text, VStack } from "@chakra-ui/layout";
+import { useTheme } from "@chakra-ui/system";
 import React from "react";
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryTheme,
+  VictoryVoronoiContainer,
+} from "victory";
 
 import { Deployment, useDeploymentsMetricsRetrieve } from "../../api/api";
 import {
@@ -9,31 +17,29 @@ import {
   CardFooter,
   CardHeader,
 } from "../../components/card";
+import { timestampToReadableTime } from "../../utils/transformers";
+import { DeploymentLogsButton } from "./deploymentLogsButton";
+
+export interface Metric {
+  name: string;
+  values: [string, number][];
+}
+
+/** formatting data to be readable for display on bi-directional graph */
+export const metricToVictoryCoordinates = (values: Metric["values"]) => {
+  return values.map(([timestamp, value]) => {
+    return { x: timestampToReadableTime(timestamp), y: value / 1_000_000 };
+  });
+};
 
 export const useDeploymentMetric = (id: string) => {
   const operation = useDeploymentsMetricsRetrieve({ id });
-  return operation;
+  useInterval(operation.refetch, 5000);
+  return {
+    ...operation,
+    data: operation.data as unknown as Metric[] | undefined,
+  };
 };
-
-/*
-<VictoryChart
-          theme={VictoryTheme.material}
-          height={200}
-          padding={{ top: 10, left: 40, right: 15, bottom: 40 }}
-        >
-          {data.data.result.map((result) => (
-            <VictoryLine
-              style={{
-                data: { stroke: chakraTheme.colors.blue[400] },
-              }}
-              data={result.values.map((value) => ({
-                x: Number(value[0]),
-                y: Number(value[1]),
-              }))}
-            />
-          ))}
-        </VictoryChart>
-*/
 
 export const DeploymentMetricsRetrieveError = () => {
   return (
@@ -52,22 +58,42 @@ export const DeploymentMetricsRetrieveError = () => {
 export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
-  const { loading, data, error } = useDeploymentMetric(deployment.id);
-  console.log(loading, data);
-  if (loading) return <div>Loading...</div>;
-
+  const { data: graphs, error } = useDeploymentMetric(deployment.id);
+  const chakraTheme = useTheme();
   return (
     <Card>
       <CardHeader>Metrics</CardHeader>
       <CardContent>
         <VStack spacing="3" align="left">
           {error && <DeploymentMetricsRetrieveError />}
-          <pre>{JSON.stringify(data ?? {}, null, 2)}</pre>;
+          {graphs && (
+            <VictoryChart
+              theme={VictoryTheme.material}
+              height={200}
+              padding={{ top: 50, bottom: 50, left: 50, right: 50 }}
+              containerComponent={
+                <VictoryVoronoiContainer
+                  labels={({ datum }: { datum: { x: string; y: number } }) =>
+                    `${datum.x}, ${datum.y}`
+                  }
+                />
+              }
+            >
+              {(graphs ?? []).map((graph) => (
+                <VictoryLine
+                  style={{
+                    data: { stroke: chakraTheme.colors.blue[400] },
+                  }}
+                  data={metricToVictoryCoordinates(graph.values)}
+                />
+              ))}
+            </VictoryChart>
+          )}
         </VStack>
       </CardContent>
       <CardFooter>
         <Spacer />
-        {/* <DeploymentLogsButton deployment={deployment} size="sm" /> */}
+        <DeploymentLogsButton deployment={deployment} size="sm" />
       </CardFooter>
     </Card>
   );
