@@ -5,10 +5,10 @@
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.6.10",
-    "@emotion/react": "^11.4.1",
+    "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/inter": "^4.5.0",
-    "@frontegg/react": "^3.0.12",
+    "@frontegg/react": "^3.0.17",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
@@ -38,7 +38,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@playwright/test": "^1.14.0",
+    "@playwright/test": "^1.16.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.0-rc.6",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
@@ -70,7 +70,7 @@
     "pyright": "^1.1.177",
     "ts-jest": "^27.0.5",
     "victory": "^36.1.0",
-    "webpack-dev-server": "^4.2.0"
+    "webpack-dev-server": "^4.4.0"
   },
   "scripts": {
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
