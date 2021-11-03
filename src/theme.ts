@@ -12,7 +12,7 @@
 
 import { extendTheme } from "@chakra-ui/react";
 import { StyleFunctionProps } from "@chakra-ui/theme-tools";
-import { ThemeOptions } from "@frontegg/react";
+import { FronteggThemeOptions } from "@frontegg/types";
 
 import { SignupFooter } from "./components/signup_footer";
 
@@ -118,7 +118,7 @@ export const fronteggCustomStyles = `
 }
 `;
 
-export const fronteggTheme: ThemeOptions = {
+export const fronteggTheme: FronteggThemeOptions = {
   adminPortal: {
     layout: {
       fullScreenMode: false,
@@ -128,6 +128,7 @@ export const fronteggTheme: ThemeOptions = {
     },
   },
   authPage: {
+    inputError: {},
     loginBox: {
       // Frontegg's types incorrectly think this property is on `authPage`
       // directly, not nested in `loginBox`, so ignore the type error.
