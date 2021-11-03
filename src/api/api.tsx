@@ -29,7 +29,7 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
-  cloudProviderRegion: number | null;
+  cloudProviderRegion: SupportedCloudProviderRegion;
 }
 
 export interface DeploymentRequest {
@@ -82,6 +82,20 @@ export interface PendingMigration {
 export interface PendingMigrationRequest {
   description: string;
   deadline: string;
+}
+
+export type ProviderEnum = "AWS" | "GCP" | "AZURE";
+
+export type RegionEnum = "us-east-1" | "eu-west-1" | "us-east1";
+
+export interface SupportedCloudProviderRegion {
+  provider: ProviderEnum;
+  region: RegionEnum;
+}
+
+export interface SupportedCloudProviderRegionRequest {
+  provider?: ProviderEnum;
+  region?: RegionEnum;
 }
 
 export type DeploymentsListProps = Omit<
