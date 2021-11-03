@@ -5,6 +5,7 @@ import React from "react";
 import { Deployment } from "../../../api/api";
 import { Card, CardFooter, CardHeader } from "../../../components/card";
 import { DeploymentLogsButton } from "../deploymentLogsButton";
+import { CpuMetrics } from "./CpuMetrics";
 import { MemoryMetrics } from "./MemoryMetrics";
 
 export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
@@ -12,7 +13,7 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
 }) => {
   return (
     <Card>
-      <CardHeader>Integrations</CardHeader>
+      <CardHeader>Metrics</CardHeader>
       <Tabs colorScheme="purple">
         <TabList px="4">
           <Tab>Memory</Tab>
@@ -22,7 +23,9 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
           <TabPanel>
             <MemoryMetrics deploymentId={deployment.id} />
           </TabPanel>
-          <TabPanel>Datadog integration coming soon.</TabPanel>
+          <TabPanel>
+            <CpuMetrics deploymentId={deployment.id} />
+          </TabPanel>
         </TabPanels>
       </Tabs>
       <CardFooter>

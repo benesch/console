@@ -471,6 +471,71 @@ export const useDeploymentsLogsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsMetricsCpuRetrievePathParams {
+  id: string;
+  period: number;
+}
+
+export type DeploymentsMetricsCpuRetrieveProps = Omit<
+  GetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsCpuRetrievePathParams;
+
+/**
+ * Retrieve cpu line graph for a deployment.
+ */
+export const DeploymentsMetricsCpuRetrieve = ({
+  id,
+  period,
+  ...props
+}: DeploymentsMetricsCpuRetrieveProps) => (
+  <Get<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >
+    path={`/api/deployments/${id}/metrics/cpu/${period}`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsMetricsCpuRetrieveProps = Omit<
+  UseGetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsCpuRetrievePathParams;
+
+/**
+ * Retrieve cpu line graph for a deployment.
+ */
+export const useDeploymentsMetricsCpuRetrieve = ({
+  id,
+  period,
+  ...props
+}: UseDeploymentsMetricsCpuRetrieveProps) =>
+  useGet<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >(
+    (paramsInPath: DeploymentsMetricsCpuRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/metrics/cpu/${paramsInPath.period}`,
+    { pathParams: { id, period }, ...props }
+  );
+
 export interface DeploymentsMetricsMemoryRetrievePathParams {
   id: string;
   period: number;
@@ -488,7 +553,7 @@ export type DeploymentsMetricsMemoryRetrieveProps = Omit<
   DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
- * Retrieve metrics for a deployment.
+ * Retrieve memory line graph data for a deployment.
  */
 export const DeploymentsMetricsMemoryRetrieve = ({
   id,
@@ -518,7 +583,7 @@ export type UseDeploymentsMetricsMemoryRetrieveProps = Omit<
   DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
- * Retrieve metrics for a deployment.
+ * Retrieve memory line graph data for a deployment.
  */
 export const useDeploymentsMetricsMemoryRetrieve = ({
   id,
