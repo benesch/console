@@ -29,7 +29,7 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
-  cloudProviderRegion: SupportedCloudProviderRegion;
+  cloudProviderRegion: SupportedCloudRegion;
 }
 
 export interface DeploymentRequest {
@@ -86,17 +86,46 @@ export interface PendingMigrationRequest {
 
 export type ProviderEnum = "AWS";
 
-export type RegionEnum = "us-east-1" | "eu-west-1";
-
-export interface SupportedCloudProviderRegion {
+export interface SupportedCloudRegion {
   provider: ProviderEnum;
-  region: RegionEnum;
+  region: string;
 }
 
-export interface SupportedCloudProviderRegionRequest {
+export interface SupportedCloudRegionRequest {
   provider?: ProviderEnum;
-  region?: RegionEnum;
+  region?: string;
 }
+
+export type CloudProvidersRetrieveProps = Omit<
+  GetProps<SupportedCloudRegion, unknown, void, void>,
+  "path"
+>;
+
+/**
+ * List the cloud provider and regions
+ */
+export const CloudProvidersRetrieve = (props: CloudProvidersRetrieveProps) => (
+  <Get<SupportedCloudRegion, unknown, void, void>
+    path={`/api/cloud-providers`}
+    {...props}
+  />
+);
+
+export type UseCloudProvidersRetrieveProps = Omit<
+  UseGetProps<SupportedCloudRegion, unknown, void, void>,
+  "path"
+>;
+
+/**
+ * List the cloud provider and regions
+ */
+export const useCloudProvidersRetrieve = (
+  props: UseCloudProvidersRetrieveProps
+) =>
+  useGet<SupportedCloudRegion, unknown, void, void>(
+    `/api/cloud-providers`,
+    props
+  );
 
 export type DeploymentsListProps = Omit<
   GetProps<Deployment[], unknown, void, void>,
@@ -706,6 +735,42 @@ export const useOrganizationsRetrieve = ({
     (paramsInPath: OrganizationsRetrievePathParams) =>
       `/api/organizations/${paramsInPath.id}`,
     { pathParams: { id }, ...props }
+  );
+
+export interface RegionsRetrievePathParams {
+  providerName: string;
+}
+
+export type RegionsRetrieveProps = Omit<
+  GetProps<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>,
+  "path"
+> &
+  RegionsRetrievePathParams;
+
+export const RegionsRetrieve = ({
+  providerName,
+  ...props
+}: RegionsRetrieveProps) => (
+  <Get<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>
+    path={`/api/regions/${providerName}`}
+    {...props}
+  />
+);
+
+export type UseRegionsRetrieveProps = Omit<
+  UseGetProps<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>,
+  "path"
+> &
+  RegionsRetrievePathParams;
+
+export const useRegionsRetrieve = ({
+  providerName,
+  ...props
+}: UseRegionsRetrieveProps) =>
+  useGet<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>(
+    (paramsInPath: RegionsRetrievePathParams) =>
+      `/api/regions/${paramsInPath.providerName}`,
+    { pathParams: { providerName }, ...props }
   );
 
 export interface SchemaRetrieveResponse {
