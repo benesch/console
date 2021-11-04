@@ -1,4 +1,4 @@
-import { Deployment } from "../api/api";
+import { Deployment, PrometheusMetrics } from "../api/api";
 
 export const validDeployment: Deployment = {
   id: "1",
@@ -19,35 +19,6 @@ export const validDeployment: Deployment = {
   status: "pending",
 };
 
-export const prometheusData = {
-  status: "success",
-  data: {
-    resultType: "matrix",
-    result: [
-      {
-        metric: {
-          __name__: "up",
-          job: "prometheus",
-          instance: "localhost:9090",
-        },
-        values: [
-          [1435781430.781, "1"],
-          [1435781445.781, "1"],
-          [1435781460.781, "1"],
-        ],
-      },
-      {
-        metric: {
-          __name__: "up",
-          job: "node",
-          instance: "localhost:9091",
-        },
-        values: [
-          [1435781430.781, "0"],
-          [1435781445.781, "0"],
-          [1435781460.781, "1"],
-        ],
-      },
-    ],
-  },
+export const validPrometheusValues: PrometheusMetrics = {
+  metrics: [{ name: "metric", values: [[(+new Date()).toString(), "1"]] }],
 };
