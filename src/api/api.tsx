@@ -29,7 +29,6 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
-  cloudProviderRegion: SupportedCloudRegion;
 }
 
 export interface DeploymentRequest {
@@ -41,6 +40,7 @@ export interface DeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
+  cloudProviderRegion: SupportedCloudRegionRequest;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
@@ -72,6 +72,7 @@ export interface PatchedDeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
+  cloudProviderRegion?: SupportedCloudRegionRequest;
 }
 
 export interface PendingMigration {
