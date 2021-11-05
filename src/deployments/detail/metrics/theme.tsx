@@ -1,30 +1,23 @@
 import { WithCSSVar } from "@chakra-ui/system";
 import { Dict } from "@chakra-ui/utils";
+import { VictoryThemeDefinition } from "victory";
 
-// *
-// * Colors
-// *
+/* customized theme from victory defaults */
 
-export const mzVictoryTheme = (theme: WithCSSVar<Dict<any>>) => {
-  const colors = Object.values(theme.colors);
-  // *
-  // * Typography
-  // *
-  const sansSerif = "'Inter', sans-serif";
+export const mzVictoryTheme = (
+  theme: WithCSSVar<Dict<any>>
+): VictoryThemeDefinition => {
+  const colors = Object.values(theme.colors) as string[];
+
+  const sansSerif = theme.fonts.body as string;
   const letterSpacing = "normal";
-  const fontSize = 14;
-  // *
-  // * Layout
-  // *
+  const fontSize = theme.fontSizes.md as string;
   const baseProps = {
     width: 450,
-    height: 300,
-    padding: 50,
+    height: 200,
+    padding: { top: 5, bottom: 5, left: 45, right: 10 },
     colorScale: colors,
   };
-  // *
-  // * Labels
-  // *
   const baseLabelStyles = {
     fontFamily: sansSerif,
     fontSize,
@@ -38,9 +31,6 @@ export const mzVictoryTheme = (theme: WithCSSVar<Dict<any>>) => {
     textAnchor: "middle",
     ...baseLabelStyles,
   };
-  // *
-  // * Strokes
-  // *
   const strokeLinecap = "round";
   const strokeLinejoin = "round";
   return {

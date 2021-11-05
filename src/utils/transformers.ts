@@ -6,7 +6,7 @@
 
 import { DateTime } from "luxon";
 
-export const timestampToReadableTime = (timestamp: number) => {
-  const dt = DateTime.fromMillis(timestamp);
+export const formatToReadableTime = (datetime: Date) => {
+  const dt = DateTime.fromJSDate(datetime);
   return dt.toLocal().toFormat("HH:mm");
 };

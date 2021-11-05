@@ -5,9 +5,10 @@ import React from "react";
 export const MetricPeriodSelector = (props: {
   onSelect: (period: number) => void;
 }) => (
-  <HStack>
-    <Text>last&nbsp;</Text>
+  <HStack justifyContent="flex-end">
+    <Text>Show the last&nbsp;</Text>
     <Select
+      flexBasis={"20%"}
       defaultValue="15"
       onChange={(e) => props.onSelect(parseInt(e.target.value))}
     >
