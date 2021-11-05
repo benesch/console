@@ -29,6 +29,7 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
+  cloudProviderRegion: SupportedCloudRegion;
 }
 
 export interface DeploymentRequest {
@@ -40,10 +41,21 @@ export interface DeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
-  cloudProviderRegion?: SupportedCloudRegionRequest;
+  cloudProviderRegion: SupportedCloudRegionRequest;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
+
+export interface DeploymentUpdateRequest {
+  name?: string;
+  size?: DeploymentSizeEnum;
+  storageMb?: number;
+  disableUserIndexes?: boolean;
+  materializedExtraArgs?: string[];
+  mzVersion?: string;
+  enableTailscale?: boolean;
+  tailscaleAuthKey?: string;
+}
 
 export interface OnboardingCall {
   start: string;
@@ -63,7 +75,7 @@ export interface Organization {
   trialExpiresAt: string | null;
 }
 
-export interface PatchedDeploymentRequest {
+export interface PatchedDeploymentUpdateRequest {
   name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
@@ -72,7 +84,6 @@ export interface PatchedDeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
-  cloudProviderRegion?: SupportedCloudRegionRequest;
 }
 
 export interface PendingMigration {
@@ -93,8 +104,8 @@ export interface SupportedCloudRegion {
 }
 
 export interface SupportedCloudRegionRequest {
-  provider?: ProviderEnum;
-  region?: string;
+  provider: ProviderEnum;
+  region: string;
 }
 
 export type CloudProvidersRetrieveProps = Omit<
@@ -236,7 +247,7 @@ export type DeploymentsUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    DeploymentRequest,
+    DeploymentUpdateRequest,
     DeploymentsUpdatePathParams
   >,
   "path" | "verb"
@@ -251,7 +262,7 @@ export const DeploymentsUpdate = ({ id, ...props }: DeploymentsUpdateProps) => (
     Deployment,
     unknown,
     void,
-    DeploymentRequest,
+    DeploymentUpdateRequest,
     DeploymentsUpdatePathParams
   >
     verb="PUT"
@@ -265,7 +276,7 @@ export type UseDeploymentsUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    DeploymentRequest,
+    DeploymentUpdateRequest,
     DeploymentsUpdatePathParams
   >,
   "path" | "verb"
@@ -283,7 +294,7 @@ export const useDeploymentsUpdate = ({
     Deployment,
     unknown,
     void,
-    DeploymentRequest,
+    DeploymentUpdateRequest,
     DeploymentsUpdatePathParams
   >(
     "PUT",
@@ -301,7 +312,7 @@ export type DeploymentsPartialUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >,
   "path" | "verb"
@@ -319,7 +330,7 @@ export const DeploymentsPartialUpdate = ({
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >
     verb="PATCH"
@@ -333,7 +344,7 @@ export type UseDeploymentsPartialUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >,
   "path" | "verb"
@@ -351,7 +362,7 @@ export const useDeploymentsPartialUpdate = ({
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >(
     "PATCH",
