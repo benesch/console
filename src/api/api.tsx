@@ -40,7 +40,7 @@ export interface DeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
-  cloudProviderRegion: SupportedCloudRegionRequest;
+  cloudProviderRegion?: SupportedCloudRegionRequest;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
