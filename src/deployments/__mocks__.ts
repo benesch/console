@@ -17,4 +17,8 @@ export const validDeployment: Deployment = {
   mzVersion: "1.0.0",
   pendingMigration: null,
   status: "pending",
+  cloudProviderRegion: {
+    provider: "AWS",
+    region: "us-east-1",
+  },
 };

@@ -46,17 +46,6 @@ export interface DeploymentRequest {
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
-export interface DeploymentUpdateRequest {
-  name?: string;
-  size?: DeploymentSizeEnum;
-  storageMb?: number;
-  disableUserIndexes?: boolean;
-  materializedExtraArgs?: string[];
-  mzVersion?: string;
-  enableTailscale?: boolean;
-  tailscaleAuthKey?: string;
-}
-
 export interface OnboardingCall {
   start: string;
   end: string;
@@ -234,71 +223,6 @@ export const useDeploymentsRetrieve = ({
 }: UseDeploymentsRetrieveProps) =>
   useGet<Deployment, unknown, void, DeploymentsRetrievePathParams>(
     (paramsInPath: DeploymentsRetrievePathParams) =>
-      `/api/deployments/${paramsInPath.id}`,
-    { pathParams: { id }, ...props }
-  );
-
-export interface DeploymentsUpdatePathParams {
-  id: string;
-}
-
-export type DeploymentsUpdateProps = Omit<
-  MutateProps<
-    Deployment,
-    unknown,
-    void,
-    DeploymentUpdateRequest,
-    DeploymentsUpdatePathParams
-  >,
-  "path" | "verb"
-> &
-  DeploymentsUpdatePathParams;
-
-/**
- * Update a deployment.
- */
-export const DeploymentsUpdate = ({ id, ...props }: DeploymentsUpdateProps) => (
-  <Mutate<
-    Deployment,
-    unknown,
-    void,
-    DeploymentUpdateRequest,
-    DeploymentsUpdatePathParams
-  >
-    verb="PUT"
-    path={`/api/deployments/${id}`}
-    {...props}
-  />
-);
-
-export type UseDeploymentsUpdateProps = Omit<
-  UseMutateProps<
-    Deployment,
-    unknown,
-    void,
-    DeploymentUpdateRequest,
-    DeploymentsUpdatePathParams
-  >,
-  "path" | "verb"
-> &
-  DeploymentsUpdatePathParams;
-
-/**
- * Update a deployment.
- */
-export const useDeploymentsUpdate = ({
-  id,
-  ...props
-}: UseDeploymentsUpdateProps) =>
-  useMutate<
-    Deployment,
-    unknown,
-    void,
-    DeploymentUpdateRequest,
-    DeploymentsUpdatePathParams
-  >(
-    "PUT",
-    (paramsInPath: DeploymentsUpdatePathParams) =>
       `/api/deployments/${paramsInPath.id}`,
     { pathParams: { id }, ...props }
   );
