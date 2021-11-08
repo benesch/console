@@ -118,7 +118,6 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                       size="sm"
                     >
                       <option>us-east-1</option>
-                      <option>eu-west-1</option>
                     </SelectField>
                   </HStack>
                   <Alert status="info" fontSize="sm">
