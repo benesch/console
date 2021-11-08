@@ -4,9 +4,12 @@
  *
  */
 
-import { DateTime } from "luxon";
+import format from "date-fns/format";
 
+export const isValidDate = (d: any) => d instanceof Date && !isNaN(d as any);
 export const formatToReadableTime = (datetime: Date) => {
-  const dt = DateTime.fromJSDate(datetime);
-  return dt.toLocal().toFormat("HH:mm");
+  if (!isValidDate(datetime)) {
+    return "";
+  }
+  return format(datetime, "HH:mm");
 };

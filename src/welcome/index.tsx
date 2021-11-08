@@ -8,7 +8,7 @@
  */
 
 import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
-import { format } from "date-fns";
+import format from "date-fns/format";
 import React from "react";
 import { InlineWidget } from "react-calendly";
 import { Redirect } from "react-router-dom";

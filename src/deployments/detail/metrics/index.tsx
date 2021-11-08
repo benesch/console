@@ -8,26 +8,34 @@ import { DeploymentLogsButton } from "../deploymentLogsButton";
 import { CpuMetrics } from "./CpuMetrics";
 import { MemoryMetrics } from "./MemoryMetrics";
 
+export const DeployementMetricsTabs: React.FC<{ deployment: Deployment }> = ({
+  deployment,
+}) => {
+  return (
+    <Tabs colorScheme="purple">
+      <TabList px="4">
+        <Tab>Memory</Tab>
+        <Tab>CPU</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel>
+          <CpuMetrics deploymentId={deployment.id} />
+        </TabPanel>
+        <TabPanel>
+          <MemoryMetrics deploymentId={deployment.id} />
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+  );
+};
+
 export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
   return (
     <Card>
       <CardHeader>Metrics</CardHeader>
-      <Tabs colorScheme="purple">
-        <TabList px="4">
-          <Tab>Memory</Tab>
-          <Tab>vCPU</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <MemoryMetrics deploymentId={deployment.id} />
-          </TabPanel>
-          <TabPanel>
-            <CpuMetrics deploymentId={deployment.id} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <DeployementMetricsTabs deployment={deployment} />
       <CardFooter>
         <Spacer />
         <DeploymentLogsButton deployment={deployment} size="sm" />

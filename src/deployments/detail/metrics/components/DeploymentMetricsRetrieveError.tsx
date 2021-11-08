@@ -8,7 +8,7 @@ export const DeploymentMetricsRetrieveError = () => {
       status="error"
       p={1}
       px={2}
-      data-testid="fetch-deployment-issue-alert"
+      data-testid="fetch-deployment-metric-error"
     >
       <AlertIcon />
       <Text>Failed to load metrics for this deployment</Text>

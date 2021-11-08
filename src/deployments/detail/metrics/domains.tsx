@@ -6,7 +6,7 @@ export interface Domains {
 }
 
 export const xDomainFromMetrics = (metrics: VictoryMetric[]): [Date, Date] => {
-  // even if multiple metrics are returned, they should be aligned on the x-axis.
+  // even if multiple metrics are returned, they should be aligned on the x-axis and already sorted
   const earliestTime = metrics[0]?.values[0].x;
   return [earliestTime, new Date()];
 };

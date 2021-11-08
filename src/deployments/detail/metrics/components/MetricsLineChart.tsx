@@ -16,7 +16,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
 }) => {
   const chakraTheme = useTheme();
   return (
-    <VStack spacing="3" align="left">
+    <VStack spacing="3" align="left" data-testid="line-chart-container">
       {operation.error && <DeploymentMetricsRetrieveError />}
       <MetricPeriodSelector onSelect={filters.setPeriod} />
       {chart.data && (

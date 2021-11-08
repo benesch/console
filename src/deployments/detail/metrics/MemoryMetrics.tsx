@@ -11,5 +11,6 @@ export const MemoryMetrics: React.FC<{ deploymentId: string }> = ({
     deploymentId,
     useDeploymentsMetricsMemoryRetrieve
   );
+
   return <MetricsLineChart {...hook} />;
 };

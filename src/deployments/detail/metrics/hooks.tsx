@@ -1,5 +1,5 @@
 import { useInterval } from "@chakra-ui/hooks";
-import React, { useEffect } from "react";
+import React from "react";
 import { UseGetReturn } from "restful-react";
 
 import { PrometheusMetrics } from "../../../api/api";
@@ -34,9 +34,6 @@ export const useRetrieveMetrics = (
     period,
   });
   useInterval(operation.refetch, 5000);
-  useEffect(() => {
-    operation.refetch();
-  }, [period]);
 
   const victoryCompatibleMetrics = prometheusMetricsToVictoryMetrics(
     operation.data

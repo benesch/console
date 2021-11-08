@@ -8,6 +8,7 @@ export const MetricPeriodSelector = (props: {
   <HStack justifyContent="flex-end">
     <Text>Show the last&nbsp;</Text>
     <Select
+      data-testid="metrics-period-selector-dropdown"
       flexBasis={"20%"}
       defaultValue="15"
       onChange={(e) => props.onSelect(parseInt(e.target.value))}
