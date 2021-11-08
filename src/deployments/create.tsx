@@ -24,7 +24,11 @@ import {
 import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
-import { DeploymentSizeEnum, useDeploymentsCreate } from "../api/api";
+import {
+  DeploymentSizeEnum,
+  SupportedCloudRegionRequest,
+  useDeploymentsCreate,
+} from "../api/api";
 import { SelectField, SubmitButton, TextField } from "../components/form";
 import { petname } from "../util";
 import { DeploymentSizeField } from "./util";
@@ -63,12 +67,20 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
             initialValues={{
               name: petname(),
               size: "XS" as DeploymentSizeEnum,
+              cloudProviderRegion: {
+                provider: "AWS",
+                region: "us-east-1",
+              } as SupportedCloudRegionRequest,
             }}
             onSubmit={async (values, actions) => {
               try {
                 await createDeployment({
                   name: values.name,
                   size: values.size,
+                  cloudProviderRegion: {
+                    provider: values.cloudProviderRegion.provider,
+                    region: values.cloudProviderRegion.region,
+                  },
                 });
                 await refetch();
                 onClose();
@@ -93,7 +105,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                   <DeploymentSizeField />
                   <HStack width="100%">
                     <SelectField
-                      name="cloud-provider"
+                      name="cloudProviderRegion.provider"
                       label="Cloud provider"
                       size="sm"
                       disabled
@@ -101,10 +113,9 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                       <option>AWS</option>
                     </SelectField>
                     <SelectField
-                      name="cloud-provider"
+                      name="cloudProviderRegion.region"
                       label="Region"
                       size="sm"
-                      disabled
                     >
                       <option>us-east-1</option>
                     </SelectField>

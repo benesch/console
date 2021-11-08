@@ -1,4 +1,3 @@
-import { api } from "@frontegg/rest-api";
 import { fireEvent, RenderResult, screen } from "@testing-library/react";
 import { Response } from "miragejs";
 import React from "react";
