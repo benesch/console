@@ -61,7 +61,13 @@ test("upgrade deployment", async ({ page }) => {
   // Use a raw API request to create a deployment running an old version.
   const deployment = await context.apiRequest("/deployments", {
     method: "POST",
-    body: JSON.stringify({ mzVersion: LEGACY_VERSION }),
+    body: JSON.stringify({
+      mzVersion: LEGACY_VERSION,
+      cloudProviderRegion: {
+        provider: "AWS",
+        region: "us-east-1",
+      },
+    }),
   });
   await page.click(`text=${deployment.name}`);
 
