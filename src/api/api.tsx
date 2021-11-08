@@ -29,6 +29,7 @@ export interface Deployment {
   pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
+  cloudProviderRegion: SupportedCloudRegion;
 }
 
 export interface DeploymentRequest {
@@ -40,6 +41,7 @@ export interface DeploymentRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
+  cloudProviderRegion: SupportedCloudRegionRequest;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
@@ -62,7 +64,7 @@ export interface Organization {
   trialExpiresAt: string | null;
 }
 
-export interface PatchedDeploymentRequest {
+export interface PatchedDeploymentUpdateRequest {
   name?: string;
   size?: DeploymentSizeEnum;
   storageMb?: number;
@@ -82,6 +84,49 @@ export interface PendingMigrationRequest {
   description: string;
   deadline: string;
 }
+
+export type ProviderEnum = "AWS";
+
+export interface SupportedCloudRegion {
+  provider: ProviderEnum;
+  region: string;
+}
+
+export interface SupportedCloudRegionRequest {
+  provider: ProviderEnum;
+  region: string;
+}
+
+export type CloudProvidersRetrieveProps = Omit<
+  GetProps<SupportedCloudRegion, unknown, void, void>,
+  "path"
+>;
+
+/**
+ * List the cloud provider and regions
+ */
+export const CloudProvidersRetrieve = (props: CloudProvidersRetrieveProps) => (
+  <Get<SupportedCloudRegion, unknown, void, void>
+    path={`/api/cloud-providers`}
+    {...props}
+  />
+);
+
+export type UseCloudProvidersRetrieveProps = Omit<
+  UseGetProps<SupportedCloudRegion, unknown, void, void>,
+  "path"
+>;
+
+/**
+ * List the cloud provider and regions
+ */
+export const useCloudProvidersRetrieve = (
+  props: UseCloudProvidersRetrieveProps
+) =>
+  useGet<SupportedCloudRegion, unknown, void, void>(
+    `/api/cloud-providers`,
+    props
+  );
 
 export type DeploymentsListProps = Omit<
   GetProps<Deployment[], unknown, void, void>,
@@ -182,71 +227,6 @@ export const useDeploymentsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
-export interface DeploymentsUpdatePathParams {
-  id: string;
-}
-
-export type DeploymentsUpdateProps = Omit<
-  MutateProps<
-    Deployment,
-    unknown,
-    void,
-    DeploymentRequest,
-    DeploymentsUpdatePathParams
-  >,
-  "path" | "verb"
-> &
-  DeploymentsUpdatePathParams;
-
-/**
- * Update a deployment.
- */
-export const DeploymentsUpdate = ({ id, ...props }: DeploymentsUpdateProps) => (
-  <Mutate<
-    Deployment,
-    unknown,
-    void,
-    DeploymentRequest,
-    DeploymentsUpdatePathParams
-  >
-    verb="PUT"
-    path={`/api/deployments/${id}`}
-    {...props}
-  />
-);
-
-export type UseDeploymentsUpdateProps = Omit<
-  UseMutateProps<
-    Deployment,
-    unknown,
-    void,
-    DeploymentRequest,
-    DeploymentsUpdatePathParams
-  >,
-  "path" | "verb"
-> &
-  DeploymentsUpdatePathParams;
-
-/**
- * Update a deployment.
- */
-export const useDeploymentsUpdate = ({
-  id,
-  ...props
-}: UseDeploymentsUpdateProps) =>
-  useMutate<
-    Deployment,
-    unknown,
-    void,
-    DeploymentRequest,
-    DeploymentsUpdatePathParams
-  >(
-    "PUT",
-    (paramsInPath: DeploymentsUpdatePathParams) =>
-      `/api/deployments/${paramsInPath.id}`,
-    { pathParams: { id }, ...props }
-  );
-
 export interface DeploymentsPartialUpdatePathParams {
   id: string;
 }
@@ -256,7 +236,7 @@ export type DeploymentsPartialUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >,
   "path" | "verb"
@@ -274,7 +254,7 @@ export const DeploymentsPartialUpdate = ({
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >
     verb="PATCH"
@@ -288,7 +268,7 @@ export type UseDeploymentsPartialUpdateProps = Omit<
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >,
   "path" | "verb"
@@ -306,7 +286,7 @@ export const useDeploymentsPartialUpdate = ({
     Deployment,
     unknown,
     void,
-    PatchedDeploymentRequest,
+    PatchedDeploymentUpdateRequest,
     DeploymentsPartialUpdatePathParams
   >(
     "PATCH",
@@ -691,6 +671,42 @@ export const useOrganizationsRetrieve = ({
     (paramsInPath: OrganizationsRetrievePathParams) =>
       `/api/organizations/${paramsInPath.id}`,
     { pathParams: { id }, ...props }
+  );
+
+export interface RegionsRetrievePathParams {
+  providerName: string;
+}
+
+export type RegionsRetrieveProps = Omit<
+  GetProps<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>,
+  "path"
+> &
+  RegionsRetrievePathParams;
+
+export const RegionsRetrieve = ({
+  providerName,
+  ...props
+}: RegionsRetrieveProps) => (
+  <Get<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>
+    path={`/api/regions/${providerName}`}
+    {...props}
+  />
+);
+
+export type UseRegionsRetrieveProps = Omit<
+  UseGetProps<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>,
+  "path"
+> &
+  RegionsRetrievePathParams;
+
+export const useRegionsRetrieve = ({
+  providerName,
+  ...props
+}: UseRegionsRetrieveProps) =>
+  useGet<SupportedCloudRegion, unknown, void, RegionsRetrievePathParams>(
+    (paramsInPath: RegionsRetrievePathParams) =>
+      `/api/regions/${paramsInPath.providerName}`,
+    { pathParams: { providerName }, ...props }
   );
 
 export interface SchemaRetrieveResponse {
