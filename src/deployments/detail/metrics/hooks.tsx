@@ -33,7 +33,7 @@ export const useRetrieveMetrics = (
     id: deploymentId,
     period,
   });
-  useInterval(operation.refetch, 5000);
+  // useInterval(operation.refetch, 5000);
 
   const victoryCompatibleMetrics = prometheusMetricsToVictoryMetrics(
     operation.data
