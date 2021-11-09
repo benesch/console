@@ -11,6 +11,7 @@ import {
   chakra,
   HTMLChakraProps,
   useClipboard,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -42,6 +43,8 @@ export function CodeBlock({
   ...props
 }: CodeBlockProps) {
   const { onCopy } = useClipboard(contents);
+  const bg = useColorModeValue("gray.100", "gray.800");
+  const buttonBg = useColorModeValue("white", "black");
 
   const preProps: HTMLChakraProps<"pre"> = {};
 
@@ -65,7 +68,7 @@ export function CodeBlock({
   }
 
   return (
-    <Box bg="gray.100" mt="3" role="group" position="relative" {...props}>
+    <Box bg={bg} mt="3" role="group" position="relative" {...props}>
       <Button
         onClick={onCopy}
         leftIcon={<CopyIcon />}
@@ -73,7 +76,7 @@ export function CodeBlock({
         position="absolute"
         _groupHover={{ opacity: 1 }}
         size="xs"
-        bg="white"
+        bg={buttonBg}
         colorScheme="purple"
         variant="outline"
         top="2"
@@ -85,7 +88,7 @@ export function CodeBlock({
       <chakra.pre
         fontSize="sm"
         p="3"
-        overflow="scroll"
+        overflow="auto"
         sx={{ wordWrap: "normal" }}
         {...preProps}
       >

@@ -409,7 +409,7 @@ function DeploymentLogsButton({
 
   return (
     <>
-      <Button onClick={handleOpen} {...props}>
+      <Button onClick={handleOpen} {...props} variant="outline">
         View logs
       </Button>
 

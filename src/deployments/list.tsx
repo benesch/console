@@ -6,10 +6,8 @@
 import {
   Alert,
   AlertIcon,
-  Box,
   Heading,
   HStack,
-  Image,
   Link,
   Spacer,
   Spinner,
@@ -21,18 +19,19 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
   useInterval,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
-import cloudOutline from "../../img/cloud-outline.svg";
 import {
   Deployment,
   useDeploymentsList as useDeploymentListApi,
 } from "../api/api";
 import { useAuth } from "../api/auth";
+import { Card } from "../components/card";
 import { SupportLink } from "../components/cta";
 import {
   BaseLayout,
@@ -40,6 +39,8 @@ import {
   PageHeader,
   PageHeading,
 } from "../layouts/base";
+import CloudSvg from "../svg/cloud";
+import colors from "../theme/colors";
 import { useCache } from "../utils/useCache";
 import { CreateDeploymentButton } from "./create";
 import { DeploymentStateBadge } from "./util";
@@ -133,16 +134,18 @@ const DeploymentListFetchErrorWarning: React.FC = () => {
 };
 
 function EmptyDeploymentList() {
+  const borderColor = useColorModeValue(colors.purple[600], colors.purple[400]);
+
   return (
     <VStack
-      border="1px dashed #472f85"
+      border={`1px dashed ${borderColor}`}
       borderRadius="4px"
       minHeight="600px"
       alignItems="center"
       justifyContent="center"
       spacing="5"
     >
-      <Image src={cloudOutline}></Image>
+      <CloudSvg />
       <Heading fontWeight="400" fontSize="2xl">
         No deployments yet.
       </Heading>
@@ -156,56 +159,55 @@ interface DeploymentTableProps {
 
 function DeploymentTable(props: DeploymentTableProps) {
   const history = useHistory();
+  const hoverBg = useColorModeValue("gray.50", "gray.900");
   return (
-    <>
-      <Box borderWidth="1px" bg="white" borderRadius="sm">
-        <Table data-testid="deployments-table">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Hostname</Th>
-              <Th>Size</Th>
-              <Th>Version</Th>
-              <Th>Status</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {props.deployments.map((d) => {
-              let trProps: TableRowProps = { key: d.id };
-              if (!d.flaggedForDeletion) {
-                trProps = {
-                  ...trProps,
-                  cursor: "pointer",
-                  _hover: { background: "gray.100" },
-                  onClick: () => history.push(`/deployments/${d.id}`),
-                };
-              }
+    <Card pt="2" px="0" pb="6">
+      <Table data-testid="deployments-table" borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Hostname</Th>
+            <Th>Size</Th>
+            <Th>Version</Th>
+            <Th>Status</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.deployments.map((d) => {
+            let trProps: TableRowProps = { key: d.id };
+            if (!d.flaggedForDeletion) {
+              trProps = {
+                ...trProps,
+                cursor: "pointer",
+                _hover: { background: hoverBg },
+                onClick: () => history.push(`/deployments/${d.id}`),
+              };
+            }
 
-              return (
-                <Tr key={d.id} data-testid="deployment-line" {...trProps}>
-                  <Td>
-                    {/* This link is for accessibility only, so we disable its
-                        link styling, as the tr already has a hover state. */}
-                    <Link
-                      as={RouterLink}
-                      to={`/deployments/${d.id}`}
-                      _hover={{ textDecoration: "none" }}
-                    >
-                      {d.name}
-                    </Link>
-                  </Td>
-                  <Td>{d.hostname}</Td>
-                  <Td>{d.size}</Td>
-                  <Td>{d.mzVersion}</Td>
-                  <Td>
-                    <DeploymentStateBadge deployment={d} />
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </Box>
-    </>
+            return (
+              <Tr key={d.id} data-testid="deployment-line" {...trProps}>
+                <Td>
+                  {/* This link is for accessibility only, so we disable its
+                      link styling, as the tr already has a hover state. */}
+                  <Link
+                    as={RouterLink}
+                    to={`/deployments/${d.id}`}
+                    _hover={{ textDecoration: "none" }}
+                  >
+                    {d.name}
+                  </Link>
+                </Td>
+                <Td>{d.hostname}</Td>
+                <Td>{d.size}</Td>
+                <Td>{d.mzVersion}</Td>
+                <Td>
+                  <DeploymentStateBadge deployment={d} />
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+    </Card>
   );
 }

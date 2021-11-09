@@ -9,7 +9,7 @@ import React from "react";
 import { useHistory } from "react-router";
 
 import { Deployment, useDeploymentsDestroy } from "../api/api";
-import { ConfirmModal } from "../components/modal";
+import { ConfirmModal } from "../components/confirmModal";
 import { sleep } from "../util";
 
 interface DestroyDeploymentButtonProps extends ButtonProps {

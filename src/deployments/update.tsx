@@ -5,6 +5,11 @@
 
 import { EditIcon } from "@chakra-ui/icons";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Alert,
   AlertIcon,
   Box,
@@ -28,7 +33,6 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import TextCollapse from "../components/collapse";
 import { SubmitButton, SwitchField, TextField } from "../components/form";
 import { DeploymentSizeField } from "./util";
 
@@ -63,7 +67,6 @@ export function UpdateDeploymentButton({
         isOpen={isOpen}
         onClose={onClose}
         initialFocusRef={initialFocusRef}
-        size="xl"
       >
         <ModalOverlay />
         <ModalContent>
@@ -98,23 +101,33 @@ export function UpdateDeploymentButton({
                   <VStack spacing="5">
                     <TextField name="name" label="Name" size="sm" />
                     <DeploymentSizeField />
-                    <TextCollapse title="Advanced settings">
-                      <SwitchField
-                        display="flex"
-                        alignItems="center"
-                        pt="1"
-                        id="disableUserIndexes"
-                        label="Disable user indexes"
-                        fontSize="sm"
-                        size="sm"
-                      />
-                      <FormControl>
-                        <FormHelperText>
-                          Use this mode to troubleshoot a Materialize deployment
-                          that is running out of memory.
-                        </FormHelperText>
-                      </FormControl>
-                    </TextCollapse>
+                    <Accordion allowMultiple w="100%">
+                      <AccordionItem>
+                        <AccordionButton>
+                          <Box flex="1" textAlign="left">
+                            Advanced settings
+                            <AccordionIcon />
+                          </Box>
+                        </AccordionButton>
+                        <AccordionPanel pb={4}>
+                          <SwitchField
+                            display="flex"
+                            alignItems="center"
+                            pt="1"
+                            id="disableUserIndexes"
+                            label="Disable user indexes"
+                            fontSize="sm"
+                            size="sm"
+                          />
+                          <FormControl>
+                            <FormHelperText>
+                              Use this mode to troubleshoot a Materialize
+                              deployment that is running out of memory.
+                            </FormHelperText>
+                          </FormControl>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
                     {(deployment.size !== form.values.size ||
                       deployment.disableUserIndexes !==
                         form.values.disableUserIndexes) && (
@@ -143,7 +156,7 @@ export function UpdateDeploymentButton({
                 </ModalBody>
                 <ModalFooter>
                   <HStack>
-                    <Button size="sm" onClick={onClose}>
+                    <Button size="sm" onClick={onClose} variant="outline">
                       Cancel
                     </Button>
                     <SubmitButton size="sm">Update</SubmitButton>
