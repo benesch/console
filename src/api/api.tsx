@@ -469,7 +469,7 @@ export type DeploymentsMetricsCpuRetrieveProps = Omit<
   DeploymentsMetricsCpuRetrievePathParams;
 
 /**
- * Retrieve cpu line graph for a deployment.
+ * Retrieve cpu line graph as a list of tuples (timestamps / utilization in %)) for a deployment.
  */
 export const DeploymentsMetricsCpuRetrieve = ({
   id,
@@ -499,7 +499,7 @@ export type UseDeploymentsMetricsCpuRetrieveProps = Omit<
   DeploymentsMetricsCpuRetrievePathParams;
 
 /**
- * Retrieve cpu line graph for a deployment.
+ * Retrieve cpu line graph as a list of tuples (timestamps / utilization in %)) for a deployment.
  */
 export const useDeploymentsMetricsCpuRetrieve = ({
   id,
@@ -534,7 +534,7 @@ export type DeploymentsMetricsMemoryRetrieveProps = Omit<
   DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
- * Retrieve memory line graph data for a deployment.
+ * Retrieve memory line graph data (as a list of tuples (timestamps / utilization in %)) for a deployment.
  */
 export const DeploymentsMetricsMemoryRetrieve = ({
   id,
@@ -564,7 +564,7 @@ export type UseDeploymentsMetricsMemoryRetrieveProps = Omit<
   DeploymentsMetricsMemoryRetrievePathParams;
 
 /**
- * Retrieve memory line graph data for a deployment.
+ * Retrieve memory line graph data (as a list of tuples (timestamps / utilization in %)) for a deployment.
  */
 export const useDeploymentsMetricsMemoryRetrieve = ({
   id,

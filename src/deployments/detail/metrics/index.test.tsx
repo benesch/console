@@ -57,7 +57,7 @@ describe.only("Metrics", () => {
 
     it("changing the period should refetch new data", async () => {
       renderComponent(metricName)(validDeploymentId);
-      const newPeriod = "60";
+      const newPeriod = (24 * 60).toString();
 
       const dropdown = await selectors.periodSelector();
 

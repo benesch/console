@@ -1,11 +1,20 @@
-import { VStack } from "@chakra-ui/layout";
+import { HStack, Text, VStack } from "@chakra-ui/layout";
 import { useTheme } from "@chakra-ui/system";
 import React from "react";
-import { VictoryAxis, VictoryChart, VictoryLine } from "victory";
+import {
+  VictoryAxis,
+  VictoryChart,
+  VictoryLine,
+  VictoryVoronoiContainer,
+} from "victory";
 
-import { formatToReadableTime } from "../../../../utils/transformers";
 import { UseRetrieveMetrics } from "../hooks";
 import { mzVictoryTheme } from "../theme";
+import {
+  formatDatapointLabel,
+  formatXToReadableDateTime,
+  formatYToPercentage,
+} from "../transformers";
 import { DeploymentMetricsRetrieveError } from "./DeploymentMetricsRetrieveError";
 import { MetricPeriodSelector } from "./MetricPeriodSelector";
 
@@ -18,31 +27,34 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   return (
     <VStack spacing="3" align="left" data-testid="line-chart-container">
       {operation.error && <DeploymentMetricsRetrieveError />}
-      <MetricPeriodSelector onSelect={filters.setPeriod} />
-      {chart.data && (
+      <>
+        <HStack justifyContent="space-between" px={3} pl={10}>
+          <Text>Utilization (%)</Text>
+          <MetricPeriodSelector onSelect={filters.setPeriod} />
+        </HStack>
         <VictoryChart
           scale={{ x: "time", y: "linear" }}
           domain={chart.domains}
           theme={mzVictoryTheme(chakraTheme)}
+          containerComponent={
+            <VictoryVoronoiContainer labels={formatDatapointLabel} />
+          }
         >
           {chart.data.map((metric) => (
             <VictoryLine interpolation="natural" data={metric.values} />
           ))}
           <VictoryAxis
             standalone={false}
-            tickCount={7}
-            tickFormat={formatToReadableTime}
+            tickCount={4}
+            tickFormat={formatXToReadableDateTime(filters.period)}
           />
           <VictoryAxis
             dependentAxis
             standalone={false}
-            label="Utilization (%)"
-            tickFormat={(y: number) => {
-              return Math.floor(y * 100);
-            }}
+            tickFormat={formatYToPercentage}
           />
         </VictoryChart>
-      )}
+      </>
     </VStack>
   );
 };

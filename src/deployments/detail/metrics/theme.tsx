@@ -11,11 +11,11 @@ export const mzVictoryTheme = (
 
   const sansSerif = theme.fonts.body as string;
   const letterSpacing = "normal";
-  const fontSize = theme.fontSizes.md as string;
+  const fontSize = 12;
   const baseProps = {
     width: 450,
     height: 200,
-    padding: { top: 5, bottom: 5, left: 45, right: 10 },
+    padding: { top: 0, bottom: 20, left: 25, right: 10 },
     colorScale: colors,
   };
   const baseLabelStyles = {
@@ -55,7 +55,6 @@ export const mzVictoryTheme = (
         },
         axisLabel: {
           ...centeredLabelStyles,
-          padding: 25,
         },
         grid: {
           fill: theme.colors.gray[400],
@@ -67,7 +66,7 @@ export const mzVictoryTheme = (
           size: 1,
           stroke: "transparent",
         },
-        tickLabels: baseLabelStyles,
+        tickLabels: { ...baseLabelStyles, fontSize: 10 },
       },
       ...baseProps,
     },
@@ -210,10 +209,13 @@ export const mzVictoryTheme = (
           stroke: "transparent",
           strokeWidth: 0,
         },
-        labels: { ...baseLabelStyles, padding: 5, pointerEvents: "none" },
+        labels: {
+          ...baseLabelStyles,
+          pointerEvents: "none",
+          fontSize: 11,
+        },
         flyout: {
-          stroke: theme.colors.gray[800],
-          strokeWidth: 1,
+          stroke: "transparent",
           fill: "#f0f0f0",
           pointerEvents: "none",
         },

@@ -20,6 +20,7 @@ export type UseRetrieveMetrics = {
     domains: Domains;
   };
   filters: {
+    period: number;
     setPeriod: (period: number) => void;
   };
 };
@@ -46,6 +47,7 @@ export const useRetrieveMetrics = (
       domains: inferDomainFromValues(victoryCompatibleMetrics),
     },
     filters: {
+      period,
       setPeriod,
     },
   };

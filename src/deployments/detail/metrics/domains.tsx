@@ -1,7 +1,7 @@
 import { VictoryMetric } from "./types";
 
 export interface Domains {
-  x: [Date, Date];
+  x?: [Date, Date];
   y: [number, number];
 }
 
