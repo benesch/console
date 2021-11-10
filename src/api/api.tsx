@@ -46,6 +46,30 @@ export interface DeploymentRequest {
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
+export interface HistoricalDeployment {
+  id: string;
+  organization: string | null;
+  tlsAuthority: string | null;
+  name: string;
+  hostname: string | null;
+  flaggedForDeletion: boolean;
+  flaggedForUpdate: boolean;
+  size: DeploymentSizeEnum;
+  storageMb: number;
+  disableUserIndexes: boolean;
+  materializedExtraArgs: string[];
+  clusterId: string | null;
+  mzVersion: string;
+  pendingMigration: string | null;
+  enableTailscale: boolean;
+  cloudProviderRegion: SupportedCloudRegion;
+  historyDate: string;
+  historyChangeReason: string | null;
+  historyType: HistoryTypeEnum;
+}
+
+export type HistoryTypeEnum = "+" | "~" | "-";
+
 export interface OnboardingCall {
   start: string;
   end: string;
@@ -371,6 +395,57 @@ export const useDeploymentsCertsRetrieve = ({
   useGet<string, unknown, void, DeploymentsCertsRetrievePathParams>(
     (paramsInPath: DeploymentsCertsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/certs`,
+    { pathParams: { id }, ...props }
+  );
+
+export interface DeploymentsHistoryListPathParams {
+  id: string;
+}
+
+export type DeploymentsHistoryListProps = Omit<
+  GetProps<
+    HistoricalDeployment[],
+    unknown,
+    void,
+    DeploymentsHistoryListPathParams
+  >,
+  "path"
+> &
+  DeploymentsHistoryListPathParams;
+
+export const DeploymentsHistoryList = ({
+  id,
+  ...props
+}: DeploymentsHistoryListProps) => (
+  <Get<HistoricalDeployment[], unknown, void, DeploymentsHistoryListPathParams>
+    path={`/api/deployments/${id}/history`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsHistoryListProps = Omit<
+  UseGetProps<
+    HistoricalDeployment[],
+    unknown,
+    void,
+    DeploymentsHistoryListPathParams
+  >,
+  "path"
+> &
+  DeploymentsHistoryListPathParams;
+
+export const useDeploymentsHistoryList = ({
+  id,
+  ...props
+}: UseDeploymentsHistoryListProps) =>
+  useGet<
+    HistoricalDeployment[],
+    unknown,
+    void,
+    DeploymentsHistoryListPathParams
+  >(
+    (paramsInPath: DeploymentsHistoryListPathParams) =>
+      `/api/deployments/${paramsInPath.id}/history`,
     { pathParams: { id }, ...props }
   );
 
