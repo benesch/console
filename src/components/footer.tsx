@@ -4,6 +4,7 @@
  */
 
 import { Box, Link } from "@chakra-ui/layout";
+import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 /**
@@ -14,11 +15,13 @@ export const getCurrentYear = () => new Date().getFullYear();
 
 /** A footer component */
 export const PageFooter: React.FC = () => {
+  const footerBg = useColorModeValue("white", "purple.900");
+  const color = useColorModeValue("gray.500", "gray.200");
   return (
     <Box
-      bg="white"
-      color="gray.500"
-      textAlign="right"
+      bg={footerBg}
+      color={color}
+      textAlign="center"
       py="3"
       fontWeight="400"
       fontSize="sm"

@@ -3,12 +3,17 @@
  * A reusable "card" component.
  */
 
-import { Box, Heading, HStack, Text } from "@chakra-ui/react";
+import { BoxProps } from "@chakra-ui/layout";
+import {
+  Box,
+  Heading,
+  HStack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import React from "react";
 
-export interface CardProps {
-  children?: React.ReactNode;
-}
+import { semanticColors } from "../theme/colors";
 
 /**
  * A "card" UI element with a header, body, and footer.
@@ -31,9 +36,26 @@ export interface CardProps {
  * </Card>
  * ```
  */
-export function Card(props: CardProps) {
+export function Card(props: BoxProps) {
+  const bg = useColorModeValue(
+    semanticColors.card.bg.light,
+    semanticColors.card.bg.dark
+  );
+  const borderColor = useColorModeValue(
+    semanticColors.card.border.light,
+    semanticColors.card.border.dark
+  );
+  const shadow = useColorModeValue("glowLight", "glowDark");
   return (
-    <Box bg="white" shadow="base" width="100%">
+    <Box
+      bg={bg}
+      shadow={shadow}
+      border={`1px solid`}
+      borderColor={borderColor}
+      width="100%"
+      borderRadius="xl"
+      {...props}
+    >
       {props.children}
     </Box>
   );
@@ -45,13 +67,17 @@ export interface CardHeaderProps {
 
 /** A header for a `Card`. */
 export function CardHeader(props: CardHeaderProps) {
+  const borderColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
   return (
     <Heading
       fontSize="lg"
       fontWeight="600"
       p="4"
       borderBottomWidth="1px"
-      borderBottomColor="gray.100"
+      borderBottomColor={borderColor}
     >
       {props.children}
     </Heading>
@@ -73,8 +99,12 @@ export interface CardFooterProps {
 
 /** A footer for a `Card`. */
 export function CardFooter(props: CardFooterProps) {
+  const borderColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
   return (
-    <HStack display="flex" borderTop="1px" borderTopColor="gray.100" p="4">
+    <HStack display="flex" borderTop="1px" borderTopColor={borderColor} p="4">
       {props.children}
     </HStack>
   );

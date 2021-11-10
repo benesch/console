@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/icons": "^1.0.17",
     "@chakra-ui/react": "^1.6.10",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/inter": "^4.5.0",
-    "@frontegg/react": "^3.0.19",
+    "@frontegg/react": "=3.0.17",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
@@ -51,9 +51,9 @@
     "@types/react-dom": "^17.0.10",
     "@types/react-router-dom": "^5.3.1",
     "@types/webpack-dev-server": "^4.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "eslint": "^7.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
@@ -100,8 +100,7 @@
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars-experimental": "error"
+      "@typescript-eslint/no-unused-vars": "off"
     },
     "extends": [
       "eslint:recommended",
