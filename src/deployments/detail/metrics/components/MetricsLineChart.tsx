@@ -9,7 +9,7 @@ import {
 } from "victory";
 
 import { UseRetrieveMetrics } from "../hooks";
-import { mzVictoryTheme } from "../theme";
+import { useMZVictoryTheme } from "../theme";
 import {
   formatDatapointLabel,
   formatXToReadableDateTime,
@@ -23,7 +23,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   chart,
   filters,
 }) => {
-  const chakraTheme = useTheme();
+  const chartTheme = useMZVictoryTheme();
   return (
     <VStack spacing="3" align="left" data-testid="line-chart-container">
       {operation.error && <DeploymentMetricsRetrieveError />}
@@ -40,7 +40,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
         <VictoryChart
           scale={{ x: "time", y: "linear" }}
           domain={chart.domains}
-          theme={mzVictoryTheme(chakraTheme)}
+          theme={chartTheme}
           containerComponent={
             <VictoryVoronoiContainer labels={formatDatapointLabel} />
           }

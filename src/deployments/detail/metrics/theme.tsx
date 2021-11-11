@@ -1,12 +1,38 @@
-import { WithCSSVar } from "@chakra-ui/system";
-import { Dict } from "@chakra-ui/utils";
+import { useColorModeValue } from "@chakra-ui/color-mode";
+import { useTheme } from "@chakra-ui/system";
+import get from "lodash/get";
 import { VictoryThemeDefinition } from "victory";
 
 /* customized theme from victory defaults */
 
-export const mzVictoryTheme = (
-  theme: WithCSSVar<Dict<any>>
-): VictoryThemeDefinition => {
+export const useMZVictoryTheme = (): VictoryThemeDefinition => {
+  const theme = useTheme();
+
+  const baseFill = get(
+    theme,
+    useColorModeValue("colors.gray.800", "colors.gray.100")
+  );
+  const baseStroke = get(
+    theme,
+    useColorModeValue("colors.gray.800", "colors.gray.200")
+  );
+  const lightStroke = get(
+    theme,
+    useColorModeValue("colors.gray.400", "colors.gray.600")
+  );
+  const lightFill = get(
+    theme,
+    useColorModeValue("colors.gray.400", "colors.gray.800")
+  );
+
+  const primaryLineStroke = get(
+    theme,
+    useColorModeValue("colors.purple.600", "colors.gray.200")
+  );
+
+  const flyoutBackground = get(theme, "colors.purple.800");
+  const flyoutTextColor = get(theme, "colors.gray.200");
+
   const colors = Object.values(theme.colors) as string[];
 
   const sansSerif = theme.fonts.body as string;
@@ -23,7 +49,7 @@ export const mzVictoryTheme = (
     fontSize,
     letterSpacing,
     padding: 5,
-    fill: theme.colors.gray[800],
+    fill: baseFill,
     stroke: "transparent",
   };
 
@@ -37,7 +63,7 @@ export const mzVictoryTheme = (
     area: {
       style: {
         data: {
-          fill: theme.colors.gray[800],
+          fill: baseFill,
         },
         labels: baseLabelStyles,
       },
@@ -48,7 +74,7 @@ export const mzVictoryTheme = (
       style: {
         axis: {
           fill: "transparent",
-          stroke: theme.colors.gray[800],
+          stroke: baseStroke,
           strokeWidth: 1,
           strokeLinecap,
           strokeLinejoin,
@@ -57,8 +83,8 @@ export const mzVictoryTheme = (
           ...centeredLabelStyles,
         },
         grid: {
-          fill: theme.colors.gray[400],
-          stroke: theme.colors.gray[400],
+          fill: lightStroke,
+          stroke: lightStroke,
           pointerEvents: "painted",
         },
         ticks: {
@@ -73,7 +99,7 @@ export const mzVictoryTheme = (
     bar: {
       style: {
         data: {
-          fill: theme.colors.gray[800],
+          fill: baseFill,
           padding: 8,
           strokeWidth: 0,
         },
@@ -84,15 +110,15 @@ export const mzVictoryTheme = (
 
     boxplot: {
       style: {
-        max: { padding: 8, stroke: theme.colors.gray[800], strokeWidth: 1 },
+        max: { padding: 8, stroke: baseStroke, strokeWidth: 1 },
         maxLabels: { ...baseLabelStyles, padding: 3 },
-        median: { padding: 8, stroke: theme.colors.gray[800], strokeWidth: 1 },
+        median: { padding: 8, stroke: baseStroke, strokeWidth: 1 },
         medianLabels: { ...baseLabelStyles, padding: 3 },
-        min: { padding: 8, stroke: theme.colors.gray[800], strokeWidth: 1 },
+        min: { padding: 8, stroke: baseStroke, strokeWidth: 1 },
         minLabels: { ...baseLabelStyles, padding: 3 },
-        q1: { padding: 8, fill: theme.colors.gray[400] },
+        q1: { padding: 8, fill: lightFill },
         q1Labels: { ...baseLabelStyles, padding: 3 },
-        q3: { padding: 8, fill: theme.colors.gray[400] },
+        q3: { padding: 8, fill: lightFill },
         q3Labels: { ...baseLabelStyles, padding: 3 },
       },
       boxWidth: 20,
@@ -101,14 +127,14 @@ export const mzVictoryTheme = (
     candlestick: {
       style: {
         data: {
-          stroke: theme.colors.gray[800],
+          stroke: baseStroke,
           strokeWidth: 1,
         },
         labels: { ...baseLabelStyles, padding: 5 },
       },
       candleColors: {
         positive: "#ffffff",
-        negative: theme.colors.gray[800],
+        negative: baseStroke,
       },
       ...baseProps,
     },
@@ -118,7 +144,7 @@ export const mzVictoryTheme = (
       style: {
         data: {
           fill: "transparent",
-          stroke: theme.colors.gray[800],
+          stroke: baseStroke,
           strokeWidth: 2,
         },
         labels: baseLabelStyles,
@@ -129,8 +155,8 @@ export const mzVictoryTheme = (
     histogram: {
       style: {
         data: {
-          fill: theme.colors.gray[400],
-          stroke: theme.colors.gray[800],
+          fill: lightFill,
+          stroke: baseStroke,
           strokeWidth: 2,
         },
         labels: baseLabelStyles,
@@ -155,7 +181,7 @@ export const mzVictoryTheme = (
       style: {
         data: {
           fill: "transparent",
-          stroke: theme.colors.gray[800],
+          stroke: primaryLineStroke,
           strokeWidth: 2,
         },
         labels: baseLabelStyles,
@@ -180,7 +206,7 @@ export const mzVictoryTheme = (
     scatter: {
       style: {
         data: {
-          fill: theme.colors.gray[800],
+          fill: baseFill,
           stroke: "transparent",
           strokeWidth: 0,
         },
@@ -191,11 +217,15 @@ export const mzVictoryTheme = (
 
     stack: baseProps,
     tooltip: {
-      style: { ...baseLabelStyles, padding: 0, pointerEvents: "none" },
+      style: {
+        ...baseLabelStyles,
+        padding: 0,
+        pointerEvents: "none",
+        backgroundColor: "red",
+      },
       flyoutStyle: {
-        stroke: theme.colors.gray[800],
+        stroke: baseStroke,
         strokeWidth: 1,
-        fill: "#f0f0f0",
         pointerEvents: "none",
       },
       flyoutPadding: 5,
@@ -211,12 +241,13 @@ export const mzVictoryTheme = (
         },
         labels: {
           ...baseLabelStyles,
+          fill: flyoutTextColor,
           pointerEvents: "none",
           fontSize: 11,
         },
         flyout: {
           stroke: "transparent",
-          fill: "#f0f0f0",
+          fill: flyoutBackground,
           pointerEvents: "none",
         },
       },
