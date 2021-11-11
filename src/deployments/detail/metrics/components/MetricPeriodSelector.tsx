@@ -13,7 +13,7 @@ export const MetricPeriodSelector = (props: {
   onSelect: (period: number) => void;
 }) => (
   <HStack>
-    <Text minW="50%">Show the last&nbsp;</Text>
+    <Text>Last&nbsp;</Text>
     <Select
       data-testid="metrics-period-selector-dropdown"
       defaultValue="60"

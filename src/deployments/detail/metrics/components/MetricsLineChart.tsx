@@ -28,7 +28,12 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
     <VStack spacing="3" align="left" data-testid="line-chart-container">
       {operation.error && <DeploymentMetricsRetrieveError />}
       <>
-        <HStack justifyContent="space-between" px={3} pl={10}>
+        <HStack
+          justifyContent="space-between"
+          alignItems="flex-end"
+          px={3}
+          pl={0}
+        >
           <Text>Utilization (%)</Text>
           <MetricPeriodSelector onSelect={filters.setPeriod} />
         </HStack>

@@ -15,7 +15,7 @@ export const mzVictoryTheme = (
   const baseProps = {
     width: 450,
     height: 200,
-    padding: { top: 0, bottom: 20, left: 25, right: 10 },
+    padding: { top: 5, bottom: 20, left: 25, right: 10 },
     colorScale: colors,
   };
   const baseLabelStyles = {

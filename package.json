@@ -80,7 +80,8 @@
     "playwright": "playwright",
     "pyright": "pyright",
     "gavi": "gavi",
-    "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx"
+    "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx",
+    "dev:mock:prometheus": "python bin/prometheus-mock-server.py"
   },
   "eslintConfig": {
     "env": {
