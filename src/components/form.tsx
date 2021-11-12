@@ -10,18 +10,22 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  InputProps,
   Select,
   Switch,
+  SwitchProps,
   ThemeComponentProps,
 } from "@chakra-ui/react";
 import { FieldHookConfig, useField, useFormikContext } from "formik";
 import React from "react";
 
+// FIXME: we should stay as compatible as possible with the base chakra ui props
 export type TextFieldProps = FieldHookConfig<string> & {
   /** The label to use above the text input. */
   label: string;
   /** The font size of the label and size of the text input. */
   size?: string;
+  disabled?: boolean;
 };
 
 /**
@@ -30,31 +34,31 @@ export type TextFieldProps = FieldHookConfig<string> & {
  * This component must be used inside a `Formik` element.
  */
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ label, size, ...props }, ref) => {
+  ({ label, size, disabled, ...props }, ref) => {
     const [field, meta] = useField(props);
     return (
       <FormControl isInvalid={meta.touched && !!meta.error}>
         <FormLabel htmlFor={props.name} fontSize={size}>
           {label}
         </FormLabel>
-        <Input size={size} ref={ref} {...field} />
+        <Input size={size} disabled={disabled} ref={ref} {...field} />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       </FormControl>
     );
   }
 );
 
-export type SwitchFieldProps = ThemeComponentProps & {
+export type SwitchFieldProps = SwitchProps & {
   label: string;
   id: string;
-  config: FieldHookConfig<boolean>;
+  config?: FieldHookConfig<boolean>;
 };
 
 export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(
-  ({ label, id, config, ...props }, ref) => {
+  ({ label, id, config = {}, ...props }, ref) => {
     const [field] = useField({ ...config, name: id });
     return (
-      <FormControl isDisabled={props.disabled} {...props} name={name}>
+      <FormControl isDisabled={props.isDisabled} {...field}>
         <Switch
           ref={ref}
           id={id}
@@ -67,7 +71,7 @@ export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(
           isChecked={field.value}
           colorScheme="purple"
         />
-        <FormLabel htmlFor={id} {...props} mb={0}>
+        <FormLabel htmlFor={id} mb={0}>
           {label}
         </FormLabel>
       </FormControl>

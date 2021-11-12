@@ -3,7 +3,7 @@
  * A reusable "card" component.
  */
 
-import { BoxProps } from "@chakra-ui/layout";
+import { BoxProps, HeadingProps } from "@chakra-ui/layout";
 import {
   Box,
   Heading,
@@ -61,7 +61,7 @@ export function Card(props: BoxProps) {
   );
 }
 
-export interface CardHeaderProps {
+export interface CardHeaderProps extends HeadingProps {
   children: React.ReactNode;
 }
 
@@ -78,9 +78,8 @@ export function CardHeader(props: CardHeaderProps) {
       p="4"
       borderBottomWidth="1px"
       borderBottomColor={borderColor}
-    >
-      {props.children}
-    </Heading>
+      {...props}
+    />
   );
 }
 

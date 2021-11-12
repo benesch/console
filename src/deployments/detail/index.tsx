@@ -36,39 +36,57 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import download from "downloadjs";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
 import {
   Deployment,
   useDeploymentsLogsRetrieve,
-  useDeploymentsRetrieve,
   useMzVersionsLatestRetrieve,
-} from "../api/api";
-import { useAuth } from "../api/auth";
+} from "../../api/api";
+import { useAuth } from "../../api/auth";
 import {
   Card,
   CardContent,
   CardField,
   CardFooter,
   CardHeader,
-} from "../components/card";
-import { CodeBlock } from "../components/codeblock";
-import { CopyableText } from "../components/Copyable";
+} from "../../components/card";
+import { CodeBlock } from "../../components/codeblock";
+import { CopyableText } from "../../components/Copyable";
 import {
   BaseLayout,
   PageBreadcrumbs,
   PageHeader,
   PageHeading,
-} from "../layouts/base";
-import { DestroyDeploymentButton } from "./destroy";
-import { UpdateDeploymentButton } from "./update";
-import { UpgradeDeploymentButton } from "./upgrade";
-import { DeploymentStateBadge } from "./util";
+} from "../../layouts/base";
+import { DestroyDeploymentButton } from "../destroy";
+import { UpdateDeploymentButton } from "../update";
+import { UpgradeDeploymentButton } from "../upgrade";
+import { DeploymentStateBadge } from "../util";
+import { DeploymentProvider, useDeployment } from "./DeploymentProvider";
+import { DeploymentIntegrationsCard } from "./integrations";
+
+/**
+ * Main deployment detail view component.
+ * Using a react context, it will share the deployment retrieval hook and refetching availabilities with the rendering tree.
+ * @param
+ * @returns
+ */
+export const DeploymentDetailPageRoot: React.FC = ({ children }) => {
+  const { id } = useParams<{ id: string }>();
+  return (
+    <DeploymentProvider initialState={id}>
+      <DeploymentDetailPage></DeploymentDetailPage>
+    </DeploymentProvider>
+  );
+};
 
 export function DeploymentDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const { data: deployment, error, refetch } = useDeploymentsRetrieve({ id });
+  const {
+    id,
+    retrieveOperation: { data: deployment, error, refetch },
+  } = useDeployment();
   const { data: latestVersion } = useMzVersionsLatestRetrieve({});
   useInterval(refetch, 5000);
 
@@ -306,28 +324,6 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
           Download certificates
         </Button>
       </CardFooter>
-    </Card>
-  );
-}
-
-interface DeploymentIntegrationsCardProps {
-  deployment: Deployment;
-}
-
-function DeploymentIntegrationsCard(_: DeploymentIntegrationsCardProps) {
-  return (
-    <Card>
-      <CardHeader>Integrations</CardHeader>
-      <Tabs colorScheme="purple">
-        <TabList px="4">
-          <Tab>Tailscale</Tab>
-          <Tab>Datadog</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>Tailscale integration coming soon.</TabPanel>
-          <TabPanel>Datadog integration coming soon.</TabPanel>
-        </TabPanels>
-      </Tabs>
     </Card>
   );
 }
