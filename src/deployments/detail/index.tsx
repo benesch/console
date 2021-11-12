@@ -36,7 +36,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import download from "downloadjs";
-import React, { ReactNode } from "react";
+import React from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
 import {
@@ -52,6 +52,7 @@ import {
   CardFooter,
   CardHeader,
 } from "../../components/card";
+import { CardTab, CardTabList, CardTabs } from "../../components/cardTabs";
 import { CodeBlock } from "../../components/codeblock";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -174,7 +175,7 @@ function DeploymentDetail({
             <UserIndexesDisabledAlert />
           )}
           <DeploymentConnectCard deployment={deployment} />
-          <DeploymentIntegrationsCard deployment={deployment} />
+          <DeploymentIntegrationsCard />
         </VStack>
         <VStack width="400px">
           <DeploymentDetailCard deployment={deployment} />
@@ -240,13 +241,15 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
 
   return (
     <Card>
-      <CardHeader>Connect</CardHeader>
-      <Tabs colorScheme="purple">
-        <TabList px="4">
-          <Tab>psql</Tab>
-          <Tab>Prometheus</Tab>
-          <Tab>Metabase</Tab>
-        </TabList>
+      <CardTabs colorScheme="purple">
+        <CardTabList>
+          <CardHeader>Connect</CardHeader>
+          <HStack>
+            <CardTab>psql</CardTab>
+            <CardTab>Prometheus</CardTab>
+            <CardTab>Metabase</CardTab>
+          </HStack>
+        </CardTabList>
         <TabPanels fontSize="15px">
           <TabPanel>
             <OrderedList ml="6" spacing="3">
@@ -317,7 +320,7 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
             <p>Metabase connection instructions coming soon.</p>
           </TabPanel>
         </TabPanels>
-      </Tabs>
+      </CardTabs>
       <CardFooter>
         <Spacer />
         <Button colorScheme="purple" size="sm" onClick={handleDownloadCerts}>
