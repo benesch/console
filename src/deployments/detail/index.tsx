@@ -52,7 +52,7 @@ import {
   CardFooter,
   CardHeader,
 } from "../../components/card";
-import { CardTab, CardTabList, CardTabs } from "../../components/cardTabs";
+import { CardTab, CardTabs, CardTabsHeaders } from "../../components/cardTabs";
 import { CodeBlock } from "../../components/codeblock";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -242,14 +242,14 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
   return (
     <Card>
       <CardTabs colorScheme="purple">
-        <CardTabList>
+        <CardTabsHeaders>
           <CardHeader>Connect</CardHeader>
           <HStack>
             <CardTab>psql</CardTab>
             <CardTab>Prometheus</CardTab>
             <CardTab>Metabase</CardTab>
           </HStack>
-        </CardTabList>
+        </CardTabsHeaders>
         <TabPanels fontSize="15px">
           <TabPanel>
             <OrderedList ml="6" spacing="3">

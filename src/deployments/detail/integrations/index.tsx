@@ -2,20 +2,24 @@ import { HStack, TabPanel, TabPanels } from "@chakra-ui/react";
 import * as React from "react";
 
 import { Card, CardHeader } from "../../../components/card";
-import { CardTab, CardTabList, CardTabs } from "../../../components/cardTabs";
+import {
+  CardTab,
+  CardTabs,
+  CardTabsHeaders,
+} from "../../../components/cardTabs";
 import { TailscaleIntegration } from "./tailscale";
 
 export const DeploymentIntegrationsCard: React.FC = () => {
   return (
     <Card>
       <CardTabs colorScheme="purple">
-        <CardTabList>
+        <CardTabsHeaders>
           <CardHeader>Integrations</CardHeader>
           <HStack>
-            <CardTab py={4}>Tailscale</CardTab>
-            <CardTab py={4}>Datadog</CardTab>
+            <CardTab>Tailscale</CardTab>
+            <CardTab>Datadog</CardTab>
           </HStack>
-        </CardTabList>
+        </CardTabsHeaders>
         <TabPanels>
           <TabPanel>
             <TailscaleIntegration />

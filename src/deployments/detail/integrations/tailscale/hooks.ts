@@ -1,10 +1,10 @@
-import { useFormikContext } from "formik";
+import { useDisclosure } from "@chakra-ui/hooks";
+import { useToast } from "@chakra-ui/toast";
 import { useEffect, useState } from "react";
 
 import {
-  Deployment,
-  DeploymentsPartialUpdateProps,
   PatchedDeploymentUpdateRequest,
+  useDeploymentsPartialUpdate,
 } from "../../../../api/api";
 import { useDeployment } from "../../DeploymentProvider";
 
@@ -12,29 +12,52 @@ export type TailscaleIntegrationForm = Pick<
   PatchedDeploymentUpdateRequest,
   "enableTailscale" | "tailscaleAuthKey"
 >;
-export const useTailscaleIntegration = () => {
-  const { retrieveOperation, partialUpdateOperation, deployment } =
+
+export const useTailscaleConfigurationForm = () => {
+  const toast = useToast();
+  const modalState = useDisclosure();
+  const { partialUpdateOperation, retrieveOperation, deployment } =
     useDeployment();
 
   const defaultTailscaleAuthKeyValue = deployment?.enableTailscale ? "***" : "";
-  const savePreferences = async (parameters: any) => {
-    await partialUpdateOperation.mutate(parameters);
-    return retrieveOperation.refetch();
+
+  const save = async (form: TailscaleIntegrationForm) => {
+    await partialUpdateOperation.mutate({
+      ...form,
+      enableTailscale: true,
+    });
+    await retrieveOperation.refetch();
+    toast({
+      title: "Integration has been saved successfully",
+      status: "success",
+    });
+    modalState.onClose();
   };
   return {
     defaultValues: {
-      enableTailscale: deployment?.enableTailscale ?? false,
       tailscaleAuthKey: defaultTailscaleAuthKeyValue,
     },
-    savePreferences,
+    modalState,
+    save,
+    operation: partialUpdateOperation,
   };
 };
 
-export const useComputedFields = () => {
-  const { values } = useFormikContext<TailscaleIntegrationForm>();
+export const useDisableIntegration = () => {
+  const toast = useToast();
+  const { retrieveOperation, partialUpdateOperation, deployment } =
+    useDeployment();
+  const disableIntegration = async () => {
+    await partialUpdateOperation.mutate({
+      enableTailscale: false,
+      tailscaleAuthKey: undefined,
+    });
+    toast({ title: "The integration has been disabled", status: "success" });
+    return retrieveOperation.refetch();
+  };
 
   return {
-    shouldShowAdditionalFields: values.enableTailscale,
-    shouldDisabledTailscaleAuthKey: !values.enableTailscale,
+    operation: partialUpdateOperation,
+    disableIntegration,
   };
 };

@@ -43,7 +43,7 @@ export interface ConfirmModalProps {
  * A modal that requires typing a prompt in order to confirm an action.
  * Intended for use with dangerous actions, like destroying a deployment.
  */
-export function ConfirmModal(props: ConfirmModalProps) {
+export function DestructiveActionModal(props: ConfirmModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmation, setConfirmation] = useState("");
   const isConfirmed = confirmation === props.confirmText;

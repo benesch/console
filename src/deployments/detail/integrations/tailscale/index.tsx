@@ -1,54 +1,22 @@
-import { Collapse, HStack, Slide, Text, VStack } from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import { Button, Collapse, HStack, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import { Deployment } from "../../../../api/api";
-import {
-  SubmitButton,
-  SwitchField,
-  TextField,
-} from "../../../../components/form";
-import { useComputedFields, useTailscaleIntegration } from "./hooks";
+import { DisableIntegrationButton } from "./DisableIntegrationButton";
+import { EnableEditTailscaleConfiguration } from "./TailscaleConfigurationModal";
 
-export const TailscaleIntegration: React.FC = () => {
-  const tailscale = useTailscaleIntegration();
+export const TailscaleIntegration = () => {
   return (
-    <Formik
-      initialValues={tailscale.defaultValues}
-      onSubmit={(values) => tailscale.savePreferences(values)}
-    >
-      <TailscaleIntegrationForm />
-    </Formik>
-  );
-};
-
-export const TailscaleIntegrationForm = () => {
-  const { shouldDisabledTailscaleAuthKey, shouldShowAdditionalFields } =
-    useComputedFields();
-  return (
-    <Form>
-      <VStack w="full" alignItems="flex-start" px={4}>
-        <Text>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo.
-        </Text>
-        <HStack>
-          <Text flexShrink={0}>Enable integration</Text>
-          <SwitchField label="" id="enableTailscale"></SwitchField>
-        </HStack>
-
-        <Collapse in={shouldShowAdditionalFields} animateOpacity>
-          <Text color="gray.400">Additional fields</Text>
-          <TextField
-            disabled
-            name="tailscaleAuthKey"
-            label="Tailscale Auth Key"
-          ></TextField>
-          <SubmitButton>Save</SubmitButton>
-        </Collapse>
-      </VStack>
-    </Form>
+    <VStack w="full" alignItems="flex-start" px={4}>
+      <Text>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+        accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+        illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+        explicabo.
+      </Text>
+      <HStack>
+        <EnableEditTailscaleConfiguration />
+        <DisableIntegrationButton />
+      </HStack>
+    </VStack>
   );
 };

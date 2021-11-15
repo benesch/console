@@ -8,7 +8,7 @@ export const CardTab: React.FC<TabProps> = (props) => {
 };
 
 /** a drop in replacement to the TabList component that can be used in a card header container */
-export const CardTabList: React.FC<TabListProps> = (props) => {
+export const CardTabsHeaders: React.FC<TabListProps> = (props) => {
   return (
     <TabList
       as={Flex}
