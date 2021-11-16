@@ -1,3 +1,4 @@
+import React from "react";
 import { createContainer } from "unstated-next";
 
 import { useDeploymentsRetrieve } from "../../api/api";
@@ -16,4 +17,11 @@ export const useDeploymentHook = (id = "") => {
 const DeploymentContainer = createContainer(useDeploymentHook);
 
 export const useDeployment = () => DeploymentContainer.useContainer();
-export const DeploymentProvider = DeploymentContainer.Provider;
+export const DeploymentProvider: React.FC<{
+  id: string;
+  children: React.ReactNode;
+}> = ({ id, children }) => (
+  <DeploymentContainer.Provider initialState={id}>
+    {children}
+  </DeploymentContainer.Provider>
+);

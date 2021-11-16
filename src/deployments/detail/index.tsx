@@ -74,7 +74,7 @@ import { DeploymentIntegrationsCard } from "./integrations";
 export const DeploymentDetailPageRoot: React.FC = ({ children }) => {
   const { id } = useParams<{ id: string }>();
   return (
-    <DeploymentProvider initialState={id}>
+    <DeploymentProvider id={id}>
       <DeploymentDetailPage></DeploymentDetailPage>
     </DeploymentProvider>
   );

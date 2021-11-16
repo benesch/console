@@ -15,18 +15,23 @@ import React from "react";
 
 import { SubmitButton, TextField } from "../../../../components/form";
 import { useDeployment } from "../../DeploymentProvider";
-import { useTailscaleConfigurationForm } from "./hooks";
+import { useTailscaleIntegration } from "./hooks";
 
-export const EnableEditTailscaleConfiguration: React.FC = (props) => {
+export const EnableEditTailscaleConfiguration: React.FC = () => {
   const { deployment } = useDeployment();
-  const { modalState, save, defaultValues } = useTailscaleConfigurationForm();
+  const { modalState, save, defaultValues } = useTailscaleIntegration();
   return (
     <>
       <EnableEditTailscaleButton
         onOpen={modalState.onOpen}
         isEnabled={deployment?.enableTailscale ?? false}
       />
-      <Modal isOpen={modalState.isOpen} onClose={modalState.onClose} size="xl">
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={modalState.onClose}
+        size="xl"
+        data-testid="tailscale-configuration-modal"
+      >
         <ModalOverlay />
         <ModalContent p={4}>
           <Formik
