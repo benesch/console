@@ -342,8 +342,12 @@ function DeploymentDetailCard({ deployment }: DeploymentDetailCardProps) {
           </CardField>
           <CardField name="Version">{deployment.mzVersion}</CardField>
           <CardField name="Size">{deployment.size}</CardField>
-          <CardField name="Cloud provider">AWS</CardField>
-          <CardField name="Region">us-east-1</CardField>
+          <CardField name="Cloud provider">
+            {deployment.cloudProviderRegion.provider}
+          </CardField>
+          <CardField name="Region">
+            {deployment.cloudProviderRegion.region}
+          </CardField>
           <CardField name="Cluster ID">{deployment.clusterId || "-"}</CardField>
         </VStack>
       </CardContent>
