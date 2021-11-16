@@ -1,6 +1,5 @@
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useToast } from "@chakra-ui/toast";
-import { useEffect, useState } from "react";
 
 import {
   PatchedDeploymentUpdateRequest,
@@ -13,11 +12,12 @@ export type TailscaleIntegrationForm = Pick<
   "enableTailscale" | "tailscaleAuthKey"
 >;
 
-export const useTailscaleConfigurationForm = () => {
+export const useTailscaleIntegration = () => {
   const toast = useToast();
   const modalState = useDisclosure();
-  const { partialUpdateOperation, retrieveOperation, deployment } =
-    useDeployment();
+
+  const { retrieveOperation, deployment, id } = useDeployment();
+  const partialUpdateOperation = useDeploymentsPartialUpdate({ id });
 
   const defaultTailscaleAuthKeyValue = deployment?.enableTailscale ? "***" : "";
 
@@ -45,8 +45,8 @@ export const useTailscaleConfigurationForm = () => {
 
 export const useDisableIntegration = () => {
   const toast = useToast();
-  const { retrieveOperation, partialUpdateOperation, deployment } =
-    useDeployment();
+  const { retrieveOperation, id } = useDeployment();
+  const partialUpdateOperation = useDeploymentsPartialUpdate({ id });
   const disableIntegration = async () => {
     await partialUpdateOperation.mutate({
       enableTailscale: false,
