@@ -32,10 +32,10 @@ export const ConfirmActionButton: React.FC<
               <PopoverFooter>
                 <HStack alignItems="self-end">
                   <Button size="sm" onClick={onClose}>
-                    Close
+                    No, Cancel
                   </Button>
                   <Button size="sm" colorScheme="blue" onClick={onConfirm}>
-                    Confirm
+                    Yes, Disable
                   </Button>
                 </HStack>
               </PopoverFooter>

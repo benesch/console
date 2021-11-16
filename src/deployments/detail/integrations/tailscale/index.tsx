@@ -1,8 +1,9 @@
 import { Button, Collapse, HStack, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import { DisableIntegrationButton } from "./DisableIntegrationButton";
-import { EnableEditTailscaleConfiguration } from "./TailscaleConfigurationModal";
+import { DisableIntegration } from "./DisableIntegrationButton";
+import { EnableEditTailscaleConfiguration } from "./EnableEditTailscaleConfiguration";
+import { IntegrationStatus } from "./IntegrationStatus";
 
 export const TailscaleIntegration = () => {
   return (
@@ -13,9 +14,12 @@ export const TailscaleIntegration = () => {
         illo inventore veritatis et quasi architecto beatae vitae dicta sunt
         explicabo.
       </Text>
-      <HStack>
-        <EnableEditTailscaleConfiguration />
-        <DisableIntegrationButton />
+      <HStack w="full" justifyContent="space-between">
+        <IntegrationStatus />
+        <HStack>
+          <DisableIntegration />
+          <EnableEditTailscaleConfiguration />
+        </HStack>
       </HStack>
     </VStack>
   );

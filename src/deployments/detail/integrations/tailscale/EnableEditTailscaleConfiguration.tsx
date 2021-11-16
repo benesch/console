@@ -1,3 +1,4 @@
+import { UseDisclosureReturn } from "@chakra-ui/hooks";
 import { Modal } from "@chakra-ui/modal";
 import {
   Button,
@@ -8,7 +9,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  VStack,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
@@ -19,14 +19,13 @@ import { useTailscaleConfigurationForm } from "./hooks";
 
 export const EnableEditTailscaleConfiguration: React.FC = (props) => {
   const { deployment } = useDeployment();
-
   const { modalState, save, defaultValues } = useTailscaleConfigurationForm();
   return (
     <>
-      <Button size="sm" onClick={modalState.onOpen}>
-        {deployment?.enableTailscale ? "Edit" : "Enable"}
-      </Button>
-
+      <EnableEditTailscaleButton
+        onOpen={modalState.onOpen}
+        isEnabled={deployment?.enableTailscale ?? false}
+      />
       <Modal isOpen={modalState.isOpen} onClose={modalState.onClose} size="xl">
         <ModalOverlay />
         <ModalContent p={4}>
@@ -56,5 +55,18 @@ export const EnableEditTailscaleConfiguration: React.FC = (props) => {
         </ModalContent>
       </Modal>
     </>
+  );
+};
+
+export const EnableEditTailscaleButton: React.FC<{
+  onOpen: () => void;
+  isEnabled: boolean;
+}> = ({ onOpen, isEnabled }) => {
+  const isEnabledText = isEnabled ? "Edit" : "Enable";
+  const colorScheme = isEnabled ? undefined : "purple";
+  return (
+    <Button size="sm" onClick={onOpen} colorScheme={colorScheme}>
+      {isEnabledText}
+    </Button>
   );
 };
