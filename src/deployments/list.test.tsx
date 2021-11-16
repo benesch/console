@@ -52,15 +52,11 @@ describe("deployments/list", () => {
   it("should refetch deployment every 5 seconds", async () => {
     renderDeploymentList();
     await selectors.deployment();
-    expect(apiMock?.handlers.getApiDeployementsHandler).toHaveBeenCalledTimes(
-      1
-    );
+    expect(apiMock?.handlers.getApiDeploymentsHandler).toHaveBeenCalledTimes(1);
 
     // after 5 seconds, we should refetch
     jest.advanceTimersByTime(6000);
-    expect(apiMock?.handlers.getApiDeployementsHandler).toHaveBeenCalledTimes(
-      2
-    );
+    expect(apiMock?.handlers.getApiDeploymentsHandler).toHaveBeenCalledTimes(2);
   });
 
   it("should display a warning alert the deployments api return an error", async () => {

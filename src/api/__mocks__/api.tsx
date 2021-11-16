@@ -11,7 +11,7 @@ export const validDeploymentId = "123";
 export const invalidDeploymentId = "456";
 
 export const createApiLayerMock = () => {
-  const getApiDeployementsHandler = jest.fn(() => {
+  const getApiDeploymentsHandler = jest.fn(() => {
     // status, header, data
     return new Response(200, {}, [validDeployment]);
   });
@@ -22,7 +22,7 @@ export const createApiLayerMock = () => {
   });
   return {
     handlers: {
-      getApiDeployementsHandler,
+      getApiDeploymentsHandler,
       getMetricsHandler,
     },
     server: new Server({
@@ -30,7 +30,7 @@ export const createApiLayerMock = () => {
       logging: true,
       routes() {
         this.urlPrefix = testApiBase;
-        this.get("/api/deployments", getApiDeployementsHandler);
+        this.get("/api/deployments", getApiDeploymentsHandler);
         this.get(
           `/api/deployments/${validDeploymentId}/metrics/memory/:period`,
           getMetricsHandler

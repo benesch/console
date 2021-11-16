@@ -8,8 +8,8 @@ import {
   VictoryVoronoiContainer,
 } from "victory";
 
+import { useMZVictoryTheme } from "../../../../theme/victoryChart";
 import { UseRetrieveMetrics } from "../hooks";
-import { useMZVictoryTheme } from "../theme";
 import {
   formatDatapointLabel,
   formatXToReadableDateTime,

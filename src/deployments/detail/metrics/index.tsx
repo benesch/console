@@ -8,7 +8,7 @@ import { DeploymentLogsButton } from "../deploymentLogsButton";
 import { CpuMetrics } from "./CpuMetrics";
 import { MemoryMetrics } from "./MemoryMetrics";
 
-export const DeployementMetricsTabs: React.FC<{ deployment: Deployment }> = ({
+export const DeploymentMetricsTabs: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
   return (
@@ -35,7 +35,7 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
   return (
     <Card>
       <CardHeader>Metrics</CardHeader>
-      <DeployementMetricsTabs deployment={deployment} />
+      <DeploymentMetricsTabs deployment={deployment} />
       <CardFooter>
         <Spacer />
         <DeploymentLogsButton deployment={deployment} size="sm" />
