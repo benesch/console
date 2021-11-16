@@ -85,6 +85,18 @@ export interface PendingMigrationRequest {
   deadline: string;
 }
 
+export interface PrometheusMetric {
+  name: string;
+  values: string[][];
+}
+
+/**
+ * Serializer for the prometheus metrics.
+ */
+export interface PrometheusMetrics {
+  metrics: PrometheusMetric[];
+}
+
 export type ProviderEnum = "AWS";
 
 export interface SupportedCloudRegion {
@@ -438,6 +450,136 @@ export const useDeploymentsLogsRetrieve = ({
     (paramsInPath: DeploymentsLogsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/logs`,
     { pathParams: { id }, ...props }
+  );
+
+export interface DeploymentsMetricsCpuRetrievePathParams {
+  id: string;
+  period: number;
+}
+
+export type DeploymentsMetricsCpuRetrieveProps = Omit<
+  GetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsCpuRetrievePathParams;
+
+/**
+ * Retrieve cpu line graph as a list of tuples (timestamps / utilization in %)) for a deployment.
+ */
+export const DeploymentsMetricsCpuRetrieve = ({
+  id,
+  period,
+  ...props
+}: DeploymentsMetricsCpuRetrieveProps) => (
+  <Get<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >
+    path={`/api/deployments/${id}/metrics/cpu/${period}`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsMetricsCpuRetrieveProps = Omit<
+  UseGetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsCpuRetrievePathParams;
+
+/**
+ * Retrieve cpu line graph as a list of tuples (timestamps / utilization in %)) for a deployment.
+ */
+export const useDeploymentsMetricsCpuRetrieve = ({
+  id,
+  period,
+  ...props
+}: UseDeploymentsMetricsCpuRetrieveProps) =>
+  useGet<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsCpuRetrievePathParams
+  >(
+    (paramsInPath: DeploymentsMetricsCpuRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/metrics/cpu/${paramsInPath.period}`,
+    { pathParams: { id, period }, ...props }
+  );
+
+export interface DeploymentsMetricsMemoryRetrievePathParams {
+  id: string;
+  period: number;
+}
+
+export type DeploymentsMetricsMemoryRetrieveProps = Omit<
+  GetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsMemoryRetrievePathParams;
+
+/**
+ * Retrieve memory line graph data (as a list of tuples (timestamps / utilization in %)) for a deployment.
+ */
+export const DeploymentsMetricsMemoryRetrieve = ({
+  id,
+  period,
+  ...props
+}: DeploymentsMetricsMemoryRetrieveProps) => (
+  <Get<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >
+    path={`/api/deployments/${id}/metrics/memory/${period}`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsMetricsMemoryRetrieveProps = Omit<
+  UseGetProps<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >,
+  "path"
+> &
+  DeploymentsMetricsMemoryRetrievePathParams;
+
+/**
+ * Retrieve memory line graph data (as a list of tuples (timestamps / utilization in %)) for a deployment.
+ */
+export const useDeploymentsMetricsMemoryRetrieve = ({
+  id,
+  period,
+  ...props
+}: UseDeploymentsMetricsMemoryRetrieveProps) =>
+  useGet<
+    PrometheusMetrics,
+    unknown,
+    void,
+    DeploymentsMetricsMemoryRetrievePathParams
+  >(
+    (paramsInPath: DeploymentsMetricsMemoryRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/metrics/memory/${paramsInPath.period}`,
+    { pathParams: { id, period }, ...props }
   );
 
 export interface DeploymentsTailscaleLogsRetrieveQueryParams {

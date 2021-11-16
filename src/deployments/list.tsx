@@ -45,7 +45,7 @@ import { useCache } from "../utils/useCache";
 import { CreateDeploymentButton } from "./create";
 import { DeploymentStateBadge } from "./util";
 
-/** the hook managing data for the deployements list page
+/** the hook managing data for the deployments list page
  * TODO: replace caching logic with `use-swr
  */
 export const useDeploymentsList = () => {

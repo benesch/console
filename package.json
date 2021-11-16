@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^1.0.17",
-    "@chakra-ui/react": "^1.6.10",
+    "@chakra-ui/react": "^1.7.1",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/inter": "^4.5.0",
@@ -12,9 +12,10 @@
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
-    "@sentry/tracing": "^6.13.3",
+    "@sentry/tracing": "^6.14.3",
     "@types/mini-css-extract-plugin": "^2.3.0",
     "css-loader": "^6.4.0",
+    "d3-scale-chromatic": "^3.0.0",
     "date-fns": "^2.25.0",
     "downloadjs": "^1.4.7",
     "formik": "^2.2.9",
@@ -42,13 +43,13 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/react-hooks": "^7.0.2",
-    "@testing-library/user-event": "^13.2.1",
+    "@testing-library/user-event": "^13.5.0",
     "@types/downloadjs": "1.4.2",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.5",
     "@types/pg": "^8.6.1",
     "@types/react": "^16.8.5",
-    "@types/react-dom": "^17.0.10",
+    "@types/react-dom": "^17.0.11",
     "@types/react-router-dom": "^5.3.1",
     "@types/webpack-dev-server": "^4.3.1",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
@@ -67,6 +68,7 @@
     "prettier": "^2.3.2",
     "pyright": "^1.1.177",
     "ts-jest": "^27.0.5",
+    "victory": "^36.1.0",
     "webpack-dev-server": "^4.4.0"
   },
   "scripts": {
@@ -79,7 +81,8 @@
     "playwright": "playwright",
     "pyright": "pyright",
     "gavi": "gavi",
-    "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx"
+    "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx",
+    "dev:mock:prometheus": "python bin/prometheus-mock-server.py"
   },
   "eslintConfig": {
     "env": {

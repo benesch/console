@@ -1,4 +1,4 @@
-import { Deployment } from "../api/api";
+import { Deployment, PrometheusMetrics } from "../api/api";
 
 export const validDeployment: Deployment = {
   id: "1",
@@ -21,4 +21,8 @@ export const validDeployment: Deployment = {
     provider: "AWS",
     region: "us-east-1",
   },
+};
+
+export const validPrometheusValues: PrometheusMetrics = {
+  metrics: [{ name: "metric", values: [[(+new Date()).toString(), "1"]] }],
 };
