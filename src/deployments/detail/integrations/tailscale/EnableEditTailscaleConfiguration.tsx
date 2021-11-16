@@ -26,14 +26,9 @@ export const EnableEditTailscaleConfiguration: React.FC = () => {
         onOpen={modalState.onOpen}
         isEnabled={deployment?.enableTailscale ?? false}
       />
-      <Modal
-        isOpen={modalState.isOpen}
-        onClose={modalState.onClose}
-        size="xl"
-        data-testid="tailscale-configuration-modal"
-      >
+      <Modal isOpen={modalState.isOpen} onClose={modalState.onClose} size="xl">
         <ModalOverlay />
-        <ModalContent p={4}>
+        <ModalContent p={4} data-testid="tailscale-configuration-modal">
           <Formik
             initialValues={defaultValues}
             onSubmit={(values) => save(values)}

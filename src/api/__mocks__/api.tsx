@@ -20,10 +20,16 @@ export const createApiLayerMock = () => {
     // status, header, data
     return new Response(200, {}, validPrometheusValues);
   });
+
+  const partialUpdateHandler = jest.fn(() => {
+    // status, header, data
+    return new Response(200, {});
+  });
   return {
     handlers: {
       getApiDeploymentsHandler,
       getMetricsHandler,
+      partialUpdateHandler,
     },
     server: new Server({
       environment: "test",
@@ -31,6 +37,7 @@ export const createApiLayerMock = () => {
       routes() {
         this.urlPrefix = testApiBase;
         this.get("/api/deployments", getApiDeploymentsHandler);
+        this.patch("/api/deployments/:id", partialUpdateHandler);
         this.get(
           `/api/deployments/${validDeploymentId}/metrics/memory/:period`,
           getMetricsHandler
