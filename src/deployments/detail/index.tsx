@@ -54,7 +54,7 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
-import { DeploymentMetricsCard } from "./metrics";
+import { DeploymentLogsButton } from "./deploymentLogsButton";
 
 export function DeploymentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -147,7 +147,7 @@ function DeploymentDetail({
           )}
           <DeploymentConnectCard deployment={deployment} />
           <DeploymentIntegrationsCard deployment={deployment} />
-          <DeploymentMetricsCard deployment={deployment} />
+          {/* <DeploymentMetricsCard deployment={deployment} /> */}
         </VStack>
         <VStack width="400px">
           <DeploymentDetailCard deployment={deployment} />
@@ -351,6 +351,9 @@ function DeploymentDetailCard({ deployment }: DeploymentDetailCardProps) {
           <CardField name="Cluster ID">{deployment.clusterId || "-"}</CardField>
         </VStack>
       </CardContent>
+      <CardFooter>
+        <DeploymentLogsButton deployment={deployment} />
+      </CardFooter>
     </Card>
   );
 }
