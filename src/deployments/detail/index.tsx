@@ -54,7 +54,6 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
-import { DeploymentMetricsCard } from "./metrics";
 
 export function DeploymentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -147,7 +146,7 @@ function DeploymentDetail({
           )}
           <DeploymentConnectCard deployment={deployment} />
           <DeploymentIntegrationsCard deployment={deployment} />
-          <DeploymentMetricsCard deployment={deployment} />
+          {/* <DeploymentMetricsCard deployment={deployment} /> */}
         </VStack>
         <VStack width="400px">
           <DeploymentDetailCard deployment={deployment} />
