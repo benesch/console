@@ -19,10 +19,10 @@ export const DeploymentMetricsTabs: React.FC<{ deployment: Deployment }> = ({
       </TabList>
       <TabPanels>
         <TabPanel>
-          <CpuMetrics deploymentId={deployment.id} />
+          <MemoryMetrics deploymentId={deployment.id} />
         </TabPanel>
         <TabPanel>
-          <MemoryMetrics deploymentId={deployment.id} />
+          <CpuMetrics deploymentId={deployment.id} />
         </TabPanel>
       </TabPanels>
     </Tabs>
