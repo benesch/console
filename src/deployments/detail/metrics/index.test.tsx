@@ -47,7 +47,7 @@ describe("Metrics", () => {
     apiMock?.server.shutdown();
   });
 
-  describe.only("card", () => {
+  describe("card", () => {
     it("should not be displayed if the deployment is not in a supported region", async () => {
       const deploymentInEurope = cloneDeep(validDeployment);
       deploymentInEurope.cloudProviderRegion.region = "eu-west-1";
