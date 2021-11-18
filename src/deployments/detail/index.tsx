@@ -48,6 +48,7 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
+import { DeploymentLogsButton } from "./deploymentLogsButton";
 import { DeploymentProvider, useDeployment } from "./DeploymentProvider";
 import { DeploymentIntegrationsCard } from "./integrations";
 import { DeploymentMetricsCard } from "./metrics";
@@ -344,6 +345,9 @@ function DeploymentDetailCard({ deployment }: DeploymentDetailCardProps) {
           <CardField name="Cluster ID">{deployment.clusterId || "-"}</CardField>
         </VStack>
       </CardContent>
+      <CardFooter>
+        <DeploymentLogsButton deployment={deployment} />
+      </CardFooter>
     </Card>
   );
 }
