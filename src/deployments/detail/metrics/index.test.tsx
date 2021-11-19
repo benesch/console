@@ -1,4 +1,5 @@
 import { fireEvent, RenderResult, screen } from "@testing-library/react";
+import cloneDeep from "lodash/cloneDeep";
 import { Response } from "miragejs";
 import React from "react";
 
@@ -8,6 +9,8 @@ import {
   validDeploymentId,
 } from "../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../utils/tests-utils";
+import { validDeployment } from "../../__mocks__";
+import { DeploymentMetricsCard } from ".";
 import { CpuMetrics } from "./CpuMetrics";
 import { MemoryMetrics } from "./MemoryMetrics";
 
@@ -23,9 +26,16 @@ const selectors = {
     node.container.querySelector(".VictoryContainer svg line"),
   fetchError: () => screen.findByTestId("fetch-deployment-metric-error"),
   periodSelector: () => screen.findByTestId("metrics-period-selector-dropdown"),
+  metricsCard: () => screen.findByTestId("metrics-card"),
+  metricsNotSupported: () =>
+    screen.findByTestId("deployment-metrics-not-available-info"),
 };
 
-describe.only("Metrics", () => {
+jest.mock("../../../api/auth", () => ({
+  useAuth: jest.fn(() => ({ fetchedAuth: false })),
+}));
+
+describe("Metrics", () => {
   jest.useFakeTimers();
   let apiMock: ApiLayerMock | undefined;
 
@@ -35,6 +45,17 @@ describe.only("Metrics", () => {
   });
   afterEach(() => {
     apiMock?.server.shutdown();
+  });
+
+  describe("card", () => {
+    it("should not be displayed if the deployment is not in a supported region", async () => {
+      const deploymentInEurope = cloneDeep(validDeployment);
+      deploymentInEurope.cloudProviderRegion.region = "eu-west-1";
+      renderFragmentInTestMode(
+        <DeploymentMetricsCard deployment={deploymentInEurope} />
+      );
+      expect(await selectors.metricsNotSupported()).toBeDefined();
+    });
   });
 
   describe.each(["ram", "cpu"] as ("ram" | "cpu")[])("%s", (metricName) => {

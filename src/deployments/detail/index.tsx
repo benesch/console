@@ -160,7 +160,11 @@ function DeploymentDetail({
             <UserIndexesDisabledAlert />
           )}
           <DeploymentConnectCard deployment={deployment} />
+<<<<<<< HEAD
           <DeploymentIntegrationsCard />
+=======
+          <DeploymentIntegrationsCard deployment={deployment} />
+>>>>>>> origin/main
           <DeploymentMetricsCard deployment={deployment} />
         </VStack>
         <VStack width="400px">
@@ -345,9 +349,6 @@ function DeploymentDetailCard({ deployment }: DeploymentDetailCardProps) {
           <CardField name="Cluster ID">{deployment.clusterId || "-"}</CardField>
         </VStack>
       </CardContent>
-      <CardFooter>
-        <DeploymentLogsButton deployment={deployment} />
-      </CardFooter>
     </Card>
   );
 }

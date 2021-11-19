@@ -2,7 +2,7 @@ import { useInterval } from "@chakra-ui/hooks";
 import React from "react";
 import { UseGetReturn } from "restful-react";
 
-import { PrometheusMetrics } from "../../../api/api";
+import { Deployment, PrometheusMetrics } from "../../../api/api";
 import { Domains, inferDomainFromValues } from "./domains";
 import { prometheusMetricsToVictoryMetrics } from "./transformers";
 import { VictoryMetric } from "./types";
@@ -52,4 +52,8 @@ export const useRetrieveMetrics = (
       setPeriod,
     },
   };
+};
+
+export const isSupportedRegionForMetrics = (deployment: Deployment) => {
+  return deployment.cloudProviderRegion.region === "us-east-1";
 };
