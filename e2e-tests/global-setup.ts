@@ -10,7 +10,8 @@ export default async function globalSetup() {
   page.click("text=Continue");
   await page.waitForSelector("[name=password]"); // wait for animation
   await page.type("[name=password]", PASSWORD);
-  await Promise.all([page.waitForNavigation(), page.click("text=Login")]);
+  page.click("text=Login");
+  await Promise.all([page.waitForNavigation()]);
   await page.context().storageState({ path: "state.json" });
   await browser.close();
 }
