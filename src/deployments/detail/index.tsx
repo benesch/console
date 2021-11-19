@@ -48,7 +48,6 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
-import { DeploymentLogsButton } from "./deploymentLogsButton";
 import { DeploymentProvider, useDeployment } from "./DeploymentProvider";
 import { DeploymentIntegrationsCard } from "./integrations";
 import { DeploymentMetricsCard } from "./metrics";
@@ -160,11 +159,7 @@ function DeploymentDetail({
             <UserIndexesDisabledAlert />
           )}
           <DeploymentConnectCard deployment={deployment} />
-<<<<<<< HEAD
           <DeploymentIntegrationsCard />
-=======
-          <DeploymentIntegrationsCard deployment={deployment} />
->>>>>>> origin/main
           <DeploymentMetricsCard deployment={deployment} />
         </VStack>
         <VStack width="400px">
