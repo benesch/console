@@ -1,14 +1,16 @@
 import { UseDisclosureReturn } from "@chakra-ui/hooks";
-import { Modal } from "@chakra-ui/modal";
+import { Modal, ModalBody } from "@chakra-ui/modal";
 import {
   Button,
   HStack,
+  Link,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
@@ -27,24 +29,37 @@ export const EnableEditTailscaleConfiguration: React.FC = () => {
         onOpen={modalState.onOpen}
         isEnabled={deployment?.enableTailscale ?? false}
       />
-      <Modal isOpen={modalState.isOpen} onClose={modalState.onClose} size="xl">
+      <Modal isOpen={modalState.isOpen} onClose={modalState.onClose}>
         <ModalOverlay />
-        <ModalContent p={4} data-testid="tailscale-configuration-modal">
+        <ModalContent data-testid="tailscale-configuration-modal">
           <Formik
             initialValues={defaultValues}
             onSubmit={(values) => save(values)}
           >
             <Form>
-              <ModalHeader>Configure Tailscale</ModalHeader>
+              <ModalHeader flexGrow={1}>Configure Tailscale</ModalHeader>
               <ModalCloseButton />
-
-              <Text color="gray.400">Required information</Text>
-              <TextField
-                name="tailscaleAuthKey"
-                label="Tailscale Auth Key"
-              ></TextField>
+              <ModalBody>
+                <VStack>
+                  <TextField
+                    type="password"
+                    name="tailscaleAuthKey"
+                    label="Tailscale Auth Key"
+                  ></TextField>
+                  <Text fontSize="sm">
+                    See the{" "}
+                    <Link
+                      href="https://tailscale.com/kb/1085/auth-keys/"
+                      textDecoration="underline"
+                    >
+                      official documentation
+                    </Link>{" "}
+                    to learn how to generate a pre-authentication key.
+                  </Text>
+                </VStack>
+              </ModalBody>
               <ModalFooter>
-                <HStack flex="1">
+                <HStack>
                   <Button onClick={modalState.onClose} size="sm">
                     Cancel
                   </Button>

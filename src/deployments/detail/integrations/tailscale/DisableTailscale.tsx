@@ -4,7 +4,7 @@ import { ConfirmActionButton } from "../../../../components/confirmActionButton"
 import { useDeployment } from "../../DeploymentProvider";
 import { useDisableIntegration } from "./hooks";
 
-export const DisableIntegration = () => {
+export const DisableTailscale = () => {
   const { deployment } = useDeployment();
   const { disableIntegration } = useDisableIntegration();
 

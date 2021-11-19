@@ -2,10 +2,9 @@
  * A component that
  */
 
-import { Box, HStack } from "@chakra-ui/layout";
+import { HStack } from "@chakra-ui/layout";
 import {
   Popover,
-  PopoverBody,
   PopoverCloseButton,
   PopoverContent,
   PopoverFooter,
@@ -26,16 +25,16 @@ export const ConfirmActionButton: React.FC<
             <Button {...props}>{children}</Button>
           </PopoverTrigger>
           <Portal>
-            <PopoverContent>
+            <PopoverContent data-testid="confirm-action-popover">
               <PopoverHeader>{confirmationText}</PopoverHeader>
               <PopoverCloseButton />
               <PopoverFooter>
-                <HStack alignItems="self-end">
+                <HStack w="full" justifyContent="flex-end">
                   <Button size="sm" onClick={onClose}>
-                    No, Cancel
+                    No
                   </Button>
-                  <Button size="sm" colorScheme="blue" onClick={onConfirm}>
-                    Yes, Disable
+                  <Button size="sm" colorScheme="red" onClick={onConfirm}>
+                    Yes
                   </Button>
                 </HStack>
               </PopoverFooter>

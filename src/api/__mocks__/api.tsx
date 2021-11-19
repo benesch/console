@@ -1,4 +1,4 @@
-import { Response, Server } from "miragejs";
+import { Request, Response, Server } from "miragejs";
 
 import {
   validDeployment,
@@ -57,6 +57,23 @@ export const createApiLayerMock = () => {
       },
     }),
   };
+};
+
+export const receivedRequestsBodyFromMock = (
+  mock: jest.Mock<any, any> | undefined
+): any[] => {
+  if (!mock) return [];
+  // the second argument is the request object
+  const requests: Request[] = mock.mock.calls.map(([_, request]) => request);
+  return requests.map((request) => {
+    try {
+      const bodyJSON = request.requestBody;
+      console.log(request.requestBody);
+      return bodyJSON;
+    } catch {
+      return [];
+    }
+  });
 };
 
 export type ApiLayerMock = ReturnType<typeof createApiLayerMock>;

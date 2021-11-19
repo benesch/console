@@ -6,6 +6,7 @@ import * as React from "react";
 import {
   ApiLayerMock,
   createApiLayerMock,
+  receivedRequestsBodyFromMock,
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
 import {
@@ -53,7 +54,6 @@ const selectors = {
 };
 
 describe("EnableEditTailscaleConfiguration", () => {
-  jest.useFakeTimers();
   let apiMock: ApiLayerMock | undefined;
 
   beforeEach(() => {
@@ -127,14 +127,12 @@ describe("EnableEditTailscaleConfiguration", () => {
       await waitFor(() => {
         // detecting the request body is a bit tricky, we should certainly abstract that a function
         // requestBody is a string by default
-        const returnValue = (
-          apiMock?.handlers.partialUpdateHandler.mock.calls[0] as Array<Request>
-        )[0];
-        if (returnValue?.requestBody) {
+        const requestBodies = receivedRequestsBodyFromMock(
+          apiMock?.handlers.partialUpdateHandler
+        );
+        if (requestBodies.length) {
           // so we scan for the "secret"
-          return expect(
-            returnValue.requestBody.includes("secret")
-          ).toBeTruthy();
+          return expect(requestBodies[0].secret).toBeDefined();
         }
       });
     });
