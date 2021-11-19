@@ -20,6 +20,7 @@ import { useTailscaleIntegration } from "./hooks";
 export const EnableEditTailscaleConfiguration: React.FC = () => {
   const { deployment } = useDeployment();
   const { modalState, save, defaultValues } = useTailscaleIntegration();
+
   return (
     <>
       <EnableEditTailscaleButton

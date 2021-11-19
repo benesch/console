@@ -16,6 +16,11 @@ export const createApiLayerMock = () => {
     return new Response(200, {}, [validDeployment]);
   });
 
+  const getApiDeploymentHandler = jest.fn(() => {
+    // status, header, data
+    return new Response(200, {}, validDeployment);
+  });
+
   const getMetricsHandler = jest.fn(() => {
     // status, header, data
     return new Response(200, {}, validPrometheusValues);
@@ -28,6 +33,7 @@ export const createApiLayerMock = () => {
   return {
     handlers: {
       getApiDeploymentsHandler,
+      getApiDeploymentHandler,
       getMetricsHandler,
       partialUpdateHandler,
     },
@@ -37,6 +43,7 @@ export const createApiLayerMock = () => {
       routes() {
         this.urlPrefix = testApiBase;
         this.get("/api/deployments", getApiDeploymentsHandler);
+        this.get("/api/deployments/:id", getApiDeploymentHandler);
         this.patch("/api/deployments/:id", partialUpdateHandler);
         this.get(
           `/api/deployments/${validDeploymentId}/metrics/memory/:period`,

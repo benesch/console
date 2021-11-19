@@ -48,15 +48,15 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   }
 );
 
-export type SwitchFieldProps = SwitchProps & {
-  label: string;
-  id: string;
-  config?: FieldHookConfig<boolean>;
-};
+export type SwitchFieldProps = FieldHookConfig<boolean> &
+  SwitchProps & {
+    label: string;
+    id: string;
+  };
 
 export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(
-  ({ label, id, config = {}, ...props }, ref) => {
-    const [field] = useField({ ...config, name: id });
+  ({ label, id, ...props }, ref) => {
+    const [field] = useField({ ...props, name: id });
     return (
       <FormControl isDisabled={props.isDisabled} {...field}>
         <Switch
@@ -67,7 +67,6 @@ export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(
           // otherwise the boolean type of `value` from `field` errors
           value=""
           mr="2"
-          {...props}
           isChecked={field.value}
           colorScheme="purple"
         />

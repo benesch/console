@@ -26,7 +26,9 @@ export const useTailscaleIntegration = () => {
       ...form,
       enableTailscale: true,
     });
+
     await retrieveOperation.refetch();
+
     toast({
       title: "Integration has been saved successfully",
       status: "success",
