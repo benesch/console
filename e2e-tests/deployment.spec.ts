@@ -54,59 +54,63 @@ test("create deployment", async ({ page }) => {
   await page.waitForSelector("text=No deployments yet");
 });
 
-test("upgrade deployment", async ({ page }) => {
-  const context = await TestContext.start(page);
-  const latestVersion = await context.apiRequest("/mz-versions/latest");
+const regions = ['us-east-1', 'eu-west-1'];
 
-  // Use a raw API request to create a deployment running an old version.
-  const deployment = await context.apiRequest("/deployments", {
-    method: "POST",
-    body: JSON.stringify({
-      mzVersion: LEGACY_VERSION,
-      cloudProviderRegion: {
-        provider: "AWS",
-        region: "us-east-1",
-      },
-    }),
+for (const region in regions){
+  test(`upgrade deployment of ${region}`, async ({ page }) => {
+    const context = await TestContext.start(page);
+    const latestVersion = await context.apiRequest("/mz-versions/latest");
+
+    // Use a raw API request to create a deployment running an old version.
+    const deployment = await context.apiRequest("/deployments", {
+      method: "POST",
+      body: JSON.stringify({
+        mzVersion: LEGACY_VERSION,
+        cloudProviderRegion: {
+          provider: "AWS",
+          region: `${region}`,
+        },
+      }),
+    });
+    await page.click(`text=${deployment.name}`);
+
+    // Verify deployment health and properties.
+    await context.waitForDeploymentHealthy();
+    await context.assertDeploymentMzVersion(LEGACY_VERSION);
+
+    // Put a table in it to ensure it's still there after the upgrade.
+    const before_data = await context.withPostgres(async function (pgConn) {
+      await pgConn.query("CREATE TABLE t (a int)");
+      await pgConn.query("INSERT INTO t VALUES (1)");
+      return pgConn.query("SELECT * FROM t");
+    });
+    expect(before_data.rows[0].a).toEqual(1);
+
+    // Upgrade to the latest version of Materialize.
+    await page.click("button:text('Upgrade')");
+    await page.type("[aria-modal] input", deployment.name);
+    await Promise.all([
+      page.waitForSelector("[aria-modal]", { state: "detached" }),
+      page.click("[aria-modal] button:text('Upgrade')"),
+    ]);
+
+    // Verify deployment health and properties again.
+    await context.waitForDeploymentVersion(latestVersion);
+    await context.waitForDeploymentHealthy();
+    await context.assertDeploymentMzVersion(latestVersion);
+
+    // Verify the table is still there.
+    const after_data = await context.withPostgres(async function (pgConn) {
+      await pgConn.query("INSERT INTO t VALUES (2)");
+      return pgConn.query("SELECT * FROM t ORDER BY a");
+    });
+    // TODO after persistence exists, verify that the original value is there too.
+    expect(after_data.rows[0].a).toEqual(2);
+
+    // Delete the deployment.
+    await context.deleteAllDeployments();
   });
-  await page.click(`text=${deployment.name}`);
-
-  // Verify deployment health and properties.
-  await context.waitForDeploymentHealthy();
-  await context.assertDeploymentMzVersion(LEGACY_VERSION);
-
-  // Put a table in it to ensure it's still there after the upgrade.
-  const before_data = await context.withPostgres(async function (pgConn) {
-    await pgConn.query("CREATE TABLE t (a int)");
-    await pgConn.query("INSERT INTO t VALUES (1)");
-    return pgConn.query("SELECT * FROM t");
-  });
-  expect(before_data.rows[0].a).toEqual(1);
-
-  // Upgrade to the latest version of Materialize.
-  await page.click("button:text('Upgrade')");
-  await page.type("[aria-modal] input", deployment.name);
-  await Promise.all([
-    page.waitForSelector("[aria-modal]", { state: "detached" }),
-    page.click("[aria-modal] button:text('Upgrade')"),
-  ]);
-
-  // Verify deployment health and properties again.
-  await context.waitForDeploymentVersion(latestVersion);
-  await context.waitForDeploymentHealthy();
-  await context.assertDeploymentMzVersion(latestVersion);
-
-  // Verify the table is still there.
-  const after_data = await context.withPostgres(async function (pgConn) {
-    await pgConn.query("INSERT INTO t VALUES (2)");
-    return pgConn.query("SELECT * FROM t ORDER BY a");
-  });
-  // TODO after persistence exists, verify that the original value is there too.
-  expect(after_data.rows[0].a).toEqual(2);
-
-  // Delete the deployment.
-  await context.deleteAllDeployments();
-});
+}
 
 async function awaitLogs(page: Page) {
   for (let i = 0; i < 10; i++) {
