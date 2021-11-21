@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^1.0.17",
-    "@chakra-ui/react": "^1.7.1",
+    "@chakra-ui/react": "^1.7.2",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
-    "@fontsource/inter": "^4.5.0",
+    "@fontsource/inter": "^4.5.1",
     "@frontegg/react": "=3.0.21",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
