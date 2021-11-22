@@ -7,13 +7,11 @@ export default async function globalSetup() {
   const page = await browser.newPage();
   await page.goto(CONSOLE_ADDR);
   await page.type("[name=email]", EMAIL);
-  await page.press("[name=email]", "Enter");
+  await page.click("text=Continue");
   await page.waitForSelector("[name=password]"); // wait for animation
   await page.type("[name=password]", PASSWORD);
-  await Promise.all([
-    page.waitForNavigation(),
-    page.press("[name=password]", "Enter"),
-  ]);
+  await page.click("text=Login");
+  await Promise.all([page.waitForNavigation()]);
   await page.context().storageState({ path: "state.json" });
   await browser.close();
 }
