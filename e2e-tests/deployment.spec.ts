@@ -2,8 +2,7 @@ import { expect, Page, test } from "@playwright/test";
 
 import { LEGACY_VERSION, TestContext } from "./util";
 
-
-const regions = ['us-east-1','eu-west-1'];
+const regions = ["us-east-1", "eu-west-1"];
 
 for (const region of regions) {
   test(`create deployment for region ${region}`, async ({ page }) => {
@@ -13,7 +12,10 @@ for (const region of regions) {
     // Create deployment.
     await page.click("text=Create deployment");
     await page.fill("[aria-modal] [name=name]", "Integration test deployment");
-    await page.selectOption("[aria-modal] [name='cloudProviderRegion.region']", { label: `${region}` });
+    await page.selectOption(
+      "[aria-modal] [name='cloudProviderRegion.region']",
+      { label: `${region}` }
+    );
     await page.click("[aria-modal] button:text('Create')");
     await page.click("text=Integration test deployment");
 
@@ -48,9 +50,13 @@ for (const region of regions) {
       page.waitForSelector("[aria-modal]", { state: "detached" }),
       page.click("[aria-modal] button:text('Update')"),
     ]);
-    await context.waitForDeploymentFieldValue("Status", "User Indexes Disabled", {
-      timeout: 600000 /* 10 minutes */,
-    });
+    await context.waitForDeploymentFieldValue(
+      "Status",
+      "User Indexes Disabled",
+      {
+        timeout: 600000 /* 10 minutes */,
+      }
+    );
 
     // Destroy the deployment.
     await page.click("text=Destroy");
@@ -58,7 +64,7 @@ for (const region of regions) {
     await page.click("[aria-modal] button:text('Destroy')");
     await page.waitForSelector("text=No deployments yet");
   });
- }
+}
 
 for (const region of regions) {
   test(`upgrade deployment of ${region}`, async ({ page }) => {
