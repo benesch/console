@@ -5,21 +5,24 @@ import {
   PatchedDeploymentUpdateRequest,
   useDeploymentsPartialUpdate,
 } from "../../../../api/api";
-import { useDeployment } from "../../DeploymentProvider";
+import { DeploymentIntegrationCallToActionProps } from "../types";
 
 export type TailscaleIntegrationForm = Pick<
   PatchedDeploymentUpdateRequest,
   "enableTailscale" | "tailscaleAuthKey"
 >;
 
-export const useTailscaleIntegration = () => {
+export const useTailscaleIntegration = ({
+  id,
+  enabled,
+  refetch,
+}: DeploymentIntegrationCallToActionProps) => {
   const toast = useToast();
   const modalState = useDisclosure();
 
-  const { retrieveOperation, deployment, id } = useDeployment();
   const partialUpdateOperation = useDeploymentsPartialUpdate({ id });
 
-  const defaultTailscaleAuthKeyValue = deployment?.enableTailscale ? "***" : "";
+  const defaultTailscaleAuthKeyValue = enabled ? "***" : "";
 
   const save = async (form: TailscaleIntegrationForm) => {
     await partialUpdateOperation.mutate({
@@ -27,7 +30,7 @@ export const useTailscaleIntegration = () => {
       enableTailscale: true,
     });
 
-    await retrieveOperation.refetch();
+    await refetch();
 
     toast({
       title: "Integration has been saved successfully",
@@ -45,9 +48,11 @@ export const useTailscaleIntegration = () => {
   };
 };
 
-export const useDisableIntegration = () => {
+export const useDisableIntegration = ({
+  id,
+  refetch,
+}: DeploymentIntegrationCallToActionProps) => {
   const toast = useToast();
-  const { retrieveOperation, id } = useDeployment();
   const partialUpdateOperation = useDeploymentsPartialUpdate({ id });
   const disableIntegration = async () => {
     await partialUpdateOperation.mutate({
@@ -55,7 +60,7 @@ export const useDisableIntegration = () => {
       tailscaleAuthKey: undefined,
     });
     toast({ title: "The integration has been disabled", status: "success" });
-    return retrieveOperation.refetch();
+    return refetch();
   };
 
   return {

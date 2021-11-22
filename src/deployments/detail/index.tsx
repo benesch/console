@@ -26,7 +26,11 @@ import download from "downloadjs";
 import React from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
-import { Deployment, useMzVersionsLatestRetrieve } from "../../api/api";
+import {
+  Deployment,
+  useDeploymentsRetrieve,
+  useMzVersionsLatestRetrieve,
+} from "../../api/api";
 import { useAuth } from "../../api/auth";
 import {
   Card,
@@ -48,30 +52,17 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
-import { DeploymentProvider, useDeployment } from "./DeploymentProvider";
 import { DeploymentIntegrationsCard } from "./integrations";
 import { DeploymentMetricsCard } from "./metrics";
 
-/**
- * Main deployment detail view component.
- * Using a react context, it will share the deployment retrieval hook and refetching availabilities with the rendering tree.
- * @param
- * @returns
- */
-export const DeploymentDetailPageRoot: React.FC = ({ children }) => {
-  const { id } = useParams<{ id: string }>();
-  return (
-    <DeploymentProvider id={id}>
-      <DeploymentDetailPage></DeploymentDetailPage>
-    </DeploymentProvider>
-  );
-};
-
 export function DeploymentDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const {
-    id,
-    retrieveOperation: { data: deployment, error, refetch },
-  } = useDeployment();
+    data: deployment,
+    refetch,
+
+    error,
+  } = useDeploymentsRetrieve({ id });
   const { data: latestVersion } = useMzVersionsLatestRetrieve({});
   useInterval(refetch, 5000);
 
@@ -159,7 +150,10 @@ function DeploymentDetail({
             <UserIndexesDisabledAlert />
           )}
           <DeploymentConnectCard deployment={deployment} />
-          <DeploymentIntegrationsCard />
+          <DeploymentIntegrationsCard
+            deployment={deployment}
+            refetch={refetch}
+          />
           <DeploymentMetricsCard deployment={deployment} />
         </VStack>
         <VStack width="400px">

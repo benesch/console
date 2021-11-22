@@ -1,6 +1,9 @@
-import { fireEvent, waitFor } from "@testing-library/dom";
+import {
+  fireEvent,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/dom";
 import { screen } from "@testing-library/react";
-import { Request } from "miragejs";
 import * as React from "react";
 
 import {
@@ -9,37 +12,17 @@ import {
   receivedRequestsBodyFromMock,
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
-import {
-  validDeployment,
-  validDeploymentWithTailscale,
-} from "../../../__mocks__";
-import { useDeployment } from "../../DeploymentProvider";
 import { EnableEditTailscaleConfiguration } from "./EnableEditTailscaleConfiguration";
 
-jest.mock("../../DeploymentProvider", () => ({
-  useDeployment: jest.fn(),
-}));
-
-const renderComponent = () =>
-  renderFragmentInTestMode(<EnableEditTailscaleConfiguration />);
-
-const contexts = {
-  useDeploymentWithoutIntegration: () => {
-    (useDeployment as jest.Mock).mockReturnValue({
-      deployment: validDeployment,
-      retrieveOperation: {
-        refetch: jest.fn().mockResolvedValue(validDeploymentWithTailscale),
-      },
-    });
-  },
-  useDeploymentWithIntegrationEnabled: () => {
-    (useDeployment as jest.Mock).mockReturnValue({
-      deployment: validDeploymentWithTailscale,
-      retrieveOperation: {
-        refetch: jest.fn().mockResolvedValue(validDeploymentWithTailscale),
-      },
-    });
-  },
+const renderComponent = (enabled = true) => {
+  const refetch = jest.fn();
+  return renderFragmentInTestMode(
+    <EnableEditTailscaleConfiguration
+      id="123"
+      refetch={refetch}
+      enabled={enabled}
+    />
+  );
 };
 
 const selectors = {
@@ -65,13 +48,11 @@ describe("EnableEditTailscaleConfiguration", () => {
 
   describe("Enable Button", () => {
     it("should display Enable if the integration is not enabled", async () => {
-      contexts.useDeploymentWithoutIntegration();
-      renderComponent();
+      renderComponent(false);
       expect(await selectors.enableButton()).toBeDefined();
     });
     it("should display the creation modal on the button click", async () => {
-      contexts.useDeploymentWithoutIntegration();
-      renderComponent();
+      renderComponent(false);
       const enableButton = await selectors.enableButton();
       enableButton.click();
       expect(await selectors.configurationModal()).toBeDefined();
@@ -80,19 +61,16 @@ describe("EnableEditTailscaleConfiguration", () => {
 
   describe("Edit Button", () => {
     it("should display Edit if the integration is currently enabled", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
       renderComponent();
       expect(await selectors.editButton()).toBeDefined();
     });
     it("should display the edition modal modal on the button click", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
       renderComponent();
       const editButton = await selectors.editButton();
       editButton.click();
       expect(await selectors.configurationModal()).toBeDefined();
     });
     it("should display an obsfucated auth key in the edit modal", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
       renderComponent();
       const editButton = await selectors.editButton();
       editButton.click();
@@ -108,8 +86,7 @@ describe("EnableEditTailscaleConfiguration", () => {
   describe("Configuration modal", () => {
     it("submit should save the deployment with the tailscale auth key", async () => {
       // setup
-      contexts.useDeploymentWithoutIntegration();
-      renderComponent();
+      renderComponent(false);
       const enableButton = await selectors.enableButton();
       enableButton.click();
       await selectors.configurationModal();

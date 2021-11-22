@@ -8,23 +8,18 @@ import {
   receivedRequestsBodyFromMock,
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
-import { validDeploymentWithTailscale } from "../../../__mocks__";
-import { useDeployment } from "../../DeploymentProvider";
 import { DisableTailscale } from "./DisableTailscale";
 
-jest.mock("../../DeploymentProvider", () => ({
-  useDeployment: jest.fn(),
-}));
+const renderComponent = (enabled: boolean) => {
+  const refetch = jest.fn();
+  const fragment = renderFragmentInTestMode(
+    <DisableTailscale id="123" enabled={enabled} refetch={refetch} />
+  );
 
-const renderComponent = () => renderFragmentInTestMode(<DisableTailscale />);
-
-const contexts = {
-  useDeploymentWithIntegrationEnabled: () => {
-    (useDeployment as jest.Mock).mockReturnValue({
-      deployment: validDeploymentWithTailscale,
-      refetch: jest.fn(),
-    });
-  },
+  return {
+    fragment,
+    refetch,
+  };
 };
 
 const selectors = {
@@ -46,16 +41,14 @@ describe("DisableTailscale", () => {
 
   describe("Disable Button ", () => {
     it("should be visible when the deployment has the integration enabled", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
-      renderComponent();
-      expect(await selectors.disableButton()).toBeDefined();
+      renderComponent(false);
+      await expect(selectors.disableButton()).rejects.toBeDefined();
     });
   });
 
   describe("Confirmation popover modal", () => {
     it("clicking on disable should prompt confirmation via a popover", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
-      renderComponent();
+      renderComponent(true);
       const disableButton = await selectors.disableButton();
       disableButton.click();
       await waitFor(() => expect(selectors.disablePopover()).toBeDefined());
@@ -63,8 +56,7 @@ describe("DisableTailscale", () => {
       expect(apiMock?.handlers.partialUpdateHandler).not.toHaveBeenCalled();
     });
     it("confirming in the popover should update the integration via API", async () => {
-      contexts.useDeploymentWithIntegrationEnabled();
-      renderComponent();
+      renderComponent(true);
       (await selectors.disableButton()).click();
       (await selectors.disablePopoverConfirmationButton()).click();
       await waitFor(() => {

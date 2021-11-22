@@ -1,11 +1,23 @@
 import { HStack, Link, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
+import {
+  DeploymentIntegrationCallToActionProps,
+  DeploymentIntegrationTabProps,
+} from "../types";
 import { DisableTailscale } from "./DisableTailscale";
 import { EnableEditTailscaleConfiguration } from "./EnableEditTailscaleConfiguration";
 import { IntegrationStatus } from "./IntegrationStatus";
 
-export const TailscaleIntegration = () => {
+export const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
+  deployment,
+  refetch,
+}) => {
+  const callToActionsProps: DeploymentIntegrationCallToActionProps = {
+    id: deployment.id,
+    enabled: deployment.enableTailscale ?? false,
+    refetch,
+  };
   return (
     <VStack w="full" alignItems="flex-start" px={4}>
       <Text>
@@ -24,10 +36,10 @@ export const TailscaleIntegration = () => {
         instance.
       </Text>
       <HStack w="full" justifyContent="space-between">
-        <IntegrationStatus />
+        <IntegrationStatus enabled={callToActionsProps.enabled} />
         <HStack>
-          <DisableTailscale />
-          <EnableEditTailscaleConfiguration />
+          <DisableTailscale {...callToActionsProps} />
+          <EnableEditTailscaleConfiguration {...callToActionsProps} />
         </HStack>
       </HStack>
     </VStack>
