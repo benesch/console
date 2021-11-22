@@ -17,7 +17,7 @@ import { analyticsClients } from "./analytics";
 import { AnalyticsOnEveryPage } from "./analytics/AnalyticsOnEveryPage";
 import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
-import { DeploymentDetailPageRoot as DeploymentDetailPage } from "./deployments/detail";
+import { DeploymentDetailPage } from "./deployments/detail";
 import { DeploymentListPage } from "./deployments/list";
 import { assert } from "./util";
 import { WelcomePage } from "./welcome";
