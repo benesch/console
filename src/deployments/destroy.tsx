@@ -9,7 +9,7 @@ import React from "react";
 import { useHistory } from "react-router";
 
 import { Deployment, useDeploymentsDestroy } from "../api/api";
-import { DestructiveActionModal } from "../components/destructiveActionModal";
+import { DangerousActionModal } from "../components/dangerousActionModal";
 import { sleep } from "../util";
 
 interface DestroyDeploymentButtonProps extends ButtonProps {
@@ -35,7 +35,7 @@ export function DestroyDeploymentButton(props: DestroyDeploymentButtonProps) {
   };
 
   return (
-    <DestructiveActionModal
+    <DangerousActionModal
       title="Destroy deployment"
       colorScheme="red"
       confirmIcon={<DeleteIcon />}
@@ -48,6 +48,6 @@ export function DestroyDeploymentButton(props: DestroyDeploymentButtonProps) {
         <strong>Are you sure?</strong> Destroying this deployment is
         irreversible.
       </Text>
-    </DestructiveActionModal>
+    </DangerousActionModal>
   );
 }

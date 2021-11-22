@@ -7,7 +7,7 @@ import { ButtonProps, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { DestructiveActionModal } from "../components/destructiveActionModal";
+import { DangerousActionModal } from "../components/dangerousActionModal";
 
 interface UpgradeDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;
@@ -34,7 +34,7 @@ export function UpgradeDeploymentButton({
   };
 
   return (
-    <DestructiveActionModal
+    <DangerousActionModal
       title="Upgrade deployment"
       actionText="Upgrade"
       colorScheme="blue"
@@ -46,6 +46,6 @@ export function UpgradeDeploymentButton({
         <strong>Are you sure?</strong> Upgrading this deployment to{" "}
         <strong>{latestVersion}</strong> will require a restart.
       </Text>
-    </DestructiveActionModal>
+    </DangerousActionModal>
   );
 }
