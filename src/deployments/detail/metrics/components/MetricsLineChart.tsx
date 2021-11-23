@@ -52,42 +52,40 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
             <VictoryVoronoiContainer labels={formatDatapointLabel} />
           }
         >
-          {chart &&
-            chart.domains &&
-            chart.domains.x &&
-            chart.domains.y &&
-            chart.domains.y[1] > 1 && (
-              <VictoryLine
-                style={{
-                  data: {
-                    stroke: theme.colors.red[400],
-                    strokeDasharray: 4,
-                  },
-                }}
-                data={[
-                  { x: chart.domains.x[0], y: 1 },
-                  { x: chart.domains.x[1], y: 1 },
-                ]}
-              />
-            )}
-          {chart &&
-            chart.domains &&
-            chart.domains.x &&
-            chart.domains.y &&
-            chart.domains.y[1] > 1 && (
-              <VictoryArea
-                style={{ data: { fill: `${theme.colors.red[400]}55` } }}
-                data={[
-                  { x: chart.domains.x[0], y: chart.domains.y[1], y0: 1 },
-                  { x: chart.domains.x[1], y: chart.domains.y[1], y0: 1 },
-                ]}
-              />
-            )}
+          {chart.domains.y[1] > 1 && (
+            <VictoryLine
+              style={{
+                data: {
+                  stroke: theme.colors.red[400],
+                  strokeDasharray: 4,
+                },
+              }}
+              data={[
+                { x: chart.domains.x[0], y: 1 },
+                { x: chart.domains.x[1], y: 1 },
+              ]}
+            />
+          )}
+          {chart.domains.y[1] > 1 && (
+            <VictoryArea
+              style={{ data: { fill: `${theme.colors.red[400]}55` } }}
+              data={[
+                { x: chart.domains.x[0], y: chart.domains.y[1], y0: 1 },
+                { x: chart.domains.x[1], y: chart.domains.y[1], y0: 1 },
+              ]}
+            />
+          )}
           {chart.data.map((metric) => (
             <VictoryArea
               key={metric.name}
               interpolation="linear"
-              data={metric.values}
+              data={[
+                ...metric.values,
+                {
+                  ...metric.values[metric.values.length - 1],
+                  x: chart.domains.x[1],
+                },
+              ]}
             />
           ))}
           <VictoryAxis
