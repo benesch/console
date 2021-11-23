@@ -2,6 +2,7 @@ import { HStack, Text, VStack } from "@chakra-ui/layout";
 import { useTheme } from "@chakra-ui/system";
 import React from "react";
 import {
+  VictoryArea,
   VictoryAxis,
   VictoryChart,
   VictoryLine,
@@ -24,6 +25,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   filters,
 }) => {
   const chartTheme = useMZVictoryTheme();
+  const theme = useTheme();
   return (
     <VStack spacing="3" align="left" data-testid="line-chart-container">
       {operation.error && <DeploymentMetricsRetrieveError />}
@@ -45,10 +47,41 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
             <VictoryVoronoiContainer labels={formatDatapointLabel} />
           }
         >
+          {chart &&
+            chart.domains &&
+            chart.domains.x &&
+            chart.domains.y &&
+            chart.domains.y[1] > 1 && (
+              <VictoryLine
+                style={{
+                  data: {
+                    stroke: theme.colors.red[400],
+                    strokeDasharray: 4,
+                  },
+                }}
+                data={[
+                  { x: chart.domains.x[0], y: 1 },
+                  { x: chart.domains.x[1], y: 1 },
+                ]}
+              />
+            )}
+          {chart &&
+            chart.domains &&
+            chart.domains.x &&
+            chart.domains.y &&
+            chart.domains.y[1] > 1 && (
+              <VictoryArea
+                style={{ data: { fill: `${theme.colors.red[400]}55` } }}
+                data={[
+                  { x: chart.domains.x[0], y: chart.domains.y[1], y0: 1 },
+                  { x: chart.domains.x[1], y: chart.domains.y[1], y0: 1 },
+                ]}
+              />
+            )}
           {chart.data.map((metric) => (
-            <VictoryLine
+            <VictoryArea
               key={metric.name}
-              interpolation="natural"
+              interpolation="linear"
               data={metric.values}
             />
           ))}
@@ -61,6 +94,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
             dependentAxis
             standalone={false}
             tickFormat={formatYToPercentage}
+            tickValues={chart.ticks}
           />
         </VictoryChart>
       </>
