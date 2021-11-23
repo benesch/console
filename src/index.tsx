@@ -3,7 +3,6 @@
  * Entry point for the frontend.
  */
 
-import "@fontsource/inter/variable-full.css";
 import "./types";
 
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
