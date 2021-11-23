@@ -11,6 +11,7 @@
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.3.0",
     "@frontegg/react": "=3.0.21",
+    "@fontsource/inter": "^4.5.1",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
