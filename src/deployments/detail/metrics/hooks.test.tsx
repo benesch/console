@@ -104,7 +104,7 @@ describe("metrics/hooks/useRetrieveMetrics", () => {
       );
       expect(result.current.chart.domains).toEqual({
         x: [new Date(2020, 5, 7), fakeNow()],
-        y: [0.9, 1],
+        y: [0, 2.25],
       });
     });
   });
