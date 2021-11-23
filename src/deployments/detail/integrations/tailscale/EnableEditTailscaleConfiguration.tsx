@@ -50,9 +50,10 @@ export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCal
                       See the{" "}
                       <Link
                         href="https://tailscale.com/kb/1085/auth-keys/"
+                        target="_blank"
                         textDecoration="underline"
                       >
-                        official documentation
+                        Tailscale documentation
                       </Link>{" "}
                       to learn how to generate a pre-authentication key.
                     </Text>

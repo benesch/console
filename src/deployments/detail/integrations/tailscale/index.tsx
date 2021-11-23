@@ -28,12 +28,17 @@ export const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
         >
           Tailscale
         </Link>{" "}
-        is a VPN service that makes the devices and applications you own
-        accessible anywhere in the world, securely and effortlessly.
-        <br /> It enables encrypted point-to-point connections using the open
-        source WireGuard protocol, which means only devices on your private
-        network can communicate with each other, including your Materialize
-        instance.
+        is a VPN service that enables encrypted point-to-point connections using
+        the open source{" "}
+        <Link
+          href="https://wireguard.com"
+          target="_blank"
+          textDecoration="underline"
+        >
+          WireGuard
+        </Link>{" "}
+        protocol. This means only devices on your private network can
+        communicate with each other.
       </Text>
       <HStack w="full" justifyContent="space-between">
         <IntegrationStatus enabled={callToActionsProps.enabled} />
