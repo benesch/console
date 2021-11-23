@@ -28,7 +28,6 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   const theme = useTheme();
   return (
     <VStack
-      spacing="3"
       align="left"
       data-testid="line-chart-container"
       sx={{ svg: { overflow: "visible" } }}
