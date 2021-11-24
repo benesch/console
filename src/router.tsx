@@ -20,16 +20,12 @@ import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";
 import { DeploymentListPage } from "./deployments/list";
 import { assert } from "./util";
-import { WelcomePage } from "./welcome";
 
 /** The root router for the application. */
 export function Router() {
   return (
     <>
       <Switch>
-        <ProtectedRoute allowUnadmitted={true} path="/welcome">
-          <WelcomePage />
-        </ProtectedRoute>
         <ProtectedRoute path="/deployments/:id">
           <DeploymentDetailPage />
         </ProtectedRoute>
@@ -58,9 +54,7 @@ function RedirectIfNotAuthRoute() {
   }
 }
 
-interface ProtectedRouteProps extends RouteProps {
-  allowUnadmitted?: boolean;
-}
+type ProtectedRouteProps = RouteProps;
 
 function ProtectedRoute(props: ProtectedRouteProps) {
   const location = useLocation();
@@ -103,12 +97,6 @@ function ProtectedRoute(props: ProtectedRouteProps) {
   // infer this, so help it along.
   assert(organization);
   assert(user);
-
-  // Unless this page allows unadmitted organizations, redirect to the welcome
-  // page if the organization hasn't been admitted.
-  if (!props.allowUnadmitted && !organization.admitted) {
-    return <Redirect to="/welcome" />;
-  }
 
   //
   return (
