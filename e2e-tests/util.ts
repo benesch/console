@@ -128,7 +128,6 @@ export class TestContext {
         }
       }
     }
-    await this.page.waitForSelector("text=No deployments yet");
   }
 
   /**
