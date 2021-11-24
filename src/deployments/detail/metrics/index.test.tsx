@@ -48,13 +48,13 @@ describe("Metrics", () => {
   });
 
   describe("card", () => {
-    it("should  be displayed if the deployment is in eu-west-1", async () => {
+    it("should not be displayed if the deployment is not in a supported region", async () => {
       const deploymentInEurope = cloneDeep(validDeployment);
       deploymentInEurope.cloudProviderRegion.region = "eu-west-1";
       renderFragmentInTestMode(
         <DeploymentMetricsCard deployment={deploymentInEurope} />
       );
-      expect(await selectors.metricsCard()).toBeDefined();
+      expect(await selectors.metricsNotSupported()).toBeDefined();
     });
   });
 

@@ -53,3 +53,7 @@ export const useRetrieveMetrics = (
     },
   };
 };
+
+export const isSupportedRegionForMetrics = (deployment: Deployment) => {
+  return deployment.cloudProviderRegion.region === "us-east-1";
+};
