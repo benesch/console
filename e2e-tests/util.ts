@@ -21,10 +21,6 @@ interface ContextWaitForSelectorOptions {
 }
 
 /** A custom error that embeds information about the api response */
-export const isApiError = (error: any): error is ApiError => {
-  return error["response"];
-};
-
 export class ApiError extends Error {
   constructor(public response: Response, message: string) {
     super(message);
@@ -125,10 +121,11 @@ export class TestContext {
         await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
       } catch (e: unknown) {
         // if the deployment does not exist, it's okay to ignore the error.
-        if (isApiError(e) && e.response.status === 404) {
-          continue;
+        const deploymentDoesNotExist =
+          e instanceof ApiError && e.response.status === 404;
+        if (!deploymentDoesNotExist) {
+          throw e;
         }
-        throw e;
       }
     }
     await this.page.waitForSelector("text=No deployments yet");
