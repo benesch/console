@@ -20,6 +20,13 @@ interface ContextWaitForSelectorOptions {
   timeout?: number;
 }
 
+/** A custom error that embeds information about the api response */
+export class ApiError extends Error {
+  constructor(public response: Response, message: string) {
+    super(message);
+  }
+}
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -42,9 +49,9 @@ export class TestContext {
     let accessToken;
     try {
       accessToken = JSON.parse(text)["accessToken"];
-    } catch (e: SyntaxError) {
+    } catch (e: unknown) {
       console.error(`Invalid json from ${refreshTokenUrl}:\n${text}`);
-      throw e;
+      throw e as SyntaxError;
     }
     const context = new TestContext(page, accessToken);
 
@@ -87,7 +94,8 @@ export class TestContext {
         } finally {
           if (!response.ok)
             // eslint-disable-next-line no-unsafe-finally
-            throw new Error(
+            throw new ApiError(
+              response,
               `API Error ${response.status}  ${url}, req: ${
                 request.body ?? "No request body"
               }, res: ${responsePayload ?? "No response body"}`
@@ -109,7 +117,16 @@ export class TestContext {
   async deleteAllDeployments() {
     const deployments = await this.apiRequest("/deployments");
     for (const d of deployments) {
-      await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
+      try {
+        await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
+      } catch (e: unknown) {
+        // if the deployment does not exist, it's okay to ignore the error.
+        const deploymentDoesNotExist =
+          e instanceof ApiError && e.response.status === 404;
+        if (!deploymentDoesNotExist) {
+          throw e;
+        }
+      }
     }
   }
 
