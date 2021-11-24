@@ -53,10 +53,6 @@ export interface OnboardingCall {
 
 export interface Organization {
   id: string;
-  /**
-   * Whether this organization has been admitted to Materialize Cloud.
-   */
-  admitted: boolean;
   deploymentLimit: number;
   /**
    * When this organization's trial period expires. If empty, the organization is on an enterprise plan.

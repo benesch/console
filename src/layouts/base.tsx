@@ -100,15 +100,11 @@ function NavBar() {
           alignSelf="stretch"
           alignItems="stretch"
         >
-          {organization.admitted ? (
-            <NavItem label="Deployments" href="/deployments" />
-          ) : (
-            <NavItem label="Welcome" href="/welcome" />
-          )}
+          <NavItem label="Deployments" href="/deployments" />
         </HStack>
 
         <HStack spacing="5">
-          {organization.admitted && organization.trialExpiresAt && (
+          {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
           )}
           <HelpDropdown />
