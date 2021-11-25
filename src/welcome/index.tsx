@@ -11,7 +11,6 @@ import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
 import format from "date-fns/format";
 import React from "react";
 import { InlineWidget } from "react-calendly";
-import { Redirect } from "react-router-dom";
 
 import { useOnboardingCallRetrieve } from "../api/api";
 import { useAuth } from "../api/auth";
@@ -26,13 +25,9 @@ import { SupportLink } from "../components/cta";
 import { BaseLayout, PageBreadcrumbs, PageHeading } from "../layouts/base";
 
 export function WelcomePage() {
-  const { user, organization } = useAuth();
+  const { user } = useAuth();
   const { data: onboardingCall, loading: onboardingCallLoading } =
     useOnboardingCallRetrieve({});
-
-  if (organization.admitted) {
-    return <Redirect to="/deployments" />;
-  }
 
   let contents;
   if (onboardingCallLoading) {
