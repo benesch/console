@@ -20,13 +20,6 @@ interface ContextWaitForSelectorOptions {
   timeout?: number;
 }
 
-/** A custom error that embeds information about the api response */
-export class ApiError extends Error {
-  constructor(public response: Response, message: string) {
-    super(message);
-  }
-}
-
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -94,8 +87,7 @@ export class TestContext {
         } finally {
           if (!response.ok)
             // eslint-disable-next-line no-unsafe-finally
-            throw new ApiError(
-              response,
+            throw new Error(
               `API Error ${response.status}  ${url}, req: ${
                 request.body ?? "No request body"
               }, res: ${responsePayload ?? "No response body"}`
@@ -121,8 +113,7 @@ export class TestContext {
         await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
       } catch (e: unknown) {
         // if the deployment does not exist, it's okay to ignore the error.
-        const deploymentDoesNotExist =
-          e instanceof ApiError && e.response.status === 404;
+        const deploymentDoesNotExist = e.message.startsWith("API Error 404");
         if (!deploymentDoesNotExist) {
           throw e;
         }
