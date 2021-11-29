@@ -19,7 +19,7 @@ import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";
 import { DeploymentListPage } from "./deployments/list";
-import { EmbeddableAuthSignupPage } from "./extern/embeddableAuthSignupPage";
+import { EmbeddableAuthSignupPage } from "./embed/authSignup";
 import { assert } from "./util";
 
 /** The root router for the application. */
