@@ -830,33 +830,6 @@ export const useMzVersionsLatestRetrieve = (
     props
   );
 
-export type OnboardingCallRetrieveProps = Omit<
-  GetProps<OnboardingCall, unknown, void, void>,
-  "path"
->;
-
-/**
- * Retrieve the first scheduled onboarding call for a user.
- */
-export const OnboardingCallRetrieve = (props: OnboardingCallRetrieveProps) => (
-  <Get<OnboardingCall, unknown, void, void>
-    path={`/api/onboarding-call`}
-    {...props}
-  />
-);
-
-export type UseOnboardingCallRetrieveProps = Omit<
-  UseGetProps<OnboardingCall, unknown, void, void>,
-  "path"
->;
-
-/**
- * Retrieve the first scheduled onboarding call for a user.
- */
-export const useOnboardingCallRetrieve = (
-  props: UseOnboardingCallRetrieveProps
-) => useGet<OnboardingCall, unknown, void, void>(`/api/onboarding-call`, props);
-
 export interface OrganizationsRetrievePathParams {
   /**
    * A UUID string identifying this organization.
