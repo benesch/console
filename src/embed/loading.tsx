@@ -2,7 +2,7 @@ import { Flex, useTheme } from "@chakra-ui/react";
 import * as React from "react";
 
 import LoadingSvg from "../svg/loadingAnimation";
-import { marketingBg } from "./styles";
+import { marketingBg } from "./authSignup/styles";
 
 export const EmbeddedLoading = () => {
   const { colors } = useTheme();

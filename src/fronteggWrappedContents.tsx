@@ -4,8 +4,8 @@ import React from "react";
 
 import logo from "../img/wordmark.svg";
 import { RestfulProvider } from "./api/auth";
-import { EmbeddedLoading } from "./extern/loading";
-import { useIsInIframe } from "./extern/utils";
+import { EmbeddedLoading } from "./embed/loading";
+import { useIsInIframe } from "./embed/utils";
 import LoadingScreen from "./loading";
 import { Router } from "./router";
 import {
