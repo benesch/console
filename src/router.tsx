@@ -19,6 +19,7 @@ import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
 import { DeploymentDetailPage } from "./deployments/detail";
 import { DeploymentListPage } from "./deployments/list";
+import { EmbeddableAuthSignupPage } from "./extern/embeddableAuthSignupPage";
 import { assert } from "./util";
 
 /** The root router for the application. */
@@ -26,6 +27,9 @@ export function Router() {
   return (
     <>
       <Switch>
+        <Route path="/embed/auth/signup">
+          <EmbeddableAuthSignupPage />
+        </Route>
         <ProtectedRoute path="/deployments/:id">
           <DeploymentDetailPage />
         </ProtectedRoute>

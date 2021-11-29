@@ -119,7 +119,7 @@ const fronteggTheme: FronteggThemeOptions = {
   },
 };
 
-export const getFronteggTheme = (mode: string) => ({
+export const getFronteggTheme = (mode: "light" | "dark") => ({
   mode,
   ...fronteggTheme,
   /* TODO wait for full frontegg styleability before attempting dark mode there */

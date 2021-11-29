@@ -9,6 +9,8 @@
     "@emotion/styled": "^11.3.0",
     "@fontsource/inter": "^4.5.1",
     "@frontegg/react": "=3.0.21",
+    "@frontegg/react-auth": "^3.0.21",
+    "@frontegg/react-core": "^3.0.21",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
     "@sentry/react": "^6.13.3",
@@ -32,9 +34,9 @@
     "ts-loader": "^9.2.5",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.4",
+    "victory": "^36.1.0",
     "webpack": "^5.52.1",
     "webpack-cli": "^4.8.0",
-    "victory": "^36.1.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
