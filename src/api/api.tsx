@@ -47,16 +47,16 @@ export interface DeploymentRequest {
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
 export interface HistoricalDeploymentChange {
-  name?: ModelChangeChar;
-  hostname?: ModelChangeChar;
-  flaggedForDeletion?: ModelChangeBoolean;
-  flaggedForUpdate?: ModelChangeBoolean;
-  size?: ModelChangeSize;
-  disableUserIndexes?: ModelChangeBoolean;
-  materializedExtraArgs?: ModelChangeListChar;
-  clusterId?: ModelChangeChar;
-  mzVersion?: ModelChangeChar;
-  enableTailscale?: ModelChangeBoolean;
+  name?: ModifiedString;
+  hostname?: ModifiedString;
+  flaggedForDeletion?: ModifiedBoolean;
+  flaggedForUpdate?: ModifiedBoolean;
+  size?: ModifiedSize;
+  disableUserIndexes?: ModifiedBoolean;
+  materializedExtraArgs?: ModifiedStringList;
+  clusterId?: ModifiedString;
+  mzVersion?: ModifiedString;
+  enableTailscale?: ModifiedBoolean;
 }
 
 export interface HistoricalDeploymentDelta {
@@ -65,37 +65,37 @@ export interface HistoricalDeploymentDelta {
 }
 
 export interface HistoricalDeploymentMetadata {
-  historyDate: string;
-  historyUserName: string;
-  historyType: HistoryTypeEnum;
+  date: string;
+  user: string;
+  operation: OperationEnum;
 }
 
-export type HistoryTypeEnum = "+" | "~" | "-";
-
-export interface ModelChangeBoolean {
+export interface ModifiedBoolean {
   old: boolean | null;
   new: boolean | null;
 }
 
-export interface ModelChangeChar {
+export interface ModifiedSize {
+  old: DeploymentSizeEnum;
+  new: DeploymentSizeEnum;
+}
+
+export interface ModifiedString {
   old: string | null;
   new: string | null;
 }
 
-export interface ModelChangeListChar {
+export interface ModifiedStringList {
   old: string | null[];
   new: string | null[];
-}
-
-export interface ModelChangeSize {
-  old: DeploymentSizeEnum;
-  new: DeploymentSizeEnum;
 }
 
 export interface OnboardingCall {
   start: string;
   end: string;
 }
+
+export type OperationEnum = "CREATE" | "UPDATE" | "DELETE";
 
 export interface Organization {
   id: string;
@@ -428,59 +428,59 @@ export const useDeploymentsCertsRetrieve = ({
     { pathParams: { id }, ...props }
   );
 
-export interface DeploymentsHistoryDiffListPathParams {
+export interface DeploymentsChangesListPathParams {
   id: string;
 }
 
-export type DeploymentsHistoryDiffListProps = Omit<
+export type DeploymentsChangesListProps = Omit<
   GetProps<
     HistoricalDeploymentDelta[],
     unknown,
     void,
-    DeploymentsHistoryDiffListPathParams
+    DeploymentsChangesListPathParams
   >,
   "path"
 > &
-  DeploymentsHistoryDiffListPathParams;
+  DeploymentsChangesListPathParams;
 
-export const DeploymentsHistoryDiffList = ({
+export const DeploymentsChangesList = ({
   id,
   ...props
-}: DeploymentsHistoryDiffListProps) => (
+}: DeploymentsChangesListProps) => (
   <Get<
     HistoricalDeploymentDelta[],
     unknown,
     void,
-    DeploymentsHistoryDiffListPathParams
+    DeploymentsChangesListPathParams
   >
-    path={`/api/deployments/${id}/history_diff`}
+    path={`/api/deployments/${id}/changes`}
     {...props}
   />
 );
 
-export type UseDeploymentsHistoryDiffListProps = Omit<
+export type UseDeploymentsChangesListProps = Omit<
   UseGetProps<
     HistoricalDeploymentDelta[],
     unknown,
     void,
-    DeploymentsHistoryDiffListPathParams
+    DeploymentsChangesListPathParams
   >,
   "path"
 > &
-  DeploymentsHistoryDiffListPathParams;
+  DeploymentsChangesListPathParams;
 
-export const useDeploymentsHistoryDiffList = ({
+export const useDeploymentsChangesList = ({
   id,
   ...props
-}: UseDeploymentsHistoryDiffListProps) =>
+}: UseDeploymentsChangesListProps) =>
   useGet<
     HistoricalDeploymentDelta[],
     unknown,
     void,
-    DeploymentsHistoryDiffListPathParams
+    DeploymentsChangesListPathParams
   >(
-    (paramsInPath: DeploymentsHistoryDiffListPathParams) =>
-      `/api/deployments/${paramsInPath.id}/history_diff`,
+    (paramsInPath: DeploymentsChangesListPathParams) =>
+      `/api/deployments/${paramsInPath.id}/changes`,
     { pathParams: { id }, ...props }
   );
 
