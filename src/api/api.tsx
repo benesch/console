@@ -26,7 +26,6 @@ export interface Deployment {
   materializedExtraArgs: string[];
   clusterId: string | null;
   mzVersion: string;
-  pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
   cloudProviderRegion: SupportedCloudRegion;
@@ -115,16 +114,6 @@ export interface PatchedDeploymentUpdateRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
-}
-
-export interface PendingMigration {
-  description: string;
-  deadline: string;
-}
-
-export interface PendingMigrationRequest {
-  description: string;
-  deadline: string;
 }
 
 export interface PrometheusMetric {
