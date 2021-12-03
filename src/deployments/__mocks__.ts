@@ -15,7 +15,6 @@ export const validDeployment: Deployment = {
   materializedExtraArgs: [],
   clusterId: "cluster",
   mzVersion: "1.0.0",
-  pendingMigration: null,
   status: "pending",
   cloudProviderRegion: {
     provider: "AWS",
