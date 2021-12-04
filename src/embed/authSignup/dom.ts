@@ -1,13 +1,20 @@
 import React from "react";
 
+import { sendFinishedMessageToParentFrame } from "./events";
+
 export class EmbeddableSignupDOMHandler {
   state = {
     loginLinkIsHidden: false,
     formIsFixed: false,
+    signupSuccess: false,
   };
 
   get shouldStopListeningForChanges() {
-    return this.state.loginLinkIsHidden && this.state.formIsFixed;
+    return (
+      this.state.loginLinkIsHidden &&
+      this.state.formIsFixed &&
+      this.state.signupSuccess
+    );
   }
 
   mutationObserver = new MutationObserver(() => this.onDOMChange());
@@ -59,6 +66,16 @@ export class EmbeddableSignupDOMHandler {
     this.state.formIsFixed = true;
   };
 
+  sendSuccessEventIfSignupSuccessful = () => {
+    const signupSuccessful = document.querySelector(
+      ".fe-sign-up__success-container"
+    );
+    if (signupSuccessful) {
+      sendFinishedMessageToParentFrame();
+      this.state.signupSuccess = true;
+    }
+  };
+
   onDOMChange = () => {
     if (this.shouldStopListeningForChanges) {
       this.mutationObserver.disconnect();
@@ -66,6 +83,7 @@ export class EmbeddableSignupDOMHandler {
     }
     this.removeLoginLinkIfExist();
     this.fixSignUpFormIfExist();
+    this.sendSuccessEventIfSignupSuccessful();
   };
 
   /** Start to listen on DOM Changes on the page */

@@ -7,7 +7,7 @@ export const marketingBg = "#F9F9F9";
 export const localFronteggSignupStyles = {
   body: {
     fontFamily: "intervariable",
-    bg: `${marketingBg} !important`,
+    bg: `transparent !important`,
   },
   input: {
     color: "black",
@@ -40,6 +40,6 @@ export const localFronteggSignupStyles = {
     display: "none !important",
   },
   ".grecaptcha-badge": {
-    display: "none !important",
+    visibility: "hidden !important",
   },
 };
