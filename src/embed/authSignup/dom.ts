@@ -3,6 +3,10 @@ import React from "react";
 import { sendFinishedMessageToParentFrame } from "./events";
 
 export class EmbeddableSignupDOMHandler {
+  selectors = {
+    loginLink: ".fe-sign-up__back-to-login-link",
+  };
+
   state = {
     loginLinkIsHidden: false,
     formIsFixed: false,
@@ -76,15 +80,15 @@ export class EmbeddableSignupDOMHandler {
     }
   };
 
-  onDOMChange = () => {
+  onDOMChange() {
     if (this.shouldStopListeningForChanges) {
-      this.mutationObserver.disconnect();
+      this.disconnect();
       return;
     }
     this.removeLoginLinkIfExist();
     this.fixSignUpFormIfExist();
     this.sendSuccessEventIfSignupSuccessful();
-  };
+  }
 
   /** Start to listen on DOM Changes on the page */
   observe() {

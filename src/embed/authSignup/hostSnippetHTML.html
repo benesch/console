@@ -4,7 +4,6 @@
     var NEXT_PAGE='https://materialize.com'
     var SIGNUP_FINISHED = "EMBED_AUTH_SIGNUP_SUCCESS"
     window.addEventListener('message', function(ev){
-        console.log(ev)
         if(ev.data === 'EMBED_AUTH_SIGNUP_SUCCESS') {
             window.location.href = NEXT_PAGE
         }
