@@ -94,7 +94,7 @@ export function EditDeploymentButton({
           >
             {(form) => (
               <Form>
-                <ModalHeader>Edit Deployment</ModalHeader>
+                <ModalHeader>Edit deployment</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pt="3" pb="3">
                   <Box ref={initialFocusRef} tabIndex={-1} />
