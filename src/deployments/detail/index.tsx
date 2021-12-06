@@ -49,7 +49,7 @@ import {
   PageHeading,
 } from "../../layouts/base";
 import { DestroyDeploymentButton } from "../destroy";
-import { UpdateDeploymentButton } from "../update";
+import { EditDeploymentButton } from "../edit";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
 import { DeploymentIntegrationsCard } from "./integrations";
@@ -130,7 +130,7 @@ function DeploymentDetail({
         <PageHeading>{deployment.name}</PageHeading>
         {deployment.flaggedForUpdate && <Spinner />}
         <Spacer />
-        <UpdateDeploymentButton
+        <EditDeploymentButton
           deployment={deployment}
           refetch={refetch}
           size="sm"

@@ -36,16 +36,16 @@ import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
 import { SubmitButton, SwitchField, TextField } from "../components/form";
 import { DeploymentSizeField } from "./util";
 
-interface UpdateDeploymentButtonProps extends ButtonProps {
+interface EditDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;
   refetch: () => Promise<void>;
 }
 
-export function UpdateDeploymentButton({
+export function EditDeploymentButton({
   deployment,
   refetch,
   ...props
-}: UpdateDeploymentButtonProps) {
+}: EditDeploymentButtonProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: deployment.id,
@@ -60,7 +60,7 @@ export function UpdateDeploymentButton({
         onClick={onOpen}
         {...props}
       >
-        Update
+        Edit
       </Button>
 
       <Modal
@@ -94,7 +94,7 @@ export function UpdateDeploymentButton({
           >
             {(form) => (
               <Form>
-                <ModalHeader>Update deployment</ModalHeader>
+                <ModalHeader>Edit Deployment</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pt="3" pb="3">
                   <Box ref={initialFocusRef} tabIndex={-1} />
@@ -160,7 +160,7 @@ export function UpdateDeploymentButton({
                     <Button size="sm" onClick={onClose} variant="outline">
                       Cancel
                     </Button>
-                    <SubmitButton size="sm">Update</SubmitButton>
+                    <SubmitButton size="sm">Save</SubmitButton>
                   </HStack>
                 </ModalFooter>
               </Form>

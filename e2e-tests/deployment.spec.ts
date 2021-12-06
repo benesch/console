@@ -31,24 +31,24 @@ for (const region of regions) {
     page.click("[aria-label=Close]");
 
     // Update the deployment name and size.
-    await page.click("text=Update");
+    await page.click("text=Edit");
     await page.fill("[aria-modal] [name=name]", "New name");
     await page.selectOption("[aria-modal] [name=size]", { label: "Small" });
     await Promise.all([
       page.waitForSelector("[aria-modal]", { state: "detached" }),
-      page.click("[aria-modal] button:text('Update')"),
+      page.click("[aria-modal] button:text('Save')"),
     ]);
     // Verify that the deployment has been updated accordingly.
     await context.waitForDeploymentHealthy();
     await context.assertDeploymentSize("S");
 
     // Update the deployment index mode.
-    await page.click("text=Update");
+    await page.click("text=Edit");
     await page.click('[aria-modal] button:has-text("Advanced")');
     await page.click('[aria-modal] label:has-text("Disable user indexes")');
     await Promise.all([
       page.waitForSelector("[aria-modal]", { state: "detached" }),
-      page.click("[aria-modal] button:text('Update')"),
+      page.click("[aria-modal] button:text('Save')"),
     ]);
     await context.waitForDeploymentFieldValue(
       "Status",
