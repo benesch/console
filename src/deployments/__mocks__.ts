@@ -22,6 +22,11 @@ export const validDeployment: Deployment = {
   },
 };
 
+export const validDeploymentWithTailscale = {
+  ...validDeployment,
+  enableTailscale: true,
+};
+
 export const validPrometheusValues: PrometheusMetrics = {
   metrics: [{ name: "metric", values: [[(+new Date()).toString(), "1"]] }],
 };

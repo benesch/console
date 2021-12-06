@@ -2,7 +2,6 @@
  * @module
  * Entry point for the frontend.
  */
-
 import "@fontsource/inter/variable-full.css";
 import "./types";
 

@@ -114,6 +114,7 @@ export function UpdateDeploymentButton({
                             display="flex"
                             alignItems="center"
                             pt="1"
+                            name="disableUserIndexes"
                             id="disableUserIndexes"
                             label="Disable user indexes"
                             fontSize="sm"

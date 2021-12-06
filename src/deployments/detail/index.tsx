@@ -16,11 +16,8 @@ import {
   OrderedList,
   Spacer,
   Spinner,
-  Tab,
-  TabList,
   TabPanel,
   TabPanels,
-  Tabs,
   UnorderedList,
   useInterval,
   VStack,
@@ -42,6 +39,7 @@ import {
   CardFooter,
   CardHeader,
 } from "../../components/card";
+import { CardTab, CardTabs, CardTabsHeaders } from "../../components/cardTabs";
 import { CodeBlock } from "../../components/codeblock";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -54,11 +52,17 @@ import { DestroyDeploymentButton } from "../destroy";
 import { UpdateDeploymentButton } from "../update";
 import { UpgradeDeploymentButton } from "../upgrade";
 import { DeploymentStateBadge } from "../util";
+import { DeploymentIntegrationsCard } from "./integrations";
 import { DeploymentMetricsCard } from "./metrics";
 
 export function DeploymentDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: deployment, error, refetch } = useDeploymentsRetrieve({ id });
+  const {
+    data: deployment,
+    refetch,
+
+    error,
+  } = useDeploymentsRetrieve({ id });
   const { data: latestVersion } = useMzVersionsLatestRetrieve({});
   useInterval(refetch, 5000);
 
@@ -146,7 +150,10 @@ function DeploymentDetail({
             <UserIndexesDisabledAlert />
           )}
           <DeploymentConnectCard deployment={deployment} />
-          <DeploymentIntegrationsCard deployment={deployment} />
+          <DeploymentIntegrationsCard
+            deployment={deployment}
+            refetch={refetch}
+          />
           <DeploymentMetricsCard deployment={deployment} />
         </VStack>
         <VStack width="400px">
@@ -213,13 +220,15 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
 
   return (
     <Card>
-      <CardHeader>Connect</CardHeader>
-      <Tabs colorScheme="purple">
-        <TabList px="4">
-          <Tab>psql</Tab>
-          <Tab>Prometheus</Tab>
-          <Tab>Metabase</Tab>
-        </TabList>
+      <CardTabs colorScheme="purple">
+        <CardTabsHeaders>
+          <CardHeader>Connect</CardHeader>
+          <HStack>
+            <CardTab>psql</CardTab>
+            <CardTab>Prometheus</CardTab>
+            <CardTab>Metabase</CardTab>
+          </HStack>
+        </CardTabsHeaders>
         <TabPanels fontSize="15px">
           <TabPanel>
             <OrderedList ml="6" spacing="3">
@@ -290,35 +299,13 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
             <p>Metabase connection instructions coming soon.</p>
           </TabPanel>
         </TabPanels>
-      </Tabs>
+      </CardTabs>
       <CardFooter>
         <Spacer />
         <Button colorScheme="purple" size="sm" onClick={handleDownloadCerts}>
           Download certificates
         </Button>
       </CardFooter>
-    </Card>
-  );
-}
-
-interface DeploymentIntegrationsCardProps {
-  deployment: Deployment;
-}
-
-function DeploymentIntegrationsCard(_: DeploymentIntegrationsCardProps) {
-  return (
-    <Card>
-      <CardHeader>Integrations</CardHeader>
-      <Tabs colorScheme="purple">
-        <TabList px="4">
-          <Tab>Tailscale</Tab>
-          <Tab>Datadog</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>Tailscale integration coming soon.</TabPanel>
-          <TabPanel>Datadog integration coming soon.</TabPanel>
-        </TabPanels>
-      </Tabs>
     </Card>
   );
 }
