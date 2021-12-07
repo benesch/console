@@ -68,7 +68,6 @@ export const receivedRequestsBodyFromMock = (
   return requests.map((request) => {
     try {
       const bodyJSON = request.requestBody;
-      console.log(request.requestBody);
       return bodyJSON;
     } catch {
       return [];

@@ -1,9 +1,6 @@
-import {
-  fireEvent,
-  waitFor,
-  waitForElementToBeRemoved,
-} from "@testing-library/dom";
+import { fireEvent, waitFor } from "@testing-library/dom";
 import { screen } from "@testing-library/react";
+import { Response } from "miragejs";
 import * as React from "react";
 
 import {
@@ -34,6 +31,7 @@ const selectors = {
     document.querySelector("[name=tailscaleAuthKey]"),
   modalSaveButton: () => screen.findByText("Save"),
   disableButton: () => screen.findByText("Edit"),
+  modalError: () => screen.findByTestId("update-integration-error"),
 };
 
 describe("EnableEditTailscaleConfiguration", () => {
@@ -112,6 +110,25 @@ describe("EnableEditTailscaleConfiguration", () => {
           return expect(requestBodies[0].secret).toBeDefined();
         }
       });
+    });
+
+    it("should display an error message when the api errors out", async () => {
+      apiMock?.handlers.partialUpdateHandler.mockImplementationOnce(() => {
+        return new Response(500, {}, {});
+      });
+
+      renderComponent(false);
+      const enableButton = await selectors.enableButton();
+      enableButton.click();
+      await selectors.configurationModal();
+
+      // act
+      const tailscaleAuthKeyInput = selectors.tailscaleAuthKeyInput();
+      fireEvent.change(tailscaleAuthKeyInput!, { target: { value: "secret" } });
+      const modalSaveButton = await selectors.modalSaveButton();
+      modalSaveButton.click();
+
+      expect(await selectors.modalError()).toBeDefined();
     });
   });
 });
