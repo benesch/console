@@ -1,5 +1,6 @@
 import { waitFor } from "@testing-library/dom";
 import { screen } from "@testing-library/react";
+import { Response } from "miragejs";
 import * as React from "react";
 
 import {
@@ -9,6 +10,13 @@ import {
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
 import { DisableTailscale } from "./DisableTailscale";
+
+const toastMock = jest.fn();
+jest.mock("@chakra-ui/toast", () => {
+  return {
+    useToast: () => toastMock,
+  };
+});
 
 const renderComponent = (enabled: boolean) => {
   const refetch = jest.fn();
@@ -66,6 +74,22 @@ describe("DisableTailscale", () => {
         if (requestBodies.length) {
           return expect(requestBodies[0].enableTailscale).toBeFalsy();
         }
+      });
+    });
+    it("should signal the API error via a toast to the user", async () => {
+      apiMock?.handlers.partialUpdateHandler.mockImplementationOnce(() => {
+        return new Response(500, {}, {});
+      });
+      renderComponent(true);
+      (await selectors.disableButton()).click();
+      (await selectors.disablePopoverConfirmationButton()).click();
+
+      await waitFor(() => {
+        expect(toastMock).toHaveBeenCalledWith({
+          title: `Failed to disable the integration`,
+          description: "Failed to fetch: 500 Internal Server Error",
+          status: "error",
+        });
       });
     });
   });

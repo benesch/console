@@ -54,13 +54,24 @@ export const useDisableIntegration = ({
 }: DeploymentIntegrationCallToActionProps) => {
   const toast = useToast();
   const partialUpdateOperation = useDeploymentsPartialUpdate({ id });
-  const disableIntegration = async () => {
-    await partialUpdateOperation.mutate({
-      enableTailscale: false,
-      tailscaleAuthKey: undefined,
-    });
-    toast({ title: "The integration has been disabled", status: "success" });
-    return refetch();
+  const disableIntegration = (closePopup: () => void) => async () => {
+    try {
+      await partialUpdateOperation.mutate({
+        enableTailscale: false,
+        tailscaleAuthKey: undefined,
+      } as any);
+      toast({ title: "The integration has been disabled", status: "success" });
+      return refetch();
+    } catch (error) {
+      console.log(error, toast);
+      toast({
+        title: `Failed to disable the integration`,
+        description: (error as Error).message,
+        status: "error",
+      });
+    } finally {
+      closePopup();
+    }
   };
 
   return {

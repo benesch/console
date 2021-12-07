@@ -1,4 +1,3 @@
-import { UseDisclosureReturn } from "@chakra-ui/hooks";
 import { Modal, ModalBody } from "@chakra-ui/modal";
 import {
   Button,

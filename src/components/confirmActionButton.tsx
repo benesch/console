@@ -15,7 +15,10 @@ import { Button, ButtonProps, Portal } from "@chakra-ui/react";
 import React from "react";
 
 export const ConfirmActionButton: React.FC<
-  { confirmationText: string; onConfirm: () => void } & ButtonProps
+  {
+    confirmationText: string;
+    onConfirm: (onClose: () => void) => () => unknown;
+  } & ButtonProps
 > = ({ children, confirmationText, onConfirm, disabled, ...props }) => {
   return (
     <Popover closeOnBlur={false}>
@@ -38,7 +41,7 @@ export const ConfirmActionButton: React.FC<
                   <Button
                     size="sm"
                     colorScheme="red"
-                    onClick={onConfirm}
+                    onClick={onConfirm(onClose)}
                     disabled={disabled}
                   >
                     Yes
