@@ -14,11 +14,16 @@ import {
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
+import * as Yup from "yup";
 
 import { SubmitButton, TextField } from "../../../../components/form";
 import { DeploymentIntegrationCallToActionProps } from "../types";
 import { useTailscaleIntegration } from "./hooks";
 import { UpdateIntegrationError } from "./UpdateIntegrationError";
+
+const validationSchema = Yup.object().shape({
+  tailscaleAuthKey: Yup.string().required("Required"),
+});
 
 export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCallToActionProps> =
   (props) => {
@@ -36,6 +41,7 @@ export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCal
           <ModalContent data-testid="tailscale-configuration-modal">
             <Formik
               initialValues={defaultValues}
+              validationSchema={validationSchema}
               onSubmit={(values) => save(values)}
             >
               <Form>
@@ -61,7 +67,9 @@ export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCal
                         to learn how to generate a pre-authentication key.
                       </Text>
                     </VStack>
-                    {operation.error && <UpdateIntegrationError />}
+                    {operation.error && (
+                      <UpdateIntegrationError error={operation.error as any} />
+                    )}
                   </VStack>
                 </ModalBody>
                 <ModalFooter>
