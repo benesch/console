@@ -89,11 +89,6 @@ export interface ModifiedStringList {
   new: string | null[];
 }
 
-export interface OnboardingCall {
-  start: string;
-  end: string;
-}
-
 export type OperationEnum = "CREATE" | "UPDATE" | "DELETE";
 
 export interface Organization {
