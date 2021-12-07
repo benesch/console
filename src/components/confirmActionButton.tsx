@@ -16,13 +16,15 @@ import React from "react";
 
 export const ConfirmActionButton: React.FC<
   { confirmationText: string; onConfirm: () => void } & ButtonProps
-> = ({ children, confirmationText, onConfirm, ...props }) => {
+> = ({ children, confirmationText, onConfirm, disabled, ...props }) => {
   return (
     <Popover closeOnBlur={false}>
       {({ onClose }) => (
         <>
           <PopoverTrigger>
-            <Button {...props}>{children}</Button>
+            <Button {...props} disabled={disabled}>
+              {children}
+            </Button>
           </PopoverTrigger>
           <Portal>
             <PopoverContent data-testid="confirm-action-popover">
@@ -30,10 +32,15 @@ export const ConfirmActionButton: React.FC<
               <PopoverCloseButton />
               <PopoverFooter>
                 <HStack w="full" justifyContent="flex-end">
-                  <Button size="sm" onClick={onClose}>
+                  <Button size="sm" onClick={onClose} disabled={disabled}>
                     No
                   </Button>
-                  <Button size="sm" colorScheme="red" onClick={onConfirm}>
+                  <Button
+                    size="sm"
+                    colorScheme="red"
+                    onClick={onConfirm}
+                    disabled={disabled}
+                  >
                     Yes
                   </Button>
                 </HStack>

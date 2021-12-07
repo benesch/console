@@ -6,7 +6,7 @@ import { useDisableIntegration } from "./hooks";
 
 export const DisableTailscale: React.FC<DeploymentIntegrationCallToActionProps> =
   (props) => {
-    const { disableIntegration } = useDisableIntegration(props);
+    const { disableIntegration, operation } = useDisableIntegration(props);
 
     if (!props.enabled) return null;
     return (
@@ -16,6 +16,7 @@ export const DisableTailscale: React.FC<DeploymentIntegrationCallToActionProps> 
         size="sm"
         confirmationText="Are you sure to want to disable the Tailscale integration for this deployment ?"
         onConfirm={disableIntegration}
+        disabled={operation.loading}
       >
         Disable
       </ConfirmActionButton>
