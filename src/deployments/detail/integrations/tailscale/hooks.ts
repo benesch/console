@@ -63,10 +63,8 @@ export const useDisableIntegration = ({
       toast({ title: "The integration has been disabled", status: "success" });
       return refetch();
     } catch (error) {
-      console.log(error, toast);
       toast({
-        title: `Failed to disable the integration`,
-        description: (error as Error).message,
+        title: `Failed to disable the Tailscale integration`,
         status: "error",
       });
     } finally {

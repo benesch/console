@@ -67,7 +67,7 @@ export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCal
                       </Text>
                     </VStack>
                     {operation.error && (
-                      <UpdateIntegrationError error={operation.error as any} />
+                      <UpdateIntegrationError name="Tailscale" />
                     )}
                   </VStack>
                 </ModalBody>

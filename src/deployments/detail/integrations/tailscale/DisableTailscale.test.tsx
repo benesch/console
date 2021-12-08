@@ -86,8 +86,7 @@ describe("DisableTailscale", () => {
 
       await waitFor(() => {
         expect(toastMock).toHaveBeenCalledWith({
-          title: `Failed to disable the integration`,
-          description: "Failed to fetch: 500 Internal Server Error",
+          title: `Failed to disable the Tailscale integration`,
           status: "error",
         });
       });
