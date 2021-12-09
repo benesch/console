@@ -46,7 +46,11 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
           }
         >
           {chart.data.map((metric) => (
-            <VictoryLine interpolation="natural" data={metric.values} />
+            <VictoryLine
+              key={metric.name}
+              interpolation="natural"
+              data={metric.values}
+            />
           ))}
           <VictoryAxis
             standalone={false}

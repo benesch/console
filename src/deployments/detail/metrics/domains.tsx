@@ -1,13 +1,13 @@
 import { VictoryMetric } from "./types";
 
 export interface Domains {
-  x?: [Date, Date];
+  x: [Date, Date];
   y: [number, number];
 }
 
 export const xDomainFromMetrics = (metrics: VictoryMetric[]): [Date, Date] => {
   // even if multiple metrics are returned, they should be aligned on the x-axis and already sorted
-  const earliestTime = metrics[0]?.values[0].x;
+  const earliestTime = metrics[0]?.values[0].x || new Date();
   return [earliestTime, new Date()];
 };
 
