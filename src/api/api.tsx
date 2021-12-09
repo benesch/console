@@ -26,7 +26,6 @@ export interface Deployment {
   materializedExtraArgs: string[];
   clusterId: string | null;
   mzVersion: string;
-  pendingMigration: PendingMigration | null;
   status: string;
   enableTailscale: boolean;
   cloudProviderRegion: SupportedCloudRegion;
@@ -46,10 +45,56 @@ export interface DeploymentRequest {
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
 
+export interface HistoricalDeploymentChange {
+  name?: ModifiedString;
+  hostname?: ModifiedString;
+  flaggedForDeletion?: ModifiedBoolean;
+  flaggedForUpdate?: ModifiedBoolean;
+  size?: ModifiedSize;
+  disableUserIndexes?: ModifiedBoolean;
+  materializedExtraArgs?: ModifiedStringList;
+  clusterId?: ModifiedString;
+  mzVersion?: ModifiedString;
+  enableTailscale?: ModifiedBoolean;
+}
+
+export interface HistoricalDeploymentDelta {
+  changes: HistoricalDeploymentChange;
+  metadata: HistoricalDeploymentMetadata;
+}
+
+export interface HistoricalDeploymentMetadata {
+  date: string;
+  user: string;
+  operation: OperationEnum;
+}
+
+export interface ModifiedBoolean {
+  old: boolean | null;
+  new: boolean | null;
+}
+
+export interface ModifiedSize {
+  old: DeploymentSizeEnum;
+  new: DeploymentSizeEnum;
+}
+
+export interface ModifiedString {
+  old: string | null;
+  new: string | null;
+}
+
+export interface ModifiedStringList {
+  old: string | null[];
+  new: string | null[];
+}
+
 export interface OnboardingCall {
   start: string;
   end: string;
 }
+
+export type OperationEnum = "CREATE" | "UPDATE" | "DELETE";
 
 export interface Organization {
   id: string;
@@ -69,16 +114,6 @@ export interface PatchedDeploymentUpdateRequest {
   mzVersion?: string;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
-}
-
-export interface PendingMigration {
-  description: string;
-  deadline: string;
-}
-
-export interface PendingMigrationRequest {
-  description: string;
-  deadline: string;
 }
 
 export interface PrometheusMetric {
@@ -379,6 +414,62 @@ export const useDeploymentsCertsRetrieve = ({
   useGet<string, unknown, void, DeploymentsCertsRetrievePathParams>(
     (paramsInPath: DeploymentsCertsRetrievePathParams) =>
       `/api/deployments/${paramsInPath.id}/certs`,
+    { pathParams: { id }, ...props }
+  );
+
+export interface DeploymentsChangesListPathParams {
+  id: string;
+}
+
+export type DeploymentsChangesListProps = Omit<
+  GetProps<
+    HistoricalDeploymentDelta[],
+    unknown,
+    void,
+    DeploymentsChangesListPathParams
+  >,
+  "path"
+> &
+  DeploymentsChangesListPathParams;
+
+export const DeploymentsChangesList = ({
+  id,
+  ...props
+}: DeploymentsChangesListProps) => (
+  <Get<
+    HistoricalDeploymentDelta[],
+    unknown,
+    void,
+    DeploymentsChangesListPathParams
+  >
+    path={`/api/deployments/${id}/changes`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsChangesListProps = Omit<
+  UseGetProps<
+    HistoricalDeploymentDelta[],
+    unknown,
+    void,
+    DeploymentsChangesListPathParams
+  >,
+  "path"
+> &
+  DeploymentsChangesListPathParams;
+
+export const useDeploymentsChangesList = ({
+  id,
+  ...props
+}: UseDeploymentsChangesListProps) =>
+  useGet<
+    HistoricalDeploymentDelta[],
+    unknown,
+    void,
+    DeploymentsChangesListPathParams
+  >(
+    (paramsInPath: DeploymentsChangesListPathParams) =>
+      `/api/deployments/${paramsInPath.id}/changes`,
     { pathParams: { id }, ...props }
   );
 

@@ -5,9 +5,7 @@ import React from "react";
 import { Deployment } from "../../../api/api";
 import { Card, CardFooter, CardHeader } from "../../../components/card";
 import { DeploymentLogsButton } from "../deploymentLogsButton";
-import { DeploymentMetricsNotAvailableError } from "./components/DeploymentMetricsNotAvailableError";
 import { CpuMetrics } from "./CpuMetrics";
-import { isSupportedRegionForMetrics } from "./hooks";
 import { MemoryMetrics } from "./MemoryMetrics";
 
 export const DeploymentMetricsTabs: React.FC<{ deployment: Deployment }> = ({
@@ -34,15 +32,10 @@ export const DeploymentMetricsTabs: React.FC<{ deployment: Deployment }> = ({
 export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
   deployment,
 }) => {
-  const metricsFragment = isSupportedRegionForMetrics(deployment) ? (
-    <DeploymentMetricsTabs deployment={deployment} />
-  ) : (
-    <DeploymentMetricsNotAvailableError />
-  );
   return (
     <Card data-testid="metrics-card">
       <CardHeader>Metrics</CardHeader>
-      {metricsFragment}
+      <DeploymentMetricsTabs deployment={deployment} />
       <CardFooter>
         <Spacer />
         <DeploymentLogsButton deployment={deployment} size="sm" />

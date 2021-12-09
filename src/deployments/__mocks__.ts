@@ -15,12 +15,16 @@ export const validDeployment: Deployment = {
   materializedExtraArgs: [],
   clusterId: "cluster",
   mzVersion: "1.0.0",
-  pendingMigration: null,
   status: "pending",
   cloudProviderRegion: {
     provider: "AWS",
     region: "us-east-1",
   },
+};
+
+export const validDeploymentWithTailscale = {
+  ...validDeployment,
+  enableTailscale: true,
 };
 
 export const validPrometheusValues: PrometheusMetrics = {

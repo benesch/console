@@ -113,7 +113,7 @@ export class TestContext {
         await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
       } catch (e: unknown) {
         // if the deployment does not exist, it's okay to ignore the error.
-        const deploymentDoesNotExist = e.message.startsWith("API Error 404");
+        const deploymentDoesNotExist = e.message.includes("API Error 404");
         if (!deploymentDoesNotExist) {
           throw e;
         }
