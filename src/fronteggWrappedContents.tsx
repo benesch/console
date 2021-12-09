@@ -4,6 +4,8 @@ import React from "react";
 
 import logo from "../img/wordmark.svg";
 import { RestfulProvider } from "./api/auth";
+import { EmbeddedLoading } from "./embed/loading";
+import { useIsInIframe } from "./embed/utils";
 import LoadingScreen from "./loading";
 import { Router } from "./router";
 import {
@@ -17,6 +19,7 @@ type Props = {
 };
 
 const FronteggWrappedContents = ({ baseUrl }: Props) => {
+  const isEmbedded = useIsInIframe();
   const [loading, setLoading] = React.useState(true);
   const { colorMode } = useColorMode();
   const theme = React.useMemo(() => {
@@ -42,7 +45,7 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
           <Router />
         </RestfulProvider>
       </FronteggProvider>
-      {loading && <LoadingScreen />}
+      {loading ? isEmbedded ? <EmbeddedLoading /> : <LoadingScreen /> : null}
     </>
   );
 };

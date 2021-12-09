@@ -1,0 +1,13 @@
+<!-- This is the local copy of the snippet embedded in the marketing website -->
+<!-- Replace with production values -->
+<script>
+    var NEXT_PAGE='https://materialize.com'
+    var SIGNUP_FINISHED = "EMBED_AUTH_SIGNUP_SUCCESS"
+    window.addEventListener('message', function(ev){
+        if(ev.data === 'EMBED_AUTH_SIGNUP_SUCCESS') {
+            window.location.href = NEXT_PAGE
+        }
+    }) 
+</script>
+
+<iframe style="border: none;" src="http://cloud.materialize.com/embed/auth/signup" width="100%" height="350"></iframe>

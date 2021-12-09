@@ -77,15 +77,18 @@ const animationStyles = `@keyframes bigBar {
     animation-delay: 0.6s;
   }`;
 
-const LoadingSvg = () => {
-  const fillColor = useColorModeValue(colors.purple[700], "white");
+const LoadingSvg: React.FC<{ fillColor?: string; width?: number }> = ({
+  fillColor,
+  width = 128,
+}) => {
+  const fillColorFromMode = useColorModeValue(colors.purple[700], "white");
   return (
     <svg
       className="m-loading-mark"
-      width="128"
+      width={width}
       viewBox="0 0 33.8232 27.916767"
       xmlns="http://www.w3.org/2000/svg"
-      fill={fillColor}
+      fill={fillColor ?? fillColorFromMode}
     >
       <style>{animationStyles}</style>
       <path
