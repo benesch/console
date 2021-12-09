@@ -89,11 +89,6 @@ export interface ModifiedStringList {
   new: string | null[];
 }
 
-export interface OnboardingCall {
-  start: string;
-  end: string;
-}
-
 export type OperationEnum = "CREATE" | "UPDATE" | "DELETE";
 
 export interface Organization {
@@ -829,33 +824,6 @@ export const useMzVersionsLatestRetrieve = (
     `/api/mz-versions/latest`,
     props
   );
-
-export type OnboardingCallRetrieveProps = Omit<
-  GetProps<OnboardingCall, unknown, void, void>,
-  "path"
->;
-
-/**
- * Retrieve the first scheduled onboarding call for a user.
- */
-export const OnboardingCallRetrieve = (props: OnboardingCallRetrieveProps) => (
-  <Get<OnboardingCall, unknown, void, void>
-    path={`/api/onboarding-call`}
-    {...props}
-  />
-);
-
-export type UseOnboardingCallRetrieveProps = Omit<
-  UseGetProps<OnboardingCall, unknown, void, void>,
-  "path"
->;
-
-/**
- * Retrieve the first scheduled onboarding call for a user.
- */
-export const useOnboardingCallRetrieve = (
-  props: UseOnboardingCallRetrieveProps
-) => useGet<OnboardingCall, unknown, void, void>(`/api/onboarding-call`, props);
 
 export interface OrganizationsRetrievePathParams {
   /**
