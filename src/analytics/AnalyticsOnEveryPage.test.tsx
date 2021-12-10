@@ -4,8 +4,8 @@ import { createMemoryHistory } from "history";
 import React from "react";
 import { Router } from "react-router";
 
+import { globalConfigStub } from "../__mocks__/config";
 import { GlobalConfig } from "../types";
-import { globalConfigStub } from "./__mocks__";
 import { AnalyticsOnEveryPage } from "./AnalyticsOnEveryPage";
 import { AnalyticsClient } from "./types";
 

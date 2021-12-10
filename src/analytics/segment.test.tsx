@@ -1,4 +1,5 @@
-import { globalConfigNoAnalyticsSetup, globalConfigStub } from "./__mocks__";
+import { globalConfigStub } from "../__mocks__/config";
+import { globalConfigNoAnalyticsSetup } from "./__mocks__";
 import { SegmentAnalyticsClient } from "./segment";
 
 const makeSegmentAnalyticsClient = (): SegmentAnalyticsClient => {

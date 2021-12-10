@@ -4,3 +4,6 @@ require("isomorphic-fetch");
 window.crypto = {};
 // eslint-disable-next-line no-undef
 window.crypto.getRandomValues = () => new Uint32Array(1);
+
+// eslint-disable-next-line no-undef
+window.CONFIG = {};
