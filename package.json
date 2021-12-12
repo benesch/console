@@ -24,7 +24,7 @@
     "date-fns": "^2.25.0",
     "downloadjs": "^1.4.7",
     "formik": "^2.2.9",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^5.4.5",
     "mini-css-extract-plugin": "^2.4.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
