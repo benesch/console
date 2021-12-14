@@ -28,10 +28,11 @@ import {
   DeploymentSizeEnum,
   SupportedCloudRegionRequest,
   useDeploymentsCreate,
-} from "../api/api";
-import { SelectField, SubmitButton, TextField } from "../components/form";
-import { petname } from "../util";
-import { DeploymentSizeField } from "./util";
+} from "../../api/api";
+import { SelectField, SubmitButton, TextField } from "../../components/form";
+import { petname } from "../../util";
+import { DeploymentSizeField } from "../util";
+import { RegionSelectField } from "./RegionSelect";
 
 interface CreateDeploymentButton extends ButtonProps {
   refetch: () => Promise<void>;
@@ -111,14 +112,7 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
                     >
                       <option>AWS</option>
                     </SelectField>
-                    <SelectField
-                      name="cloudProviderRegion.region"
-                      label="Region"
-                      size="sm"
-                    >
-                      <option>us-east-1</option>
-                      <option>eu-west-1</option>
-                    </SelectField>
+                    <RegionSelectField />
                   </HStack>
                   <Alert status="info" fontSize="sm">
                     Additional cloud providers and regions coming soon.
