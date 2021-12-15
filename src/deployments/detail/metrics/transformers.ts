@@ -28,8 +28,7 @@ export const formatYToPercentage = (y: number) => {
   return `${Math.round(y * 100)}`;
 };
 
-export const formatFullDateTime = (date: Date) =>
-  format(date, "yyyy-MM-dd HH:mm");
+export const formatFullDateTime = (date: Date) => format(date, "Pp");
 
 /** A formatter that takes in account the overall timeframe to decide how much info to show */
 export const formatXToReadableDateTime =
@@ -37,13 +36,10 @@ export const formatXToReadableDateTime =
     if (!isValidDate(datetime)) {
       return "invalid";
     }
-    if (periodInMinutes <= durationsInMinutes.hour) {
-      return format(datetime, "HH:mm");
-    }
     if (periodInMinutes <= durationsInMinutes.day) {
-      return format(datetime, "M/d HH:mm");
+      return format(datetime, "p");
     }
-    return format(datetime, "M/d");
+    return format(datetime, "P");
   };
 
 export const formatDatapointLabel = (

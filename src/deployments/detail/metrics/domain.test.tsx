@@ -51,7 +51,7 @@ describe("domains", () => {
         ];
 
         expect(roundToTwoDecimals(yDomainFromMetrics(metricsWith)[1])).toEqual(
-          1.45
+          1.2
         );
       });
     });

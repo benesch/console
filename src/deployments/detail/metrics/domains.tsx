@@ -37,13 +37,21 @@ export const inferDomainFromValues = (metrics: VictoryMetric[]): Domains => {
   };
 };
 
+const Y_TICK_LENGTH = 0.2;
+const defaultTicks = [0];
+let tick = 0;
+while (tick < 1) {
+  tick += Y_TICK_LENGTH;
+  defaultTicks.push(tick);
+}
+
 export const inferTicksFromDomain = (domains: Domains) => {
-  const ticks = [0, 0.2, 0.4, 0.6, 0.8, 1];
+  const ticks = [...defaultTicks];
   if (domains.y[1] > 1) {
-    const extraTickCount = Math.ceil((domains.y[1] - 1.0) / 0.2);
+    const extraTickCount = Math.ceil((domains.y[1] - 1.0) / Y_TICK_LENGTH);
     let i = 1;
     while (i <= extraTickCount) {
-      ticks.push(1 + i * 0.2);
+      ticks.push(1 + i * Y_TICK_LENGTH);
       i += 1;
     }
   }
