@@ -26,6 +26,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
 }) => {
   const chartTheme = useMZVictoryTheme();
   const theme = useTheme();
+
   return (
     <VStack
       align="left"

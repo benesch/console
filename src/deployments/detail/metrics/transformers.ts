@@ -3,6 +3,7 @@ import format from "date-fns/format";
 import { PrometheusMetrics } from "../../../api/api";
 import { roundTo2Decimals } from "../../../utils/numbers";
 import { isValidDate } from "../../../utils/validators";
+import { durationsInMinutes } from "./components/MetricPeriodSelector";
 import { VictoryDatum, VictoryMetric, VictoryTimedDataPoint } from "./types";
 
 /** transforming api data to be in 2-dimensional chart victory format */
@@ -28,19 +29,21 @@ export const formatYToPercentage = (y: number) => {
 };
 
 export const formatFullDateTime = (date: Date) =>
-  format(date, "yy-MM-dd HH:mm");
-export const formatToDayAndTime = (date: Date) => format(date, "dd-MM HH:mm");
+  format(date, "yyyy-MM-dd HH:mm");
 
-/** A formatter that takes in account the overall timeframe to decice to show only the time or the date and the time */
+/** A formatter that takes in account the overall timeframe to decide how much info to show */
 export const formatXToReadableDateTime =
   (periodInMinutes: number) => (datetime: Date) => {
     if (!isValidDate(datetime)) {
       return "invalid";
     }
-    if (periodInMinutes <= 60) {
+    if (periodInMinutes <= durationsInMinutes.hour) {
       return format(datetime, "HH:mm");
     }
-    return formatToDayAndTime(datetime);
+    if (periodInMinutes <= durationsInMinutes.day) {
+      return format(datetime, "M/d HH:mm");
+    }
+    return format(datetime, "M/d");
   };
 
 export const formatDatapointLabel = (
