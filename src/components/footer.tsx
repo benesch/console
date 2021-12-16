@@ -3,9 +3,12 @@
  * Components and utils display at the bottom of layouts
  */
 
-import { Box, Link } from "@chakra-ui/layout";
+import { Flex, Link } from "@chakra-ui/layout";
+import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
+
+import { Version } from "../version/Version";
 
 /**
  * the current year as four digit
@@ -18,16 +21,18 @@ export const PageFooter: React.FC = () => {
   const footerBg = useColorModeValue("white", "purple.900");
   const color = useColorModeValue("gray.500", "gray.200");
   return (
-    <Box
+    <Flex
       bg={footerBg}
       color={color}
       textAlign="center"
+      alignItems={"center"}
+      justifyContent={"center"}
       py="3"
       fontWeight="400"
       fontSize="sm"
       boxShadow="footer"
     >
-      © {getCurrentYear()} Materialize, Inc.
+      <Text>© {getCurrentYear()} Materialize, Inc.</Text>
       <Link
         href="https://materialize.com/privacy-policy"
         target="_blank"
@@ -50,6 +55,7 @@ export const PageFooter: React.FC = () => {
       >
         System Status
       </Link>
-    </Box>
+      <Version />
+    </Flex>
   );
 };

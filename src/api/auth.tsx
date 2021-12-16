@@ -11,6 +11,7 @@ import {
   RestfulReactProviderProps as BaseRestfulProviderProps,
 } from "restful-react";
 
+import { versionHeaders } from "../version/api";
 import { Organization } from "./api";
 
 /**
@@ -92,13 +93,11 @@ interface RestfulProviderProps
 export function RestfulProvider(props: RestfulProviderProps) {
   const { user } = useFronteggAuth((state) => state);
 
-  let requestOptions = {};
-  if (user)
-    requestOptions = {
-      headers: { authorization: `Bearer ${user.accessToken}` },
-    };
+  const headers = versionHeaders();
+
+  if (user) headers.authorization = `Bearer ${user.accessToken}`;
 
   return (
-    <BaseRestfulProvider base="/" requestOptions={requestOptions} {...props} />
+    <BaseRestfulProvider base="/" requestOptions={{ headers }} {...props} />
   );
 }
