@@ -49,11 +49,15 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
           domain={chart.domains}
           theme={chartTheme}
           containerComponent={
-            <VictoryVoronoiContainer labels={formatDatapointLabel} />
+            <VictoryVoronoiContainer
+              labels={formatDatapointLabel}
+              voronoiBlacklist={["overuseLine", "overuseFill"]}
+            />
           }
         >
           {chart.domains.y[1] > 1 && (
             <VictoryLine
+              name="overuseLine"
               style={{
                 data: {
                   stroke: theme.colors.red[400],
@@ -68,6 +72,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
           )}
           {chart.domains.y[1] > 1 && (
             <VictoryArea
+              name="overuseFill"
               style={{ data: { fill: `${theme.colors.red[400]}55` } }}
               data={[
                 { x: chart.domains.x[0], y: chart.domains.y[1], y0: 1 },
