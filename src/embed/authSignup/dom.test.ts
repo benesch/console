@@ -25,7 +25,6 @@ describe("dom/EmbeddableSignupDOMHandler", () => {
     `);
     const dom = instance();
     dom.removeLoginLinkIfExist();
-    console.log(document.body.innerHTML);
     expect(screen.queryByTestId("login-link-parent")?.style.display).toBe(
       "none"
     );
@@ -43,7 +42,6 @@ describe("dom/EmbeddableSignupDOMHandler", () => {
     `);
     const dom = instance();
     dom.fixSignUpFormIfExist();
-    console.log(document.body.innerHTML);
     const labels = document.querySelectorAll("label");
     expect(labels.length).toBe(3);
     expect((labels[0] as HTMLLabelElement).htmlFor).toBe("name");
