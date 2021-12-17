@@ -103,7 +103,12 @@ const EditDeploymentModal = ({
                 <ModalBody pt="3" pb="3">
                   <Box ref={initialFocusRef} tabIndex={-1} />
                   <VStack spacing="5">
-                    <TextField name="name" label="Name" size="sm" />
+                    <TextField
+                      name="name"
+                      label="Name"
+                      size="sm"
+                      maxLength={64}
+                    />
                     <DeploymentSizeField />
                     <Accordion allowMultiple w="100%">
                       <AccordionItem>

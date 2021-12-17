@@ -120,7 +120,12 @@ const CreateDeploymentModal = (props: Props) => {
               <ModalBody pt="3" pb="6">
                 <Box ref={initialFocusRef} tabIndex={-1} />
                 <VStack spacing="5">
-                  <TextField name="name" label="Name" size="sm" />
+                  <TextField
+                    name="name"
+                    label="Name"
+                    size="sm"
+                    maxLength={64}
+                  />
                   <DeploymentSizeField />
                   <HStack width="100%">
                     <CloudProviderSelectField

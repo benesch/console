@@ -26,6 +26,7 @@ export type TextFieldProps = FieldHookConfig<string> &
     /** The font size of the label and size of the text input. */
     size?: string;
     disabled?: boolean;
+    maxLength?: number;
   };
 
 /**
@@ -34,7 +35,7 @@ export type TextFieldProps = FieldHookConfig<string> &
  * This component must be used inside a `Formik` element.
  */
 export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ label, size, disabled, type, autoComplete, ...props }, ref) => {
+  ({ label, size, disabled, type, autoComplete, maxLength, ...props }, ref) => {
     const [field, meta] = useField(props);
     return (
       <FormControl isInvalid={meta.touched && !!meta.error}>
@@ -47,6 +48,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           ref={ref}
           type={type}
           autoComplete={autoComplete}
+          maxLength={maxLength}
           {...field}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>
