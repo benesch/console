@@ -39,7 +39,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     const [field, meta] = useField(props);
     return (
       <FormControl isInvalid={meta.touched && !!meta.error}>
-        <FormLabel htmlFor={props.name} fontSize={size}>
+        <FormLabel htmlFor={props.id} fontSize={size}>
           {label}
         </FormLabel>
         <Input
