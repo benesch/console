@@ -282,7 +282,7 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
                 Add the following configuration to <code>prometheus.yml</code>:
                 <CodeBlock
                   contents={`scrape_configs:
-  - job_name: materialized
+  - job_name: materialize-cloud-${deployment.name}
     scheme: https
     tls_config:
       ca_file: ca.crt
