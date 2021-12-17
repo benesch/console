@@ -44,33 +44,27 @@ describe("formatters", () => {
 
   test("formatFullDateTime", () => {
     expect(formatFullDateTime(new Date(2020, 1, 1, 1, 1))).toEqual(
-      "20-02-01 01:01"
+      "02/01/2020, 1:01 AM"
     );
   });
 
   test("formatToDayAndTime", () => {
     expect(formatFullDateTime(new Date(2020, 1, 1, 1, 1))).toEqual(
-      "20-02-01 01:01"
-    );
-  });
-
-  test("formatToDayAndTime", () => {
-    expect(formatFullDateTime(new Date(2020, 1, 1, 1, 1))).toEqual(
-      "20-02-01 01:01"
+      "02/01/2020, 1:01 AM"
     );
   });
 
   describe("formatXToReadableDateTime", () => {
-    it("should format to time only if the period is less than 60 minutes", () => {
-      expect(formatXToReadableDateTime(60)(new Date(2020, 1, 1, 1, 1))).toEqual(
-        "01:01"
-      );
+    it("should format to time only if the period is less than a day", () => {
+      expect(
+        formatXToReadableDateTime(1440)(new Date(2020, 1, 1, 1, 1))
+      ).toEqual("1:01 AM");
     });
 
-    it("should format to date and time otherwise", () => {
+    it("should format to date otherwise", () => {
       expect(
-        formatXToReadableDateTime(120)(new Date(2020, 1, 1, 1, 1))
-      ).toEqual("01-02 01:01");
+        formatXToReadableDateTime(1441)(new Date(2020, 1, 1, 1, 1))
+      ).toEqual("02/01/2020");
     });
   });
 });

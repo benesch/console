@@ -63,7 +63,8 @@ export const useMZVictoryTheme = (): VictoryThemeDefinition => {
     area: {
       style: {
         data: {
-          fill: baseFill,
+          fill: `${primaryLineStroke}33`,
+          stroke: primaryLineStroke,
         },
         labels: baseLabelStyles,
       },

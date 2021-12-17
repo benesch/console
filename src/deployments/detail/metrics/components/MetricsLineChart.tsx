@@ -2,6 +2,7 @@ import { HStack, Text, VStack } from "@chakra-ui/layout";
 import { useTheme } from "@chakra-ui/system";
 import React from "react";
 import {
+  VictoryArea,
   VictoryAxis,
   VictoryChart,
   VictoryLine,
@@ -24,8 +25,14 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   filters,
 }) => {
   const chartTheme = useMZVictoryTheme();
+  const theme = useTheme();
+
   return (
-    <VStack spacing="3" align="left" data-testid="line-chart-container">
+    <VStack
+      align="left"
+      data-testid="line-chart-container"
+      sx={{ svg: { overflow: "visible" } }}
+    >
       {operation.error && <DeploymentMetricsRetrieveError />}
       <>
         <HStack
@@ -42,14 +49,48 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
           domain={chart.domains}
           theme={chartTheme}
           containerComponent={
-            <VictoryVoronoiContainer labels={formatDatapointLabel} />
+            <VictoryVoronoiContainer
+              labels={formatDatapointLabel}
+              voronoiBlacklist={["overuseLine", "overuseFill"]}
+            />
           }
         >
-          {chart.data.map((metric) => (
+          {chart.domains.y[1] > 1 && (
             <VictoryLine
+              name="overuseLine"
+              style={{
+                data: {
+                  stroke: theme.colors.red[400],
+                  strokeDasharray: 4,
+                },
+              }}
+              data={[
+                { x: chart.domains.x[0], y: 1 },
+                { x: chart.domains.x[1], y: 1 },
+              ]}
+            />
+          )}
+          {chart.domains.y[1] > 1 && (
+            <VictoryArea
+              name="overuseFill"
+              style={{ data: { fill: `${theme.colors.red[400]}55` } }}
+              data={[
+                { x: chart.domains.x[0], y: chart.domains.y[1], y0: 1 },
+                { x: chart.domains.x[1], y: chart.domains.y[1], y0: 1 },
+              ]}
+            />
+          )}
+          {chart.data.map((metric) => (
+            <VictoryArea
               key={metric.name}
-              interpolation="natural"
-              data={metric.values}
+              interpolation="linear"
+              data={[
+                ...metric.values,
+                {
+                  ...metric.values[metric.values.length - 1],
+                  x: chart.domains.x[1],
+                },
+              ]}
             />
           ))}
           <VictoryAxis
@@ -61,6 +102,7 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
             dependentAxis
             standalone={false}
             tickFormat={formatYToPercentage}
+            tickValues={chart.ticks}
           />
         </VictoryChart>
       </>

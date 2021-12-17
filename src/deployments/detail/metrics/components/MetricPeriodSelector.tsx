@@ -2,7 +2,7 @@ import { HStack, Text } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import React from "react";
 
-const durationsInMinutes = {
+export const durationsInMinutes = {
   hour: 60,
   day: 24 * 60,
   week: 7 * 24 * 60,

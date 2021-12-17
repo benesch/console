@@ -3,7 +3,11 @@ import React from "react";
 import { UseGetReturn } from "restful-react";
 
 import { PrometheusMetrics } from "../../../api/api";
-import { Domains, inferDomainFromValues } from "./domains";
+import {
+  Domains,
+  inferDomainFromValues,
+  inferTicksFromDomain,
+} from "./domains";
 import { prometheusMetricsToVictoryMetrics } from "./transformers";
 import { VictoryMetric } from "./types";
 
@@ -18,6 +22,7 @@ export type UseRetrieveMetrics = {
   chart: {
     data: VictoryMetric[];
     domains: Domains;
+    ticks: number[];
   };
   filters: {
     period: number;
@@ -41,11 +46,14 @@ export const useRetrieveMetrics = (
     operation.data
   );
 
+  const domains = inferDomainFromValues(victoryCompatibleMetrics);
+
   return {
     operation,
     chart: {
       data: victoryCompatibleMetrics,
-      domains: inferDomainFromValues(victoryCompatibleMetrics),
+      domains,
+      ticks: inferTicksFromDomain(domains),
     },
     filters: {
       period,
