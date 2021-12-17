@@ -283,6 +283,7 @@ function DeploymentConnectCard({ deployment }: DeploymentConnectCardProps) {
                 <CodeBlock
                   contents={`scrape_configs:
   - job_name: materialized
+    scheme: https
     tls_config:
       ca_file: ca.crt
       cert_file: materialize.crt
