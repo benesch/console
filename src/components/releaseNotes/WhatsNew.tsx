@@ -13,7 +13,8 @@ const WhatsNew = () => {
       onClick={onLinkClicked}
       isExternal
       href={releaseNoteLink}
-      colorScheme={"purple"}
+      background="whiteAlpha.300"
+      color="white"
     >
       ✨ What's new
     </Tag>
