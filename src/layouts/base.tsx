@@ -30,6 +30,7 @@ import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import { SUPPORT_HREF } from "../components/cta";
 import { PageFooter } from "../components/footer";
+import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { assert } from "../util";
 
 export interface BaseLayoutProps {
@@ -104,6 +105,7 @@ function NavBar() {
         </HStack>
 
         <HStack spacing="5">
+          <WhatsNew />
           {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
           )}
