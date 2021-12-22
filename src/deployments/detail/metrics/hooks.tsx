@@ -3,6 +3,7 @@ import React from "react";
 import { UseGetReturn } from "restful-react";
 
 import { PrometheusMetrics } from "../../../api/api";
+import { defaultMetricPeriod } from "./components/MetricPeriodSelector";
 import {
   Domains,
   inferDomainFromValues,
@@ -34,13 +35,13 @@ export const useRetrieveMetrics = (
   deploymentId: string,
   hook: GetMetricsHook
 ): UseRetrieveMetrics => {
-  const [period, setPeriod] = React.useState<number>(5);
+  const [period, setPeriod] = React.useState<number>(defaultMetricPeriod);
   const operation = hook({
     id: deploymentId,
     period,
   });
 
-  useInterval(operation.refetch, 5000);
+  useInterval(operation.refetch, 30000);
 
   const victoryCompatibleMetrics = prometheusMetricsToVictoryMetrics(
     operation.data

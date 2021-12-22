@@ -4,6 +4,7 @@ import parseISO from "date-fns/parseISO";
 
 import { mockDate } from "../../../__mocks__/date";
 import { PrometheusMetrics } from "../../../api/api";
+import { defaultMetricPeriod } from "./components/MetricPeriodSelector";
 import { GetMetricsHook, useRetrieveMetrics } from "./hooks";
 
 const refetch = jest.fn();
@@ -49,7 +50,10 @@ describe("metrics/hooks/useRetrieveMetrics", () => {
     );
 
     expect(result.current.operation.loading).toBe(true);
-    expect(hook).toHaveBeenCalledWith({ id: deploymentId, period: 5 });
+    expect(hook).toHaveBeenCalledWith({
+      id: deploymentId,
+      period: defaultMetricPeriod,
+    });
   });
 
   it("should return the api call hook result in the operation prop", () => {
@@ -63,12 +67,12 @@ describe("metrics/hooks/useRetrieveMetrics", () => {
       error: undefined,
     });
   });
-  it("should refetch the latest data every 5 seconds", () => {
+  it("should refetch the latest data every 30 seconds", () => {
     const { result } = renderHook(() =>
       useRetrieveMetrics("1", hook as unknown as GetMetricsHook)
     );
     expect(result.current.operation.refetch).toHaveBeenCalledTimes(0);
-    jest.advanceTimersByTime(4000);
+    jest.advanceTimersByTime(29000);
     expect(result.current.operation.refetch).toHaveBeenCalledTimes(0);
     jest.advanceTimersByTime(1500);
     expect(result.current.operation.refetch).toHaveBeenCalledTimes(1);

@@ -9,6 +9,8 @@ export const durationsInMinutes = {
   month: 30 * 24 * 60,
 };
 
+export const defaultMetricPeriod = durationsInMinutes.hour;
+
 export const MetricPeriodSelector = (props: {
   onSelect: (period: number) => void;
 }) => (
@@ -16,7 +18,7 @@ export const MetricPeriodSelector = (props: {
     <Text>Last&nbsp;</Text>
     <Select
       data-testid="metrics-period-selector-dropdown"
-      defaultValue="60"
+      defaultValue={defaultMetricPeriod}
       onChange={(e) => props.onSelect(parseInt(e.target.value))}
     >
       <option value={durationsInMinutes.hour}>hour</option>
