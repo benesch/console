@@ -6,7 +6,7 @@ import { Router } from "react-router";
 
 import { globalConfigStub } from "../__mocks__/config";
 import { GlobalConfig } from "../types";
-import { AnalyticsOnEveryPage } from "./AnalyticsOnEveryPage";
+import AnalyticsOnEveryPage from "./AnalyticsOnEveryPage";
 import { AnalyticsClient } from "./types";
 
 export class ShimAnalyticsClient extends AnalyticsClient {

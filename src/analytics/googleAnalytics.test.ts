@@ -2,7 +2,7 @@ import ReactGA from "react-ga";
 
 import { globalConfigStub } from "../__mocks__/config";
 import { globalConfigNoAnalyticsSetup } from "./__mocks__";
-import { GAAnalyticsClient } from "./googleAnalytics";
+import GAAnalyticsClient from "./googleAnalytics";
 
 const makeGAClient = (): GAAnalyticsClient => {
   return new GAAnalyticsClient(globalConfigStub);

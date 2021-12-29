@@ -9,17 +9,17 @@ import {
   VictoryVoronoiContainer,
 } from "victory";
 
-import { useMZVictoryTheme } from "../../../../theme/victoryChart";
+import useMZVictoryTheme from "../../../../theme/victoryChart";
 import { UseRetrieveMetrics } from "../hooks";
 import {
   formatDatapointLabel,
   formatXToReadableDateTime,
   formatYToPercentage,
 } from "../transformers";
-import { DeploymentMetricsRetrieveError } from "./DeploymentMetricsRetrieveError";
-import { MetricPeriodSelector } from "./MetricPeriodSelector";
+import DeploymentMetricsRetrieveError from "./DeploymentMetricsRetrieveError";
+import MetricPeriodSelector from "./MetricPeriodSelector";
 
-export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
+const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
   operation,
   chart,
   filters,
@@ -109,3 +109,5 @@ export const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
     </VStack>
   );
 };
+
+export default MetricsLineChart;

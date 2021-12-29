@@ -6,6 +6,7 @@ import { RestfulProvider } from "restful-react";
 
 import { testApiBase } from "../api/__mocks__/api";
 
+// eslint-disable-next-line import/prefer-default-export
 export const renderFragmentInTestMode = (fragment: React.ReactNode) => {
   return render(
     <ChakraProvider>

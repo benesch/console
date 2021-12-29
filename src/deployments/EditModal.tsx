@@ -33,15 +33,19 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { SubmitButton, SwitchField, TextField } from "../components/form";
-import { DeploymentSizeField } from "./util";
+import {
+  SubmitButton,
+  SwitchField,
+  TextField,
+} from "../components/formComponents";
+import DeploymentSizeField from "./DeploymentSizeField";
 
 interface EditDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;
   refetch: () => Promise<void>;
 }
 
-export function EditDeploymentButton({
+function EditDeploymentModal({
   deployment,
   refetch,
   ...props
@@ -171,3 +175,5 @@ export function EditDeploymentButton({
     </>
   );
 }
+
+export default EditDeploymentModal;

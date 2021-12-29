@@ -5,7 +5,7 @@ import { VictoryThemeDefinition } from "victory";
 
 /* customized theme from victory defaults */
 
-export const useMZVictoryTheme = (): VictoryThemeDefinition => {
+const useMZVictoryTheme = (): VictoryThemeDefinition => {
   const theme = useTheme();
 
   const baseFill = get(
@@ -257,3 +257,5 @@ export const useMZVictoryTheme = (): VictoryThemeDefinition => {
     },
   };
 };
+
+export default useMZVictoryTheme;

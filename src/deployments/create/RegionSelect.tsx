@@ -1,15 +1,10 @@
 import { useFormikContext } from "formik";
 import * as React from "react";
 
-import {
-  DeploymentRequest,
-  ProviderEnum,
-  SupportedCloudRegion,
-  useRegionsList,
-} from "../../api/api";
-import { SelectField } from "../../components/form";
+import { DeploymentRequest, useRegionsList } from "../../api/api";
+import { SelectField } from "../../components/formComponents";
 
-export const useRegions = () => {
+const useRegions = () => {
   const currentProvider =
     useFormikContext<DeploymentRequest>().values.cloudProviderRegion.provider;
   const getRegionsOperation = useRegionsList({
@@ -25,7 +20,7 @@ export const useRegions = () => {
   };
 };
 
-export const RegionSelectField = () => {
+const RegionSelectField = () => {
   const { operation, regions } = useRegions();
   return (
     <SelectField
@@ -42,3 +37,5 @@ export const RegionSelectField = () => {
     </SelectField>
   );
 };
+
+export default RegionSelectField;

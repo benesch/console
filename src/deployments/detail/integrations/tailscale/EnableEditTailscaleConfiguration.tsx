@@ -15,16 +15,16 @@ import { Form, Formik } from "formik";
 import React from "react";
 import * as Yup from "yup";
 
-import { SubmitButton, TextField } from "../../../../components/form";
+import { SubmitButton, TextField } from "../../../../components/formComponents";
 import { DeploymentIntegrationCallToActionProps } from "../types";
 import { useTailscaleIntegration } from "./hooks";
-import { UpdateIntegrationError } from "./UpdateIntegrationError";
+import UpdateIntegrationError from "./UpdateIntegrationError";
 
 const validationSchema = Yup.object().shape({
   tailscaleAuthKey: Yup.string().required("Required"),
 });
 
-export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCallToActionProps> =
+const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCallToActionProps> =
   (props) => {
     const { modalState, save, defaultValues, operation } =
       useTailscaleIntegration(props);
@@ -93,7 +93,7 @@ export const EnableEditTailscaleConfiguration: React.FC<DeploymentIntegrationCal
     );
   };
 
-export const EnableEditTailscaleButton: React.FC<{
+const EnableEditTailscaleButton: React.FC<{
   onOpen: () => void;
   isEnabled: boolean;
 }> = ({ onOpen, isEnabled }) => {
@@ -105,3 +105,5 @@ export const EnableEditTailscaleButton: React.FC<{
     </Button>
   );
 };
+
+export default EnableEditTailscaleConfiguration;

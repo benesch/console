@@ -31,43 +31,21 @@ import {
   useDeploymentsList as useDeploymentListApi,
 } from "../api/api";
 import { useAuth } from "../api/auth";
-import { Card } from "../components/card";
-import { SupportLink } from "../components/cta";
+import { Card } from "../components/cardComponents";
+import SupportLink from "../components/SupportLink";
 import {
   BaseLayout,
   PageBreadcrumbs,
   PageHeader,
   PageHeading,
-} from "../layouts/base";
-import CloudSvg from "../svg/cloud";
+} from "../layouts/BaseLayout";
+import CloudSvg from "../svg/CloudSvg";
 import colors from "../theme/colors";
-import { useCache } from "../utils/useCache";
-import { CreateDeploymentButton } from "./create";
-import { DeploymentStateBadge } from "./util";
+import useCache from "../utils/useCache";
+import CreateDeploymentModal from "./create/CreateDeploymentModal";
+import DeploymentStateBadge from "./DeploymentStateBadge";
 
-/** the hook managing data for the deployments list page
- * TODO: replace caching logic with `use-swr
- */
-export const useDeploymentsList = () => {
-  const {
-    data: deployments,
-    refetch,
-    loading,
-    error,
-  } = useDeploymentListApi({});
-
-  const deploymentsLocalCopy = useCache(deployments);
-  useInterval(refetch, 5000);
-
-  return {
-    deployments: deployments || deploymentsLocalCopy,
-    error,
-    loading,
-    refetch,
-  };
-};
-
-export function DeploymentListPage() {
+function DeploymentListPage() {
   const { organization } = useAuth();
   const { deployments, refetch, error } = useDeploymentsList();
 
@@ -95,7 +73,7 @@ export function DeploymentListPage() {
           {error && <DeploymentListFetchErrorWarning />}
         </HStack>
         <Spacer />
-        <CreateDeploymentButton
+        <CreateDeploymentModal
           refetch={refetch}
           isDisabled={!canCreateDeployments}
           size="sm"
@@ -106,6 +84,28 @@ export function DeploymentListPage() {
     </BaseLayout>
   );
 }
+
+/** the hook managing data for the deployments list page
+ * TODO: replace caching logic with `use-swr
+ */
+const useDeploymentsList = () => {
+  const {
+    data: deployments,
+    refetch,
+    loading,
+    error,
+  } = useDeploymentListApi({});
+
+  const deploymentsLocalCopy = useCache(deployments);
+  useInterval(refetch, 5000);
+
+  return {
+    deployments: deployments || deploymentsLocalCopy,
+    error,
+    loading,
+    refetch,
+  };
+};
 
 function DeploymentLimitWarning() {
   return (
@@ -211,3 +211,5 @@ function DeploymentTable(props: DeploymentTableProps) {
     </Card>
   );
 }
+
+export default DeploymentListPage;

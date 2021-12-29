@@ -9,6 +9,8 @@ import React from "react";
 export const SUPPORT_EMAIL = "support@materialize.com";
 export const SUPPORT_HREF = `mailto:${SUPPORT_EMAIL}`;
 
-export function SupportLink(props: LinkProps) {
+function SupportLink(props: LinkProps) {
   return <Link href={SUPPORT_HREF} textDecoration="underline" {...props} />;
 }
+
+export default SupportLink;

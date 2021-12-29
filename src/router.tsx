@@ -13,16 +13,16 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { analyticsClients } from "./analytics";
-import { AnalyticsOnEveryPage } from "./analytics/AnalyticsOnEveryPage";
+import analyticsClients from "./analytics";
+import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider } from "./api/auth";
-import { DeploymentDetailPage } from "./deployments/detail";
-import { DeploymentListPage } from "./deployments/list";
+import DeploymentDetailPage from "./deployments/detail/DetailPage";
+import DeploymentListPage from "./deployments/ListPage";
 import { assert } from "./util";
 
 /** The root router for the application. */
-export function Router() {
+function Router() {
   return (
     <>
       <Switch>
@@ -105,3 +105,5 @@ function ProtectedRoute(props: ProtectedRouteProps) {
     </AuthProvider>
   );
 }
+
+export default Router;

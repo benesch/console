@@ -5,11 +5,11 @@ import {
   DeploymentIntegrationCallToActionProps,
   DeploymentIntegrationTabProps,
 } from "../types";
-import { DisableTailscale } from "./DisableTailscale";
-import { EnableEditTailscaleConfiguration } from "./EnableEditTailscaleConfiguration";
-import { IntegrationStatus } from "./IntegrationStatus";
+import DisableTailscale from "./DisableTailscale";
+import EnableEditTailscaleConfiguration from "./EnableEditTailscaleConfiguration";
+import IntegrationStatus from "./IntegrationStatus";
 
-export const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
+const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
   deployment,
   refetch,
 }) => {
@@ -50,3 +50,5 @@ export const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
     </VStack>
   );
 };
+
+export default TailscaleIntegration;

@@ -7,19 +7,15 @@ import { ButtonProps, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 
 import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
-import { DangerousActionModal } from "../components/dangerousActionModal";
+import DangerActionModal from "../components/DangerActionModal";
 
-interface UpgradeDeploymentButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   deployment: Deployment;
   latestVersion: string;
   refetch: () => Promise<void>;
 }
 
-export function UpgradeDeploymentButton({
-  deployment,
-  latestVersion,
-  refetch,
-}: UpgradeDeploymentButtonProps) {
+function UpgradeDeploymentModal({ deployment, latestVersion, refetch }: Props) {
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: deployment.id,
   });
@@ -34,7 +30,7 @@ export function UpgradeDeploymentButton({
   };
 
   return (
-    <DangerousActionModal
+    <DangerActionModal
       title="Upgrade deployment"
       actionText="Upgrade"
       colorScheme="blue"
@@ -46,6 +42,8 @@ export function UpgradeDeploymentButton({
         <strong>Are you sure?</strong> Upgrading this deployment to{" "}
         <strong>{latestVersion}</strong> will require a restart.
       </Text>
-    </DangerousActionModal>
+    </DangerActionModal>
   );
 }
+
+export default UpgradeDeploymentModal;

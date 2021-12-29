@@ -11,8 +11,8 @@ import {
 import { renderFragmentInTestMode } from "../../../utils/tests-utils";
 import { validDeployment } from "../../__mocks__";
 import { DeploymentMetricsCard } from ".";
-import { CpuMetrics } from "./CpuMetrics";
-import { MemoryMetrics } from "./MemoryMetrics";
+import CpuMetrics from "./CpuMetrics";
+import MemoryMetrics from "./MemoryMetrics";
 
 const renderComponent =
   (metricType: "ram" | "cpu") => (deploymentId: string) => {

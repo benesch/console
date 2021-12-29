@@ -16,6 +16,7 @@ import FronteggWrappedContents from "./fronteggWrappedContents";
 import * as theme from "./theme";
 
 /** global config injected from the django template */
+// eslint-disable-next-line import/prefer-default-export
 export const config = window.CONFIG;
 // Configure Sentry error reporting.
 if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {

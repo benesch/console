@@ -8,8 +8,8 @@ import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import { Version } from "../version/Version";
-import ReleaseNoteLink from "./releaseNotes/ReleaseNoteLink";
+import ReleaseNoteLink from "../components/releaseNotes/ReleaseNoteLink";
+import Version from "../version/Version";
 
 /**
  * the current year as four digit
@@ -18,7 +18,7 @@ import ReleaseNoteLink from "./releaseNotes/ReleaseNoteLink";
 export const getCurrentYear = () => new Date().getFullYear();
 
 /** A footer component */
-export const PageFooter: React.FC = () => {
+const PageFooter: React.FC = () => {
   const footerBg = useColorModeValue("white", "purple.900");
   const color = useColorModeValue("gray.500", "gray.200");
   return (
@@ -49,3 +49,5 @@ export const PageFooter: React.FC = () => {
     </HStack>
   );
 };
+
+export default PageFooter;

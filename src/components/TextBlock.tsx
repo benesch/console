@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-export interface CodeBlockProps extends BoxProps {
+interface Props extends BoxProps {
   /** The code to display. */
   contents: string;
   /** Whether to display line numbers. */
@@ -36,12 +36,7 @@ export interface CodeBlockProps extends BoxProps {
  * results in scroll bars. Setting `wrap` to `true` will cause long lines to
  * wrap instead.
  */
-export function CodeBlock({
-  wrap,
-  lineNumbers,
-  contents,
-  ...props
-}: CodeBlockProps) {
+function CodeBlock({ wrap, lineNumbers, contents, ...props }: Props) {
   const { onCopy } = useClipboard(contents);
   const bg = useColorModeValue("gray.100", "gray.800");
   const buttonBg = useColorModeValue("white", "black");
@@ -122,3 +117,5 @@ function Line(props: LineProps) {
     </chakra.span>
   );
 }
+
+export default CodeBlock;

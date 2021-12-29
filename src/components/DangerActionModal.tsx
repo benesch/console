@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-export interface DangerousActionModalProps {
+interface Props {
   /** The contents of the modal. */
   children: React.ReactNode;
   /** The color scheme for the open and confirm buttons. */
@@ -43,7 +43,7 @@ export interface DangerousActionModalProps {
  * A modal that requires typing a prompt in order to confirm an action.
  * Intended for use with dangerous actions, like destroying a deployment.
  */
-export function DangerousActionModal(props: DangerousActionModalProps) {
+function DangerActionModal(props: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmation, setConfirmation] = useState("");
   const isConfirmed = confirmation === props.confirmText;
@@ -100,3 +100,5 @@ export function DangerousActionModal(props: DangerousActionModalProps) {
     </>
   );
 }
+
+export default DangerActionModal;
