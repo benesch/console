@@ -23,7 +23,7 @@ function DeploymentSizeField() {
           Extra large
         </option>
       </SelectField>
-      <Alert status="info">
+      <Alert status="info" variant="pale">
         <AlertDescription fontSize="sm">
           Need a larger size? <SupportLink>Contact us.</SupportLink>
         </AlertDescription>
