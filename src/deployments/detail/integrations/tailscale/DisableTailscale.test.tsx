@@ -9,7 +9,7 @@ import {
   receivedRequestsBodyFromMock,
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
-import { DisableTailscale } from "./DisableTailscale";
+import DisableTailscale from "./DisableTailscale";
 
 const toastMock = jest.fn();
 jest.mock("@chakra-ui/toast", () => {

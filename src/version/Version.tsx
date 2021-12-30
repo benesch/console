@@ -4,7 +4,7 @@ import * as React from "react";
 import { isValidString } from "../utils/validators";
 import { currentVersion } from "./api";
 
-export const Version = () => {
+const Version = () => {
   if (!isValidString(currentVersion)) return null;
   return (
     <Tag size={"sm"} variant="outline" opacity={0.8} fontSize={"80%"}>
@@ -12,3 +12,5 @@ export const Version = () => {
     </Tag>
   );
 };
+
+export default Version;

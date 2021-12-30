@@ -1,7 +1,7 @@
-import { GAAnalyticsClient } from "./googleAnalytics";
-import { SegmentAnalyticsClient } from "./segment";
+import GAAnalyticsClient from "./googleAnalytics";
+import SegmentAnalyticsClient from "./segment";
 
-export const analyticsClients = [
+export default [
   new GAAnalyticsClient(window.CONFIG),
   new SegmentAnalyticsClient(window.CONFIG),
 ];

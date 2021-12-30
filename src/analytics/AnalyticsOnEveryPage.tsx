@@ -10,7 +10,7 @@ import { AnalyticsClient } from "./types";
  * @param analyticsClients - An array of analytics clients.
  * @returns A react component.
  */
-export const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
+const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
   clients,
 }) => {
   const auth = useAuth((state) => state);
@@ -37,3 +37,5 @@ export const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
   }, [auth]);
   return null;
 };
+
+export default AnalyticsOnEveryPage;

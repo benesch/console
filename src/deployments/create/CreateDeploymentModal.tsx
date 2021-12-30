@@ -29,16 +29,20 @@ import {
   SupportedCloudRegionRequest,
   useDeploymentsCreate,
 } from "../../api/api";
-import { SelectField, SubmitButton, TextField } from "../../components/form";
+import {
+  SelectField,
+  SubmitButton,
+  TextField,
+} from "../../components/formComponents";
 import { petname } from "../../util";
-import { DeploymentSizeField } from "../util";
-import { RegionSelectField } from "./RegionSelect";
+import DeploymentSizeField from "../DeploymentSizeField";
+import RegionSelectField from "./RegionSelect";
 
-interface CreateDeploymentButton extends ButtonProps {
+interface Props extends ButtonProps {
   refetch: () => Promise<void>;
 }
 
-export function CreateDeploymentButton(props: CreateDeploymentButton) {
+function CreateDeploymentModal(props: Props) {
   const { refetch, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate: createDeployment } = useDeploymentsCreate({});
@@ -134,3 +138,5 @@ export function CreateDeploymentButton(props: CreateDeploymentButton) {
     </>
   );
 }
+
+export default CreateDeploymentModal;

@@ -11,7 +11,7 @@ export const durationsInMinutes = {
 
 export const defaultMetricPeriod = durationsInMinutes.hour;
 
-export const MetricPeriodSelector = (props: {
+const MetricPeriodSelector = (props: {
   onSelect: (period: number) => void;
 }) => (
   <HStack>
@@ -28,3 +28,5 @@ export const MetricPeriodSelector = (props: {
     </Select>
   </HStack>
 );
+
+export default MetricPeriodSelector;

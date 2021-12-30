@@ -4,10 +4,10 @@ import React from "react";
 
 import logo from "../img/wordmark.svg";
 import { RestfulProvider } from "./api/auth";
-import { EmbeddedLoading } from "./embed/loading";
+import EmbeddedLoading from "./embed/EmbeddedLoading";
 import { useIsInIframe } from "./embed/utils";
 import LoadingScreen from "./loading";
-import { Router } from "./router";
+import Router from "./router";
 import {
   fronteggAuthPageBackground,
   fronteggCustomStyles,

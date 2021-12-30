@@ -18,16 +18,13 @@ import React from "react";
 
 import { Deployment, useDeploymentsLogsRetrieve } from "../../api/api";
 import { useAuth } from "../../api/auth";
-import { CodeBlock } from "../../components/codeblock";
+import CodeBlock from "../../components/TextBlock";
 
-interface DeploymentLogsButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   deployment: Deployment;
 }
 
-export function DeploymentLogsButton({
-  deployment,
-  ...props
-}: DeploymentLogsButtonProps) {
+function DeploymentLogsModal({ deployment, ...props }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { fetchAuthed } = useAuth();
   const { loading, data, refetch } = useDeploymentsLogsRetrieve({
@@ -102,3 +99,5 @@ export function DeploymentLogsButton({
     </>
   );
 }
+
+export default DeploymentLogsModal;

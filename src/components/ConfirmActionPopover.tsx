@@ -14,7 +14,7 @@ import {
 import { Button, ButtonProps, Portal } from "@chakra-ui/react";
 import React from "react";
 
-export const ConfirmActionButton: React.FC<
+const ConfirmActionPopover: React.FC<
   {
     confirmationText: string;
     onConfirm: (onClose: () => void) => () => unknown;
@@ -55,3 +55,5 @@ export const ConfirmActionButton: React.FC<
     </Popover>
   );
 };
+
+export default ConfirmActionPopover;

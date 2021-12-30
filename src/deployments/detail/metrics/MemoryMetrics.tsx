@@ -1,10 +1,10 @@
 import React from "react";
 
 import { useDeploymentsMetricsMemoryRetrieve } from "../../../api/api";
-import { MetricsLineChart } from "./components/MetricsLineChart";
+import MetricsLineChart from "./components/MetricsLineChart";
 import { useRetrieveMetrics } from "./hooks";
 
-export const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
+const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
   ({ deploymentId }) => {
     const hook = useRetrieveMetrics(
       deploymentId,
@@ -14,3 +14,5 @@ export const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
     return <MetricsLineChart {...hook} />;
   }
 );
+
+export default MemoryMetrics;

@@ -9,14 +9,14 @@ import React from "react";
 import { useHistory } from "react-router";
 
 import { Deployment, useDeploymentsDestroy } from "../api/api";
-import { DangerousActionModal } from "../components/dangerousActionModal";
+import DangerActionModal from "../components/DangerActionModal";
 import { sleep } from "../util";
 
-interface DestroyDeploymentButtonProps extends ButtonProps {
+interface Props extends ButtonProps {
   deployment: Deployment;
 }
 
-export function DestroyDeploymentButton(props: DestroyDeploymentButtonProps) {
+function DestroyDeploymentModal(props: Props) {
   const history = useHistory();
   const { mutate: destroyDeployment } = useDeploymentsDestroy({});
   const toast = useToast();
@@ -35,7 +35,7 @@ export function DestroyDeploymentButton(props: DestroyDeploymentButtonProps) {
   };
 
   return (
-    <DangerousActionModal
+    <DangerActionModal
       title="Destroy deployment"
       colorScheme="red"
       confirmIcon={<DeleteIcon />}
@@ -48,6 +48,8 @@ export function DestroyDeploymentButton(props: DestroyDeploymentButtonProps) {
         <strong>Are you sure?</strong> Destroying this deployment is
         irreversible.
       </Text>
-    </DangerousActionModal>
+    </DangerActionModal>
   );
 }
+
+export default DestroyDeploymentModal;

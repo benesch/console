@@ -9,7 +9,7 @@ import {
   receivedRequestsBodyFromMock,
 } from "../../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../../utils/tests-utils";
-import { EnableEditTailscaleConfiguration } from "./EnableEditTailscaleConfiguration";
+import EnableEditTailscaleConfiguration from "./EnableEditTailscaleConfiguration";
 
 const renderComponent = (enabled = true) => {
   const refetch = jest.fn();

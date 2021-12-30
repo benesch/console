@@ -13,9 +13,9 @@ import {
   testApiBase,
 } from "../api/__mocks__/api";
 import { validDeployment } from "./__mocks__";
-import { DeploymentListPage } from "./list";
+import DeploymentListPage from "./ListPage";
 
-export const renderDeploymentList = () => {
+const renderDeploymentList = () => {
   return render(
     <MemoryRouter>
       <RestfulProvider base={testApiBase}>

@@ -3,10 +3,14 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import React from "react";
 
 import { Deployment } from "../../../api/api";
-import { Card, CardFooter, CardHeader } from "../../../components/card";
-import { DeploymentLogsButton } from "../deploymentLogsButton";
-import { CpuMetrics } from "./CpuMetrics";
-import { MemoryMetrics } from "./MemoryMetrics";
+import {
+  Card,
+  CardFooter,
+  CardHeader,
+} from "../../../components/cardComponents";
+import DeploymentLogsModal from "../DeploymentLogsModal";
+import CpuMetrics from "./CpuMetrics";
+import MemoryMetrics from "./MemoryMetrics";
 
 export const DeploymentMetricsTabs: React.FC<{ deployment: Deployment }> = ({
   deployment,
@@ -38,7 +42,7 @@ export const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
       <DeploymentMetricsTabs deployment={deployment} />
       <CardFooter>
         <Spacer />
-        <DeploymentLogsButton deployment={deployment} size="sm" />
+        <DeploymentLogsModal deployment={deployment} size="sm" />
       </CardFooter>
     </Card>
   );

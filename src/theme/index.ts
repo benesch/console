@@ -14,7 +14,7 @@ import { extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 
-import { SignupFooter } from "../components/signup_footer";
+import SignupFooter from "../layouts/SignupFooter";
 import colors, { gradients, semanticColors, shadows } from "./colors";
 import * as components from "./components";
 

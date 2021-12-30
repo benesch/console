@@ -8,7 +8,7 @@ import * as React from "react";
 import { domHandler } from "./dom";
 import { baseFronteggTheme, localFronteggSignupStyles } from "./styles";
 
-export const EmbeddableAuthSignupPage = () => {
+const EmbeddableAuthSignupPage = () => {
   domHandler.use();
   return (
     <>
@@ -27,3 +27,5 @@ export const EmbeddableAuthSignupPage = () => {
     </>
   );
 };
+
+export default EmbeddableAuthSignupPage;

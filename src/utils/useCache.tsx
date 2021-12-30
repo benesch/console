@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
  * @param value
  * @returns
  */
-export const useCache = <T,>(value: T): T | undefined => {
+const useCache = <T,>(value: T): T | undefined => {
   // we use a ref because it does not cause a rerender when the inner value changes
   const [cache, setCache] = useState<T | undefined>(value);
 
@@ -18,3 +18,5 @@ export const useCache = <T,>(value: T): T | undefined => {
 
   return cache;
 };
+
+export default useCache;

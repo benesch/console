@@ -4,7 +4,7 @@ import SegmentIntegration from "@segment/analytics.js-integration-segmentio";
 import { GlobalConfig } from "../types";
 import { AnalyticsClient } from "./types";
 
-export class SegmentAnalyticsClient extends AnalyticsClient {
+export default class SegmentAnalyticsClient extends AnalyticsClient {
   public segmentNativeClient: NativeSegmentClient | null = null;
 
   /**

@@ -3,7 +3,7 @@ import ReactGA from "react-ga";
 import { GlobalConfig } from "../types";
 import { AnalyticsClient } from "./types";
 
-export class GAAnalyticsClient extends AnalyticsClient {
+export default class GAAnalyticsClient extends AnalyticsClient {
   constructor(config: GlobalConfig) {
     super(config);
     if (config.googleAnalyticsId) {

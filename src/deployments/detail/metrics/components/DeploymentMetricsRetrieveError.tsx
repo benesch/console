@@ -2,7 +2,7 @@ import { Alert, AlertIcon } from "@chakra-ui/alert";
 import { Text } from "@chakra-ui/layout";
 import React from "react";
 
-export const DeploymentMetricsRetrieveError = () => {
+const DeploymentMetricsRetrieveError = () => {
   return (
     <Alert
       status="error"
@@ -15,3 +15,5 @@ export const DeploymentMetricsRetrieveError = () => {
     </Alert>
   );
 };
+
+export default DeploymentMetricsRetrieveError;

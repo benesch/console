@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 
-import LoadingSvg from "./svg/loadingAnimation";
+import LoadingSvg from "./svg/LoadingSvg";
 
 const LoadingScreen = () => {
   return (

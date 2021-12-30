@@ -28,10 +28,10 @@ import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
-import { SUPPORT_HREF } from "../components/cta";
-import { PageFooter } from "../components/footer";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
+import { SUPPORT_HREF } from "../components/SupportLink";
 import { assert } from "../util";
+import PageFooter from "./PageFooter";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
