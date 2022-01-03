@@ -118,7 +118,7 @@ function CreateDeploymentModal(props: Props) {
                     </SelectField>
                     <RegionSelectField />
                   </HStack>
-                  <Alert status="info" fontSize="sm">
+                  <Alert status="info" fontSize="sm" variant="pale">
                     Additional cloud providers and regions coming soon.
                   </Alert>
                 </VStack>

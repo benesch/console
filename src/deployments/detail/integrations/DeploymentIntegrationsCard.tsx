@@ -3,10 +3,10 @@ import * as React from "react";
 
 import {
   Card,
-  CardHeader,
   CardTab,
   CardTabs,
   CardTabsHeaders,
+  CardTitle,
 } from "../../../components/cardComponents";
 import TailscaleIntegration from "./tailscale/TailscaleIntegration";
 import { DeploymentIntegrationTabProps } from "./types";
@@ -19,7 +19,7 @@ const DeploymentIntegrationsCard: React.FC<DeploymentIntegrationTabProps> = ({
     <Card>
       <CardTabs colorScheme="purple">
         <CardTabsHeaders>
-          <CardHeader>Integrations</CardHeader>
+          <CardTitle>Connect</CardTitle>
           <HStack>
             <CardTab>Tailscale</CardTab>
             <CardTab>Datadog</CardTab>

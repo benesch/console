@@ -10,7 +10,7 @@ interface Props {
 /** A badge that displays the human-readable status of a deployment. */
 function DeploymentStateBadge({ deployment }: Props) {
   if (deployment.flaggedForDeletion) {
-    return <Badge colorScheme="yellow">Destroying</Badge>;
+    return <Badge colorScheme="orange">Destroying</Badge>;
   }
   if (deployment.flaggedForUpdate) {
     return <Badge colorScheme="yellow">Updating</Badge>;

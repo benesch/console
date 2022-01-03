@@ -3,8 +3,7 @@
  * A reusable "card" component.
  */
 
-import { BoxProps, HeadingProps } from "@chakra-ui/layout";
-import { Flex } from "@chakra-ui/layout";
+import { BoxProps, Flex, HeadingProps } from "@chakra-ui/layout";
 import {
   Box,
   Heading,
@@ -63,21 +62,23 @@ export function Card(props: BoxProps) {
   );
 }
 
-export interface CardHeaderProps extends HeadingProps {
+export interface CardTitleProps extends HeadingProps {
   children: React.ReactNode;
 }
 
+/* A title for a `Card`. Used standalone in `CardTabsHeaders.` */
+export function CardTitle(props: CardTitleProps) {
+  return <Heading fontSize="lg" fontWeight="600" p="4" {...props} />;
+}
+
 /** A header for a `Card`. */
-export function CardHeader(props: CardHeaderProps) {
+export function CardHeader(props: CardTitleProps) {
   const borderColor = useColorModeValue(
     semanticColors.divider.light,
     semanticColors.divider.dark
   );
   return (
-    <Heading
-      fontSize="lg"
-      fontWeight="600"
-      p="4"
+    <CardTitle
       borderBottomWidth="1px"
       borderBottomColor={borderColor}
       {...props}
@@ -85,7 +86,8 @@ export function CardHeader(props: CardHeaderProps) {
   );
 }
 
-/** a drop in replacement to the tab component that can be used in a card header */
+export const CardTabs = Tabs;
+
 export const CardTab: React.FC<TabProps> = (props) => {
   return <Tab py={4} {...props} />;
 };
@@ -103,8 +105,6 @@ export const CardTabsHeaders: React.FC<TabListProps> = (props) => {
     ></TabList>
   );
 };
-
-export const CardTabs = Tabs;
 
 export interface CardContentProps {
   children?: React.ReactNode;

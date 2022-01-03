@@ -28,6 +28,7 @@ import {
   CardTab,
   CardTabs,
   CardTabsHeaders,
+  CardTitle,
 } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
 import CodeBlock from "../../components/TextBlock";
@@ -50,7 +51,7 @@ function ConnectCard({ deployment }: DeploymentConnectCardProps) {
     <Card>
       <CardTabs colorScheme="purple">
         <CardTabsHeaders>
-          <CardHeader>Connect</CardHeader>
+          <CardTitle>Connect</CardTitle>
           <HStack>
             <CardTab>psql</CardTab>
             <CardTab>Prometheus</CardTab>

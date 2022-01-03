@@ -1,6 +1,23 @@
-import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
+import {
+  mode,
+  StyleFunctionProps,
+  transparentize,
+} from "@chakra-ui/theme-tools";
 
 import { semanticColors } from "./colors";
+
+export const Alert = {
+  variants: {
+    pale: (props: StyleFunctionProps) => {
+      const { theme, colorScheme: c } = props;
+      return {
+        container: {
+          bg: mode(`${c}.50`, transparentize(`${c}.200`, 0.16)(theme))(props),
+        },
+      };
+    },
+  },
+};
 
 export const Badge = {
   defaultProps: {
