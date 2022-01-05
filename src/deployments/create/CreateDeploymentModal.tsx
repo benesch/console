@@ -25,6 +25,7 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import {
+  Deployment,
   DeploymentSizeEnum,
   SupportedCloudRegionRequest,
   useDeploymentsCreate,
@@ -39,7 +40,7 @@ import DeploymentSizeField from "../DeploymentSizeField";
 import RegionSelectField from "./RegionSelect";
 
 interface Props extends ButtonProps {
-  refetch: () => Promise<void>;
+  refetch: () => Promise<Deployment[] | null>;
 }
 
 function CreateDeploymentModal(props: Props) {
