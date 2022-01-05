@@ -45,7 +45,7 @@ import useCache from "../utils/useCache";
 import CreateDeploymentModal from "./create/CreateDeploymentModal";
 import DeploymentStateBadge from "./DeploymentStateBadge";
 
-function DeploymentListPage() {
+const DeploymentListPage = () => {
   const { organization } = useAuth();
   const { deployments, refetch, error } = useDeploymentsList();
 
@@ -83,7 +83,7 @@ function DeploymentListPage() {
       {deploymentsView}
     </BaseLayout>
   );
-}
+};
 
 /** the hook managing data for the deployments list page
  * TODO: replace caching logic with `use-swr
@@ -107,7 +107,7 @@ const useDeploymentsList = () => {
   };
 };
 
-function DeploymentLimitWarning() {
+const DeploymentLimitWarning = () => {
   return (
     <Alert status="warning" mb="5">
       <AlertIcon />
@@ -117,7 +117,7 @@ function DeploymentLimitWarning() {
       </Text>
     </Alert>
   );
-}
+};
 
 const DeploymentListFetchErrorWarning: React.FC = () => {
   return (
@@ -133,7 +133,7 @@ const DeploymentListFetchErrorWarning: React.FC = () => {
   );
 };
 
-function EmptyDeploymentList() {
+const EmptyDeploymentList = () => {
   const borderColor = useColorModeValue(colors.purple[600], colors.purple[400]);
 
   return (
@@ -151,13 +151,13 @@ function EmptyDeploymentList() {
       </Heading>
     </VStack>
   );
-}
+};
 
 interface DeploymentTableProps {
   deployments: Deployment[];
 }
 
-function DeploymentTable(props: DeploymentTableProps) {
+const DeploymentTable = (props: DeploymentTableProps) => {
   const history = useHistory();
   const hoverBg = useColorModeValue("gray.50", "gray.900");
   return (
@@ -210,6 +210,6 @@ function DeploymentTable(props: DeploymentTableProps) {
       </Table>
     </Card>
   );
-}
+};
 
 export default DeploymentListPage;

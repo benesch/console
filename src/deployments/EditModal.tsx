@@ -45,11 +45,11 @@ interface EditDeploymentButtonProps extends ButtonProps {
   refetch: () => Promise<Deployment | null>;
 }
 
-function EditDeploymentModal({
+const EditDeploymentModal = ({
   deployment,
   refetch,
   ...props
-}: EditDeploymentButtonProps) {
+}: EditDeploymentButtonProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: deployment.id,
@@ -174,6 +174,6 @@ function EditDeploymentModal({
       </Modal>
     </>
   );
-}
+};
 
 export default EditDeploymentModal;

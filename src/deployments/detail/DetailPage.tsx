@@ -90,11 +90,11 @@ interface DetailContentProps {
   refetch: () => Promise<Deployment | null>;
 }
 
-function DetailContent({
+const DetailContent = ({
   deployment,
   latestVersion,
   refetch,
-}: DetailContentProps) {
+}: DetailContentProps) => {
   return (
     <>
       <PageHeader>
@@ -133,25 +133,25 @@ function DetailContent({
       </HStack>
     </>
   );
-}
+};
 
 interface DeploymentNotFoundProps {
   id: string;
 }
 
-function DeploymentNotFound(props: DeploymentNotFoundProps) {
+const DeploymentNotFound = (props: DeploymentNotFoundProps) => {
   return (
     <>
       <Heading fontWeight="400" fontSize="2xl" mb="5">
         Unknown
       </Heading>
       <p>
-        The deployment with ID "{props.id}" is unknown. Perhaps it was recently
-        deleted.
+        The deployment with ID &quot;{props.id}&quot; is unknown. Perhaps it was
+        recently deleted.
       </p>
     </>
   );
-}
+};
 
 interface DeploymentUpgradeAlert {
   deployment: Deployment;
@@ -159,11 +159,11 @@ interface DeploymentUpgradeAlert {
   refetch: () => Promise<Deployment | null>;
 }
 
-function DeploymentUpgradeAlert({
+const DeploymentUpgradeAlert = ({
   deployment,
   latestVersion,
   refetch,
-}: DeploymentUpgradeAlert) {
+}: DeploymentUpgradeAlert) => {
   return (
     <Alert>
       <AlertIcon />
@@ -177,27 +177,27 @@ function DeploymentUpgradeAlert({
       />
     </Alert>
   );
-}
+};
 
-function UserIndexesDisabledAlert() {
+const UserIndexesDisabledAlert = () => {
   return (
     <Alert status="info">
       <AlertIcon />
       <AlertTitle mr={2}>User indexes are disabled</AlertTitle>
       <AlertDescription>
-        Your deployment is healthy, but in "disable user indexes" mode no data
-        will be ingested. You can connect to your Materialize deployment to
-        debug OOM or other crash loops.
+        Your deployment is healthy, but in &quot;disable user indexes&quot; mode
+        no data will be ingested. You can connect to your Materialize deployment
+        to debug OOM or other crash loops.
       </AlertDescription>
     </Alert>
   );
-}
+};
 
 interface DetailCardProps {
   deployment: Deployment;
 }
 
-function DetailCard({ deployment }: DetailCardProps) {
+const DetailCard = ({ deployment }: DetailCardProps) => {
   return (
     <Card>
       <CardHeader>Details</CardHeader>
@@ -223,6 +223,6 @@ function DetailCard({ deployment }: DetailCardProps) {
       </CardContent>
     </Card>
   );
-}
+};
 
 export default DetailPage;

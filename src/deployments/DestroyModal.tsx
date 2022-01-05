@@ -16,7 +16,7 @@ interface Props extends ButtonProps {
   deployment: Deployment;
 }
 
-function DestroyDeploymentModal(props: Props) {
+const DestroyDeploymentModal = (props: Props) => {
   const history = useHistory();
   const { mutate: destroyDeployment } = useDeploymentsDestroy({});
   const toast = useToast();
@@ -50,6 +50,6 @@ function DestroyDeploymentModal(props: Props) {
       </Text>
     </DangerActionModal>
   );
-}
+};
 
 export default DestroyDeploymentModal;

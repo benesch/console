@@ -22,7 +22,7 @@ import DeploymentListPage from "./deployments/ListPage";
 import { assert } from "./util";
 
 /** The root router for the application. */
-function Router() {
+const Router = () => {
   return (
     <>
       <Switch>
@@ -37,9 +37,9 @@ function Router() {
       <AnalyticsOnEveryPage clients={analyticsClients} />
     </>
   );
-}
+};
 
-function RedirectIfNotAuthRoute() {
+const RedirectIfNotAuthRoute = () => {
   const location = useLocation();
   const { routes: authRoutes } = useFronteggAuth((state) => state);
   if (Object.values(authRoutes).includes(location.pathname)) {
@@ -52,11 +52,11 @@ function RedirectIfNotAuthRoute() {
   } else {
     return <Redirect to={authRoutes.authenticatedUrl} />;
   }
-}
+};
 
 type ProtectedRouteProps = RouteProps;
 
-function ProtectedRoute(props: ProtectedRouteProps) {
+const ProtectedRoute = (props: ProtectedRouteProps) => {
   const location = useLocation();
 
   // Consume Frontegg authentication state.
@@ -104,6 +104,6 @@ function ProtectedRoute(props: ProtectedRouteProps) {
       <Route {...props} />
     </AuthProvider>
   );
-}
+};
 
 export default Router;

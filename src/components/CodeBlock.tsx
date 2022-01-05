@@ -36,7 +36,7 @@ interface Props extends BoxProps {
  * results in scroll bars. Setting `wrap` to `true` will cause long lines to
  * wrap instead.
  */
-function CodeBlock({ wrap, lineNumbers, contents, ...props }: Props) {
+const CodeBlock = ({ wrap, lineNumbers, contents, ...props }: Props) => {
   const { onCopy } = useClipboard(contents);
   const bg = useColorModeValue("gray.100", "gray.800");
   const buttonBg = useColorModeValue("white", "black");
@@ -50,7 +50,7 @@ function CodeBlock({ wrap, lineNumbers, contents, ...props }: Props) {
   let children: React.ReactNode;
   if (lineNumbers) {
     children = contents.split("\n").map((line, i) => (
-      <Line index={i}>
+      <Line key={`line-${i}`} index={i}>
         {line}
         {"\n"}
       </Line>
@@ -91,14 +91,14 @@ function CodeBlock({ wrap, lineNumbers, contents, ...props }: Props) {
       </chakra.pre>
     </Box>
   );
-}
+};
 
 interface LineProps {
   index: number;
   children: React.ReactNode;
 }
 
-function Line(props: LineProps) {
+const Line = (props: LineProps) => {
   return (
     <chakra.span
       _before={{
@@ -116,6 +116,6 @@ function Line(props: LineProps) {
       {props.children}
     </chakra.span>
   );
-}
+};
 
 export default CodeBlock;

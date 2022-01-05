@@ -16,7 +16,7 @@ const WhatsNew = () => {
       background="whiteAlpha.300"
       color="white"
     >
-      ✨ What's new
+      ✨ What&apos;s new
     </Tag>
   );
 };

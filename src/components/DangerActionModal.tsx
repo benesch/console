@@ -43,7 +43,7 @@ interface Props {
  * A modal that requires typing a prompt in order to confirm an action.
  * Intended for use with dangerous actions, like destroying a deployment.
  */
-function DangerActionModal(props: Props) {
+const DangerActionModal = (props: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmation, setConfirmation] = useState("");
   const isConfirmed = confirmation === props.confirmText;
@@ -99,6 +99,6 @@ function DangerActionModal(props: Props) {
       </Modal>
     </>
   );
-}
+};
 
 export default DangerActionModal;

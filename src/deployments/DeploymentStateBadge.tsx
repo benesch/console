@@ -8,7 +8,7 @@ interface Props {
 }
 
 /** A badge that displays the human-readable status of a deployment. */
-function DeploymentStateBadge({ deployment }: Props) {
+const DeploymentStateBadge = ({ deployment }: Props) => {
   if (deployment.flaggedForDeletion) {
     return <Badge colorScheme="orange">Destroying</Badge>;
   }
@@ -47,6 +47,6 @@ function DeploymentStateBadge({ deployment }: Props) {
     default:
       return <Badge colorScheme="red">Unknown</Badge>;
   }
-}
+};
 
 export default DeploymentStateBadge;

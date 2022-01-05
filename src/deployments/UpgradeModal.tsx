@@ -15,7 +15,11 @@ interface Props extends ButtonProps {
   refetch: () => Promise<Deployment | null>;
 }
 
-function UpgradeDeploymentModal({ deployment, latestVersion, refetch }: Props) {
+const UpgradeDeploymentModal = ({
+  deployment,
+  latestVersion,
+  refetch,
+}: Props) => {
   const { mutate: updateDeployment } = useDeploymentsPartialUpdate({
     id: deployment.id,
   });
@@ -44,6 +48,6 @@ function UpgradeDeploymentModal({ deployment, latestVersion, refetch }: Props) {
       </Text>
     </DangerActionModal>
   );
-}
+};
 
 export default UpgradeDeploymentModal;
