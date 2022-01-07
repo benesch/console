@@ -44,7 +44,7 @@ import ConnectCard from "./ConnectCard";
 import DeploymentIntegrationsCard from "./integrations/DeploymentIntegrationsCard";
 import { DeploymentMetricsCard } from "./metrics";
 
-function DetailPage() {
+const DetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const {
     data: deployment,
@@ -82,12 +82,12 @@ function DetailPage() {
       {deploymentView}
     </BaseLayout>
   );
-}
+};
 
 interface DetailContentProps {
   deployment: Deployment;
   latestVersion: string;
-  refetch: () => Promise<void>;
+  refetch: () => Promise<Deployment | null>;
 }
 
 function DetailContent({
@@ -156,7 +156,7 @@ function DeploymentNotFound(props: DeploymentNotFoundProps) {
 interface DeploymentUpgradeAlert {
   deployment: Deployment;
   latestVersion: string;
-  refetch: () => Promise<void>;
+  refetch: () => Promise<Deployment | null>;
 }
 
 function DeploymentUpgradeAlert({

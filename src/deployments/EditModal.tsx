@@ -42,7 +42,7 @@ import DeploymentSizeField from "./DeploymentSizeField";
 
 interface EditDeploymentButtonProps extends ButtonProps {
   deployment: Deployment;
-  refetch: () => Promise<void>;
+  refetch: () => Promise<Deployment | null>;
 }
 
 function EditDeploymentModal({
