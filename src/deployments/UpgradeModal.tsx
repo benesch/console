@@ -12,7 +12,7 @@ import DangerActionModal from "../components/DangerActionModal";
 interface Props extends ButtonProps {
   deployment: Deployment;
   latestVersion: string;
-  refetch: () => Promise<void>;
+  refetch: () => Promise<Deployment | null>;
 }
 
 function UpgradeDeploymentModal({ deployment, latestVersion, refetch }: Props) {
