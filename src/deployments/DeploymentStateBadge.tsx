@@ -25,6 +25,16 @@ function DeploymentStateBadge({ deployment }: Props) {
       </Badge>
     );
   }
+  if (deployment.status === "OK" && deployment.catalogRestoreMode) {
+    return (
+      <Badge
+        colorScheme="blue"
+        title="Deployment is restoring from a catalog backup."
+      >
+        Restoring From Catalog Backup
+      </Badge>
+    );
+  }
   switch (deployment.status) {
     case "OK":
       return <Badge colorScheme="green">Healthy</Badge>;
