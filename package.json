@@ -68,7 +68,7 @@
     "gavi": "^0.2.2",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.5",
-    "miragejs": "^0.1.42",
+    "miragejs": "^0.1.43",
     "pg": "^8.7.1",
     "prettier": "^2.3.2",
     "pyright": "^1.1.191",
