@@ -8,6 +8,7 @@ export const validDeployment: Deployment = {
   hostname: "sub.host.com",
   flaggedForDeletion: false,
   flaggedForUpdate: true,
+  catalogRestoreMode: false,
   size: "S",
   storageMb: 1000,
   disableUserIndexes: false,

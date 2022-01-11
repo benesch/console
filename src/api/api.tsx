@@ -20,6 +20,7 @@ export interface Deployment {
   hostname: string | null;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
+  catalogRestoreMode: boolean;
   size: DeploymentSizeEnum;
   storageMb: number;
   disableUserIndexes: boolean;
@@ -33,6 +34,7 @@ export interface Deployment {
 
 export interface DeploymentRequest {
   name?: string;
+  catalogRestoreMode?: boolean;
   size?: DeploymentSizeEnum;
   storageMb?: number;
   disableUserIndexes?: boolean;
@@ -50,6 +52,7 @@ export interface HistoricalDeploymentChange {
   hostname?: ModifiedString;
   flaggedForDeletion?: ModifiedBoolean;
   flaggedForUpdate?: ModifiedBoolean;
+  catalogRestoreMode?: ModifiedBoolean;
   size?: ModifiedSize;
   disableUserIndexes?: ModifiedBoolean;
   materializedExtraArgs?: ModifiedStringList;
@@ -102,6 +105,7 @@ export interface Organization {
 
 export interface PatchedDeploymentUpdateRequest {
   name?: string;
+  catalogRestoreMode?: boolean;
   size?: DeploymentSizeEnum;
   storageMb?: number;
   disableUserIndexes?: boolean;
