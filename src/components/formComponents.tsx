@@ -14,19 +14,19 @@ import {
   Select,
   Switch,
   SwitchProps,
-  ThemeComponentProps,
 } from "@chakra-ui/react";
 import { FieldHookConfig, useField, useFormikContext } from "formik";
 import React from "react";
 
 // FIXME: we should stay as compatible as possible with the base chakra ui props
-export type TextFieldProps = FieldHookConfig<string> & {
-  /** The label to use above the text input. */
-  label: string;
-  /** The font size of the label and size of the text input. */
-  size?: string;
-  disabled?: boolean;
-};
+export type TextFieldProps = FieldHookConfig<string> &
+  InputProps & {
+    /** The label to use above the text input. */
+    label: string;
+    /** The font size of the label and size of the text input. */
+    size?: string;
+    disabled?: boolean;
+  };
 
 /**
  * A text field in a Formik form.
@@ -119,7 +119,7 @@ export const SelectField = React.forwardRef<
   );
 });
 
-export function SubmitButton(props: ButtonProps) {
+export const SubmitButton = (props: ButtonProps) => {
   const formik = useFormikContext();
   return (
     <Button
@@ -131,4 +131,4 @@ export function SubmitButton(props: ButtonProps) {
       {props.children}
     </Button>
   );
-}
+};

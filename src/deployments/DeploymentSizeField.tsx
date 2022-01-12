@@ -5,7 +5,7 @@ import { useAuth } from "../api/auth";
 import { SelectField } from "../components/formComponents";
 import SupportLink from "../components/SupportLink";
 
-function DeploymentSizeField() {
+const DeploymentSizeField = () => {
   const { organization } = useAuth();
   const disabled = !!organization?.trialExpiresAt;
   return (
@@ -30,6 +30,6 @@ function DeploymentSizeField() {
       </Alert>
     </>
   );
-}
+};
 
 export default DeploymentSizeField;

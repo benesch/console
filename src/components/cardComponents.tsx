@@ -37,7 +37,7 @@ import { semanticColors } from "../theme/colors";
  * </Card>
  * ```
  */
-export function Card(props: BoxProps) {
+export const Card = (props: BoxProps) => {
   const bg = useColorModeValue(
     semanticColors.card.bg.light,
     semanticColors.card.bg.dark
@@ -60,19 +60,19 @@ export function Card(props: BoxProps) {
       {props.children}
     </Box>
   );
-}
+};
 
 export interface CardTitleProps extends HeadingProps {
   children: React.ReactNode;
 }
 
 /* A title for a `Card`. Used standalone in `CardTabsHeaders.` */
-export function CardTitle(props: CardTitleProps) {
+export const CardTitle = (props: CardTitleProps) => {
   return <Heading fontSize="lg" fontWeight="600" p="4" {...props} />;
-}
+};
 
 /** A header for a `Card`. */
-export function CardHeader(props: CardTitleProps) {
+export const CardHeader = (props: CardTitleProps) => {
   const borderColor = useColorModeValue(
     semanticColors.divider.light,
     semanticColors.divider.dark
@@ -84,7 +84,7 @@ export function CardHeader(props: CardTitleProps) {
       {...props}
     />
   );
-}
+};
 
 export const CardTabs = Tabs;
 
@@ -111,16 +111,16 @@ export interface CardContentProps {
 }
 
 /** The container of the body content for a `Card`. */
-export function CardContent(props: CardContentProps) {
+export const CardContent = (props: CardContentProps) => {
   return <Box p="4">{props.children}</Box>;
-}
+};
 
 export interface CardFooterProps {
   children?: React.ReactNode;
 }
 
 /** A footer for a `Card`. */
-export function CardFooter(props: CardFooterProps) {
+export const CardFooter = (props: CardFooterProps) => {
   const borderColor = useColorModeValue(
     semanticColors.divider.light,
     semanticColors.divider.dark
@@ -130,7 +130,7 @@ export function CardFooter(props: CardFooterProps) {
       {props.children}
     </HStack>
   );
-}
+};
 
 export interface CardFieldProps {
   name: string;
@@ -138,7 +138,7 @@ export interface CardFieldProps {
 }
 
 /** A name–value pair for display in a `Card`. */
-export function CardField(props: CardFieldProps) {
+export const CardField = (props: CardFieldProps) => {
   return (
     <Box data-field-name={props.name}>
       <Text fontSize="sm" color="grey">
@@ -147,4 +147,4 @@ export function CardField(props: CardFieldProps) {
       {props.children}
     </Box>
   );
-}
+};

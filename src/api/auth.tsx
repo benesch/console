@@ -43,11 +43,11 @@ export interface AuthProviderProps {
 /**
  * A React provider that manages authentication state.
  */
-export function AuthProvider({
+export const AuthProvider = ({
   user,
   organization,
   children,
-}: AuthProviderProps) {
+}: AuthProviderProps) => {
   const authState = useFronteggAuth((state) => state);
   const fetchAuthed = async (input: RequestInfo, init?: RequestInit) =>
     fetch(input, {
@@ -62,7 +62,7 @@ export function AuthProvider({
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 const AuthContext = React.createContext<IAuthContext>(undefined!);
 
@@ -90,7 +90,7 @@ interface RestfulProviderProps
 /**
  * A wrapper for `BaseRestfulProvider` that wires up Frontegg authentication.
  */
-export function RestfulProvider(props: RestfulProviderProps) {
+export const RestfulProvider = (props: RestfulProviderProps) => {
   const { user } = useFronteggAuth((state) => state);
 
   const headers = versionHeaders();
@@ -100,4 +100,4 @@ export function RestfulProvider(props: RestfulProviderProps) {
   return (
     <BaseRestfulProvider base="/" requestOptions={{ headers }} {...props} />
   );
-}
+};

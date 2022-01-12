@@ -30,14 +30,14 @@ import {
   CardTabsHeaders,
   CardTitle,
 } from "../../components/cardComponents";
+import CodeBlock from "../../components/CodeBlock";
 import { CopyableText } from "../../components/Copyable";
-import CodeBlock from "../../components/TextBlock";
 
 interface DeploymentConnectCardProps {
   deployment: Deployment;
 }
 
-function ConnectCard({ deployment }: DeploymentConnectCardProps) {
+const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
   const { fetchAuthed } = useAuth();
   const handleDownloadCerts = async () => {
     const response = await fetchAuthed(
@@ -138,6 +138,6 @@ function ConnectCard({ deployment }: DeploymentConnectCardProps) {
       </CardFooter>
     </Card>
   );
-}
+};
 
 export default ConnectCard;

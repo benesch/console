@@ -53,7 +53,7 @@ export interface BaseLayoutProps {
  * </BaseLayout>
  * ```
  */
-export function BaseLayout(props: BaseLayoutProps) {
+export const BaseLayout = (props: BaseLayoutProps) => {
   return (
     <Flex direction="column" height="100vh">
       <NavBar />
@@ -65,9 +65,9 @@ export function BaseLayout(props: BaseLayoutProps) {
       <PageFooter />
     </Flex>
   );
-}
+};
 
-function NavBar() {
+const NavBar = () => {
   const { organization } = useAuth();
   const borderWidth = useColorModeValue("0", "1px");
   const borderColor = useColorModeValue("transparent", "gray.700");
@@ -115,14 +115,14 @@ function NavBar() {
       </Flex>
     </Flex>
   );
-}
+};
 
 interface NavItemProps {
   href?: string;
   label: string;
 }
 
-function NavItem(props: NavItemProps) {
+const NavItem = (props: NavItemProps) => {
   const location = useLocation();
   const href = props.href || "#";
   const active = location.pathname.startsWith(href);
@@ -148,9 +148,9 @@ function NavItem(props: NavItemProps) {
       <Box fontWeight="semibold">{props.label}</Box>
     </HStack>
   );
-}
+};
 
-function HelpDropdown() {
+const HelpDropdown = () => {
   return (
     <Menu>
       <MenuButton>
@@ -178,13 +178,13 @@ function HelpDropdown() {
       </MenuList>
     </Menu>
   );
-}
+};
 
 interface TrialBubble {
   trialExpiresAt: string;
 }
 
-function TrialBubble(props: TrialBubble) {
+const TrialBubble = (props: TrialBubble) => {
   const trialExpiresAt = Date.parse(props.trialExpiresAt);
   const now = Date.now();
   const expired = trialExpiresAt < now;
@@ -215,22 +215,22 @@ function TrialBubble(props: TrialBubble) {
       </Link>
     </HStack>
   );
-}
+};
 
 interface HelpDropdownLinkProps {
   href: string;
   children: React.ReactNode;
 }
 
-function HelpDropdownLink(props: HelpDropdownLinkProps) {
+const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
   return (
     <MenuItem as="a" href={props.href} target="_blank" fontWeight="medium">
       {props.children}
     </MenuItem>
   );
-}
+};
 
-function ProfileDropdown() {
+const ProfileDropdown = () => {
   const history = useHistory();
   const { user, routes: authRoutes } = useAuth();
   const emailColor = useColorModeValue("gray.500", "gray.200");
@@ -268,16 +268,16 @@ function ProfileDropdown() {
       </MenuList>
     </Menu>
   );
-}
+};
 
 export interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
 /** A container for the header block at the top of a page. */
-export function PageHeader(props: PageHeaderProps) {
+export const PageHeader = (props: PageHeaderProps) => {
   return <HStack mb="5">{props.children}</HStack>;
-}
+};
 
 export interface PageBreadcrumbsProps {
   children?: React.ReactNode;
@@ -290,11 +290,11 @@ export interface PageBreadcrumbsProps {
  * should include this component even if the breadcrumbs are empty so that it
  * takes up the right amount of space.
  */
-export function PageBreadcrumbs(props: PageHeadingProps) {
+export const PageBreadcrumbs = (props: PageHeadingProps) => {
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
   return <Box fontSize="md">{props.children || <>&nbsp;</>}</Box>;
-}
+};
 
 export interface PageHeadingProps {
   children?: React.ReactNode;
@@ -305,10 +305,10 @@ export interface PageHeadingProps {
  *
  * This component should be used inside of a `PageHeader`.
  */
-export function PageHeading(props: PageHeadingProps) {
+export const PageHeading = (props: PageHeadingProps) => {
   return (
     <Heading fontWeight="400" fontSize="2xl">
       {props.children}
     </Heading>
   );
-}
+};

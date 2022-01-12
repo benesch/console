@@ -43,7 +43,7 @@ interface Props extends ButtonProps {
   refetch: () => Promise<Deployment[] | null>;
 }
 
-function CreateDeploymentModal(props: Props) {
+const CreateDeploymentModal = (props: Props) => {
   const { refetch, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { mutate: createDeployment } = useDeploymentsCreate({});
@@ -138,6 +138,6 @@ function CreateDeploymentModal(props: Props) {
       </Modal>
     </>
   );
-}
+};
 
 export default CreateDeploymentModal;

@@ -5,7 +5,11 @@ import React from "react";
 const SignupFooter = (
   <p>
     By signing up to Materialize Cloud, you agree to our{" "}
-    <a target="_blank" href="https://materialize.com/terms-and-conditions/">
+    <a
+      target="_blank"
+      rel="noreferrer"
+      href="https://materialize.com/terms-and-conditions/"
+    >
       Cloud Terms and Conditions
     </a>
     .
