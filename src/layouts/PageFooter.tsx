@@ -8,7 +8,6 @@ import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import ReleaseNoteLink from "../components/releaseNotes/ReleaseNoteLink";
 import Version from "../version/Version";
 
 /**
@@ -45,7 +44,6 @@ const PageFooter: React.FC = () => {
         System Status
       </Link>
       <Version />
-      <ReleaseNoteLink />
     </HStack>
   );
 };
