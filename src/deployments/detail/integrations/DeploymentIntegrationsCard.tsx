@@ -19,7 +19,7 @@ const DeploymentIntegrationsCard: React.FC<DeploymentIntegrationTabProps> = ({
     <Card>
       <CardTabs colorScheme="purple">
         <CardTabsHeaders>
-          <CardTitle>Connect</CardTitle>
+          <CardTitle>Integrations</CardTitle>
           <HStack>
             <CardTab>Tailscale</CardTab>
             <CardTab>Datadog</CardTab>
