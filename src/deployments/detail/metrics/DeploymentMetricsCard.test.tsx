@@ -10,8 +10,8 @@ import {
 } from "../../../api/__mocks__/api";
 import { renderFragmentInTestMode } from "../../../utils/tests-utils";
 import { validDeployment } from "../../__mocks__";
-import { DeploymentMetricsCard } from ".";
 import CpuMetrics from "./CpuMetrics";
+import DeploymentMetricsCard from "./DeploymentMetricsCard";
 import MemoryMetrics from "./MemoryMetrics";
 
 const renderComponent =

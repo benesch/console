@@ -42,7 +42,7 @@ import EditDeploymentModal from "../EditModal";
 import UpgradeDeploymentModal from "../UpgradeModal";
 import ConnectCard from "./ConnectCard";
 import DeploymentIntegrationsCard from "./integrations/DeploymentIntegrationsCard";
-import { DeploymentMetricsCard } from "./metrics";
+import DeploymentMetricsCard from "./metrics/DeploymentMetricsCard";
 
 const DetailPage = () => {
   const { id } = useParams<{ id: string }>();
