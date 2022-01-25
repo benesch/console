@@ -100,7 +100,7 @@ export const CardTabsHeaders: React.FC<TabListProps> = (props) => {
       display="flex"
       justifyContent="space-between"
       alignItems="center"
-      px="2"
+      pr="2"
       {...props}
     ></TabList>
   );

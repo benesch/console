@@ -19,7 +19,7 @@ const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
     refetch,
   };
   return (
-    <VStack w="full" alignItems="flex-start" px={4}>
+    <VStack w="full" alignItems="flex-start">
       <Text>
         <Link
           href="https://tailscale.com"
