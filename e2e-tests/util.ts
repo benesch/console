@@ -13,7 +13,7 @@ export const EMAIL = "infra+cloud-integration-tests@materialize.com";
 // leaked is that someone could spin up a bunch of deployments in this account.
 export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
 
-export const LEGACY_VERSION = "v0.9.1";
+export const LEGACY_VERSION = "v0.14.0";
 
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
