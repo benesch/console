@@ -2,7 +2,9 @@ import { Request, Response, Server } from "miragejs";
 
 import {
   validDeployment,
+  validDeploymentList,
   validPrometheusValues,
+  validRegions,
 } from "../../deployments/__mocks__";
 
 export const testApiBase = "https://example.com";
@@ -13,7 +15,7 @@ export const invalidDeploymentId = "456";
 export const createApiLayerMock = () => {
   const getApiDeploymentsHandler = jest.fn(() => {
     // status, header, data
-    return new Response(200, {}, [validDeployment]);
+    return new Response(200, {}, validDeploymentList);
   });
 
   const getApiDeploymentHandler = jest.fn(() => {
@@ -30,11 +32,16 @@ export const createApiLayerMock = () => {
     // status, header, data
     return new Response(200, {});
   });
+
+  const getRegionsListHandler = jest.fn(() => {
+    return new Response(200, {}, validRegions);
+  });
   return {
     handlers: {
       getApiDeploymentsHandler,
       getApiDeploymentHandler,
       getMetricsHandler,
+      getRegionsListHandler,
       partialUpdateHandler,
     },
     server: new Server({
@@ -45,6 +52,7 @@ export const createApiLayerMock = () => {
         this.get("/api/deployments", getApiDeploymentsHandler);
         this.get("/api/deployments/:id", getApiDeploymentHandler);
         this.patch("/api/deployments/:id", partialUpdateHandler);
+        this.get("/api/regions/:providerId", getRegionsListHandler);
         this.get(
           `/api/deployments/${validDeploymentId}/metrics/memory/:period`,
           getMetricsHandler

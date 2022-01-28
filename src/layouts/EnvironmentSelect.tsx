@@ -22,14 +22,15 @@ const EnvironmentSelectField = () => {
 
   return (
     <Select
-      name="deployment-environment"
+      aria-label="Environment"
+      name="environment-select"
       value={current}
       onChange={(e) => setCurrent(e.target.value)}
       disabled={options.length < 1}
     >
       {/* TODO remove "All" once we remove visibility across environments */}
       {["All", ...options].map((env) => (
-        <option key={env} value={env}>
+        <option key={env} value={env} data-testid="environment-option">
           {env}
         </option>
       ))}
