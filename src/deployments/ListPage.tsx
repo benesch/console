@@ -25,6 +25,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
 import {
   Deployment,
@@ -39,6 +40,8 @@ import {
   PageHeader,
   PageHeading,
 } from "../layouts/BaseLayout";
+import EnvironmentSelectField from "../layouts/EnvironmentSelect";
+import currentEnvironment from "../recoil/currentEnvironment";
 import CloudSvg from "../svg/CloudSvg";
 import colors from "../theme/colors";
 import useCache from "../utils/useCache";
@@ -48,6 +51,7 @@ import DeploymentStateBadge from "./DeploymentStateBadge";
 const DeploymentListPage = () => {
   const { organization } = useAuth();
   const { deployments, refetch, error } = useDeploymentsList();
+  const [envFilter] = useRecoilState(currentEnvironment);
 
   let deploymentsView;
   let canCreateDeployments = null;
@@ -61,7 +65,19 @@ const DeploymentListPage = () => {
     if (deployments.length === 0) {
       deploymentsView = <EmptyDeploymentList />;
     } else {
-      deploymentsView = <DeploymentTable deployments={deployments} />;
+      deploymentsView = (
+        <DeploymentTable
+          deployments={deployments.filter((d) => {
+            if (envFilter === "All") {
+              return true;
+            }
+            return (
+              d.cloudProviderRegion.provider === envFilter.split(" ")[0] &&
+              d.cloudProviderRegion.region === envFilter.split(" ")[1]
+            );
+          })}
+        />
+      );
     }
   }
   return (
@@ -69,7 +85,10 @@ const DeploymentListPage = () => {
       <PageBreadcrumbs></PageBreadcrumbs>
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-          <PageHeading>Deployments</PageHeading>
+          <HStack>
+            <PageHeading>Deployments</PageHeading>
+            <EnvironmentSelectField />
+          </HStack>
           {error && <DeploymentListFetchErrorWarning />}
         </HStack>
         <Spacer />
