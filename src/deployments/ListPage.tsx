@@ -205,7 +205,7 @@ const DeploymentTable = (props: DeploymentTableProps) => {
 
             return (
               <Tr key={d.id} data-testid="deployment-line" {...trProps}>
-                <Td>
+                <Td width="50%">
                   {/* This link is for accessibility only, so we disable its
                       link styling, as the tr already has a hover state. */}
                   <Link
@@ -216,10 +216,10 @@ const DeploymentTable = (props: DeploymentTableProps) => {
                     {d.name}
                   </Link>
                 </Td>
-                <Td>{d.hostname}</Td>
-                <Td>{d.size}</Td>
-                <Td>{d.mzVersion}</Td>
-                <Td>
+                <Td style={{ whiteSpace: "nowrap" }}>{d.hostname}</Td>
+                <Td style={{ whiteSpace: "nowrap" }}>{d.size}</Td>
+                <Td style={{ whiteSpace: "nowrap" }}>{d.mzVersion}</Td>
+                <Td style={{ whiteSpace: "nowrap" }}>
                   <DeploymentStateBadge deployment={d} />
                 </Td>
               </Tr>
