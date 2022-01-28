@@ -1,17 +1,15 @@
-import { HStack, Spacer } from "@chakra-ui/layout";
+import { HStack } from "@chakra-ui/layout";
 import { TabPanel, TabPanels } from "@chakra-ui/tabs";
 import React from "react";
 
 import { Deployment } from "../../../api/api";
 import {
   Card,
-  CardFooter,
   CardTab,
   CardTabs,
   CardTabsHeaders,
   CardTitle,
 } from "../../../components/cardComponents";
-import DeploymentLogsModal from "../DeploymentLogsModal";
 import CpuMetrics from "./CpuMetrics";
 import MemoryMetrics from "./MemoryMetrics";
 
@@ -37,10 +35,6 @@ const DeploymentMetricsCard: React.FC<{ deployment: Deployment }> = ({
           </TabPanel>
         </TabPanels>
       </CardTabs>
-      <CardFooter>
-        <Spacer />
-        <DeploymentLogsModal deployment={deployment} size="sm" />
-      </CardFooter>
     </Card>
   );
 };

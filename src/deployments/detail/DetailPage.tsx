@@ -41,6 +41,7 @@ import DestroyDeploymentModal from "../DestroyModal";
 import EditDeploymentModal from "../EditModal";
 import UpgradeDeploymentModal from "../UpgradeModal";
 import ConnectCard from "./ConnectCard";
+import DeploymentLogsModal from "./DeploymentLogsModal";
 import DeploymentIntegrationsCard from "./integrations/DeploymentIntegrationsCard";
 import DeploymentMetricsCard from "./metrics/DeploymentMetricsCard";
 
@@ -101,6 +102,7 @@ const DetailContent = ({
         <PageHeading>{deployment.name}</PageHeading>
         {deployment.flaggedForUpdate && <Spinner />}
         <Spacer />
+        <DeploymentLogsModal deployment={deployment} size="sm" />
         <EditDeploymentModal
           deployment={deployment}
           refetch={refetch}
