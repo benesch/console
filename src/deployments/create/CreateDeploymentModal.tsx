@@ -28,6 +28,7 @@ import {
   Deployment,
   DeploymentSizeEnum,
   SupportedCloudRegionRequest,
+  useCloudProvidersList,
   useDeploymentsCreate,
 } from "../../api/api";
 import {
@@ -37,11 +38,21 @@ import {
 } from "../../components/formComponents";
 import { petname } from "../../util";
 import DeploymentSizeField from "../DeploymentSizeField";
+import CloudProviderSelectField from "./CloudProviderSelect";
 import RegionSelectField from "./RegionSelect";
 
 interface Props extends ButtonProps {
   refetch: () => Promise<Deployment[] | null>;
 }
+
+const useCloudProviders = () => {
+  const getCloudProvidersOperation = useCloudProvidersList({});
+
+  return {
+    getCloudProvidersOperation: getCloudProvidersOperation,
+    cloudProviders: getCloudProvidersOperation.data,
+  };
+};
 
 const CreateDeploymentModal = (props: Props) => {
   const { refetch, ...buttonProps } = props;
@@ -49,6 +60,7 @@ const CreateDeploymentModal = (props: Props) => {
   const { mutate: createDeployment } = useDeploymentsCreate({});
   const toast = useToast();
   const initialFocusRef = useRef(null);
+  const { getCloudProvidersOperation, cloudProviders } = useCloudProviders();
 
   return (
     <>
@@ -72,10 +84,12 @@ const CreateDeploymentModal = (props: Props) => {
             initialValues={{
               name: petname(),
               size: "XS" as DeploymentSizeEnum,
-              cloudProviderRegion: {
-                provider: "AWS",
-                region: "us-east-1",
-              } as SupportedCloudRegionRequest,
+              cloudProviderRegion: cloudProviders
+                ? cloudProviders[0]
+                : ({
+                    provider: "AWS",
+                    region: "us-east-1",
+                  } as SupportedCloudRegionRequest),
             }}
             onSubmit={async (values, actions) => {
               try {
@@ -109,15 +123,14 @@ const CreateDeploymentModal = (props: Props) => {
                   <TextField name="name" label="Name" size="sm" />
                   <DeploymentSizeField />
                   <HStack width="100%">
-                    <SelectField
-                      name="cloudProviderRegion.provider"
-                      label="Cloud provider"
-                      size="sm"
-                      disabled
-                    >
-                      <option>AWS</option>
-                    </SelectField>
-                    <RegionSelectField />
+                    <CloudProviderSelectField
+                      loading={getCloudProvidersOperation.loading}
+                      cloudProviders={cloudProviders}
+                    />
+                    <RegionSelectField
+                      loading={getCloudProvidersOperation.loading}
+                      cloudProviders={cloudProviders}
+                    />
                   </HStack>
                   <Alert status="info" fontSize="sm" variant="pale">
                     Additional cloud providers and regions coming soon.

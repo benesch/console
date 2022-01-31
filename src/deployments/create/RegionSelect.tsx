@@ -1,37 +1,41 @@
 import { useFormikContext } from "formik";
 import * as React from "react";
 
-import { DeploymentRequest, useRegionsList } from "../../api/api";
+import {
+  DeploymentRequest,
+  SupportedCloudRegion,
+  useRegionsList,
+} from "../../api/api";
 import { SelectField } from "../../components/formComponents";
 
-const useRegions = () => {
+const filterProviders = (cloudProviders: SupportedCloudRegion[]) => {
   const currentProvider =
     useFormikContext<DeploymentRequest>().values.cloudProviderRegion.provider;
-  const getRegionsOperation = useRegionsList({
-    providerName: currentProvider,
-  });
 
-  return {
-    operation: getRegionsOperation,
-    regions:
-      getRegionsOperation.data?.filter(
-        (region) => region.provider === currentProvider
-      ) ?? [],
-  };
+  return (
+    cloudProviders?.filter(
+      (provider) => provider.provider === currentProvider
+    ) ?? []
+  );
 };
 
-const RegionSelectField = () => {
-  const { operation, regions } = useRegions();
+interface Props {
+  loading: boolean;
+  cloudProviders: SupportedCloudRegion[] | null;
+}
+
+const RegionSelectField = (props: Props) => {
+  const providers = filterProviders(props.cloudProviders || []);
   return (
     <SelectField
       name="cloudProviderRegion.region"
       label="Region"
       size="sm"
-      disabled={operation.loading}
+      disabled={props.loading}
     >
-      {regions.map((supportedRegion) => (
-        <option key={supportedRegion.region} value={supportedRegion.region}>
-          {supportedRegion.region}
+      {providers.map((provider) => (
+        <option key={provider.region} value={provider.region}>
+          {provider.region}
         </option>
       ))}
     </SelectField>
