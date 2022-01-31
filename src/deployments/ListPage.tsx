@@ -25,13 +25,14 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
 import {
   Deployment,
   useDeploymentsList as useDeploymentListApi,
 } from "../api/api";
 import { useAuth } from "../api/auth";
-import { Card } from "../components/cardComponents";
+import { Card, CardContent } from "../components/cardComponents";
 import SupportLink from "../components/SupportLink";
 import {
   BaseLayout,
@@ -39,6 +40,8 @@ import {
   PageHeader,
   PageHeading,
 } from "../layouts/BaseLayout";
+import EnvironmentSelectField from "../layouts/EnvironmentSelect";
+import currentEnvironment from "../recoil/currentEnvironment";
 import CloudSvg from "../svg/CloudSvg";
 import colors from "../theme/colors";
 import useCache from "../utils/useCache";
@@ -48,6 +51,18 @@ import DeploymentStateBadge from "./DeploymentStateBadge";
 const DeploymentListPage = () => {
   const { organization } = useAuth();
   const { deployments, refetch, error } = useDeploymentsList();
+  const [envFilter] = useRecoilState(currentEnvironment);
+  const filteredDeployments = React.useMemo(() => {
+    return (deployments ?? []).filter((d) => {
+      if (envFilter === "All") {
+        return true;
+      }
+      return (
+        d.cloudProviderRegion.provider === envFilter.split(" ")[0] &&
+        d.cloudProviderRegion.region === envFilter.split(" ")[1]
+      );
+    });
+  }, [envFilter, deployments]);
 
   let deploymentsView;
   let canCreateDeployments = null;
@@ -61,7 +76,7 @@ const DeploymentListPage = () => {
     if (deployments.length === 0) {
       deploymentsView = <EmptyDeploymentList />;
     } else {
-      deploymentsView = <DeploymentTable deployments={deployments} />;
+      deploymentsView = <DeploymentTable deployments={filteredDeployments} />;
     }
   }
   return (
@@ -69,7 +84,10 @@ const DeploymentListPage = () => {
       <PageBreadcrumbs></PageBreadcrumbs>
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-          <PageHeading>Deployments</PageHeading>
+          <HStack>
+            <PageHeading>Deployments</PageHeading>
+            <EnvironmentSelectField />
+          </HStack>
           {error && <DeploymentListFetchErrorWarning />}
         </HStack>
         <Spacer />
@@ -162,52 +180,57 @@ const DeploymentTable = (props: DeploymentTableProps) => {
   const hoverBg = useColorModeValue("gray.50", "gray.900");
   return (
     <Card pt="2" px="0" pb="6">
-      <Table data-testid="deployments-table" borderRadius="xl">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Hostname</Th>
-            <Th>Size</Th>
-            <Th>Version</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {props.deployments.map((d) => {
-            let trProps: TableRowProps = { key: d.id };
-            if (!d.flaggedForDeletion) {
-              trProps = {
-                ...trProps,
-                cursor: "pointer",
-                _hover: { background: hoverBg },
-                onClick: () => history.push(`/deployments/${d.id}`),
-              };
-            }
+      {
+        <Table data-testid="deployments-table" borderRadius="xl">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Hostname</Th>
+              <Th>Size</Th>
+              <Th>Version</Th>
+              <Th>Status</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {props.deployments.map((d) => {
+              let trProps: TableRowProps = { key: d.id };
+              if (!d.flaggedForDeletion) {
+                trProps = {
+                  ...trProps,
+                  cursor: "pointer",
+                  _hover: { background: hoverBg },
+                  onClick: () => history.push(`/deployments/${d.id}`),
+                };
+              }
 
-            return (
-              <Tr key={d.id} data-testid="deployment-line" {...trProps}>
-                <Td>
-                  {/* This link is for accessibility only, so we disable its
+              return (
+                <Tr key={d.id} data-testid="deployment-line" {...trProps}>
+                  <Td width="50%">
+                    {/* This link is for accessibility only, so we disable its
                       link styling, as the tr already has a hover state. */}
-                  <Link
-                    as={RouterLink}
-                    to={`/deployments/${d.id}`}
-                    _hover={{ textDecoration: "none" }}
-                  >
-                    {d.name}
-                  </Link>
-                </Td>
-                <Td>{d.hostname}</Td>
-                <Td>{d.size}</Td>
-                <Td>{d.mzVersion}</Td>
-                <Td>
-                  <DeploymentStateBadge deployment={d} />
-                </Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
+                    <Link
+                      as={RouterLink}
+                      to={`/deployments/${d.id}`}
+                      _hover={{ textDecoration: "none" }}
+                    >
+                      {d.name}
+                    </Link>
+                  </Td>
+                  <Td style={{ whiteSpace: "nowrap" }}>{d.hostname}</Td>
+                  <Td style={{ whiteSpace: "nowrap" }}>{d.size}</Td>
+                  <Td style={{ whiteSpace: "nowrap" }}>{d.mzVersion}</Td>
+                  <Td style={{ whiteSpace: "nowrap" }}>
+                    <DeploymentStateBadge deployment={d} />
+                  </Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      }
+      {props.deployments.length < 1 && (
+        <CardContent px={6}>No matching deployments.</CardContent>
+      )}
     </Card>
   );
 };

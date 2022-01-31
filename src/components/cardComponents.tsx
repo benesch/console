@@ -106,12 +106,8 @@ export const CardTabsHeaders: React.FC<TabListProps> = (props) => {
   );
 };
 
-export interface CardContentProps {
-  children?: React.ReactNode;
-}
-
 /** The container of the body content for a `Card`. */
-export const CardContent = (props: CardContentProps) => {
+export const CardContent = (props: BoxProps) => {
   return <Box p="4">{props.children}</Box>;
 };
 

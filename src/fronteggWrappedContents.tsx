@@ -1,6 +1,7 @@
 import { useColorMode } from "@chakra-ui/color-mode";
 import { FronteggProvider } from "@frontegg/react";
 import React from "react";
+import { RecoilRoot } from "recoil";
 
 import logo from "../img/wordmark.svg";
 import { RestfulProvider } from "./api/auth";
@@ -42,7 +43,9 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
         customLoader={setLoading}
       >
         <RestfulProvider>
-          <Router />
+          <RecoilRoot>
+            <Router />
+          </RecoilRoot>
         </RestfulProvider>
       </FronteggProvider>
       {loading ? isEmbedded ? <EmbeddedLoading /> : <LoadingScreen /> : null}

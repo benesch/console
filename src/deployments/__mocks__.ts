@@ -23,6 +23,29 @@ export const validDeployment: Deployment = {
   },
 };
 
+export const validEUDeployment: Deployment = {
+  ...validDeployment,
+  id: "2",
+  name: "justified-kangaroo",
+  size: "XS",
+  cloudProviderRegion: {
+    provider: "AWS",
+    region: "eu-west-1",
+  },
+};
+
+export const validEUSecondDeployment: Deployment = {
+  ...validEUDeployment,
+  id: "3",
+  name: "red-ostrich",
+};
+
+export const validDeploymentList = [
+  validDeployment,
+  validEUDeployment,
+  validEUSecondDeployment,
+];
+
 export const validDeploymentWithTailscale = {
   ...validDeployment,
   enableTailscale: true,
@@ -31,3 +54,30 @@ export const validDeploymentWithTailscale = {
 export const validPrometheusValues: PrometheusMetrics = {
   metrics: [{ name: "metric", values: [[(+new Date()).toString(), "1"]] }],
 };
+
+export const validRegions = (function () {
+  const set: Record<string, string[]> = {};
+  validDeploymentList.forEach((d) => {
+    if (set[d.cloudProviderRegion.provider]) {
+      if (
+        set[d.cloudProviderRegion.provider].indexOf(
+          d.cloudProviderRegion.region
+        ) === -1
+      ) {
+        set[d.cloudProviderRegion.provider].push(d.cloudProviderRegion.region);
+      }
+    } else {
+      set[d.cloudProviderRegion.provider] = [d.cloudProviderRegion.region];
+    }
+  });
+  const result: { provider: string; region: string }[] = [];
+  Object.keys(set).forEach((provider) => {
+    set[provider].forEach((region) => {
+      result.push({
+        provider,
+        region,
+      });
+    });
+  });
+  return result;
+})();
