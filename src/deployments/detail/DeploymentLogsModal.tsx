@@ -62,7 +62,13 @@ const DeploymentLogsModal = ({ deployment, ...props }: Props) => {
 
   return (
     <>
-      <Button onClick={handleOpen} {...props}>
+      <Button
+        onClick={handleOpen}
+        colorScheme="purple"
+        variant="outline"
+        // leftIcon={<EditIcon />}
+        {...props}
+      >
         View logs
       </Button>
 
