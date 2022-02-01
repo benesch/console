@@ -5,6 +5,9 @@ import path from "path";
 import { Client } from "pg";
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
+export const IS_MINIKUBE =
+  CONSOLE_ADDR === "http://localhost:8000" ||
+  CONSOLE_ADDR === "http://backend:8000";
 
 export const EMAIL = "infra+cloud-integration-tests@materialize.com";
 

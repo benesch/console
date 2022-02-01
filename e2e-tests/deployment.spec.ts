@@ -1,8 +1,9 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { LEGACY_VERSION, TestContext } from "./util";
+import { IS_MINIKUBE, LEGACY_VERSION, TestContext } from "./util";
 
-const regions = ["us-east-1", "eu-west-1"];
+const provider = IS_MINIKUBE ? "local" : "AWS";
+const regions = IS_MINIKUBE ? ["minikube"] : ["us-east-1", "eu-west-1"];
 
 for (const region of regions) {
   test(`create deployment for region ${region}`, async ({ page }) => {
@@ -77,7 +78,7 @@ for (const region of regions) {
       body: JSON.stringify({
         mzVersion: LEGACY_VERSION,
         cloudProviderRegion: {
-          provider: "AWS",
+          provider: provider,
           region: `${region}`,
         },
       }),

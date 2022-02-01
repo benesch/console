@@ -127,7 +127,7 @@ export interface PrometheusMetrics {
   metrics: PrometheusMetric[];
 }
 
-export type ProviderEnum = "AWS";
+export type ProviderEnum = "AWS" | "local";
 
 export interface SupportedCloudRegion {
   provider: ProviderEnum;
