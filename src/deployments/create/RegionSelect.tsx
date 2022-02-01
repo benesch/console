@@ -8,12 +8,12 @@ import {
 } from "../../api/api";
 import { SelectField } from "../../components/formComponents";
 
-const filterProviders = (cloudProviders: SupportedCloudRegion[]) => {
+const useFilterProviders = (cloudProviders: SupportedCloudRegion[]) => {
   const currentProvider =
     useFormikContext<DeploymentRequest>().values.cloudProviderRegion.provider;
 
   return (
-    cloudProviders?.filter(
+    cloudProviders.filter(
       (provider) => provider.provider === currentProvider
     ) ?? []
   );
@@ -25,7 +25,7 @@ interface Props {
 }
 
 const RegionSelectField = (props: Props) => {
-  const providers = filterProviders(props.cloudProviders || []);
+  const providers = useFilterProviders(props.cloudProviders || []);
   return (
     <SelectField
       name="cloudProviderRegion.region"
