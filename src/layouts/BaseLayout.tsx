@@ -3,6 +3,8 @@
  * Base layout and supporting components, like page headers.
  */
 
+import { HamburgerIcon } from "@chakra-ui/icons";
+import { Spacer } from "@chakra-ui/react";
 import {
   Avatar,
   Box,
@@ -11,6 +13,7 @@ import {
   Flex,
   Heading,
   HStack,
+  IconButton,
   Link,
   Menu,
   MenuButton,
@@ -25,11 +28,13 @@ import { AdminPortal } from "@frontegg/react";
 import { differenceInDays } from "date-fns";
 import * as React from "react";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
+import platform from "../recoil/platform";
 import { assert } from "../util";
 import PageFooter from "./PageFooter";
 
@@ -81,9 +86,25 @@ const NavBar = () => {
       borderBottom={borderWidth}
       borderColor={borderColor}
     >
-      <Flex justify="space-between" align="center" w="full" maxW="7xl" px="5">
-        <HStack as={RouterLink} to="/" mr="3rem">
-          <chakra.img src={logo} height="9" mr="4"></chakra.img>
+      <Flex
+        justify={{ base: "flex-start", lg: "space-between" }}
+        align="center"
+        w="full"
+        maxW="7xl"
+        px="5"
+      >
+        <HStack
+          as={RouterLink}
+          to="/"
+          mr={{ base: 1, xl: 2 }}
+          order={2}
+          flex={1}
+        >
+          <chakra.img
+            src={logo}
+            height="9"
+            mr={{ base: 2, lg: 4 }}
+          ></chakra.img>
           <VStack spacing="-7px" align="left">
             <Text fontWeight="700" fontSize="md">
               Materialize Cloud
@@ -93,18 +114,8 @@ const NavBar = () => {
             </Text>
           </VStack>
         </HStack>
-
-        <HStack
-          spacing="3"
-          flex="1"
-          display="flex"
-          alignSelf="stretch"
-          alignItems="stretch"
-        >
-          <NavItem label="Deployments" href="/deployments" />
-        </HStack>
-
-        <HStack spacing="5">
+        <NavMenu />
+        <HStack spacing="5" order={2}>
           <WhatsNew />
           {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
@@ -114,6 +125,62 @@ const NavBar = () => {
         </HStack>
       </Flex>
     </Flex>
+  );
+};
+
+const platformNavItems = [
+  { label: "Clusters", href: "/platform/clusters" },
+  { label: "Sources", href: "/platform/sources" },
+  { label: "Views", href: "/platform/views" },
+  { label: "Sinks", href: "/platform/sinks" },
+];
+const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
+
+const NavMenu = () => {
+  const [isPlatform] = useRecoilState(platform);
+  const navItems = isPlatform ? platformNavItems : legacyNavItems;
+  return (
+    <>
+      <HStack
+        spacing="3"
+        flex="2"
+        order={2}
+        display={{ base: isPlatform ? "none" : "flex", lg: "flex" }}
+        alignSelf="stretch"
+        alignItems="stretch"
+        ml={{ base: 0.5, xl: 2 }}
+        mr={{ base: 0.5, xl: 1 }}
+      >
+        {navItems.map((item) => (
+          <NavItem key={`nav-button-${item.label}`} {...item} />
+        ))}
+      </HStack>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          aria-label="Menu"
+          title="Menu"
+          icon={<HamburgerIcon />}
+          display={{ base: isPlatform ? "block" : "none", lg: "none" }}
+          sx={{
+            order: 1,
+          }}
+          variant="outline"
+          mr="1rem"
+        />
+        <MenuList>
+          {navItems.map((item) => (
+            <MenuItem
+              as={RouterLink}
+              key={`menu-item-${item.label}`}
+              to={item.href}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    </>
   );
 };
 
@@ -132,7 +199,7 @@ const NavItem = (props: NavItemProps) => {
       to={href}
       aria-current={active ? "page" : undefined}
       spacing="2"
-      px="6"
+      px={{ base: 3, lg: 5, xl: 6 }}
       transition="all 0.2s"
       color="gray.200"
       _hover={{ bg: "whiteAlpha.200" }}
@@ -144,6 +211,8 @@ const NavItem = (props: NavItemProps) => {
         borderRight: "3px solid transparent",
         paddingTop: "3px",
       }}
+      borderLeft={"3px solid transparent"}
+      borderRight={"3px solid transparent"}
     >
       <Box fontWeight="semibold">{props.label}</Box>
     </HStack>
@@ -153,7 +222,7 @@ const NavItem = (props: NavItemProps) => {
 const HelpDropdown = () => {
   return (
     <Menu>
-      <MenuButton>
+      <MenuButton aria-label="Help" title="Help">
         <Box
           bg="white"
           rounded="full"
@@ -240,7 +309,7 @@ const ProfileDropdown = () => {
 
   return (
     <Menu>
-      <MenuButton>
+      <MenuButton aria-label="Profile" title="Profile">
         <Avatar
           size="sm"
           src={user.profilePictureUrl || user.profileImage}

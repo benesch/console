@@ -11,7 +11,11 @@
  */
 
 import { extendTheme } from "@chakra-ui/react";
-import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
+import {
+  createBreakpoints,
+  mode,
+  StyleFunctionProps,
+} from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 
 import SignupFooter from "../layouts/SignupFooter";
@@ -20,12 +24,21 @@ import * as components from "./components";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 
+const breakpoints = createBreakpoints({
+  sm: "30em",
+  md: "48em",
+  lg: "62em",
+  xl: "80em",
+  "2xl": "96em",
+});
+
 export const chakraTheme = extendTheme({
   global: {
     body: {
       fontFamily: fontDefault,
     },
   },
+  breakpoints,
   components,
   colors: {
     ...colors,

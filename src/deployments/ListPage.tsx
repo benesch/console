@@ -6,7 +6,6 @@
 import {
   Alert,
   AlertIcon,
-  Heading,
   HStack,
   Link,
   Spacer,
@@ -21,7 +20,6 @@ import {
   Tr,
   useColorModeValue,
   useInterval,
-  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
@@ -34,16 +32,13 @@ import {
 import { useAuth } from "../api/auth";
 import { Card, CardContent } from "../components/cardComponents";
 import SupportLink from "../components/SupportLink";
+import { BaseLayout, PageBreadcrumbs, PageHeader } from "../layouts/BaseLayout";
 import {
-  BaseLayout,
-  PageBreadcrumbs,
-  PageHeader,
-  PageHeading,
-} from "../layouts/BaseLayout";
-import EnvironmentSelectField from "../layouts/EnvironmentSelect";
+  EmptyList,
+  ListFetchError,
+  ListPageHeaderContent,
+} from "../layouts/listPageComponents";
 import currentEnvironment from "../recoil/currentEnvironment";
-import CloudSvg from "../svg/CloudSvg";
-import colors from "../theme/colors";
 import useCache from "../utils/useCache";
 import CreateDeploymentModal from "./create/CreateDeploymentModal";
 import DeploymentStateBadge from "./DeploymentStateBadge";
@@ -64,32 +59,26 @@ const DeploymentListPage = () => {
     });
   }, [envFilter, deployments]);
 
-  let deploymentsView;
-  let canCreateDeployments = null;
+  const isLoading = !deployments || organization === null;
+  const isEmpty = !isLoading && deployments.length === 0;
+  const canCreateDeployments =
+    isLoading || deployments.length < organization.deploymentLimit;
   // FIXME: add error handling and message to the user
   // FIXME: flatten the conditional branches by extracting returned components
 
-  if (!deployments || organization === null) {
-    deploymentsView = <Spinner data-testid="loading-spinner" />;
-  } else {
-    canCreateDeployments = deployments.length < organization.deploymentLimit;
-    if (deployments.length === 0) {
-      deploymentsView = <EmptyDeploymentList />;
-    } else {
-      deploymentsView = <DeploymentTable deployments={filteredDeployments} />;
-    }
-  }
   return (
     <BaseLayout>
-      <PageBreadcrumbs></PageBreadcrumbs>
+      <PageBreadcrumbs />
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-          <HStack>
-            <PageHeading>Deployments</PageHeading>
-            <EnvironmentSelectField />
-          </HStack>
-          {error && <DeploymentListFetchErrorWarning />}
+          <ListPageHeaderContent title="Deployments" />
         </HStack>
+        {!!error && (
+          <ListFetchError
+            data-testid="fetch-deployment-issue-alert"
+            message={`Failed to load list of deployments`}
+          />
+        )}
         <Spacer />
         <CreateDeploymentModal
           refetch={refetch}
@@ -97,8 +86,12 @@ const DeploymentListPage = () => {
           size="sm"
         />
       </PageHeader>
-      {canCreateDeployments === false && <DeploymentLimitWarning />}
-      {deploymentsView}
+      {isLoading && <Spinner data-testid="loading-spinner" />}
+      {isEmpty && <EmptyList title="deployments" />}
+      {!canCreateDeployments && <DeploymentLimitWarning />}
+      {!isLoading && !isEmpty && (
+        <DeploymentTable deployments={filteredDeployments} />
+      )}
     </BaseLayout>
   );
 };
@@ -134,40 +127,6 @@ const DeploymentLimitWarning = () => {
         <SupportLink>Contact us.</SupportLink>
       </Text>
     </Alert>
-  );
-};
-
-const DeploymentListFetchErrorWarning: React.FC = () => {
-  return (
-    <Alert
-      status="warning"
-      p={1}
-      px={2}
-      data-testid="fetch-deployment-issue-alert"
-    >
-      <AlertIcon />
-      <Text>Failed to load list of deployments</Text>
-    </Alert>
-  );
-};
-
-const EmptyDeploymentList = () => {
-  const borderColor = useColorModeValue(colors.purple[600], colors.purple[400]);
-
-  return (
-    <VStack
-      border={`1px dashed ${borderColor}`}
-      borderRadius="4px"
-      minHeight="600px"
-      alignItems="center"
-      justifyContent="center"
-      spacing="5"
-    >
-      <CloudSvg />
-      <Heading fontWeight="400" fontSize="2xl">
-        No deployments yet.
-      </Heading>
-    </VStack>
   );
 };
 
