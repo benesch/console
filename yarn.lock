@@ -8642,10 +8642,10 @@ pupa@^2.0.1:
   dependencies:
     escape-goat "^2.0.0"
 
-pyright@1.1.193:
-  version "1.1.193"
-  resolved "https://registry.yarnpkg.com/pyright/-/pyright-1.1.193.tgz#3c5568ebb460baa4cf64587f4baa9178e02653f4"
-  integrity sha512-01hkfhK1PYKPSWbJrYgNwwlsVH+Thp1xmkKZjxVZrGFqavkJbhETlg1RcAHMnmU8Sg7G4Ry99dW6IsSGyCdzXg==
+pyright@1.1.221:
+  version "1.1.221"
+  resolved "https://registry.yarnpkg.com/pyright/-/pyright-1.1.221.tgz#c912dd49e43d7756e3e5550f66eee671dfe7740f"
+  integrity sha512-TJUEXRobE1zGOTU+FVkGA+5cVVDVXohg4NuGffMsWRJXhUA4blZcW08jXmBH+vT3d2KZOdkngJpRthyr2nYybw==
 
 qs@6.7.0:
   version "6.7.0"
