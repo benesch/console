@@ -1,23 +1,44 @@
-import { Link, Tag } from "@chakra-ui/react";
-import React from "react";
+import { Box, Link, Tooltip } from "@chakra-ui/react";
+import React, { MouseEventHandler } from "react";
 
 import { useWhatsNew } from "./hook";
 
 const WhatsNew = () => {
   const { visible, onLinkClicked, releaseNoteLink } = useWhatsNew();
+  const onClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    // This makes clicks here go to the release notes
+    // rather than bubbling to the full logo home page link
+    e.stopPropagation();
+    onLinkClicked();
+  };
   if (!(visible && releaseNoteLink)) return null;
 
   return (
-    <Tag
-      as={Link}
-      onClick={onLinkClicked}
-      isExternal
-      href={releaseNoteLink}
-      background="whiteAlpha.300"
-      color="white"
-    >
-      ✨ What&apos;s new
-    </Tag>
+    <Box position="absolute" top={-4} right={-4}>
+      <Tooltip label="What's new" fontSize="xs" placement="right">
+        <Box
+          as={Link}
+          onClick={onClick}
+          isExternal
+          href={releaseNoteLink}
+          bg="whiteAlpha.400"
+          _hover={{ background: "whiteAlpha.600", textDecoration: "none" }}
+          borderRadius="xl"
+          px="1"
+          py="1"
+          fontSize="xs"
+          rounded="full"
+          h="5"
+          w="5"
+          color="purple.900"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          ✨
+        </Box>
+      </Tooltip>
+    </Box>
   );
 };
 
