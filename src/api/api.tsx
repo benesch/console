@@ -666,44 +666,44 @@ export const useDeploymentsMetricsMemoryRetrieve = ({
     { pathParams: { id, period }, ...props }
   );
 
-export interface DeploymentsSecretsRetrievePathParams {
+export interface DeploymentsSecretsListPathParams {
   id: string;
 }
 
-export type DeploymentsSecretsRetrieveProps = Omit<
-  GetProps<string, unknown, void, DeploymentsSecretsRetrievePathParams>,
+export type DeploymentsSecretsListProps = Omit<
+  GetProps<string[], unknown, void, DeploymentsSecretsListPathParams>,
   "path"
 > &
-  DeploymentsSecretsRetrievePathParams;
+  DeploymentsSecretsListPathParams;
 
 /**
  * List all customer defined secrets for the deployment
  */
-export const DeploymentsSecretsRetrieve = ({
+export const DeploymentsSecretsList = ({
   id,
   ...props
-}: DeploymentsSecretsRetrieveProps) => (
-  <Get<string, unknown, void, DeploymentsSecretsRetrievePathParams>
+}: DeploymentsSecretsListProps) => (
+  <Get<string[], unknown, void, DeploymentsSecretsListPathParams>
     path={`/api/deployments/${id}/secrets`}
     {...props}
   />
 );
 
-export type UseDeploymentsSecretsRetrieveProps = Omit<
-  UseGetProps<string, unknown, void, DeploymentsSecretsRetrievePathParams>,
+export type UseDeploymentsSecretsListProps = Omit<
+  UseGetProps<string[], unknown, void, DeploymentsSecretsListPathParams>,
   "path"
 > &
-  DeploymentsSecretsRetrievePathParams;
+  DeploymentsSecretsListPathParams;
 
 /**
  * List all customer defined secrets for the deployment
  */
-export const useDeploymentsSecretsRetrieve = ({
+export const useDeploymentsSecretsList = ({
   id,
   ...props
-}: UseDeploymentsSecretsRetrieveProps) =>
-  useGet<string, unknown, void, DeploymentsSecretsRetrievePathParams>(
-    (paramsInPath: DeploymentsSecretsRetrievePathParams) =>
+}: UseDeploymentsSecretsListProps) =>
+  useGet<string[], unknown, void, DeploymentsSecretsListPathParams>(
+    (paramsInPath: DeploymentsSecretsListPathParams) =>
       `/api/deployments/${paramsInPath.id}/secrets`,
     { pathParams: { id }, ...props }
   );
