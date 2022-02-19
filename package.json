@@ -16,7 +16,7 @@
     "@frontegg/react-core": "^3.0.21",
     "@segment/analytics.js-core": "^4.1.11",
     "@segment/analytics.js-integration-segmentio": "^4.4.7",
-    "@sentry/react": "^6.16.1",
+    "@sentry/react": "^6.17.9",
     "@sentry/tracing": "^6.17.4",
     "@types/mini-css-extract-plugin": "^2.4.0",
     "css-loader": "^6.5.1",
