@@ -99,24 +99,24 @@ const NavBar = () => {
           mr={{ base: 1, xl: 2 }}
           order={2}
           flex={1}
+          height="full"
         >
-          <chakra.img
-            src={logo}
-            height="9"
-            mr={{ base: 2, lg: 4 }}
-          ></chakra.img>
-          <VStack spacing="-7px" align="left">
+          <VStack position="relative" flex="0 0 36px" mr={{ base: 2, lg: 4 }}>
+            <chakra.img src={logo} height="9"></chakra.img>
+            <WhatsNew />
+          </VStack>
+          <VStack spacing="-7px" align="flex-start">
             <Text fontWeight="700" fontSize="md">
               Materialize Cloud
             </Text>
             <Text fontWeight="400" fontSize="sm" color="gray.200">
               open beta
             </Text>
+            <WhatsNew />
           </VStack>
         </HStack>
         <NavMenu />
         <HStack spacing="5" order={2}>
-          <WhatsNew />
           {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
           )}
