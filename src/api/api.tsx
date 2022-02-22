@@ -666,6 +666,151 @@ export const useDeploymentsMetricsMemoryRetrieve = ({
     { pathParams: { id, period }, ...props }
   );
 
+export interface DeploymentsSecretsListPathParams {
+  id: string;
+}
+
+export type DeploymentsSecretsListProps = Omit<
+  GetProps<string[], unknown, void, DeploymentsSecretsListPathParams>,
+  "path"
+> &
+  DeploymentsSecretsListPathParams;
+
+/**
+ * List all customer defined secrets for the deployment
+ */
+export const DeploymentsSecretsList = ({
+  id,
+  ...props
+}: DeploymentsSecretsListProps) => (
+  <Get<string[], unknown, void, DeploymentsSecretsListPathParams>
+    path={`/api/deployments/${id}/secrets`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsSecretsListProps = Omit<
+  UseGetProps<string[], unknown, void, DeploymentsSecretsListPathParams>,
+  "path"
+> &
+  DeploymentsSecretsListPathParams;
+
+/**
+ * List all customer defined secrets for the deployment
+ */
+export const useDeploymentsSecretsList = ({
+  id,
+  ...props
+}: UseDeploymentsSecretsListProps) =>
+  useGet<string[], unknown, void, DeploymentsSecretsListPathParams>(
+    (paramsInPath: DeploymentsSecretsListPathParams) =>
+      `/api/deployments/${paramsInPath.id}/secrets`,
+    { pathParams: { id }, ...props }
+  );
+
+export interface DeploymentsSecretsCreatePathParams {
+  id: string;
+  secret: string;
+}
+
+export type DeploymentsSecretsCreateProps = Omit<
+  MutateProps<void, unknown, void, string, DeploymentsSecretsCreatePathParams>,
+  "path" | "verb"
+> &
+  DeploymentsSecretsCreatePathParams;
+
+/**
+ * Insert/update a customer defined secret in the deployment
+ */
+export const DeploymentsSecretsCreate = ({
+  id,
+  secret,
+  ...props
+}: DeploymentsSecretsCreateProps) => (
+  <Mutate<void, unknown, void, string, DeploymentsSecretsCreatePathParams>
+    verb="POST"
+    path={`/api/deployments/${id}/secrets/${secret}`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsSecretsCreateProps = Omit<
+  UseMutateProps<
+    void,
+    unknown,
+    void,
+    string,
+    DeploymentsSecretsCreatePathParams
+  >,
+  "path" | "verb"
+> &
+  DeploymentsSecretsCreatePathParams;
+
+/**
+ * Insert/update a customer defined secret in the deployment
+ */
+export const useDeploymentsSecretsCreate = ({
+  id,
+  secret,
+  ...props
+}: UseDeploymentsSecretsCreateProps) =>
+  useMutate<void, unknown, void, string, DeploymentsSecretsCreatePathParams>(
+    "POST",
+    (paramsInPath: DeploymentsSecretsCreatePathParams) =>
+      `/api/deployments/${paramsInPath.id}/secrets/${paramsInPath.secret}`,
+    { pathParams: { id, secret }, ...props }
+  );
+
+export interface DeploymentsSecretsDestroyPathParams {
+  id: string;
+}
+
+export type DeploymentsSecretsDestroyProps = Omit<
+  MutateProps<void, unknown, void, string, DeploymentsSecretsDestroyPathParams>,
+  "path" | "verb"
+> &
+  DeploymentsSecretsDestroyPathParams;
+
+/**
+ * Delete a customer defined secret from the deployment
+ */
+export const DeploymentsSecretsDestroy = ({
+  id,
+  ...props
+}: DeploymentsSecretsDestroyProps) => (
+  <Mutate<void, unknown, void, string, DeploymentsSecretsDestroyPathParams>
+    verb="DELETE"
+    path={`/api/deployments/${id}/secrets`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsSecretsDestroyProps = Omit<
+  UseMutateProps<
+    void,
+    unknown,
+    void,
+    string,
+    DeploymentsSecretsDestroyPathParams
+  >,
+  "path" | "verb"
+> &
+  DeploymentsSecretsDestroyPathParams;
+
+/**
+ * Delete a customer defined secret from the deployment
+ */
+export const useDeploymentsSecretsDestroy = ({
+  id,
+  ...props
+}: UseDeploymentsSecretsDestroyProps) =>
+  useMutate<void, unknown, void, string, DeploymentsSecretsDestroyPathParams>(
+    "DELETE",
+    (paramsInPath: DeploymentsSecretsDestroyPathParams) =>
+      `/api/deployments/${paramsInPath.id}/secrets`,
+    { pathParams: { id }, ...props }
+  );
+
 export interface DeploymentsTailscaleLogsRetrieveQueryParams {
   previous?: boolean;
 }
