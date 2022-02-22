@@ -93,17 +93,18 @@ const NavBar = () => {
         maxW="7xl"
         px="5"
       >
-        <HStack
-          as={RouterLink}
-          to="/"
-          mr={{ base: 1, xl: 2 }}
-          order={2}
-          flex={1}
-          height="full"
-        >
-          <VStack position="relative" flex="0 0 36px" mr={{ base: 2, lg: 4 }}>
-            <chakra.img src={logo} height="9"></chakra.img>
-            <WhatsNew />
+        <HStack as={RouterLink} to="/" mr={2} order={2} flex={1} height="full">
+          <VStack
+            position="relative"
+            flex="0 0 24px"
+            mr={{ base: 1, md: 2, lg: 4 }}
+          >
+            <chakra.img src={logo} height={{ sm: 6, md: 9 }}></chakra.img>
+            <WhatsNew
+              position="absolute"
+              top={{ base: -5, md: -4 }}
+              right={{ base: -3, md: -4 }}
+            />
           </VStack>
           <VStack spacing="-7px" align="flex-start">
             <Text fontWeight="700" fontSize="md">
@@ -112,11 +113,10 @@ const NavBar = () => {
             <Text fontWeight="400" fontSize="sm" color="gray.200">
               open beta
             </Text>
-            <WhatsNew />
           </VStack>
         </HStack>
         <NavMenu />
-        <HStack spacing="5" order={2}>
+        <HStack spacing={{ base: 2, md: 5 }} order={2}>
           {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
           )}
@@ -166,7 +166,7 @@ const NavMenu = () => {
             order: 1,
           }}
           variant="outline"
-          mr="1rem"
+          mr={{ base: 3, md: 4 }}
         />
         <MenuList>
           {navItems.map((item) => (
@@ -268,10 +268,10 @@ const TrialBubble = (props: TrialBubble) => {
   }
   return (
     <HStack
-      spacing="4"
+      spacing={{ base: 3, md: 4 }}
       bg={expired ? "red.500" : "whiteAlpha.300"}
       borderRadius="md"
-      px="3"
+      px={{ sm: 2, md: 3 }}
       py="1"
       fontSize="sm"
     >

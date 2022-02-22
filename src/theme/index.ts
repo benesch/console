@@ -24,21 +24,12 @@ import * as components from "./components";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 
-const breakpoints = createBreakpoints({
-  sm: "30em",
-  md: "48em",
-  lg: "62em",
-  xl: "80em",
-  "2xl": "96em",
-});
-
 export const chakraTheme = extendTheme({
   global: {
     body: {
       fontFamily: fontDefault,
     },
   },
-  breakpoints,
   components,
   colors: {
     ...colors,
