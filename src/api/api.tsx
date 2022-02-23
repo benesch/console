@@ -470,6 +470,42 @@ export const useDeploymentsChangesList = ({
     { pathParams: { id }, ...props }
   );
 
+export interface DeploymentsIpRetrievePathParams {
+  id: string;
+}
+
+export type DeploymentsIpRetrieveProps = Omit<
+  GetProps<string, unknown, void, DeploymentsIpRetrievePathParams>,
+  "path"
+> &
+  DeploymentsIpRetrievePathParams;
+
+export const DeploymentsIpRetrieve = ({
+  id,
+  ...props
+}: DeploymentsIpRetrieveProps) => (
+  <Get<string, unknown, void, DeploymentsIpRetrievePathParams>
+    path={`/api/deployments/${id}/ip`}
+    {...props}
+  />
+);
+
+export type UseDeploymentsIpRetrieveProps = Omit<
+  UseGetProps<string, unknown, void, DeploymentsIpRetrievePathParams>,
+  "path"
+> &
+  DeploymentsIpRetrievePathParams;
+
+export const useDeploymentsIpRetrieve = ({
+  id,
+  ...props
+}: UseDeploymentsIpRetrieveProps) =>
+  useGet<string, unknown, void, DeploymentsIpRetrievePathParams>(
+    (paramsInPath: DeploymentsIpRetrievePathParams) =>
+      `/api/deployments/${paramsInPath.id}/ip`,
+    { pathParams: { id }, ...props }
+  );
+
 export interface DeploymentsLogsRetrieveQueryParams {
   previous?: boolean;
 }
