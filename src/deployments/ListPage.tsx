@@ -144,9 +144,9 @@ const DeploymentTable = (props: DeploymentTableProps) => {
           <Thead>
             <Tr>
               <Th>Name</Th>
-              <Th>Hostname</Th>
+              <Th display={{ base: "none", md: "table-cell" }}>Hostname</Th>
               <Th>Size</Th>
-              <Th>Version</Th>
+              <Th display={{ base: "none", md: "table-cell" }}>Version</Th>
               <Th>Status</Th>
             </Tr>
           </Thead>
@@ -175,9 +175,19 @@ const DeploymentTable = (props: DeploymentTableProps) => {
                       {d.name}
                     </Link>
                   </Td>
-                  <Td style={{ whiteSpace: "nowrap" }}>{d.hostname}</Td>
+                  <Td
+                    display={{ base: "none", md: "table-cell" }}
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {d.hostname}
+                  </Td>
                   <Td style={{ whiteSpace: "nowrap" }}>{d.size}</Td>
-                  <Td style={{ whiteSpace: "nowrap" }}>{d.mzVersion}</Td>
+                  <Td
+                    display={{ base: "none", md: "table-cell" }}
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {d.mzVersion}
+                  </Td>
                   <Td style={{ whiteSpace: "nowrap" }}>
                     <DeploymentStateBadge deployment={d} />
                   </Td>

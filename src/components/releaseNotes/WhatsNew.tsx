@@ -1,20 +1,18 @@
-import { Box, Link, Tooltip } from "@chakra-ui/react";
+import { Box, BoxProps, Link, Tooltip } from "@chakra-ui/react";
 import React, { MouseEventHandler } from "react";
 
 import { useWhatsNew } from "./hook";
 
-const WhatsNew = () => {
+const WhatsNew = (props: BoxProps) => {
   const { visible, onLinkClicked, releaseNoteLink } = useWhatsNew();
   const onClick: MouseEventHandler<HTMLDivElement> = (e) => {
-    // This makes clicks here go to the release notes
-    // rather than bubbling to the full logo home page link
     e.stopPropagation();
     onLinkClicked();
   };
   if (!(visible && releaseNoteLink)) return null;
 
   return (
-    <Box position="absolute" top={-4} right={-4}>
+    <Box {...props}>
       <Tooltip label="What's new" fontSize="xs" placement="right">
         <Box
           as={Link}
