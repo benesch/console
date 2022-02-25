@@ -15,6 +15,7 @@ import {
   useInterval,
   VStack,
 } from "@chakra-ui/react";
+import compareVersions from "compare-versions";
 import React from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
@@ -112,7 +113,7 @@ const DetailContent = ({
       </PageHeader>
       <HStack display="flex" spacing="5" alignItems="top">
         <VStack flex="1" spacing="5" minWidth="0">
-          {deployment.mzVersion !== latestVersion && (
+          {compareVersions(latestVersion, deployment.mzVersion) === 1 && (
             <DeploymentUpgradeAlert
               deployment={deployment}
               latestVersion={latestVersion}
