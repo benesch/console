@@ -9,6 +9,7 @@ export const globalConfigStub: GlobalConfig = {
   googleAnalyticsId: "google-analytics-id",
   releaseNotesRootURL: null,
   lastReleaseNoteId: null,
+  isDevelopment: false,
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {

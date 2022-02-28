@@ -14,6 +14,7 @@ export interface GlobalConfig {
   googleAnalyticsId: string | null;
   releaseNotesRootURL: string | null;
   lastReleaseNoteId: string | null;
+  isDevelopment: boolean | null;
 }
 
 declare global {

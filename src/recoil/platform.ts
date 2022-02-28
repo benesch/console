@@ -4,7 +4,7 @@ import keys from "./keyConstants";
 
 const platform = atom({
   key: keys.PLATFORM,
-  default: false, // edit to see platform-specific features
+  default: window.CONFIG.isDevelopment,
 });
 
 export default platform;
