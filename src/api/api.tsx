@@ -15,7 +15,7 @@ export const SPEC_VERSION = "0.1.0";
 export interface Deployment {
   id: string;
   organization: string;
-  tlsAuthority: string;
+  tlsAuthority: string | null;
   name: string;
   hostname: string | null;
   flaggedForDeletion: boolean;
