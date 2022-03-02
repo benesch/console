@@ -21,6 +21,7 @@ export const validDeployment: Deployment = {
     provider: "AWS",
     region: "us-east-1",
   },
+  releaseTrack: "stable",
 };
 
 export const validEUDeployment: Deployment = {
