@@ -21,6 +21,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 
 import {
   Deployment,
+  useDeploymentsIpRetrieve,
   useDeploymentsRetrieve,
   useMzVersionsLatestRetrieve,
 } from "../../api/api";
@@ -201,25 +202,29 @@ interface DetailCardProps {
 }
 
 const DetailCard = ({ deployment }: DetailCardProps) => {
+  const { data } = useDeploymentsIpRetrieve({ id: deployment.id });
   return (
     <Card>
       <CardHeader>Details</CardHeader>
       <CardContent>
         <VStack spacing="3" align="left">
-          <CardField name="Name">{deployment.name}</CardField>
+          <CardField name="Name">{deployment.name || "-"}</CardField>
           <CardField name="Status">
             <DeploymentStateBadge deployment={deployment} />
           </CardField>
           <CardField name="Hostname">
-            <CopyableText>{deployment.hostname ?? ""}</CopyableText>
+            <CopyableText>{deployment.hostname}</CopyableText>
           </CardField>
-          <CardField name="Version">{deployment.mzVersion}</CardField>
-          <CardField name="Size">{deployment.size}</CardField>
+          <CardField name="Static IP">
+            <CopyableText>{data}</CopyableText>
+          </CardField>
+          <CardField name="Version">{deployment.mzVersion || "-"}</CardField>
+          <CardField name="Size">{deployment.size || "-"}</CardField>
           <CardField name="Cloud provider">
-            {deployment.cloudProviderRegion.provider}
+            {deployment.cloudProviderRegion.provider || "-"}
           </CardField>
           <CardField name="Region">
-            {deployment.cloudProviderRegion.region}
+            {deployment.cloudProviderRegion.region || "-"}
           </CardField>
           <CardField name="Cluster ID">{deployment.clusterId || "-"}</CardField>
         </VStack>

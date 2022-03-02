@@ -46,11 +46,18 @@ export const CopyStateIcon: React.FC<{ copied: boolean } & IconProps> = ({
 };
 
 /** A component that enable the children text to be copied */
-export const CopyableText: React.FC<TextProps & { children: string }> = (
+export const CopyableText: React.FC<TextProps & { children: string | null }> = (
   props
 ) => {
   const content = props.children ?? "";
   const { onCopy, copied, shouldDisplayIcon } = useCopyableText(content);
+  if (!content) {
+    return (
+      <Text color="inherit" {...props}>
+        -
+      </Text>
+    );
+  }
   return (
     <Button
       variant="link"

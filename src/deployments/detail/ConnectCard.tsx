@@ -21,17 +21,13 @@ import { Deployment } from "../../api/api";
 import { useAuth } from "../../api/auth";
 import {
   Card,
-  CardContent,
-  CardField,
   CardFooter,
-  CardHeader,
   CardTab,
   CardTabs,
   CardTabsHeaders,
   CardTitle,
 } from "../../components/cardComponents";
 import CodeBlock from "../../components/CodeBlock";
-import { CopyableText } from "../../components/Copyable";
 
 interface DeploymentConnectCardProps {
   deployment: Deployment;
