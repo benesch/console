@@ -27,6 +27,7 @@ export interface Deployment {
   materializedExtraArgs: string[];
   clusterId: string | null;
   mzVersion: string;
+  releaseTrack: ReleaseTrackEnum;
   status: string;
   enableTailscale: boolean;
   cloudProviderRegion: SupportedCloudRegion;
@@ -40,6 +41,7 @@ export interface DeploymentRequest {
   disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
+  releaseTrack?: ReleaseTrackEnum;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
   cloudProviderRegion: SupportedCloudRegionRequest;
@@ -111,6 +113,7 @@ export interface PatchedDeploymentUpdateRequest {
   disableUserIndexes?: boolean;
   materializedExtraArgs?: string[];
   mzVersion?: string;
+  releaseTrack?: ReleaseTrackEnum;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
 }
@@ -128,6 +131,8 @@ export interface PrometheusMetrics {
 }
 
 export type ProviderEnum = "AWS" | "local";
+
+export type ReleaseTrackEnum = "canary" | "stable";
 
 export interface SupportedCloudRegion {
   provider: ProviderEnum;
