@@ -114,7 +114,8 @@ const DetailContent = ({
       </PageHeader>
       <HStack display="flex" spacing="5" alignItems="top">
         <VStack flex="1" spacing="5" minWidth="0">
-          {semver.valid(deployment.mzVersion) &&
+          {semver.valid(latestVersion) &&
+            semver.valid(deployment.mzVersion) &&
             semver.gt(latestVersion, deployment.mzVersion) && (
               <DeploymentUpgradeAlert
                 deployment={deployment}
