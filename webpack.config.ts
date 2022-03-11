@@ -2,6 +2,19 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import { Configuration } from "webpack";
 
+const additionalPlugins = [];
+if (process.env.SENTRY_RELEASE) {
+  const SentryPlugin = require("@sentry/webpack-plugin");
+  additionalPlugins.push(new SentryPlugin({
+    include: path.resolve(__dirname, "dist", "frontend"),
+    org: 'materializeinc',
+    project: 'cloud-frontend',
+    release: process.env.SENTRY_RELEASE,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  }));
+
+}
+
 const config: Configuration = {
   entry: "./src/index.tsx",
   resolve: {
@@ -16,6 +29,7 @@ const config: Configuration = {
         options: {
           // Type checking is provided by fork-ts-checker.
           transpileOnly: true,
+          // compilerOptions: { "sourceMap": true }
         },
       },
       {
@@ -28,7 +42,7 @@ const config: Configuration = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [new MiniCssExtractPlugin(), ...additionalPlugins],
   optimization: {
     splitChunks: {
       cacheGroups: {
@@ -41,6 +55,7 @@ const config: Configuration = {
       },
     },
   },
+  devtool: "source-map",
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist", "frontend"),
