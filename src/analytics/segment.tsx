@@ -19,6 +19,7 @@ export default class SegmentAnalyticsClient extends AnalyticsClient {
       this.segmentNativeClient.initialize({
         "Segment.io": {
           apiKey: config.segmentApiKey,
+          apiHost: "api.segment.materialize.com/v1",
           retryQueue: true,
           addBundledMetadata: true,
         },
