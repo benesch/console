@@ -9,7 +9,6 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
-    "target": "es6",
-    "sourceMap": true
+    "target": "es6"
   }
 }

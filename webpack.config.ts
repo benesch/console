@@ -3,7 +3,9 @@ import path from "path";
 import { Configuration } from "webpack";
 
 const additionalPlugins = [];
-if (process.env.SENTRY_RELEASE) {
+let additionalTSOptions: { [index: string]: any } = {};
+if (process.env.SOURCE_MAPS) {
+
   const SentryPlugin = require("@sentry/webpack-plugin");
   additionalPlugins.push(new SentryPlugin({
     include: path.resolve(__dirname, "dist", "frontend"),
@@ -13,6 +15,9 @@ if (process.env.SENTRY_RELEASE) {
     authToken: process.env.SENTRY_AUTH_TOKEN,
   }));
 
+  // Ensure the Typescript compiler knows to generate source maps
+  additionalTSOptions = require("./tsconfig.json");
+  additionalTSOptions.compilerOptions.sourceMap = true;
 }
 
 const config: Configuration = {
@@ -29,7 +34,7 @@ const config: Configuration = {
         options: {
           // Type checking is provided by fork-ts-checker.
           transpileOnly: true,
-          // compilerOptions: { "sourceMap": true }
+          ...additionalTSOptions
         },
       },
       {
