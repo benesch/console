@@ -5,15 +5,17 @@ import { Configuration } from "webpack";
 const additionalPlugins = [];
 let additionalTSOptions: { [index: string]: any } = {};
 if (process.env.SOURCE_MAPS) {
-
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const SentryPlugin = require("@sentry/webpack-plugin");
-  additionalPlugins.push(new SentryPlugin({
-    include: path.resolve(__dirname, "dist", "frontend"),
-    org: 'materializeinc',
-    project: 'cloud-frontend',
-    release: process.env.SENTRY_RELEASE,
-    authToken: process.env.SENTRY_AUTH_TOKEN,
-  }));
+  additionalPlugins.push(
+    new SentryPlugin({
+      include: path.resolve(__dirname, "dist", "frontend"),
+      org: "materializeinc",
+      project: "cloud-frontend",
+      release: process.env.SENTRY_RELEASE,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    })
+  );
 
   // Ensure the Typescript compiler knows to generate source maps
   additionalTSOptions = require("./tsconfig.json");
@@ -34,7 +36,7 @@ const config: Configuration = {
         options: {
           // Type checking is provided by fork-ts-checker.
           transpileOnly: true,
-          ...additionalTSOptions
+          ...additionalTSOptions,
         },
       },
       {
