@@ -14,6 +14,7 @@ import {
 } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
+import AppPasswordsPage from "./access/AppPasswordsPage";
 import analyticsClients from "./analytics";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { useOrganizationsRetrieve } from "./api/api";
@@ -35,6 +36,9 @@ const Router = () => {
         </ProtectedRoute>
         <ProtectedRoute path="/deployments">
           <DeploymentListPage />
+        </ProtectedRoute>
+        <ProtectedRoute path="/access">
+          <AppPasswordsPage />
         </ProtectedRoute>
         {isPlatform && (
           <ProtectedRoute path="/platform">

@@ -5,6 +5,7 @@
 
 import {
   Button,
+  ButtonProps,
   HStack,
   Input,
   Modal,
@@ -20,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 
-interface Props {
+interface Props extends ButtonProps {
   /** The contents of the modal. */
   children: React.ReactNode;
   /** The color scheme for the open and confirm buttons. */
@@ -29,6 +30,8 @@ interface Props {
   confirmIcon?: React.ReactElement;
   /** The text to use in the open and confirm buttons. */
   actionText: string;
+  /** The text to use in the confirm button. If unspecified, use actionText. */
+  finalActionText?: string;
   /** The text the user will be required to type to confirm the action. */
   confirmText: string;
   /** The callback to invoke if the user successfully confirms the action. */
@@ -43,36 +46,45 @@ interface Props {
  * A modal that requires typing a prompt in order to confirm an action.
  * Intended for use with dangerous actions, like destroying a deployment.
  */
-const DangerActionModal = (props: Props) => {
+const DangerActionModal = ({
+  confirmIcon,
+  actionText,
+  finalActionText,
+  confirmText,
+  onConfirm,
+  children,
+  title,
+  ...props
+}: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [confirmation, setConfirmation] = useState("");
-  const isConfirmed = confirmation === props.confirmText;
+  const isConfirmed = confirmation === confirmText;
   const handleConfirm = async () => {
-    await props.onConfirm();
+    await onConfirm();
     onClose();
   };
 
   return (
     <>
       <Button
-        leftIcon={props.confirmIcon}
-        colorScheme={props.colorScheme}
+        leftIcon={actionText ? confirmIcon : undefined}
         onClick={onOpen}
-        size={props.size}
+        title={title}
+        {...props}
       >
-        {props.actionText}
+        {actionText || confirmIcon}
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{props.title}</ModalHeader>
+          <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pt="3" pb="6">
             <VStack align="left" spacing="4">
-              {props.children}
+              {children}
               <Text fontSize="sm">
-                Enter <strong>{props.confirmText}</strong> to proceed:
+                Enter <strong>{confirmText}</strong> to proceed:
               </Text>
               <Input
                 size="sm"
@@ -91,7 +103,7 @@ const DangerActionModal = (props: Props) => {
                 isDisabled={!isConfirmed}
                 onClick={handleConfirm}
               >
-                {props.actionText}
+                {finalActionText || actionText}
               </Button>
             </HStack>
           </ModalFooter>

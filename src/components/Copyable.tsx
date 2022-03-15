@@ -3,9 +3,14 @@
  * It does not enforce any formatting and exposes styling props via the `@chakra-ui`'s text interface.
  */
 
-import { Button } from "@chakra-ui/button";
 import { CheckIcon, CopyIcon, IconProps } from "@chakra-ui/icons";
 import { HStack, Text, TextProps } from "@chakra-ui/layout";
+import {
+  Button,
+  ButtonProps,
+  useClipboard,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import React from "react";
 
 /** A hook that manage the copy mechanism and the icon state */
@@ -69,6 +74,35 @@ export const CopyableText: React.FC<TextProps & { children: string | null }> = (
         <Text color="inherit" {...props}></Text>
         {shouldDisplayIcon && <CopyStateIcon copied={copied} />}
       </HStack>
+    </Button>
+  );
+};
+
+interface CopyButtonProps extends ButtonProps {
+  contents: string;
+}
+
+export const CopyButton = ({ contents, ...props }: CopyButtonProps) => {
+  const { onCopy } = useClipboard(contents);
+  const buttonBg = useColorModeValue("white", "black");
+
+  return (
+    <Button
+      leftIcon={<CopyIcon />}
+      opacity="0"
+      position="absolute"
+      _groupHover={{ opacity: 1 }}
+      size="xs"
+      bg={buttonBg}
+      colorScheme="purple"
+      variant="outline"
+      top="2"
+      right="2"
+      transition="opacity 0.1s"
+      {...props}
+      onClick={onCopy}
+    >
+      Copy
     </Button>
   );
 };

@@ -12,7 +12,7 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React from "react";
 
 import CloudSvg from "../svg/CloudSvg";
 import colors from "../theme/colors";

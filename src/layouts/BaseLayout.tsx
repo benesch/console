@@ -4,9 +4,7 @@
  */
 
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { Spacer } from "@chakra-ui/react";
 import {
-  Avatar,
   Box,
   chakra,
   Container,
@@ -17,17 +15,15 @@ import {
   Link,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { AdminPortal } from "@frontegg/react";
 import { differenceInDays } from "date-fns";
 import * as React from "react";
-import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
 import logo from "../../img/logo-reverse.svg";
@@ -35,8 +31,8 @@ import { useAuth } from "../api/auth";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
 import platform from "../recoil/platform";
-import { assert } from "../util";
 import PageFooter from "./PageFooter";
+import ProfileDropdown from "./ProfileDropdown";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
@@ -296,46 +292,6 @@ const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
     <MenuItem as="a" href={props.href} target="_blank" fontWeight="medium">
       {props.children}
     </MenuItem>
-  );
-};
-
-const ProfileDropdown = () => {
-  const history = useHistory();
-  const { user, routes: authRoutes } = useAuth();
-  const emailColor = useColorModeValue("gray.500", "gray.200");
-  const signoutColor = useColorModeValue("red.500", "red.300");
-
-  assert(user); // This component is only rendered for logged-in users.
-
-  return (
-    <Menu>
-      <MenuButton aria-label="Profile" title="Profile">
-        <Avatar
-          size="sm"
-          src={user.profilePictureUrl || user.profileImage}
-          name={user.name}
-        />
-      </MenuButton>
-      <MenuList>
-        <VStack px="3" pt="3" pb="2" align="left" lineHeight="1.3" spacing="0">
-          <Text fontWeight="semibold">{user.name}</Text>
-          <Text mt="1" fontSize="xs" color={emailColor}>
-            {user.email}
-          </Text>
-        </VStack>
-        <MenuDivider />
-        <MenuItem fontWeight="medium" onClick={() => AdminPortal.show()}>
-          Account settings
-        </MenuItem>
-        <MenuItem
-          fontWeight="medium"
-          color={signoutColor}
-          onClick={() => history.push(authRoutes.logoutUrl)}
-        >
-          Sign out
-        </MenuItem>
-      </MenuList>
-    </Menu>
   );
 };
 

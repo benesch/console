@@ -7,13 +7,13 @@ import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
   BoxProps,
-  Button,
   chakra,
   HTMLChakraProps,
-  useClipboard,
   useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
+
+import { CopyButton } from "./Copyable";
 
 interface Props extends BoxProps {
   /** The code to display. */
@@ -37,9 +37,7 @@ interface Props extends BoxProps {
  * wrap instead.
  */
 const CodeBlock = ({ wrap, lineNumbers, contents, ...props }: Props) => {
-  const { onCopy } = useClipboard(contents);
   const bg = useColorModeValue("gray.100", "gray.800");
-  const buttonBg = useColorModeValue("white", "black");
 
   const preProps: HTMLChakraProps<"pre"> = {};
 
@@ -64,22 +62,7 @@ const CodeBlock = ({ wrap, lineNumbers, contents, ...props }: Props) => {
 
   return (
     <Box bg={bg} mt="3" role="group" position="relative" {...props}>
-      <Button
-        onClick={onCopy}
-        leftIcon={<CopyIcon />}
-        opacity="0"
-        position="absolute"
-        _groupHover={{ opacity: 1 }}
-        size="xs"
-        bg={buttonBg}
-        colorScheme="purple"
-        variant="outline"
-        top="2"
-        right="2"
-        transition="opacity 0.1s"
-      >
-        Copy
-      </Button>
+      <CopyButton contents={contents} />
       <chakra.pre
         fontSize="sm"
         p="3"

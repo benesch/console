@@ -11,6 +11,9 @@ export const IS_MINIKUBE =
 
 export const EMAIL = "infra+cloud-integration-tests@materialize.com";
 
+export const USER_ID = "40065de2-e723-4bda-a411-8cbc1d7f5c14";
+export const TENANT_ID = "d376e19f-64bf-4d39-9268-5f7f1c3ddec4";
+
 // TODO(benesch): avoid hardcoding this password in the repository. There's
 // nothing sensitive in the account, though, so the worst that could happen if
 // leaked is that someone could spin up a bunch of deployments in this account.
@@ -110,6 +113,54 @@ export class TestContext {
   }
 
   /**
+   * Make a Frontegg API request using the browser's access token.
+   */
+  async fronteggRequest(url: string, request?) {
+    if (Date.now() < this.refreshDeadline) {
+      console.log("Updating auth token...");
+      const auth = await TestContext.authenticate(this.request);
+      this.accessToken = auth.accessToken;
+      this.refreshToken = auth.refreshToken;
+      this.refreshDeadline = TestContext.calculateRefreshDeadline(
+        auth.expiresIn
+      );
+    }
+    url = `https://${adminPortalHost()}${url}`;
+    request = {
+      ...request,
+      headers: {
+        authorization: `Bearer ${this.accessToken}`,
+        "content-type": "application/json",
+        ...(request || {}).headers,
+      },
+    };
+    const response = await this.request.fetch(url, request);
+
+    // rethrowing the error here if the response is not ok.
+    // we also try to attach useful req/res info to the error.
+    // this should be extracted to a helper function, but the evaluate method cannot access a variable out of scope.
+    let responsePayload = undefined;
+    try {
+      responsePayload = await response.text();
+    } finally {
+      if (!response.ok)
+        // eslint-disable-next-line no-unsafe-finally
+        throw new Error(
+          `Frontegg API Error ${response.status}  ${url}, req: ${
+            request.body ?? "No request body"
+          }, res: ${responsePayload ?? "No response body"}`
+        );
+    }
+
+    if (response.status() === 204) {
+      return null;
+    } else if (request.method !== "DELETE") {
+      // we already consume the body as text, so we need to parse manually
+      return JSON.parse(responsePayload);
+    }
+  }
+
+  /**
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?) {
@@ -167,6 +218,38 @@ export class TestContext {
         // if the deployment does not exist, it's okay to ignore the error.
         const deploymentDoesNotExist = e.message.includes("API Error 404");
         if (!deploymentDoesNotExist) {
+          throw e;
+        }
+      }
+    }
+  }
+
+  async deleteAllKeys() {
+    const userKeys = await this.fronteggRequest(
+      `/identity/resources/users/api-tokens/v1`,
+      {
+        headers: {
+          "frontegg-tenant-id": TENANT_ID,
+          "frontegg-user-id": USER_ID,
+        },
+      }
+    );
+    for (const k of userKeys) {
+      try {
+        await this.fronteggRequest(
+          `/identity/resources/users/api-tokens/v1/${k.clientId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "frontegg-tenant-id": TENANT_ID,
+              "frontegg-user-id": USER_ID,
+            },
+          }
+        );
+      } catch (e: unknown) {
+        // if the deployment does not exist, it's okay to ignore the error.
+        const keyDoesNotExist = e.message.includes("API Error 404");
+        if (!keyDoesNotExist) {
           throw e;
         }
       }
