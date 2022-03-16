@@ -10,34 +10,10 @@ const makeSegmentAnalyticsClientWithNoApiKey = (): SegmentAnalyticsClient => {
   return new SegmentAnalyticsClient(globalConfigNoAnalyticsSetup);
 };
 
-jest.mock("@segment/analytics.js-integration-segmentio", () => ({}));
-jest.mock("@segment/analytics.js-core/build/analytics", () => {
-  class AnalyticsMock {
-    initialize = jest.fn();
-    use = jest.fn();
-    page = jest.fn();
-    identify = jest.fn();
-    reset = jest.fn();
-  }
-  return AnalyticsMock;
-});
+jest.mock("@segment/analytics-next");
 
 describe("analytics/segment", () => {
   describe("SegmentAnalyticsClient", () => {
-    it("constructor should build a native segment client object and configure it", () => {
-      const client = makeSegmentAnalyticsClient();
-      expect(client.segmentNativeClient).toBeDefined();
-
-      // first argument of first call
-      expect(
-        (client.segmentNativeClient?.initialize as jest.Mock).mock.calls[0][0]
-      ).toMatchObject({
-        "Segment.io": {
-          apiKey: globalConfigStub.segmentApiKey,
-        },
-      });
-      expect(client.segmentNativeClient?.use).toHaveBeenCalledWith({});
-    });
     it("constructor should not attempt to build a segment client if the config is not present", () => {
       const client = makeSegmentAnalyticsClientWithNoApiKey();
       expect(client.segmentNativeClient).toBeNull();
