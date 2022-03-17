@@ -25,6 +25,15 @@ interface ContextWaitForSelectorOptions {
   timeout?: number;
 }
 
+const adminPortalHost = () => {
+  if(IS_MINIKUBE) {
+    return "admin.staging.materialize.com";
+  } else {
+    const console_url = new URL(CONSOLE_ADDR);
+    return `admin.${console_url.host}`;
+  }
+}
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -36,19 +45,18 @@ export class TestContext {
     this.page = page;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+    this.request = request;
   }
 
   /** Start a new test. */
   static async start(page: Page, request: APIRequestContext) {
-    const authUrl = "**/identity/resources/auth/v1/user";
-
+    const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const [response] = await Promise.all([
       request.post(authUrl, {
-        headers: {"Content-Type": "application/json"},
-        data: JSON.stringify({
+        data: {
           "email": EMAIL,
           "password": PASSWORD,
-        }),
+        },
       }),
       page.goto(CONSOLE_ADDR),
     ]);
@@ -88,11 +96,8 @@ export class TestContext {
       },
     };
 
-    // TODO(benesch): upgrade to Playwright's native support for this when it is
-    // released.
-
     // See: https://github.com/microsoft/playwright/issues/5999
-    const response = await this.request.fetch(url, request);
+    const response = await this.request.fetch(`${CONSOLE_ADDR}/api${url}`, request);
 
     // rethrowing the error here if the response is not ok.
     // we also try to attach useful req/res info to the error.
