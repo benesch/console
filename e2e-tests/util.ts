@@ -18,7 +18,7 @@ export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
 
 export const LEGACY_VERSION = "v0.20.0";
 
-const STATE_NAME = "state.json";
+export const STATE_NAME = "state.json";
 
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
