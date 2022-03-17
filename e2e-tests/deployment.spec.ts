@@ -6,8 +6,8 @@ const provider = IS_MINIKUBE ? "local" : "AWS";
 const regions = IS_MINIKUBE ? ["minikube"] : ["us-east-1", "eu-west-1"];
 
 for (const region of regions) {
-  test(`create deployment for region ${region}`, async ({ page }) => {
-    const context = await TestContext.start(page);
+  test(`create deployment for region ${region}`, async ({ page, request }) => {
+    const context = await TestContext.start(page, request);
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Create deployment.
@@ -68,8 +68,8 @@ for (const region of regions) {
 }
 
 for (const region of regions) {
-  test(`upgrade deployment of ${region}`, async ({ page }) => {
-    const context = await TestContext.start(page);
+  test(`upgrade deployment of ${region}`, async ({ page, request }) => {
+    const context = await TestContext.start(page, request);
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Use a raw API request to create a deployment running an old version.

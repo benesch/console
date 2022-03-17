@@ -1,6 +1,6 @@
 import { chromium } from "@playwright/test";
 
-import { CONSOLE_ADDR, EMAIL, PASSWORD } from "./util";
+import { CONSOLE_ADDR, EMAIL, PASSWORD, STATE_NAME } from "./util";
 
 export default async function globalSetup() {
   const browser = await chromium.launch();
@@ -14,6 +14,6 @@ export default async function globalSetup() {
     page.waitForNavigation(),
     page.press("[name=password]", "Enter"),
   ]);
-  await page.context().storageState({ path: "state.json" });
+  await page.context().storageState({ path: STATE_NAME });
   await browser.close();
 }
