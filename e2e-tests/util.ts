@@ -27,7 +27,7 @@ interface ContextWaitForSelectorOptions {
 
 const adminPortalHost = () => {
   if(IS_MINIKUBE) {
-    return "admin.staging.materialize.com";
+    return "admin.staging.cloud.materialize.com";
   } else {
     const console_url = new URL(CONSOLE_ADDR);
     return `admin.${console_url.host}`;
