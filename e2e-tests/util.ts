@@ -54,7 +54,7 @@ export class TestContext {
   request: APIRequestContext;
   accessToken: string;
   refreshToken: string;
-  expires: Date;
+  refreshDeadline: Date;
 
   constructor(
     page: Page,
@@ -65,7 +65,7 @@ export class TestContext {
     this.request = request;
     this.accessToken = auth.accessToken;
     this.refreshToken = auth.refreshToken;
-    this.expires = TestContext.calculate_expiration(auth.expiresIn);
+    this.refreshDeadline = TestContext.calculateRefreshDeadline(auth.expiresIn);
   }
 
   /** Start a new test. */
@@ -103,11 +103,11 @@ export class TestContext {
     return auth;
   };
 
-  static calculate_expiration(expiresIn: number) {
+  static calculateRefreshDeadline(expiresIn: number) {
       // Use the expiresIn instead of expires, since expires is a hard to work with string.
       // Store it as expiring a few seconds early, in case of time skew and network latencies.
       var expires = new Date();
-      expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn - 5);
+      expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn/2);
       return expires;
   };
 
@@ -115,13 +115,12 @@ export class TestContext {
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?) {
-    const millis_until_expiration = this.expires - Date.now();
-    if (millis_until_expiration < REFRESH_MILLIS) {
-        console.log(`Updating auth token with ${millis_until_expiration}ms before expiration.`);
+    if (Date.now() < this.refreshDeadline) {
+        console.log("Updating auth token...");
         const auth = await TestContext.authenticate(this.request);
         this.accessToken = auth.accessToken;
         this.refreshToken = auth.refreshToken;
-        this.expires = TestContext.calculate_expiration(auth.expiresIn);
+        this.refreshDeadline = TestContext.calculateRefreshDeadline(auth.expiresIn);
     }
     url = `${CONSOLE_ADDR}/api${url}`;
     request = {
