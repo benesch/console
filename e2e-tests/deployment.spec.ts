@@ -34,7 +34,7 @@ for (const region of regions) {
     await page.click("text=View logs");
     const logs = await awaitLogs(page);
     expect(logs).toMatch(/materialized.*listening on 0.0.0.0:6875.../);
-    page.click("[aria-label=Close]");
+    await page.click("[aria-label=Close]");
 
     // Update the deployment name and size.
     await page.click("text=Edit");
