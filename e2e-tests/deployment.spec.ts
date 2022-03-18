@@ -1,13 +1,18 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { IS_MINIKUBE, LEGACY_VERSION, TestContext } from "./util";
+import { IS_MINIKUBE, LEGACY_VERSION, TestContext, STATE_NAME } from "./util";
 
 const provider = IS_MINIKUBE ? "local" : "AWS";
 const regions = IS_MINIKUBE ? ["minikube"] : ["us-east-1", "eu-west-1"];
 
+test.afterEach(async ({page}) => {
+      // Update the refresh token for future tests.
+    await page.context().storageState({ path: STATE_NAME });
+});
+
 for (const region of regions) {
-  test(`create deployment for region ${region}`, async ({ page }) => {
-    const context = await TestContext.start(page);
+  test(`create deployment for region ${region}`, async ({ page, request }) => {
+    const context = await TestContext.start(page, request);
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Create deployment.
@@ -29,7 +34,7 @@ for (const region of regions) {
     await page.click("text=View logs");
     const logs = await awaitLogs(page);
     expect(logs).toMatch(/materialized.*listening on 0.0.0.0:6875.../);
-    page.click("[aria-label=Close]");
+    await page.click("[aria-label=Close]");
 
     // Update the deployment name and size.
     await page.click("text=Edit");
@@ -68,20 +73,20 @@ for (const region of regions) {
 }
 
 for (const region of regions) {
-  test(`upgrade deployment of ${region}`, async ({ page }) => {
-    const context = await TestContext.start(page);
+  test(`upgrade deployment of ${region}`, async ({ page, request }) => {
+    const context = await TestContext.start(page, request);
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Use a raw API request to create a deployment running an old version.
     const deployment = await context.apiRequest("/deployments", {
       method: "POST",
-      body: JSON.stringify({
+      data: {
         mzVersion: LEGACY_VERSION,
         cloudProviderRegion: {
           provider: provider,
           region: `${region}`,
         },
-      }),
+      },
     });
     await page.click(`text=${deployment.name}`);
 

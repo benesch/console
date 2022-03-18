@@ -1,4 +1,4 @@
-import { expect, Page } from "@playwright/test";
+import { expect, Page, APIRequestContext } from "@playwright/test";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
@@ -18,41 +18,69 @@ export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
 
 export const LEGACY_VERSION = "v0.20.0";
 
+export const STATE_NAME = "state.json";
+
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
   timeout?: number;
 }
 
+interface FronteggAuthResponse {
+  /** Short-lived access token. */
+  accessToken: string;
+  /** Longer-lived refresh token, usable only once. */
+  refreshToken: string;
+  /** Time after which the access token has expired. */
+  expires: string;
+}
+
+const adminPortalHost = () => {
+  if(IS_MINIKUBE) {
+    return "admin.staging.cloud.materialize.com";
+  } else {
+    const console_url = new URL(CONSOLE_ADDR);
+    return `admin.${console_url.host}`;
+  }
+}
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
+  request: APIRequestContext;
   accessToken: string;
+  refreshToken: string;
+  expires: string;
 
-  constructor(page: Page, accessToken: string) {
+  constructor(page: Page, request: APIRequestContext, auth: FronteggAuthResponse) {
     this.page = page;
-    this.accessToken = accessToken;
+    this.request = request;
+    this.accessToken = auth.accessToken;
+    this.refreshToken = auth.refreshToken;
+    this.expires = auth.expires;
   }
 
   /** Start a new test. */
-  static async start(page: Page) {
-    const refreshTokenUrl = "**/identity/resources/auth/v1/user/token/refresh";
-    // Squirrel away the access token for later.
+  static async start(page: Page, request: APIRequestContext) {
+    const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const [response] = await Promise.all([
-      page.waitForResponse(refreshTokenUrl),
+      request.post(authUrl, {
+        data: {
+          "email": EMAIL,
+          "password": PASSWORD,
+        },
+      }),
       page.goto(CONSOLE_ADDR),
     ]);
     const text = await response.text();
-    let accessToken;
+    let json: FronteggAuthResponse;
     try {
-      accessToken = JSON.parse(text)["accessToken"];
+      json = JSON.parse(text);
+      // TODO: handle expiry
     } catch (e: unknown) {
-      console.error(`Invalid json from ${refreshTokenUrl}:\n${text}`);
+      console.error(`Invalid json from ${authUrl}:\n${text}`);
       throw e as SyntaxError;
     }
-    const context = new TestContext(page, accessToken);
-
-    // Update the refresh token for future tests.
-    await page.context().storageState({ path: "state.json" });
+    const context = new TestContext(page, request, json);
 
     // Provide a clean slate for the test.
     context.deleteAllDeployments();
@@ -64,7 +92,8 @@ export class TestContext {
   /**
    * Make an API request using the browser's access token.
    */
-  async apiRequest(url: string, request?: RequestInit) {
+  async apiRequest(url: string, request?) {
+    url = `${CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
       headers: {
@@ -73,39 +102,30 @@ export class TestContext {
         ...(request || {}).headers,
       },
     };
-    // TODO(benesch): upgrade to Playwright's native support for this when it is
-    // released.
+    const response = await this.request.fetch(url, request);
 
-    // See: https://github.com/microsoft/playwright/issues/5999
-    return this.page.evaluate(
-      async ({ url, request }) => {
-        const response = await fetch(url, request);
+    // rethrowing the error here if the response is not ok.
+    // we also try to attach useful req/res info to the error.
+    // this should be extracted to a helper function, but the evaluate method cannot access a variable out of scope.
+    let responsePayload = undefined;
+    try {
+      responsePayload = await response.text();
+    } finally {
+      if (!response.ok)
+        // eslint-disable-next-line no-unsafe-finally
+        throw new Error(
+          `API Error ${response.status}  ${url}, req: ${
+              request.body ?? "No request body"
+           }, res: ${responsePayload ?? "No response body"}`
+        );
+    }
 
-        // rethrowing the error here if the response is not ok.
-        // we also try to attach useful req/res info to the error.
-        // this should be extracted to a helper function, but the evaluate method cannot access a variable out of scope.
-        let responsePayload = undefined;
-        try {
-          responsePayload = await response.text();
-        } finally {
-          if (!response.ok)
-            // eslint-disable-next-line no-unsafe-finally
-            throw new Error(
-              `API Error ${response.status}  ${url}, req: ${
-                request.body ?? "No request body"
-              }, res: ${responsePayload ?? "No response body"}`
-            );
-        }
-
-        if (response.status === 204) {
-          return null;
-        } else {
-          // we already consume the body as text, so we need to parse manually
-          return JSON.parse(responsePayload);
-        }
-      },
-      { url: `${CONSOLE_ADDR}/api${url}`, request }
-    );
+    if (response.status() === 204) {
+      return null;
+    } else {
+      // we already consume the body as text, so we need to parse manually
+      return JSON.parse(responsePayload);
+    }
   }
 
   /** Delete any existing deployments. */
