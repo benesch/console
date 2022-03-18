@@ -75,13 +75,13 @@ for (const region of regions) {
     // Use a raw API request to create a deployment running an old version.
     const deployment = await context.apiRequest("/deployments", {
       method: "POST",
-      body: JSON.stringify({
+      data: {
         mzVersion: LEGACY_VERSION,
         cloudProviderRegion: {
           provider: provider,
           region: `${region}`,
         },
-      }),
+      },
     });
     await page.click(`text=${deployment.name}`);
 

@@ -87,6 +87,7 @@ export class TestContext {
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?) {
+    url = `${CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
       headers: {
@@ -95,9 +96,7 @@ export class TestContext {
         ...(request || {}).headers,
       },
     };
-
-    // See: https://github.com/microsoft/playwright/issues/5999
-    const response = await this.request.fetch(`${CONSOLE_ADDR}/api${url}`, request);
+    const response = await this.request.fetch(url, request);
 
     // rethrowing the error here if the response is not ok.
     // we also try to attach useful req/res info to the error.
