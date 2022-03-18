@@ -1,4 +1,4 @@
-import { expect, Page, APIRequestContext } from "@playwright/test";
+import { APIRequestContext, expect, Page } from "@playwright/test";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
@@ -35,13 +35,13 @@ interface FronteggAuthResponse {
 }
 
 const adminPortalHost = () => {
-  if(IS_MINIKUBE) {
+  if (IS_MINIKUBE) {
     return "admin.staging.cloud.materialize.com";
   } else {
     const console_url = new URL(CONSOLE_ADDR);
     return `admin.${console_url.host}`;
   }
-}
+};
 
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
@@ -51,7 +51,11 @@ export class TestContext {
   refreshToken: string;
   expires: string;
 
-  constructor(page: Page, request: APIRequestContext, auth: FronteggAuthResponse) {
+  constructor(
+    page: Page,
+    request: APIRequestContext,
+    auth: FronteggAuthResponse
+  ) {
     this.page = page;
     this.request = request;
     this.accessToken = auth.accessToken;
@@ -65,8 +69,8 @@ export class TestContext {
     const [response] = await Promise.all([
       request.post(authUrl, {
         data: {
-          "email": EMAIL,
-          "password": PASSWORD,
+          email: EMAIL,
+          password: PASSWORD,
         },
       }),
       page.goto(CONSOLE_ADDR),
@@ -115,8 +119,8 @@ export class TestContext {
         // eslint-disable-next-line no-unsafe-finally
         throw new Error(
           `API Error ${response.status}  ${url}, req: ${
-              request.body ?? "No request body"
-           }, res: ${responsePayload ?? "No response body"}`
+            request.body ?? "No request body"
+          }, res: ${responsePayload ?? "No response body"}`
         );
     }
 
