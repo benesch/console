@@ -104,7 +104,6 @@ export class TestContext {
 
   static calculateRefreshDeadline(expiresIn: number) {
     // Use the expiresIn instead of expires, since expires is a hard to work with string.
-    // Store it as expiring a few seconds early, in case of time skew and network latencies.
     const expires = new Date();
     expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn / 2);
     return expires;
