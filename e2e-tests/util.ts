@@ -47,7 +47,6 @@ const adminPortalHost = () => {
   }
 };
 
-
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -87,11 +86,11 @@ export class TestContext {
   static async authenticate(request: APIRequestContext) {
     const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const response = await request.post(authUrl, {
-        data: {
-          email: EMAIL,
-          password: PASSWORD,
-        },
-      });
+      data: {
+        email: EMAIL,
+        password: PASSWORD,
+      },
+    });
     const text = await response.text();
     let auth: FronteggAuthResponse;
     try {
@@ -101,26 +100,28 @@ export class TestContext {
       throw e as SyntaxError;
     }
     return auth;
-  };
+  }
 
   static calculateRefreshDeadline(expiresIn: number) {
-      // Use the expiresIn instead of expires, since expires is a hard to work with string.
-      // Store it as expiring a few seconds early, in case of time skew and network latencies.
-      var expires = new Date();
-      expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn/2);
-      return expires;
-  };
+    // Use the expiresIn instead of expires, since expires is a hard to work with string.
+    // Store it as expiring a few seconds early, in case of time skew and network latencies.
+    const expires = new Date();
+    expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn / 2);
+    return expires;
+  }
 
   /**
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?) {
     if (Date.now() < this.refreshDeadline) {
-        console.log("Updating auth token...");
-        const auth = await TestContext.authenticate(this.request);
-        this.accessToken = auth.accessToken;
-        this.refreshToken = auth.refreshToken;
-        this.refreshDeadline = TestContext.calculateRefreshDeadline(auth.expiresIn);
+      console.log("Updating auth token...");
+      const auth = await TestContext.authenticate(this.request);
+      this.accessToken = auth.accessToken;
+      this.refreshToken = auth.refreshToken;
+      this.refreshDeadline = TestContext.calculateRefreshDeadline(
+        auth.expiresIn
+      );
     }
     url = `${CONSOLE_ADDR}/api${url}`;
     request = {
