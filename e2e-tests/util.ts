@@ -25,6 +25,15 @@ interface ContextWaitForSelectorOptions {
   timeout?: number;
 }
 
+interface FronteggAuthResponse {
+  /** Short-lived access token. */
+  accessToken: string;
+  /** Longer-lived refresh token, usable only once. */
+  refreshToken: string;
+  /** Time after which the access token has expired. */
+  expires: string;
+}
+
 const adminPortalHost = () => {
   if(IS_MINIKUBE) {
     return "admin.staging.cloud.materialize.com";
@@ -40,12 +49,14 @@ export class TestContext {
   request: APIRequestContext;
   accessToken: string;
   refreshToken: string;
+  expires: string;
 
-  constructor(page: Page, request: APIRequestContext, accessToken: string, refreshToken: string) {
+  constructor(page: Page, request: APIRequestContext, auth: FronteggAuthResponse) {
     this.page = page;
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
     this.request = request;
+    this.accessToken = auth.accessToken;
+    this.refreshToken = auth.refreshToken;
+    this.expires = auth.expires;
   }
 
   /** Start a new test. */
@@ -61,20 +72,15 @@ export class TestContext {
       page.goto(CONSOLE_ADDR),
     ]);
     const text = await response.text();
-    let accessToken, refreshToken;
+    let json: FronteggAuthResponse;
     try {
-      const json = JSON.parse(text);
-      accessToken = json["accessToken"];
-      refreshToken = json["refreshToken"];
+      json = JSON.parse(text);
       // TODO: handle expiry
     } catch (e: unknown) {
       console.error(`Invalid json from ${authUrl}:\n${text}`);
       throw e as SyntaxError;
     }
-    const context = new TestContext(page, request, accessToken, refreshToken);
-
-    // Update the refresh token for future tests.
-    await page.context().storageState({ path: STATE_NAME });
+    const context = new TestContext(page, request, json);
 
     // Provide a clean slate for the test.
     context.deleteAllDeployments();
