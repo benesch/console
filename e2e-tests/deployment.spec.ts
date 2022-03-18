@@ -1,9 +1,14 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { IS_MINIKUBE, LEGACY_VERSION, TestContext } from "./util";
+import { IS_MINIKUBE, LEGACY_VERSION, TestContext, STATE_NAME } from "./util";
 
 const provider = IS_MINIKUBE ? "local" : "AWS";
 const regions = IS_MINIKUBE ? ["minikube"] : ["us-east-1", "eu-west-1"];
+
+test.afterEach(async ({page}) => {
+      // Update the refresh token for future tests.
+    await page.context().storageState({ path: STATE_NAME });
+});
 
 for (const region of regions) {
   test(`create deployment for region ${region}`, async ({ page, request }) => {
