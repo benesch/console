@@ -20,6 +20,8 @@ export const LEGACY_VERSION = "v0.20.0";
 
 export const STATE_NAME = "state.json";
 
+const REFRESH_MILLIS = 60000;
+
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
   timeout?: number;
@@ -32,6 +34,8 @@ interface FronteggAuthResponse {
   refreshToken: string;
   /** Time after which the access token has expired. */
   expires: string;
+  /** Seconds until expiration */
+  expiresIn: number;
 }
 
 const adminPortalHost = () => {
@@ -43,13 +47,14 @@ const adminPortalHost = () => {
   }
 };
 
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
   request: APIRequestContext;
   accessToken: string;
   refreshToken: string;
-  expires: string;
+  expires: Date;
 
   constructor(
     page: Page,
@@ -60,31 +65,17 @@ export class TestContext {
     this.request = request;
     this.accessToken = auth.accessToken;
     this.refreshToken = auth.refreshToken;
-    this.expires = auth.expires;
+    this.expires = TestContext.calculate_expiration(auth.expiresIn);
   }
 
   /** Start a new test. */
   static async start(page: Page, request: APIRequestContext) {
-    const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
-    const [response] = await Promise.all([
-      request.post(authUrl, {
-        data: {
-          email: EMAIL,
-          password: PASSWORD,
-        },
-      }),
+    const [auth] = await Promise.all([
+      TestContext.authenticate(request),
       page.goto(CONSOLE_ADDR),
     ]);
-    const text = await response.text();
-    let json: FronteggAuthResponse;
-    try {
-      json = JSON.parse(text);
-      // TODO: handle expiry
-    } catch (e: unknown) {
-      console.error(`Invalid json from ${authUrl}:\n${text}`);
-      throw e as SyntaxError;
-    }
-    const context = new TestContext(page, request, json);
+
+    const context = new TestContext(page, request, auth);
 
     // Provide a clean slate for the test.
     context.deleteAllDeployments();
@@ -93,10 +84,45 @@ export class TestContext {
     return context;
   }
 
+  static async authenticate(request: APIRequestContext) {
+    const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
+    const response = await request.post(authUrl, {
+        data: {
+          email: EMAIL,
+          password: PASSWORD,
+        },
+      });
+    const text = await response.text();
+    let auth: FronteggAuthResponse;
+    try {
+      auth = JSON.parse(text);
+    } catch (e: unknown) {
+      console.error(`Invalid json from ${authUrl}:\n${text}`);
+      throw e as SyntaxError;
+    }
+    return auth;
+  };
+
+  static calculate_expiration(expiresIn: number) {
+      // Use the expiresIn instead of expires, since expires is a hard to work with string.
+      // Store it as expiring a few seconds early, in case of time skew and network latencies.
+      var expires = new Date();
+      expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn - 5);
+      return expires;
+  };
+
   /**
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?) {
+    const millis_until_expiration = this.expires - Date.now();
+    if (millis_until_expiration < REFRESH_MILLIS) {
+        console.log(`Updating auth token with ${millis_until_expiration}ms before expiration.`);
+        const auth = await TestContext.authenticate(this.request);
+        this.accessToken = auth.accessToken;
+        this.refreshToken = auth.refreshToken;
+        this.expires = TestContext.calculate_expiration(auth.expiresIn);
+    }
     url = `${CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
