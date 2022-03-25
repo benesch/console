@@ -62,6 +62,7 @@
     "@types/webpack-dev-server": "^4.7.2",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.16.0",
+    "concurrently": "7.0.0",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
@@ -93,7 +94,8 @@
     "gavi": "gavi",
     "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx",
     "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true webpack",
-    "dev:mock:prometheus": "python bin/prometheus-mock-server.py"
+    "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
+    "concurrently": "concurrently"
   },
   "eslintConfig": {
     "env": {
