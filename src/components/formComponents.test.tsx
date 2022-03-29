@@ -7,7 +7,7 @@ import { TextField } from "./formComponents";
 
 describe("TextField", () => {
   jest.useFakeTimers();
-  it.only("Should respect maximum length of the field", () => {
+  it("Should respect maximum length of the field", () => {
     const out = render(
       <Formik
         initialValues={{
