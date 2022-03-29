@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { Form, Formik } from "formik";
 import React from "react";
 
-import { TextField } from "./form";
+import { TextField } from "./formComponents";
 
 describe("TextField", () => {
   jest.useFakeTimers();
