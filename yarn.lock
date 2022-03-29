@@ -1308,12 +1308,12 @@
     react-recaptcha-v3 "^2.0.1"
     uuid "^8.3.2"
 
-"@frontegg/react-core@^3.0.21":
-  version "3.0.21"
-  resolved "https://registry.yarnpkg.com/@frontegg/react-core/-/react-core-3.0.21.tgz#042a237a90a070680e7c9f8657524b9c439d601d"
-  integrity sha512-WsvGpLTVaWVzrPwWDzDZW9LQSi8Vec9wo9P/rMVWAx4KTvgDF5QXBpjGVGXC8wNKOlJgleFJoPAP0m+bR4QX9g==
+"@frontegg/react-core@^4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@frontegg/react-core/-/react-core-4.0.11.tgz#5d70232bb46b82b2ea50d292ff2629a8335c78fe"
+  integrity sha512-qFhtBlpRv/Z7Wj5/lbtgz3Vmmrq3K7+YX2haCPYcSfsw0y6hHMCvI0lUGBu3wsiOJcRXjoxuPmXNC5k9XzldzA==
   dependencies:
-    "@frontegg/react-hooks" "4.42.1"
+    "@frontegg/react-hooks" "5.33.1"
     classnames "^2.2.6"
     formik "^2.1.5"
     history "^4.9.0"
@@ -1336,6 +1336,14 @@
     "@frontegg/redux-store" "4.42.1"
     react-redux "^7.x"
 
+"@frontegg/react-hooks@5.33.1":
+  version "5.33.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/react-hooks/-/react-hooks-5.33.1.tgz#a162f140b967d3ce10c6456cfbf9c0dc44b46764"
+  integrity sha512-WJZwcQ+ODLRF078TesPB1rTsRM+kHWpqvn2+SSVxM0X9mnwsb0wUY/ZOW4+4MvE4aJCA2h/+4GGxgmmQemE9+A==
+  dependencies:
+    "@frontegg/redux-store" "5.33.1"
+    react-redux "^7.x"
+
 "@frontegg/react@=3.0.21":
   version "3.0.21"
   resolved "https://registry.yarnpkg.com/@frontegg/react/-/react-3.0.21.tgz#d5c044000ffbbd2ec73c2a3c9867d54a9415d1d5"
@@ -1356,10 +1364,26 @@
     tslib "^2.3.1"
     uuid "^8.3.0"
 
+"@frontegg/redux-store@5.33.1":
+  version "5.33.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/redux-store/-/redux-store-5.33.1.tgz#a78ecbab9ff663edbcd0accaddcbc6699622a0ff"
+  integrity sha512-qj8rPqNbEuV96uS7MRb7mLQRTuSz7SnytnhVUG0prDkrbv+V/OJhN4ld8iYr9MXLdfd3/SNec6hib6Q7UNlUTw==
+  dependencies:
+    "@frontegg/rest-api" "2.10.61"
+    "@reduxjs/toolkit" "^1.5.0"
+    redux-saga "^1.1.0"
+    tslib "^2.3.1"
+    uuid "^8.3.0"
+
 "@frontegg/rest-api@2.10.47":
   version "2.10.47"
   resolved "https://registry.yarnpkg.com/@frontegg/rest-api/-/rest-api-2.10.47.tgz#70f096ecfab8c53b909f424a54e5db5fa64e0be3"
   integrity sha512-r42xDO7kvWMBo9s9r/kpvZQjFTUF+qNkK3QkY4vMfyzyW6SdbY9jvitxIfkr3ZgeGwOeqL9MFd/z4T2CkzGJDQ==
+
+"@frontegg/rest-api@2.10.61":
+  version "2.10.61"
+  resolved "https://registry.yarnpkg.com/@frontegg/rest-api/-/rest-api-2.10.61.tgz#57b5518a2dd46625bf0679d001457900d37561de"
+  integrity sha512-WX+onWjovECJ/RCsGiPvd2AtRQIdVFfHS+9c5t2G60MzzbrLIrN/AOcUWOgj1Y+P5xLbfGWwtn/FZflAFK430A==
 
 "@frontegg/types@4.42.1":
   version "4.42.1"
