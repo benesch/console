@@ -80,6 +80,7 @@
     "pyright": "1.1.221",
     "react-refresh": "^0.11.0",
     "ts-jest": "^27.1.0",
+    "typescript-eslint-language-service": "^5.0.0",
     "webpack-dev-server": "^4.7.3"
   },
   "scripts": {

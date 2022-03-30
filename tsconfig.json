@@ -9,6 +9,11 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
-    "target": "es6"
+    "target": "es6",
+    "plugins": [
+      {
+        "name": "typescript-eslint-language-service"
+      }
+    ]
   }
 }
