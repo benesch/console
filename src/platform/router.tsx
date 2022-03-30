@@ -1,6 +1,7 @@
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { useAuth } from "../api/auth";
 import ClustersListPage from "./ClustersList";
 import Dashboard from "./dashboard/Dashboard";
 import SinksListPage from "./SinksList";
@@ -9,6 +10,12 @@ import ViewsListPage from "./ViewsList";
 
 const PlatformRouter = () => {
   const { path } = useRouteMatch();
+  const { organization } = useAuth();
+
+  if (!organization.platformEnabled) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <Switch>
       <Route exact path={`${path}`}>
