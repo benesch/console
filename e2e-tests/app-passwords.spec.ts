@@ -1,6 +1,11 @@
 import { test } from "@playwright/test";
 
-import { CONSOLE_ADDR, TestContext } from "./util";
+import { CONSOLE_ADDR, STATE_NAME, TestContext } from "./util";
+
+test.afterEach(async ({ page }) => {
+  // Update the refresh token for future tests.
+  await page.context().storageState({ path: STATE_NAME });
+});
 
 test(`new app password`, async ({ page, request }) => {
   const context = await TestContext.start(page, request);
