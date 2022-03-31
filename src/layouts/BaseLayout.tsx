@@ -23,14 +23,13 @@ import {
 } from "@chakra-ui/react";
 import { differenceInDays } from "date-fns";
 import * as React from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
-import platform from "../recoil/platform";
+import { assert } from "../util";
 import PageFooter from "./PageFooter";
 import ProfileDropdown from "./ProfileDropdown";
 
@@ -133,15 +132,20 @@ const platformNavItems = [
 const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
 
 const NavMenu = () => {
-  const [isPlatform] = useRecoilState(platform);
-  const navItems = isPlatform ? platformNavItems : legacyNavItems;
+  const { organization } = useAuth();
+  const navItems = organization.platformEnabled
+    ? platformNavItems
+    : legacyNavItems;
   return (
     <>
       <HStack
         spacing="3"
         flex="2"
         order={2}
-        display={{ base: isPlatform ? "none" : "flex", lg: "flex" }}
+        display={{
+          base: organization.platformEnabled ? "none" : "flex",
+          lg: "flex",
+        }}
         alignSelf="stretch"
         alignItems="stretch"
         ml={{ base: 0.5, xl: 2 }}
@@ -157,7 +161,10 @@ const NavMenu = () => {
           aria-label="Menu"
           title="Menu"
           icon={<HamburgerIcon />}
-          display={{ base: isPlatform ? "block" : "none", lg: "none" }}
+          display={{
+            base: organization.platformEnabled ? "block" : "none",
+            lg: "none",
+          }}
           sx={{
             order: 1,
           }}

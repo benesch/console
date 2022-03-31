@@ -100,6 +100,10 @@ export interface Organization {
   id: string;
   deploymentLimit: number;
   /**
+   * Whether to enable the new Materialize Platform experience for this organization.
+   */
+  platformEnabled: boolean;
+  /**
    * When this organization's trial period expires. If empty, the organization is on an enterprise plan.
    */
   trialExpiresAt: string | null;
