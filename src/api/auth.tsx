@@ -51,8 +51,11 @@ export const AuthProvider = ({
   const authState = useFronteggAuth((state) => state);
   const fetchAuthed = async (input: RequestInfo, init?: RequestInit) =>
     fetch(input, {
-      headers: { authorization: `Bearer ${user.accessToken}` },
       ...init,
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+        ...init?.headers,
+      },
     });
 
   return (
