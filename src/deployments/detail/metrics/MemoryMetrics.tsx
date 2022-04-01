@@ -1,8 +1,8 @@
 import React from "react";
 
 import { useDeploymentsMetricsMemoryRetrieve } from "../../../api/backend";
-import MetricsLineChart from "./components/MetricsLineChart";
-import { useRetrieveMetrics } from "./hooks";
+import MetricsLineChart from "../../../components/metrics/components/MetricsLineChart";
+import { useRetrieveMetrics } from "../../../components/metrics/hooks";
 
 const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
   ({ deploymentId }) => {
@@ -11,7 +11,13 @@ const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
       useDeploymentsMetricsMemoryRetrieve
     );
 
-    return <MetricsLineChart {...hook} />;
+    return (
+      <MetricsLineChart
+        {...hook}
+        testId="fetch-deployment-metric-error"
+        errorMessage="Failed to load metrics for this deployment"
+      />
+    );
   }
 );
 

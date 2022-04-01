@@ -89,7 +89,14 @@ const NavBar = () => {
         maxW="7xl"
         px="5"
       >
-        <HStack as={RouterLink} to="/" mr={2} order={2} flex={1} height="full">
+        <HStack
+          as={RouterLink}
+          to={organization.platformEnabled ? "/platform/" : "/"}
+          mr={2}
+          order={2}
+          flex={1}
+          height="full"
+        >
           <VStack
             position="relative"
             flex="0 0 24px"

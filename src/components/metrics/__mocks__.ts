@@ -1,4 +1,4 @@
-import { Deployment, PrometheusMetrics } from "../api/backend";
+import { Deployment, PrometheusMetrics } from "../../api/backend";
 
 export const validDeployment: Deployment = {
   id: "1",

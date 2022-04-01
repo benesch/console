@@ -83,7 +83,7 @@ const DeploymentListPage = () => {
 /** the hook managing data for the deployments list page
  * TODO: replace caching logic with `use-swr
  */
-const useDeploymentsList = () => {
+export const useDeploymentsList = () => {
   const {
     data: deployments,
     refetch,
