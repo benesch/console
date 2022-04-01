@@ -1,15 +1,9 @@
 import { Select, Spinner } from "@chakra-ui/react";
-import * as React from "react";
-import { useEffect, useState } from "react";
+import React from "react";
 import { useRecoilState } from "recoil";
 
-import { SupportedCloudRegion, useCloudProvidersList } from "../api/backend";
-import { Environment } from "../api/environment-controller";
 import { useEnvironments } from "../api/environment-controller-fetch";
-import {
-  currentEnvironment,
-  RegionEnvironment,
-} from "../recoil/currentEnvironment";
+import { currentEnvironment } from "../recoil/currentEnvironment";
 
 const EnvironmentSelectField = () => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
@@ -25,18 +19,20 @@ const EnvironmentSelectField = () => {
     <Select
       aria-label="Environment"
       name="environment-select"
-      value={current?.address || ""}
+      value={current?.coordd_address || ""}
       onChange={(e) =>
         setCurrent(
-          environments.find((env) => e.target.value === env.address) || null
+          environments.find((env) => e.target.value === env.coordd_address) ||
+            null
         )
       }
+      size="sm"
       disabled={environments.length < 1}
     >
       {environments.map((e) => (
         <option
-          key={e.address}
-          value={e.address}
+          key={e.coordd_address}
+          value={e.coordd_address}
           data-testid="environment-option"
         >
           {e.provider}/{e.region}

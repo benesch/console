@@ -10,7 +10,7 @@ import { VictoryDatum, VictoryMetric, VictoryTimedDataPoint } from "./types";
 export const prometheusMetricsToVictoryMetrics = (
   data: PrometheusMetrics | null
 ): VictoryMetric[] => {
-  if (!data) return [];
+  if (!data || !data.metrics) return [];
   return data.metrics.map((metric): VictoryMetric => {
     return {
       name: metric.name,

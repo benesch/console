@@ -33,6 +33,7 @@ import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
+import EnvironmentSelectField from "./EnvironmentSelect";
 import PageFooter from "./PageFooter";
 import ProfileDropdown from "./ProfileDropdown";
 
@@ -105,6 +106,7 @@ const NavBar = () => {
           order={2}
           flex={1}
           height="full"
+          minWidth={200}
         >
           <VStack
             position="relative"
@@ -129,6 +131,7 @@ const NavBar = () => {
         </HStack>
         <NavMenu />
         <HStack spacing={{ base: 2, md: 5 }} order={2}>
+          <EnvironmentSelectField />
           {organization.trialExpiresAt && (
             <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
           )}
@@ -166,7 +169,7 @@ const NavMenu = () => {
         spacing="3"
         flex="2"
         order={2}
-        display={{ base: "none", lg: "flex" }}
+        display={{ base: "none", xl: "flex" }}
         alignSelf="stretch"
         alignItems="stretch"
         ml={{ base: 0.5, xl: 2 }}
@@ -182,7 +185,7 @@ const NavMenu = () => {
           aria-label="Menu"
           title="Menu"
           icon={<HamburgerIcon />}
-          display={{ base: "block", lg: "none" }}
+          display={{ base: "block", xl: "none" }}
           sx={{
             order: 1,
           }}
@@ -292,6 +295,7 @@ const TrialBubble = (props: TrialBubble) => {
       px={{ sm: 2, md: 3 }}
       py="1"
       fontSize="sm"
+      minWidth={180}
     >
       <VStack spacing="-1">
         <Text>Free trial</Text>

@@ -15,7 +15,11 @@ const MemoryMetrics: React.FC<{ deploymentId: string }> = React.memo(
       <MetricsLineChart
         {...hook}
         testId="fetch-deployment-metric-error"
-        errorMessage="Failed to load metrics for this deployment"
+        errorMessage={
+          hook.operation.error
+            ? "Failed to load metrics for this deployment"
+            : null
+        }
       />
     );
   }
