@@ -20,6 +20,7 @@ export const validDeployment: Deployment = {
   cloudProviderRegion: {
     provider: "AWS",
     region: "us-east-1",
+    environmentControllerUrl: "https://localhost:8001",
   },
   releaseTrack: "stable",
 };
@@ -32,6 +33,7 @@ export const validEUDeployment: Deployment = {
   cloudProviderRegion: {
     provider: "AWS",
     region: "eu-west-1",
+    environmentControllerUrl: "https://localhost:8001",
   },
 };
 

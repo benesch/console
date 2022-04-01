@@ -141,6 +141,7 @@ export type ReleaseTrackEnum = "canary" | "stable";
 export interface SupportedCloudRegion {
   provider: ProviderEnum;
   region: string;
+  environmentControllerUrl: string;
 }
 
 export interface SupportedCloudRegionRequest {
