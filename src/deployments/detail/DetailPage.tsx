@@ -43,6 +43,7 @@ import DestroyDeploymentModal from "../DestroyModal";
 import EditDeploymentModal from "../EditModal";
 import UpgradeDeploymentModal from "../UpgradeModal";
 import ConnectCard from "./ConnectCard";
+import ConnectCardPassword from "./ConnectCardPassword";
 import DeploymentLogsModal from "./DeploymentLogsModal";
 import DeploymentIntegrationsCard from "./integrations/DeploymentIntegrationsCard";
 import DeploymentMetricsCard from "./metrics/DeploymentMetricsCard";
@@ -126,7 +127,11 @@ const DetailContent = ({
           {deployment.disableUserIndexes && deployment.status === "OK" && (
             <UserIndexesDisabledAlert />
           )}
-          <ConnectCard deployment={deployment} />
+          {deployment.tlsAuthority !== null ? (
+            <ConnectCard deployment={deployment} />
+          ) : (
+            <ConnectCardPassword deployment={deployment} />
+          )}
           <DeploymentIntegrationsCard
             deployment={deployment}
             refetch={refetch}
