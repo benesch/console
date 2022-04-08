@@ -75,9 +75,7 @@ const DeploymentListPage = () => {
       {isLoading && <Spinner data-testid="loading-spinner" />}
       {isEmpty && <EmptyList title="deployments" />}
       {!canCreateDeployments && <DeploymentLimitWarning />}
-      {!isLoading && !isEmpty && (
-        <DeploymentTable deployments={deployments} />
-      )}
+      {!isLoading && !isEmpty && <DeploymentTable deployments={deployments} />}
     </BaseLayout>
   );
 };
