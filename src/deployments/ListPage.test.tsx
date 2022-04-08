@@ -87,22 +87,4 @@ describe("deployments/list", () => {
 
     expect(await selectors.deployment()).toBeDefined();
   });
-
-  it("should show only one environment's deployments if filter is specified", async () => {
-    renderDeploymentList();
-    await selectors.deployment();
-    // starting value is "All"
-    expect(await selectors.environmentSelect()).toHaveValue("All");
-    expect(screen.getAllByRole("option").length).toBe(validRegions.length + 1);
-    // and we show all the deployments at first
-    expect((await selectors.deploymentRows()).length).toBe(
-      validDeploymentList.length
-    );
-    fireEvent.change(await selectors.environmentSelect(), {
-      target: { value: "AWS us-east-1" },
-    });
-    expect(await selectors.environmentSelect()).toHaveValue("AWS us-east-1");
-    // now it's filtered down to just one
-    expect((await selectors.deploymentRows()).length).toBe(1);
-  });
 });

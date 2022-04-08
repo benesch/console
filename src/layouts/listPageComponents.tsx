@@ -29,7 +29,6 @@ export const ListPageHeaderContent: React.FC<ListPageHeaderContentProps> = ({
   return (
     <HStack spacing={4} alignItems="center" justifyContent="flex-start">
       <PageHeading>{title}</PageHeading>
-      <EnvironmentSelectField />
     </HStack>
   );
 };

@@ -23,7 +23,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-import { useRecoilState } from "recoil";
 
 import { useAuth } from "../api/auth";
 import {
@@ -38,7 +37,6 @@ import {
   ListFetchError,
   ListPageHeaderContent,
 } from "../layouts/listPageComponents";
-import currentEnvironment from "../recoil/currentEnvironment";
 import useCache from "../utils/useCache";
 import CreateDeploymentModal from "./create/CreateDeploymentModal";
 import DeploymentStateBadge from "./DeploymentStateBadge";
@@ -46,18 +44,6 @@ import DeploymentStateBadge from "./DeploymentStateBadge";
 const DeploymentListPage = () => {
   const { organization } = useAuth();
   const { deployments, refetch, error } = useDeploymentsList();
-  const [envFilter] = useRecoilState(currentEnvironment);
-  const filteredDeployments = React.useMemo(() => {
-    return (deployments ?? []).filter((d) => {
-      if (envFilter === "All") {
-        return true;
-      }
-      return (
-        d.cloudProviderRegion.provider === envFilter.split(" ")[0] &&
-        d.cloudProviderRegion.region === envFilter.split(" ")[1]
-      );
-    });
-  }, [envFilter, deployments]);
 
   const isLoading = !deployments || organization === null;
   const isEmpty = !isLoading && deployments.length === 0;
@@ -90,7 +76,7 @@ const DeploymentListPage = () => {
       {isEmpty && <EmptyList title="deployments" />}
       {!canCreateDeployments && <DeploymentLimitWarning />}
       {!isLoading && !isEmpty && (
-        <DeploymentTable deployments={filteredDeployments} />
+        <DeploymentTable deployments={deployments} />
       )}
     </BaseLayout>
   );
