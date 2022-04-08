@@ -128,6 +128,7 @@ const platformNavItems = [
   { label: "Deployments", href: "/deployments", legacy: true },
   { label: "Dashboard", href: "/platform" },
   { label: "Regions", href: "/platform/regions" },
+  { label: "Clusters", href: "/platform/clusters" },
 ];
 const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
 

@@ -21,14 +21,17 @@ import EnvironmentSelectField from "./EnvironmentSelect";
 
 type ListPageHeaderContentProps = {
   title: string;
+  children?: React.ReactNode;
 };
 
 export const ListPageHeaderContent: React.FC<ListPageHeaderContentProps> = ({
   title,
+  children,
 }) => {
   return (
     <HStack spacing={4} alignItems="center" justifyContent="flex-start">
       <PageHeading>{title}</PageHeading>
+      {children}
     </HStack>
   );
 };

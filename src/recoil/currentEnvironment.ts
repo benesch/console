@@ -2,10 +2,13 @@ import { atom } from "recoil";
 
 import keys from "./keyConstants";
 
-const currentEnvironment = atom({
-  key: keys.CURRENT_ENVIRONMENT,
-  // TODO remove All once we can no longer view across environments
-  default: "All", // "AWS us-east-1",
-});
+export interface RegionEnvironment {
+  provider: string;
+  region: string;
+  address: string;
+}
 
-export default currentEnvironment;
+export const currentEnvironment = atom<RegionEnvironment | null>({
+  key: keys.CURRENT_ENVIRONMENT,
+  default: null,
+});
