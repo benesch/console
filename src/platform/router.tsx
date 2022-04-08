@@ -3,7 +3,7 @@ import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
 import { useAuth } from "../api/auth";
 import Dashboard from "./dashboard/Dashboard";
-import EnvironmentsListPage from "./EnvironmentsList";
+import EnvironmentsListPage from "./environments/EnvironmentsList";
 
 const PlatformRouter = () => {
   const { path } = useRouteMatch();
