@@ -5,7 +5,7 @@ import {
   DeploymentRequest,
   SupportedCloudRegion,
   useCloudProvidersList,
-} from "../../api/api";
+} from "../../api/backend";
 import { SelectField } from "../../components/formComponents";
 
 interface Props {

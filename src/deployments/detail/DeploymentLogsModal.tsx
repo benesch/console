@@ -16,8 +16,8 @@ import {
 import download from "downloadjs";
 import React from "react";
 
-import { Deployment, useDeploymentsLogsRetrieve } from "../../api/api";
 import { useAuth } from "../../api/auth";
+import { Deployment, useDeploymentsLogsRetrieve } from "../../api/backend";
 import CodeBlock from "../../components/CodeBlock";
 
 interface Props extends ButtonProps {

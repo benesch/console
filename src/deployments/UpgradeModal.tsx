@@ -6,7 +6,7 @@
 import { ButtonProps, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 
-import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
+import { Deployment, useDeploymentsPartialUpdate } from "../api/backend";
 import DangerActionModal from "../components/DangerActionModal";
 
 interface Props extends ButtonProps {

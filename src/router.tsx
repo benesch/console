@@ -16,8 +16,8 @@ import {
 import AppPasswordsPage from "./access/AppPasswordsPage";
 import analyticsClients from "./analytics";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
-import { useOrganizationsRetrieve } from "./api/api";
 import { AuthProvider, useAuth } from "./api/auth";
+import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
 import PlatformRouter from "./platform/router";

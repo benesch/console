@@ -1,4 +1,4 @@
-import { Deployment } from "../../../api/api";
+import { Deployment } from "../../../api/backend";
 
 export interface DeploymentIntegrationTabProps {
   deployment: Deployment;

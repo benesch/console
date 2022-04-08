@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useDeploymentsMetricsCpuRetrieve } from "../../../api/api";
+import { useDeploymentsMetricsCpuRetrieve } from "../../../api/backend";
 import MetricsLineChart from "./components/MetricsLineChart";
 import { useRetrieveMetrics } from "./hooks";
 

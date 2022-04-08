@@ -2,7 +2,7 @@ import { useInterval } from "@chakra-ui/hooks";
 import React from "react";
 import { UseGetReturn } from "restful-react";
 
-import { PrometheusMetrics } from "../../../api/api";
+import { PrometheusMetrics } from "../../../api/backend";
 import { defaultMetricPeriod } from "./components/MetricPeriodSelector";
 import {
   Domains,

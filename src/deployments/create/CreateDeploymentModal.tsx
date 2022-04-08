@@ -30,7 +30,7 @@ import {
   SupportedCloudRegionRequest,
   useCloudProvidersList,
   useDeploymentsCreate,
-} from "../../api/api";
+} from "../../api/backend";
 import {
   SelectField,
   SubmitButton,

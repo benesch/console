@@ -17,8 +17,8 @@ import {
 import download from "downloadjs";
 import React from "react";
 
-import { Deployment } from "../../api/api";
 import { useAuth } from "../../api/auth";
+import { Deployment } from "../../api/backend";
 import {
   Card,
   CardFooter,

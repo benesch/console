@@ -24,7 +24,7 @@ import {
   useDeploymentsIpRetrieve,
   useDeploymentsRetrieve,
   useMzVersionsLatestRetrieve,
-} from "../../api/api";
+} from "../../api/backend";
 import {
   Card,
   CardContent,

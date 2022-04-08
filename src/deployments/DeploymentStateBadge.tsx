@@ -1,7 +1,7 @@
 import { Badge } from "@chakra-ui/react";
 import React from "react";
 
-import { Deployment } from "../api/api";
+import { Deployment } from "../api/backend";
 
 interface Props {
   deployment: Deployment;
