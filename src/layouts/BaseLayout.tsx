@@ -5,6 +5,7 @@
 
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Badge,
   Box,
   chakra,
   Container,
@@ -124,10 +125,9 @@ const NavBar = () => {
 };
 
 const platformNavItems = [
-  { label: "Clusters", href: "/platform/clusters" },
-  { label: "Sources", href: "/platform/sources" },
-  { label: "Views", href: "/platform/views" },
-  { label: "Sinks", href: "/platform/sinks" },
+  { label: "Deployments", href: "/deployments", legacy: true },
+  { label: "Dashboard", href: "/platform" },
+  { label: "Regions", href: "/platform/regions" },
 ];
 const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
 
@@ -142,10 +142,7 @@ const NavMenu = () => {
         spacing="3"
         flex="2"
         order={2}
-        display={{
-          base: organization.platformEnabled ? "none" : "flex",
-          lg: "flex",
-        }}
+        display="flex"
         alignSelf="stretch"
         alignItems="stretch"
         ml={{ base: 0.5, xl: 2 }}
@@ -161,10 +158,7 @@ const NavMenu = () => {
           aria-label="Menu"
           title="Menu"
           icon={<HamburgerIcon />}
-          display={{
-            base: organization.platformEnabled ? "block" : "none",
-            lg: "none",
-          }}
+          display={{ base: "block", lg: "none" }}
           sx={{
             order: 1,
           }}
@@ -190,19 +184,20 @@ const NavMenu = () => {
 interface NavItemProps {
   href?: string;
   label: string;
+  legacy?: boolean;
 }
 
 const NavItem = (props: NavItemProps) => {
   const location = useLocation();
   const href = props.href || "#";
-  const active = location.pathname.startsWith(href);
+  const active = location.pathname === href;
   return (
     <HStack
       as={RouterLink}
       to={href}
       aria-current={active ? "page" : undefined}
       spacing="2"
-      px={{ base: 3, lg: 5, xl: 6 }}
+      px={3}
       transition="all 0.2s"
       color="gray.200"
       _hover={{ bg: "whiteAlpha.200" }}
@@ -218,6 +213,7 @@ const NavItem = (props: NavItemProps) => {
       borderRight={"3px solid transparent"}
     >
       <Box fontWeight="semibold">{props.label}</Box>
+      {props.legacy && <Badge>Legacy</Badge>}
     </HStack>
   );
 };

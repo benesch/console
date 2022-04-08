@@ -8,7 +8,7 @@ import {
   ListPageHeaderContent,
 } from "../layouts/listPageComponents";
 
-const SourcesListPage = () => {
+const EnvironmentsListPage = () => {
   const isLoading = false;
   const isEmpty = true;
   return (
@@ -16,24 +16,26 @@ const SourcesListPage = () => {
       <PageBreadcrumbs />
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-          <ListPageHeaderContent title="Sources" />
+          <ListPageHeaderContent title="Regions" />
         </HStack>
       </PageHeader>
       {isLoading && <Spinner data-testid="loading-spinner" />}
-      {isEmpty && <EmptyList title="sources" />}
-      {!isLoading && !isEmpty && <SourceTable />}
+      {isEmpty && <EmptyList title="available regions" />}
+      {!isLoading && !isEmpty && <EnvironmentTable />}
     </BaseLayout>
   );
 };
 
-const SourceTable = () => {
+const EnvironmentTable = () => {
   return (
     <Card pt="2" px="0" pb="6">
       {
-        <Table data-testid="source-table" borderRadius="xl">
+        <Table data-testid="cluster-table" borderRadius="xl">
           <Thead>
             <Tr>
               <Th>Name</Th>
+              <Th>Hostname</Th>
+              <Th>Size</Th>
               <Th>Status</Th>
             </Tr>
           </Thead>
@@ -44,4 +46,4 @@ const SourceTable = () => {
   );
 };
 
-export default SourcesListPage;
+export default EnvironmentsListPage;
