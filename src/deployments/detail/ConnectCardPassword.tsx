@@ -71,9 +71,9 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
                 <CodeBlock
                   contents={`psql "postgresql://${encodeURIComponent(
                     user.email
-                  )}@${
-                    deployment.hostname
-                  }:6875/materialize?sslmode=verify-full&sslrootcert=/etc/ssl/certs/ca-certificates.crt"`}
+                  )}@${deployment.hostname}:${
+                    deployment.port
+                  }/materialize?sslmode=verify-full&sslrootcert=/etc/ssl/certs/ca-certificates.crt"`}
                 ></CodeBlock>
               </ListItem>
               <ListItem>
@@ -108,7 +108,7 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
       # Or use "password_file" to keep the password out of your configuration
     static_configs:
       - targets:
-        - ${deployment.hostname}:6875
+        - ${deployment.hostname}:${deployment.port}
 `}
                 ></CodeBlock>
               </ListItem>

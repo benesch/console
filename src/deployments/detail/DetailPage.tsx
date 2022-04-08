@@ -222,6 +222,9 @@ const DetailCard = ({ deployment }: DetailCardProps) => {
           <CardField name="Hostname">
             <CopyableText>{deployment.hostname}</CopyableText>
           </CardField>
+          <CardField name="Port">
+            <CopyableText>{deployment.port.toString()}</CopyableText>
+          </CardField>
           <CardField name="Static IP">
             <CopyableText>{data}</CopyableText>
           </CardField>

@@ -18,6 +18,7 @@ export interface Deployment {
   tlsAuthority: string | null;
   name: string;
   hostname: string | null;
+  port: number;
   flaggedForDeletion: boolean;
   flaggedForUpdate: boolean;
   catalogRestoreMode: boolean;

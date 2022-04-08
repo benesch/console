@@ -79,7 +79,7 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
                 Open a terminal and run psql from the directory containing the
                 certificates:
                 <CodeBlock
-                  contents={`psql "postgresql://materialize@${deployment.hostname}:6875/materialize?sslmode=verify-full&sslcert=materialize.crt&sslkey=materialize.key&sslrootcert=ca.crt"`}
+                  contents={`psql "postgresql://materialize@${deployment.hostname}:${deployment.port}/materialize?sslmode=verify-full&sslcert=materialize.crt&sslkey=materialize.key&sslrootcert=ca.crt"`}
                 ></CodeBlock>
               </ListItem>
               <ListItem>
@@ -115,7 +115,7 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
       key_file: materialize.key
     static_configs:
       - targets:
-        - ${deployment.hostname}:6875
+        - ${deployment.hostname}:${deployment.port}
 `}
                 ></CodeBlock>
               </ListItem>

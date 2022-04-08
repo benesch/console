@@ -6,6 +6,7 @@ export const validDeployment: Deployment = {
   tlsAuthority: "string",
   name: "eloquent-wombat",
   hostname: "sub.host.com",
+  port: 6875,
   flaggedForDeletion: false,
   flaggedForUpdate: true,
   catalogRestoreMode: false,

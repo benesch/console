@@ -262,8 +262,9 @@ export class TestContext {
    * Assumes that the browser is navigated to a deployment detail page.
    */
   async pgConnect() {
-    // Determine hostname.
+    // Determine hostname and port.
     const hostname = await this.readDeploymentField("Hostname");
+    const port = await this.readDeploymentField("Port");
 
     // Download certificates.
     const [download] = await Promise.all([
@@ -277,7 +278,7 @@ export class TestContext {
     const pgParams = {
       user: "materialize",
       host: hostname,
-      port: 6875,
+      port: port,
       database: "materialize",
       ssl: {
         ca: fs.readFileSync("scratch/ca.crt", "utf8"),
