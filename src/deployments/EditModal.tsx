@@ -32,7 +32,7 @@ import {
 import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
-import { Deployment, useDeploymentsPartialUpdate } from "../api/api";
+import { Deployment, useDeploymentsPartialUpdate } from "../api/backend";
 import {
   SubmitButton,
   SwitchField,

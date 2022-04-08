@@ -14,8 +14,8 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { Deployment } from "../../api/api";
 import { useAuth } from "../../api/auth";
+import { Deployment } from "../../api/backend";
 import {
   Card,
   CardTab,

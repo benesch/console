@@ -2,7 +2,7 @@ import { Select } from "@chakra-ui/react";
 import * as React from "react";
 import { useRecoilState } from "recoil";
 
-import { useRegionsList } from "../api/api";
+import { useRegionsList } from "../api/backend";
 import currentEnvironment from "../recoil/currentEnvironment";
 
 const useEnvironmentOptions = () => {

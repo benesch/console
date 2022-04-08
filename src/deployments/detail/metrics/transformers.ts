@@ -1,6 +1,6 @@
 import format from "date-fns/format";
 
-import { PrometheusMetrics } from "../../../api/api";
+import { PrometheusMetrics } from "../../../api/backend";
 import { roundTo2Decimals } from "../../../utils/numbers";
 import { isValidDate } from "../../../utils/validators";
 import { durationsInMinutes } from "./components/MetricPeriodSelector";

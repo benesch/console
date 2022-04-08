@@ -4,7 +4,7 @@ import { useToast } from "@chakra-ui/toast";
 import {
   PatchedDeploymentUpdateRequest,
   useDeploymentsPartialUpdate,
-} from "../../../../api/api";
+} from "../../../../api/backend";
 import { DeploymentIntegrationCallToActionProps } from "../types";
 
 export type TailscaleIntegrationForm = Pick<

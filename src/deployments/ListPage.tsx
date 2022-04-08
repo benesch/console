@@ -25,11 +25,11 @@ import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
+import { useAuth } from "../api/auth";
 import {
   Deployment,
   useDeploymentsList as useDeploymentListApi,
-} from "../api/api";
-import { useAuth } from "../api/auth";
+} from "../api/backend";
 import { Card, CardContent } from "../components/cardComponents";
 import SupportLink from "../components/SupportLink";
 import { BaseLayout, PageBreadcrumbs, PageHeader } from "../layouts/BaseLayout";

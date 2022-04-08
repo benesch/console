@@ -12,7 +12,7 @@ import {
 } from "restful-react";
 
 import { versionHeaders } from "../version/api";
-import { Organization } from "./api";
+import { Organization } from "./backend";
 
 /**
  * The authentication state.

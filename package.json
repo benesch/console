@@ -93,7 +93,7 @@
     "playwright": "playwright",
     "pyright": "pyright",
     "gavi": "gavi",
-    "gen:api": "restful-react import --file api/schema.yml --output frontend/src/api/api.tsx --transformer frontend/api-transformer.js && eslint --fix frontend/src/api/api.tsx",
+    "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
     "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true webpack",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
     "concurrently": "concurrently"

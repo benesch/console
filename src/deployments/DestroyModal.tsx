@@ -8,7 +8,7 @@ import { ButtonProps, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 import { useHistory } from "react-router";
 
-import { Deployment, useDeploymentsDestroy } from "../api/api";
+import { Deployment, useDeploymentsDestroy } from "../api/backend";
 import DangerActionModal from "../components/DangerActionModal";
 import { sleep } from "../util";
 

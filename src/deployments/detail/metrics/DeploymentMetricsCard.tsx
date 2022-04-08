@@ -2,7 +2,7 @@ import { HStack } from "@chakra-ui/layout";
 import { TabPanel, TabPanels } from "@chakra-ui/tabs";
 import React from "react";
 
-import { Deployment } from "../../../api/api";
+import { Deployment } from "../../../api/backend";
 import {
   Card,
   CardTab,

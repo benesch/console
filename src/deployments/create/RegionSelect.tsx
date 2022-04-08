@@ -5,7 +5,7 @@ import {
   DeploymentRequest,
   SupportedCloudRegion,
   useRegionsList,
-} from "../../api/api";
+} from "../../api/backend";
 import { SelectField } from "../../components/formComponents";
 
 const useFilterProviders = (cloudProviders: SupportedCloudRegion[]) => {

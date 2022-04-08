@@ -1,4 +1,4 @@
-import { PrometheusMetric } from "../../../api/api";
+import { PrometheusMetric } from "../../../api/backend";
 
 export interface VictoryTimedDataPoint {
   x: Date;

@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import parseISO from "date-fns/parseISO";
 
 import { mockDate } from "../../../__mocks__/date";
-import { PrometheusMetrics } from "../../../api/api";
+import { PrometheusMetrics } from "../../../api/backend";
 import { defaultMetricPeriod } from "./components/MetricPeriodSelector";
 import { GetMetricsHook, useRetrieveMetrics } from "./hooks";
 
