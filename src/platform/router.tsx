@@ -8,9 +8,9 @@ import EnvironmentsListPage from "./environments/EnvironmentsList";
 
 const PlatformRouter = () => {
   const { path } = useRouteMatch();
-  const { organization } = useAuth();
+  const { platformEnabled } = useAuth();
 
-  if (!organization.platformEnabled) {
+  if (!platformEnabled) {
     return <Redirect to="/" />;
   }
 
