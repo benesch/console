@@ -51,7 +51,7 @@ export function useClusters() {
     "SELECT id, name FROM mz_clusters ORDER BY id"
   );
 
-  let clusters: Cluster[] = [];
+  let clusters = null;
   if (data) {
     clusters = data.map(
       (row) =>

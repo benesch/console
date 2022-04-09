@@ -96,8 +96,8 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     url = <Spinner />;
   } else if (environment) {
     url = (
-      <Code padding="2">
-        <CopyableText>
+      <Code padding="1">
+        <CopyableText fontSize="xs">
           {`postgres://${encodeURIComponent(user.email)}@${
             environment.coordd_address
           }/materialize`}
