@@ -133,10 +133,8 @@ const platformNavItems = [
 const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
 
 const NavMenu = () => {
-  const { organization } = useAuth();
-  const navItems = organization.platformEnabled
-    ? platformNavItems
-    : legacyNavItems;
+  const { platformEnabled } = useAuth();
+  const navItems = platformEnabled ? platformNavItems : legacyNavItems;
   return (
     <>
       <HStack
