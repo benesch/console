@@ -46,6 +46,7 @@ export interface DeploymentRequest {
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
   cloudProviderRegion: SupportedCloudRegionRequest;
+  skipMtlsAuth?: boolean;
 }
 
 export type DeploymentSizeEnum = "XS" | "S" | "M" | "L" | "XL";
@@ -121,6 +122,7 @@ export interface PatchedDeploymentUpdateRequest {
   releaseTrack?: ReleaseTrackEnum;
   enableTailscale?: boolean;
   tailscaleAuthKey?: string;
+  skipMtlsAuth?: boolean;
 }
 
 export interface PrometheusMetric {
