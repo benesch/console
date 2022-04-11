@@ -182,6 +182,7 @@ export class TestContext {
         ...(request || {}).headers,
       },
     };
+    console.log("API Request:", request);
     const response = await this.request.fetch(url, request);
 
     // rethrowing the error here if the response is not ok.
@@ -257,7 +258,7 @@ export class TestContext {
   }
 
   /**
-   * Attempt a pgwire connection to Materialize.
+   * Attempt a pgwire connection to Materialize with mutual TLS authentication.
    *
    * Assumes that the browser is navigated to a deployment detail page.
    */
@@ -286,6 +287,35 @@ export class TestContext {
         cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
         rejectUnauthorized: false,
       },
+      connectionTimeoutMillis: 1000,
+      query_timeout: 1000,
+    };
+    for (let i = 0; i < 600; i++) {
+      try {
+        const client = new Client(pgParams);
+        await client.connect();
+        return client;
+      } catch (error) {
+        console.log(error);
+        await this.page.waitForTimeout(1000);
+      }
+    }
+    throw new Error("unable to connect");
+  }
+
+  async pgConnectPassword(password: string) {
+    // Determine hostname and port.
+    const hostname = await this.readDeploymentField("Hostname");
+    const port = await this.readDeploymentField("Port");
+
+    // Attempt PostgreSQL connection to Materialize.
+    const pgParams = {
+      user: EMAIL,
+      host: hostname,
+      port: port,
+      database: "materialize",
+      password,
+      ssl: { rejectUnauthorized: false },
       connectionTimeoutMillis: 1000,
       query_timeout: 1000,
     };
@@ -356,10 +386,12 @@ export class TestContext {
    *
    * Assumes that the browser is navigated to a deployment detail page.
    */
-  async assertDeploymentMzVersion(expectedVersion: string) {
+  async assertDeploymentMzVersion(expectedVersion: string, password?: string) {
     // Check the version reported via pgwire.
     {
-      const pgConn = await this.pgConnect();
+      const pgConn = password
+        ? await this.pgConnectPassword(password)
+        : await this.pgConnect();
       const result = await pgConn.query("SELECT mz_version()");
       await pgConn.end();
       let version: string = result.rows[0].mz_version;
