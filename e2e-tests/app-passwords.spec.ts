@@ -26,24 +26,22 @@ test(`creating and using an app password`, async ({ page, request }) => {
   );
   const password = await passwordField.evaluate((e) => e.textContent);
 
-  if (!IS_MINIKUBE) {
-    await page.goto(`${CONSOLE_ADDR}/deployments`);
-    const deployment = await context.apiRequest("/deployments", {
-      method: "POST",
-      data: {
-        cloudProviderRegion: {
-          provider: provider,
-          region: `${region}`,
-        },
-        skipMtlsAuth: true,
+  await page.goto(`${CONSOLE_ADDR}/deployments`);
+  const deployment = await context.apiRequest("/deployments", {
+    method: "POST",
+    data: {
+      cloudProviderRegion: {
+        provider: provider,
+        region: `${region}`,
       },
-    });
-    await page.click(`text=${deployment.name}`);
-    await context.waitForDeploymentHealthy();
-    await page.waitForSelector("text=Generate an app-specific password");
-    const version = await context.readDeploymentField("Version");
-    await context.assertDeploymentMzVersion(version, password);
-  }
+      skipMtlsAuth: true,
+    },
+  });
+  await page.click(`text=${deployment.name}`);
+  await context.waitForDeploymentHealthy();
+  await page.waitForSelector("text=Generate an app-specific password");
+  const version = await context.readDeploymentField("Version");
+  await context.assertDeploymentMzVersion(version, password);
 
   // Delete key
   await page.goto(`${CONSOLE_ADDR}/access`);

@@ -315,7 +315,7 @@ export class TestContext {
       port: port,
       database: "materialize",
       password,
-      ssl: { rejectUnauthorized: false },
+      ssl: IS_MINIKUBE ? undefined : { rejectUnauthorized: false },
       connectionTimeoutMillis: 1000,
       query_timeout: 1000,
     };
