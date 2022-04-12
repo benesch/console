@@ -3,17 +3,12 @@ import { FronteggProvider } from "@frontegg/react";
 import React from "react";
 import { RecoilRoot } from "recoil";
 
-import logo from "../img/wordmark.svg";
 import { RestfulProvider } from "./api/auth";
 import EmbeddedLoading from "./embed/EmbeddedLoading";
 import { useIsInIframe } from "./embed/utils";
 import LoadingScreen from "./loading";
 import Router from "./router";
-import {
-  fronteggAuthPageBackground,
-  fronteggCustomStyles,
-  getFronteggTheme,
-} from "./theme";
+import { fronteggAuthPageBackground, getFronteggTheme } from "./theme";
 
 type Props = {
   baseUrl: string;
@@ -36,10 +31,8 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
             authenticatedUrl: "/deployments",
           },
         }}
-        headerImage={logo}
         backgroundImage={fronteggAuthPageBackground}
         themeOptions={theme}
-        customStyles={fronteggCustomStyles}
         customLoader={setLoading}
       >
         <RestfulProvider>
