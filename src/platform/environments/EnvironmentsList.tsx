@@ -9,6 +9,7 @@ import {
   Th,
   Thead,
   Tr,
+  useInterval,
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
@@ -26,6 +27,7 @@ import {
   EmptyList,
   ListPageHeaderContent,
 } from "../../layouts/listPageComponents";
+import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
 const EnvironmentsListPage = () => {
@@ -86,6 +88,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   const { data: environments, refetch } = useEnvironmentsList({
     base: props.region.environmentControllerUrl,
   });
+  useInterval(refetch, 5000);
   const isLoading = environments === null;
   const environment =
     !isLoading && environments?.length > 0 ? environments[0] : null;
@@ -118,6 +121,13 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         {allowEnabling && (
           <EnableEnvironmentModal
             refetch={refetch}
+            region={props.region}
+            size="sm"
+            float="right"
+          />
+        )}
+        {environment && (
+          <DestroyEnvironmentModal
             region={props.region}
             size="sm"
             float="right"

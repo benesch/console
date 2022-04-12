@@ -79,6 +79,35 @@ export const useEnvironmentsCreate = (props: UseEnvironmentsCreateProps) =>
     props
   );
 
+export type EnvironmentsDestroyProps = Omit<
+  MutateProps<void, unknown, void, void, void>,
+  "path" | "verb"
+>;
+
+/**
+ * Destroy an environment.
+ */
+export const EnvironmentsDestroy = (props: EnvironmentsDestroyProps) => (
+  <Mutate<void, unknown, void, void, void>
+    verb="DELETE"
+    path={`/api/environment`}
+    {...props}
+  />
+);
+
+export type UseEnvironmentsDestroyProps = Omit<
+  UseMutateProps<void, unknown, void, void, void>,
+  "path" | "verb"
+>;
+
+/**
+ * Destroy an environment.
+ */
+export const useEnvironmentsDestroy = (props: UseEnvironmentsDestroyProps) =>
+  useMutate<void, unknown, void, void, void>("DELETE", `/api/environment`, {
+    ...props,
+  });
+
 export type HealthRetrieveProps = Omit<
   GetProps<void, unknown, void, void>,
   "path"
