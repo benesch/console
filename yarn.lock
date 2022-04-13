@@ -1290,30 +1290,31 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.5.tgz#d4e52e8a0c84b93abae46efd4c43bd7a7f23907f"
   integrity sha512-mWnePEroLfaJQWmynipzOVcH6JwT8Jta3+yLsC5Pm/snHBXnOiAOnjBqYjKnvXwJ4eUPt2AaAhyrtwCgWQRGOg==
 
-"@frontegg/admin-portal@4.42.1":
-  version "4.42.1"
-  resolved "https://registry.yarnpkg.com/@frontegg/admin-portal/-/admin-portal-4.42.1.tgz#b5674e296182b9c0ede476b11ed52059b3b5328b"
-  integrity sha512-hdCnaIyBhxP+2comIh4+kyW6+aSdZgoVnpIk/A2DafZNhNX/echAU5mRbSxMVO4BC4n4n4yrV9xWmWok3XtgYQ==
+"@frontegg/admin-portal@5.38.1":
+  version "5.38.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/admin-portal/-/admin-portal-5.38.1.tgz#819283b63caa5309662ea93bd38182ff00e40326"
+  integrity sha512-c8RGun6n06nNBYxCyXxIkFNT/CnQHGvoRL1ld8crOtjvjlueVz6uRxJK11Jp2sNHUWSqoVnc86LQy6k7jHtuKQ==
   dependencies:
-    "@frontegg/react-hooks" "4.42.1"
-    "@frontegg/types" "4.42.1"
+    "@frontegg/types" "5.38.1"
+    uuid "^8.3.2"
 
-"@frontegg/react-auth@^3.0.21":
-  version "3.0.21"
-  resolved "https://registry.yarnpkg.com/@frontegg/react-auth/-/react-auth-3.0.21.tgz#fd46a2f714821d5cb9a8736f7844276d77ace508"
-  integrity sha512-+N/xx5+lh8dGf16p/G/ORPljd62UY3fzZFQcChf21je4eSdKaEOp9Rviwab8Cl7EBd1X9pWGMa4CASVSvOADxA==
+"@frontegg/react-auth@^4.0.12":
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/@frontegg/react-auth/-/react-auth-4.0.12.tgz#7ba71f76336ffed380fc7f7ae4ad50d7175903f6"
+  integrity sha512-zX1lNqnBSF1jvn2z8koE+sUuoxa5torm4sJci7MGUgfDeHJYBftr4rDq2x05d5hZ/PaSX5yEjZzxnNo81oxWdg==
   dependencies:
     clipboard-copy "^3.1.0"
+    jwt-encode "1.0.1"
     react-dropzone "^9.0.0"
     react-recaptcha-v3 "^2.0.1"
     uuid "^8.3.2"
 
-"@frontegg/react-core@^3.0.21":
-  version "3.0.21"
-  resolved "https://registry.yarnpkg.com/@frontegg/react-core/-/react-core-3.0.21.tgz#042a237a90a070680e7c9f8657524b9c439d601d"
-  integrity sha512-WsvGpLTVaWVzrPwWDzDZW9LQSi8Vec9wo9P/rMVWAx4KTvgDF5QXBpjGVGXC8wNKOlJgleFJoPAP0m+bR4QX9g==
+"@frontegg/react-core@^4.0.12":
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/@frontegg/react-core/-/react-core-4.0.12.tgz#24449221d3cc117713a1a602b845f173b2ed89a9"
+  integrity sha512-pc1RqlJ74zUahqdsc7q1iAzIhCZZ+QxY2HdViGGatopO3mH++Jb6e4zZYjsmFsRUJkpbzpXePvUrPnP7MBqexw==
   dependencies:
-    "@frontegg/react-hooks" "4.42.1"
+    "@frontegg/react-hooks" "5.38.1"
     classnames "^2.2.6"
     formik "^2.1.5"
     history "^4.9.0"
@@ -1328,43 +1329,42 @@
     react-waypoint "^10.1.0"
     yup "^0.28.3"
 
-"@frontegg/react-hooks@4.42.1":
-  version "4.42.1"
-  resolved "https://registry.yarnpkg.com/@frontegg/react-hooks/-/react-hooks-4.42.1.tgz#c90aad7a168b36e156306b0ee081362e15d88b77"
-  integrity sha512-/m8X1PA0S6l11eP0ndaG0u2JGR5qd6Hq7UEs7cksUDbzA1s/tXhXFPl2HWIIzYTzcvS/1Yvn6kOXXgdqESX4Sg==
+"@frontegg/react-hooks@5.38.1":
+  version "5.38.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/react-hooks/-/react-hooks-5.38.1.tgz#e5c057a4d8693ff21af10537eae79d73653fd938"
+  integrity sha512-wWWHwaiIQvNlusdSTbKcN5WUDVBKId3sergobuG7qOvrE2zR1eptkEtx8z6P0Xwu7OM5gfHjMb4iZHQWzBWiuw==
   dependencies:
-    "@frontegg/redux-store" "4.42.1"
+    "@frontegg/redux-store" "5.38.1"
     react-redux "^7.x"
 
-"@frontegg/react@=3.0.21":
-  version "3.0.21"
-  resolved "https://registry.yarnpkg.com/@frontegg/react/-/react-3.0.21.tgz#d5c044000ffbbd2ec73c2a3c9867d54a9415d1d5"
-  integrity sha512-pZkn6Rs/CheHZ9uN1cH6TbTMGftbfesAcucMOUavSgZKluZ2pZWUoexZV8GFy5Ly5zpSVdjvhyw9b3nQMOzp7g==
+"@frontegg/react@^4.0.12":
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/@frontegg/react/-/react-4.0.12.tgz#711056bc9a0d0976ea9ddd7f6e61c61b0bd51b68"
+  integrity sha512-p0f8LX+oJ4NwVzahJbW+MFD468DkyhH0jaOjn5HQWLJTWhyqgGpcWhc5Y/8a1tP5ee7ZwGpDdbh4v9jRTRDWPA==
   dependencies:
-    "@frontegg/admin-portal" "4.42.1"
-    "@frontegg/react-hooks" "4.42.1"
-    react-router-dom "^5.0.0"
+    "@frontegg/admin-portal" "5.38.1"
+    "@frontegg/react-hooks" "5.38.1"
 
-"@frontegg/redux-store@4.42.1":
-  version "4.42.1"
-  resolved "https://registry.yarnpkg.com/@frontegg/redux-store/-/redux-store-4.42.1.tgz#7fc313b68cdb70772e0e3973981f302c37eedac5"
-  integrity sha512-Di/NibgMI91LQws0Dsx5svT+7DGrR//GfPqUzyebvbtXL8jCz0Jawy3TLueg2lomNZkJUhKiEWdN5KCUnMMKWg==
+"@frontegg/redux-store@5.38.1":
+  version "5.38.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/redux-store/-/redux-store-5.38.1.tgz#abe6a683a8f370e99c8bba4fe3477e549eccbbec"
+  integrity sha512-c3227FdL9I+SDbf7vvepw2zOvZKDWh/2tnWsEeLS6D4dM0hWLwmiaUIKmTXW98JH3g5YAUH/6FU9Wjbb0wSiUg==
   dependencies:
-    "@frontegg/rest-api" "2.10.47"
+    "@frontegg/rest-api" "2.10.61"
     "@reduxjs/toolkit" "^1.5.0"
     redux-saga "^1.1.0"
     tslib "^2.3.1"
     uuid "^8.3.0"
 
-"@frontegg/rest-api@2.10.47":
-  version "2.10.47"
-  resolved "https://registry.yarnpkg.com/@frontegg/rest-api/-/rest-api-2.10.47.tgz#70f096ecfab8c53b909f424a54e5db5fa64e0be3"
-  integrity sha512-r42xDO7kvWMBo9s9r/kpvZQjFTUF+qNkK3QkY4vMfyzyW6SdbY9jvitxIfkr3ZgeGwOeqL9MFd/z4T2CkzGJDQ==
+"@frontegg/rest-api@2.10.61":
+  version "2.10.61"
+  resolved "https://registry.yarnpkg.com/@frontegg/rest-api/-/rest-api-2.10.61.tgz#57b5518a2dd46625bf0679d001457900d37561de"
+  integrity sha512-WX+onWjovECJ/RCsGiPvd2AtRQIdVFfHS+9c5t2G60MzzbrLIrN/AOcUWOgj1Y+P5xLbfGWwtn/FZflAFK430A==
 
-"@frontegg/types@4.42.1":
-  version "4.42.1"
-  resolved "https://registry.yarnpkg.com/@frontegg/types/-/types-4.42.1.tgz#04413d9fa84fca6e6f60a2990de817daa3dcc2a3"
-  integrity sha512-LrDKzDep8XITOmFLPofWPevwx7eqPgxrZUxzzTQAKPnLToJwy+RIkXk0ZHfNizSeCXTd7+bStwD7HGgjw9kcAQ==
+"@frontegg/types@5.38.1":
+  version "5.38.1"
+  resolved "https://registry.yarnpkg.com/@frontegg/types/-/types-5.38.1.tgz#928319be8bae2dbcf664c28ee55fd915908dbef6"
+  integrity sha512-tukp9OQnbTyWYQZilLXghRByd+3JFCybv2SaE00boj6I35yW6her4ZPPDV0U069hIlqVlRdVMqNAWVNy0a3myw==
   dependencies:
     csstype "^3.0.9"
 
@@ -7628,6 +7628,13 @@ jsprim@^1.2.2:
     array-includes "^3.1.3"
     object.assign "^4.1.2"
 
+jwt-encode@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/jwt-encode/-/jwt-encode-1.0.1.tgz#6602a0475f757c7d5d559a7e923f3d3d5ecd938c"
+  integrity sha512-QrGiNhynbAYyFdbC1GbjborzenSFs5Ga+2nE0uBokGXsH11xrgd1AX55HR7P+wGQyyZOn6LUO5iKlh74dlhBkA==
+  dependencies:
+    ts.cryptojs256 "^1.0.1"
+
 keyv@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-3.1.0.tgz#ecc228486f69991e49e9476485a5be1e8fc5c4d9"
@@ -9355,7 +9362,7 @@ react-remove-scroll@2.4.1:
     use-callback-ref "^1.2.3"
     use-sidecar "^1.0.1"
 
-react-router-dom@^5.0.0, react-router-dom@^5.3.0:
+react-router-dom@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-5.3.0.tgz#da1bfb535a0e89a712a93b97dd76f47ad1f32363"
   integrity sha512-ObVBLjUZsphUUMVycibxgMdh5jJ1e3o+KpAZBVeHcNQZ4W+uUGGWsokurzlF4YOldQYRQL4y6yFRWM4m3svmuQ==
@@ -10612,6 +10619,11 @@ ts-node@^10.4.0:
     make-error "^1.1.1"
     v8-compile-cache-lib "^3.0.0"
     yn "3.1.1"
+
+ts.cryptojs256@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ts.cryptojs256/-/ts.cryptojs256-1.0.1.tgz#56a3d3a3bc022ad358b3e62cd8dae3224d9384f1"
+  integrity sha1-VqPTo7wCKtNYs+Ys2NrjIk2ThPE=
 
 tsconfig-paths@^3.12.0:
   version "3.13.0"

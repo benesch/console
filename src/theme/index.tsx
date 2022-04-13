@@ -17,7 +17,9 @@ import {
   StyleFunctionProps,
 } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
+import React from "react";
 
+import logo from "../../img/wordmark.svg";
 import LoginFooter from "../layouts/LoginFooter";
 import SignupFooter from "../layouts/SignupFooter";
 import colors, { gradients, semanticColors, shadows } from "./colors";
@@ -74,54 +76,24 @@ export const fronteggAuthPageBackground = `
   ${gradients.primary.gradient},
   ${gradients.primary.fallback}
 `;
-
-export const fronteggCustomStyles = `
-/* Our logo is very wide and short, so make it bigger than normal. */
-.fe-logo-wrapper img {
-  width: 65%;
-}
-
-/* Add a missing period to the "Sign up." link for consistency with the
- * "Log in." link. */
-[data-testid="redirect-to-signup"]:after {
-  content: "."
-}
-`;
-
 const fronteggTheme: FronteggThemeOptions = {
-  adminPortal: {
-    layout: {
-      fullScreenMode: false,
-    },
-    typographyStyleOptions: {
-      fontFamily: fontDefault,
-    },
-  },
-  authPage: {
-    inputError: {},
-    loginBox: {
-      // Frontegg's types incorrectly think this property is on `authPage`
-      // directly, not nested in `loginBox`, so ignore the type error.
-      // @ts-ignore
-      // backgroundCard: "white",
-    },
-  },
   loginBox: {
+    boxStyle: {
+      backgroundColor: "white",
+    },
     login: {
-      // Add a footer that temporarily redirects the signup flow to a WordPress
-      // form with manual access control.
-      footer: LoginFooter,
+      logo: {
+        image: () => <img src={logo} />,
+        placement: "page",
+      },
+      boxFooter: () => <LoginFooter />,
     },
     signup: {
-      footer: SignupFooter,
-    },
-  },
-  typography: {
-    body1Bold: {
-      fontWeight: 500,
-    },
-    button: {
-      fontFamily: fontDefault,
+      logo: {
+        image: () => <img src={logo} />,
+        placement: "page",
+      },
+      boxFooter: () => SignupFooter,
     },
   },
   typographyStyleOptions: {
