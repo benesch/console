@@ -93,6 +93,13 @@ export class TestContext {
         email: EMAIL,
         password: PASSWORD,
       },
+
+      // frontegg's upstream timeout is 60s, they advise us to run
+      // for longer than that so that they can see why our requests
+      // are occasionally timing out.
+      //
+      // TODO: figure out why we see occasional timeouts and remove this.
+      timeout: 61 * 1000,
     });
     const text = await response.text();
     let auth: FronteggAuthResponse;
