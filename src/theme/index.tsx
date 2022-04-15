@@ -82,18 +82,14 @@ const fronteggTheme: FronteggThemeOptions = {
       backgroundColor: "white",
     },
     login: {
-      logo: {
-        image: () => <img src={logo} />,
-        placement: "page",
-      },
       boxFooter: () => <LoginFooter />,
     },
     signup: {
-      logo: {
-        image: () => <img src={logo} />,
-        placement: "page",
-      },
       boxFooter: () => SignupFooter,
+    },
+    logo: {
+      image: () => <img src={logo} />,
+      placement: "page",
     },
   },
   typographyStyleOptions: {
