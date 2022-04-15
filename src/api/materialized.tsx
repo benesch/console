@@ -12,30 +12,30 @@ import { useAuth } from "./auth";
 /**
  * A React hook that runs a SQL query against the current environment.
  */
-export function useSql(query: string) {
+export function useSql(sql: string) {
   const { fetchAuthed } = useAuth();
   const [current, _] = useRecoilState(currentEnvironment);
   const [results, setResults] = useState<any[] | null>(null);
 
-  async function executeQuery() {
+  async function executeSql() {
     if (!current) return;
 
-    const response = await fetchAuthed(`//${current.address}/sql`, {
+    const response = await fetchAuthed(`//${current.address}/api/sql`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: `sql=${encodeURIComponent(query)}`,
+      body: JSON.stringify({ sql: sql }),
     });
     const results = JSON.parse(await response.text());
     setResults(results.results[0].rows);
   }
 
   useEffect(() => {
-    executeQuery();
-  }, [current, query]);
+    executeSql();
+  }, [current, sql]);
 
-  return { data: results, refetch: executeQuery };
+  return { data: results, refetch: executeSql };
 }
 
 export interface Cluster {
