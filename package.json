@@ -10,7 +10,7 @@
     "@chakra-ui/toast": "^1.5.7",
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.8.1",
-    "@fontsource/inter": "^4.5.1",
+    "@fontsource/inter": "^4.5.7",
     "@frontegg/react": "^4.0.12",
     "@frontegg/react-auth": "^4.0.12",
     "@frontegg/react-core": "^4.0.12",
