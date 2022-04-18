@@ -1285,10 +1285,10 @@
   resolved "https://registry.yarnpkg.com/@exodus/schemasafe/-/schemasafe-1.0.0-rc.6.tgz#7985f681564cff4ffaebb5896eb4be20af3aae7a"
   integrity sha512-dDnQizD94EdBwEj/fh3zPRa/HWCS9O5au2PuHhZBbuM3xWHxuaKzPBOEWze7Nn0xW68MIpZ7Xdyn1CoCpjKCuQ==
 
-"@fontsource/inter@^4.5.1":
-  version "4.5.5"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.5.tgz#d4e52e8a0c84b93abae46efd4c43bd7a7f23907f"
-  integrity sha512-mWnePEroLfaJQWmynipzOVcH6JwT8Jta3+yLsC5Pm/snHBXnOiAOnjBqYjKnvXwJ4eUPt2AaAhyrtwCgWQRGOg==
+"@fontsource/inter@^4.5.7":
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.7.tgz#f0657c52105ed51e04ac636a25d6016896c5ee9d"
+  integrity sha512-25k3thupaOEBexuU+jAkGqieKPbuhSuA+sinDwp1iBNhqQPiJ9QHDvsXgoCgCbZ4sGlE8aCwZmSlDJrPdJHNkw==
 
 "@frontegg/admin-portal@5.38.1":
   version "5.38.1"
@@ -1773,18 +1773,18 @@
     redux-thunk "^2.4.1"
     reselect "^4.1.5"
 
-"@segment/analytics-next@^1.34.0":
-  version "1.34.0"
-  resolved "https://registry.yarnpkg.com/@segment/analytics-next/-/analytics-next-1.34.0.tgz#dfc0ec53a39f3131adf7181d6f6cc74a84f7e8c5"
-  integrity sha512-3hbpLhMqgBrdv8WWB+qZY34F0SE4qx+zbx28D5YHpI5U1u0dEd34IjNSoBigkEHVNOV2Z1Rkyr1UBbQtZVb6Xw==
+"@segment/analytics-next@^1.35.1":
+  version "1.35.1"
+  resolved "https://registry.yarnpkg.com/@segment/analytics-next/-/analytics-next-1.35.1.tgz#ef28fbb20dcd895cbce4f1f2d006040f76eb5fd6"
+  integrity sha512-NXdbH6SGBQHZj+bZlpBnbx9DnSq2OVQ6OqLzWzPy2s91+YLJS/UyVPH/WqZ8qcMz/ut5W1FHd0vSrNJ/DGpBnA==
   dependencies:
     "@lukeed/uuid" "^2.0.0"
     "@segment/analytics.js-video-plugins" "^0.2.1"
-    "@segment/facade" "3.4.8"
+    "@segment/facade" "^3.4.9"
     "@segment/tsub" "^0.1.10"
     dset "^3.0.0"
     js-cookie "^2.2.1"
-    node-fetch "^2.6.1"
+    node-fetch "^2.6.7"
     spark-md5 "^3.0.1"
     tslib "^2.1.0"
     unfetch "^4.1.0"
@@ -1796,10 +1796,10 @@
   dependencies:
     unfetch "^3.1.1"
 
-"@segment/facade@3.4.8":
-  version "3.4.8"
-  resolved "https://registry.yarnpkg.com/@segment/facade/-/facade-3.4.8.tgz#6a8b669115c9a0b1903d3ee2364f62e267a47cc6"
-  integrity sha512-WFtyFUcDPHaUB1Rikrn8dZVCLPkdJmkkHSTgL5gwI8qKuZzRkpsKyeFUmmehmYbF1Jw+sESzKXzf23DFkKFm3A==
+"@segment/facade@^3.4.9":
+  version "3.4.9"
+  resolved "https://registry.yarnpkg.com/@segment/facade/-/facade-3.4.9.tgz#07e614073fa873910035c085e69bccd27df088a6"
+  integrity sha512-0RTLB0g4HiJASc6pTD2/Tru+Qz+VPGL1W+/EvkBGhY6WYk00cZhTjLsMJ8X5BO6iPqLb3vsxtfjVM/RREG5oQQ==
   dependencies:
     "@segment/isodate-traverse" "^1.1.1"
     inherits "^2.0.4"
