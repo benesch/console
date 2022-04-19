@@ -27,9 +27,32 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   await page.goto(`${CONSOLE_ADDR}/platform/regions`);
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
-  // TODO: This is wrong. We have to do the UI parts in sequence, but
-  // once both regions are refreshed & enabled, we can connect in
-  // parallel:
+  // Clean up existing environments and spin them up again - we do
+  // this in sequence because it's happening in the UI with modals.
+  // TODO: replace the cleanup with API calls:
+  for (let i = 0; i < (await regionRows.count()); i++) {
+    const row = regionRows.nth(i);
+    const fields = row.locator("td");
+    const region = await fields.first().innerText();
+    const startURL = await fields.nth(1).innerText();
+    if (startURL.startsWith("postgres")) {
+      // Delete an old env if one exists.
+      await row.locator('button:text("Destroy")').click();
+      page.type("[aria-modal] input", region);
+      await Promise.all([
+        page.waitForSelector("[aria-modal]", { state: "detached" }),
+        page.click("[aria-modal] button:text('Destroy')"),
+      ]);
+    }
+    const createButton = row.locator('button:text("Enable region")');
+    await createButton.click();
+    await Promise.all([
+      page.click("[aria-modal] button:text('Enable')"),
+      row.locator("td >> text=/^postgres:/").waitFor(),
+    ]);
+  }
+
+  // Next, connect to each environment's environment, simultaneously:
   await Promise.all(
     Array(await regionRows.count())
       .fill(0)
@@ -47,23 +70,6 @@ async function testPlatformEnvironment<T>(
   row: Locator
 ) {
   const fields = row.locator("td");
-  const region = await fields.first().innerText();
-  const startURL = await fields.nth(1).innerText();
-  if (startURL.startsWith("postgres")) {
-    // Delete an old env if one exists.
-    await row.locator('button:text("Destroy")').click();
-    page.type("[aria-modal] input", region);
-    await Promise.all([
-      page.waitForSelector("[aria-modal]", { state: "detached" }),
-      page.click("[aria-modal] button:text('Destroy')"),
-    ]);
-  }
-  const createButton = row.locator('button:text("Enable region")');
-  await createButton.click();
-  await Promise.all([
-    page.click("[aria-modal] button:text('Enable')"),
-    row.locator("td >> text=/^postgres:/").waitFor(),
-  ]);
 
   const url = new URL(await fields.nth(1).innerText());
   const pgParams = {
