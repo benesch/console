@@ -48,12 +48,10 @@ async function testPlatformEnvironment<T>(
 ) {
   const fields = row.locator("td");
   const region = await fields.first().innerText();
-  console.log("Running on", region);
   const startURL = await fields.nth(1).innerText();
-  console.log("Running on inner promise", region);
   if (startURL.startsWith("postgres")) {
     // Delete an old env if one exists.
-    await row.locator("button").click();
+    await row.locator('button:text("Destroy")').click();
     page.type("[aria-modal] input", region);
     await Promise.all([
       page.waitForSelector("[aria-modal]", { state: "detached" }),
