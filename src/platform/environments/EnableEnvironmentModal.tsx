@@ -39,6 +39,13 @@ interface Props extends ButtonProps {
   region: SupportedCloudRegion;
 }
 
+/// The image SHA that we spin up all new materialize platform
+/// components up with by default.  You need to bump this to a new
+/// value whenever you wish to try new materialized functions in
+/// cloud.
+// TODO: Use something like the release tracks we use for materialize cloud deployments.
+const ImageTag = "unstable-130a6b6cc6d2bf8aecf066d75f919ec259c5efdc";
+
 const EnableEnvironmentModal = (props: Props) => {
   const { refetch, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -67,7 +74,7 @@ const EnableEnvironmentModal = (props: Props) => {
         <ModalContent>
           <Formik
             initialValues={{
-              image: "materialize/materialized:unstable",
+              image: `materialize/materialized:${ImageTag}`,
             }}
             onSubmit={async (values, actions) => {
               try {
