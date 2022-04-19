@@ -21,7 +21,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     "/identity/resources/users/api-tokens/v1",
     { method: "POST", data: { description: name } }
   );
-  const password = `{clientId}{secret}`;
+  const password = `${clientId}${secret}`;
   console.log("environment-controller password", password);
 
   await page.goto(`${CONSOLE_ADDR}/platform/regions`);
