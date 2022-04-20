@@ -33,6 +33,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   for (let i = 0; i < (await regionRows.count()); i++) {
     const row = regionRows.nth(i);
     const fields = row.locator("td");
+    await row.locator("button").waitFor(); // expect any button to be visible
     const region = await fields.first().innerText();
     const startURL = await fields.nth(1).innerText();
     if (startURL.startsWith("postgres")) {
