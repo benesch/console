@@ -124,13 +124,21 @@ const NavBar = () => {
   );
 };
 
-const platformNavItems = [
-  { label: "Deployments", href: "/deployments", legacy: true },
+type NavItem = {
+  label: string;
+  href: string;
+  legacy?: boolean;
+};
+
+const platformNavItems: NavItem[] = [
   { label: "Dashboard", href: "/platform" },
   { label: "Regions", href: "/platform/regions" },
   { label: "Clusters", href: "/platform/clusters" },
+  { label: "Deployments", href: "/deployments", legacy: true },
 ];
-const legacyNavItems = [{ label: "Deployments", href: "/deployments" }];
+const legacyNavItems: NavItem[] = [
+  { label: "Deployments", href: "/deployments" },
+];
 
 const NavMenu = () => {
   const { platformEnabled } = useAuth();
@@ -141,7 +149,7 @@ const NavMenu = () => {
         spacing="3"
         flex="2"
         order={2}
-        display="flex"
+        display={{ base: "none", lg: "flex" }}
         alignSelf="stretch"
         alignItems="stretch"
         ml={{ base: 0.5, xl: 2 }}
@@ -172,6 +180,7 @@ const NavMenu = () => {
               to={item.href}
             >
               {item.label}
+              {item.legacy && <Badge ml={1}>Legacy</Badge>}
             </MenuItem>
           ))}
         </MenuList>
@@ -180,13 +189,7 @@ const NavMenu = () => {
   );
 };
 
-interface NavItemProps {
-  href?: string;
-  label: string;
-  legacy?: boolean;
-}
-
-const NavItem = (props: NavItemProps) => {
+const NavItem = (props: NavItem) => {
   const location = useLocation();
   const href = props.href || "#";
   const active = location.pathname === href;
