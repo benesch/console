@@ -333,6 +333,9 @@ export class TestContext {
         return client;
       } catch (error) {
         console.log(error);
+        if (error.code === "28P01") {
+          throw new Error("wrong password");
+        }
         await this.page.waitForTimeout(1000);
       }
     }
