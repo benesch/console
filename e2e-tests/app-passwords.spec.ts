@@ -13,12 +13,12 @@ test(`creating and using an app password`, async ({ page, request }) => {
   const context = await TestContext.start(page, request);
   const now = new Date().getTime();
   const name = `Integration test token ${now}`;
-  await context.deleteAllKeys();
+  await context.deleteAllKeysOlderThan(2);
   await page.goto(`${CONSOLE_ADDR}/access`);
 
   // Create key
   console.log("Creating app-specific password", name);
-  await page.waitForSelector("text=No app-specific passwords yet.");
+  await page.waitForSelector("text=Generate new password");
   await page.fill("form [name=name]", name);
   await page.click("form button:text('Submit')");
   await page.waitForSelector(`text=New password "${name}"`);
@@ -51,6 +51,9 @@ test(`creating and using an app password`, async ({ page, request }) => {
   await page.goto(`${CONSOLE_ADDR}/access`);
   await page.click("[aria-label='Delete password']");
   await page.type("[aria-modal] input", name);
-  await page.click("[aria-modal] button:text('Delete')");
-  await page.waitForSelector("text=No app-specific passwords yet.");
+  await Promise.all([
+    page.waitForSelector("[aria-modal]", { state: "detached" }),
+    page.click("[aria-modal] button:text('Delete')"),
+  ]);
+  await page.waitForSelector(`text=${name}`, { state: "detached" });
 });

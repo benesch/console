@@ -244,9 +244,13 @@ export class TestContext {
     );
   }
 
-  async deleteAllKeys() {
+  async deleteAllKeysOlderThan(hours: number) {
     const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
+      const age = new Date() - Date.parse(k.createdAt);
+      if (age < hours * 60 * 60 * 1000) {
+        continue;
+      }
       try {
         await this.fronteggRequest(
           `/identity/resources/users/api-tokens/v1/${k.clientId}`,
