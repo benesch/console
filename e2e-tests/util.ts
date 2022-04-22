@@ -232,8 +232,8 @@ export class TestContext {
     }
   }
 
-  async deleteAllKeys() {
-    const userKeys = await this.fronteggRequest(
+  async listAllKeys() {
+    return await this.fronteggRequest(
       `/identity/resources/users/api-tokens/v1`,
       {
         headers: {
@@ -242,6 +242,10 @@ export class TestContext {
         },
       }
     );
+  }
+
+  async deleteAllKeys() {
+    const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
       try {
         await this.fronteggRequest(
@@ -334,6 +338,7 @@ export class TestContext {
       } catch (error) {
         console.log(error);
         if (error.code === "28P01") {
+          console.log("app-specific passwords", await this.listAllKeys());
           throw new Error("wrong password");
         }
         await this.page.waitForTimeout(1000);
