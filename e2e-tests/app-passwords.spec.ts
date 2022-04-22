@@ -11,11 +11,13 @@ test.afterEach(async ({ page }) => {
 
 test(`creating and using an app password`, async ({ page, request }) => {
   const context = await TestContext.start(page, request);
-  const name = "Integration test token";
+  const now = new Date().getTime();
+  const name = `Integration test token ${now}`;
   await context.deleteAllKeys();
   await page.goto(`${CONSOLE_ADDR}/access`);
 
   // Create key
+  console.log("Creating app-specific password", name);
   await page.waitForSelector("text=No app-specific passwords yet.");
   await page.fill("form [name=name]", name);
   await page.click("form button:text('Submit')");
@@ -25,6 +27,8 @@ test(`creating and using an app password`, async ({ page, request }) => {
     `css=[aria-label="clientId"]`
   );
   const password = await passwordField.evaluate((e) => e.textContent);
+  const appPasswords = await context.listAllKeys();
+  console.log("app passwords now", appPasswords);
 
   await page.goto(`${CONSOLE_ADDR}/deployments`);
   const deployment = await context.apiRequest("/deployments", {
