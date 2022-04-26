@@ -57,7 +57,7 @@ const AppPasswordsPage = () => {
       )}${(tokensState.successDialog.secret || "").replaceAll("-", "")}`;
     }
     return "";
-  }, [tokensState]);
+  }, [tokensState, latestPassName]);
 
   const deleteCb = (clientId: string) => {
     setLatestDeletionId(clientId);
