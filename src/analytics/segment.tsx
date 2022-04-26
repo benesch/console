@@ -1,4 +1,4 @@
-import { Analytics } from "@segment/analytics-next";
+import { Analytics, AnalyticsBrowser, Context } from "@segment/analytics-next";
 
 import { GlobalConfig } from "../types";
 import { AnalyticsClient } from "./types";
@@ -13,10 +13,18 @@ export default class SegmentAnalyticsClient extends AnalyticsClient {
   constructor(config: GlobalConfig) {
     super(config);
     if (config.segmentApiKey) {
-      this.segmentNativeClient = new Analytics({
-        writeKey: config.segmentApiKey,
-      });
-      this.page();
+      AnalyticsBrowser.load(
+        {
+          writeKey: config.segmentApiKey,
+        },
+        {
+          retryQueue: true,
+        }
+      )
+        .then((value) => ([this.segmentNativeClient] = value))
+        .catch((reason) => {
+          console.log(reason);
+        });
     }
   }
 
