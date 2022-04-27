@@ -1,4 +1,4 @@
-import { Analytics, AnalyticsBrowser, Context } from "@segment/analytics-next";
+import { Analytics, AnalyticsBrowser } from "@segment/analytics-next";
 
 import { GlobalConfig } from "../types";
 import { AnalyticsClient } from "./types";
