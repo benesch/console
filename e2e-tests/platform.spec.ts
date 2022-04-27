@@ -1,4 +1,5 @@
 import { APIRequestContext, Locator, Page, test } from "@playwright/test";
+import assert from "assert";
 import { Client } from "pg";
 
 import {
@@ -74,27 +75,44 @@ async function testPlatformEnvironment<T>(
   password: string,
   row: Locator
 ) {
+  const client = await connectRegionPostgres(page, password, row);
+  await client.query("CREATE CLUSTER c SIZE 'xsmall';");
+  await client.query("CREATE TABLE t (a int);");
+  await client.query("INSERT INTO t VALUES (42);");
+  await client.query("SET CLUSTER = c");
+  const result = await client.query("SELECT * FROM t");
+  assert.deepStrictEqual(result.rows, [{ a: 42 }]);
+}
+
+async function connectRegionPostgres(
+  page: Page,
+  password: string,
+  row: Locator
+): Promise<Client> {
   const fields = row.locator("td");
 
   const url = new URL(await fields.nth(1).innerText());
   const pgParams = {
     user: EMAIL,
     host: url.hostname,
-    port: url.port,
+    port: parseInt(url.port, 10),
     database: url.pathname.slice(1),
     password,
     ssl: IS_MINIKUBE ? undefined : { rejectUnauthorized: false },
-    connectionTimeoutMillis: 1000,
-    query_timeout: 1000,
+    // 5 second connection timeout, because Frontegg authentication can be slow.
+    connectionTimeoutMillis: 5 * 1000,
+    // 2 minute query timeout, because spinning up a cluster can be slow.
+    query_timeout: 2 * 60 * 1000,
   };
   for (let i = 0; i < 600; i++) {
     try {
       const client = new Client(pgParams);
       await client.connect();
-      await client.query("SELECT 1;");
+      return client;
     } catch (error) {
       console.log(error);
       await page.waitForTimeout(1000);
     }
   }
+  throw new Error("unable to connect to region");
 }
