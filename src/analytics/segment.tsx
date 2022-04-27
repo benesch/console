@@ -23,7 +23,7 @@ export default class SegmentAnalyticsClient extends AnalyticsClient {
       )
         .then((value) => ([this.segmentNativeClient] = value))
         .catch((reason) => {
-          console.log(reason);
+          console.error(reason);
         });
     }
   }
