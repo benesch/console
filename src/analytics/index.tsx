@@ -1,7 +1,5 @@
-import GAAnalyticsClient from "./googleAnalytics";
-import SegmentAnalyticsClient from "./segment";
+export { default as GAAnalyticsClient } from "./googleAnalytics";
+export { default as SegmentAnalyticsClient } from "./segment";
+import useAnalyticsClients from "./hook";
 
-export default [
-  new GAAnalyticsClient(window.CONFIG),
-  new SegmentAnalyticsClient(window.CONFIG),
-];
+export default useAnalyticsClients;
