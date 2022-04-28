@@ -81,6 +81,9 @@ export class TestContext {
 
     // Provide a clean slate for the test.
     context.deleteAllDeployments();
+    // Ensure they're on the deployments page, whether the test is for platform or not
+    // TODO make start() not deployments-centric once we're in platform world
+    await page.click('a:has-text("Deployments")');
     await page.waitForSelector("text=No deployments yet");
 
     return context;
