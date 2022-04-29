@@ -2,13 +2,7 @@ import { APIRequestContext, Locator, Page, test } from "@playwright/test";
 import assert from "assert";
 import { Client } from "pg";
 
-import {
-  CONSOLE_ADDR,
-  EMAIL,
-  IS_MINIKUBE,
-  STATE_NAME,
-  TestContext,
-} from "./util";
+import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
 test.afterEach(async ({ page }) => {
   // Update the refresh token for future tests.
@@ -98,7 +92,7 @@ async function connectRegionPostgres(
     port: parseInt(url.port, 10),
     database: url.pathname.slice(1),
     password,
-    ssl: IS_MINIKUBE ? undefined : { rejectUnauthorized: false },
+    ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
     // 5 second connection timeout, because Frontegg authentication can be slow.
     connectionTimeoutMillis: 5 * 1000,
     // 2 minute query timeout, because spinning up a cluster can be slow.

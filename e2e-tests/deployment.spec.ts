@@ -1,9 +1,9 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { IS_MINIKUBE, LEGACY_VERSION, STATE_NAME, TestContext } from "./util";
+import { IS_KIND, LEGACY_VERSION, STATE_NAME, TestContext } from "./util";
 
-const provider = IS_MINIKUBE ? "local" : "AWS";
-const regions = IS_MINIKUBE ? ["minikube"] : ["us-east-1", "eu-west-1"];
+const provider = IS_KIND ? "local" : "AWS";
+const regions = IS_KIND ? ["kind"] : ["us-east-1", "eu-west-1"];
 
 test.afterEach(async ({ page }) => {
   // Update the refresh token for future tests.
