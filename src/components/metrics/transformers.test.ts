@@ -1,4 +1,4 @@
-import { validPrometheusValues } from "../../__mocks__";
+import { validPrometheusValues } from "./__mocks__";
 import {
   formatFullDateTime,
   formatXToReadableDateTime,

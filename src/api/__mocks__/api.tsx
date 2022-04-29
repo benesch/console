@@ -5,7 +5,7 @@ import {
   validDeploymentList,
   validPrometheusValues,
   validRegions,
-} from "../../deployments/__mocks__";
+} from "../../components/metrics/__mocks__";
 
 export const testApiBase = "https://example.com";
 

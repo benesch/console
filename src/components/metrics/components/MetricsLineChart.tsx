@@ -9,20 +9,24 @@ import {
   VictoryVoronoiContainer,
 } from "victory";
 
-import useMZVictoryTheme from "../../../../theme/victoryChart";
+import useMZVictoryTheme from "../../../theme/victoryChart";
 import { UseRetrieveMetrics } from "../hooks";
 import {
   formatDatapointLabel,
   formatXToReadableDateTime,
   formatYToPercentage,
 } from "../transformers";
-import DeploymentMetricsRetrieveError from "./DeploymentMetricsRetrieveError";
 import MetricPeriodSelector from "./MetricPeriodSelector";
+import DeploymentMetricsRetrieveError from "./MetricsRetrieveError";
 
-const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
+type Props = UseRetrieveMetrics & { testId: string; errorMessage: string };
+
+const MetricsLineChart: React.FC<Props> = ({
   operation,
   chart,
   filters,
+  errorMessage,
+  testId,
 }) => {
   const chartTheme = useMZVictoryTheme();
   const theme = useTheme();
@@ -33,7 +37,12 @@ const MetricsLineChart: React.FC<UseRetrieveMetrics> = ({
       data-testid="line-chart-container"
       sx={{ svg: { overflow: "visible" } }}
     >
-      {operation.error && <DeploymentMetricsRetrieveError />}
+      {operation.error && (
+        <DeploymentMetricsRetrieveError
+          errorMessage={errorMessage}
+          testId={testId}
+        />
+      )}
       <>
         <HStack
           justifyContent="space-between"

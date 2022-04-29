@@ -3,8 +3,50 @@ import { useTheme } from "@chakra-ui/system";
 import get from "lodash/get";
 import { VictoryThemeDefinition } from "victory";
 
-/* customized theme from victory defaults */
+import colors from "./colors";
 
+const shuffleEvenly = (arr: string[]): string[] => {
+  const result: string[] = [];
+  const piles: string[][] = [];
+  const numItems = arr.length;
+  const slices = 8;
+  while (piles.length < slices) {
+    piles.push(arr.splice(0, Math.floor(numItems / slices)));
+  }
+  let i = 0;
+  while (i < numItems) {
+    if (piles[i % slices] && piles[i % slices].length > 0) {
+      result.push(piles[i % slices].pop() as string);
+    }
+    i += 1;
+  }
+  return result;
+};
+
+const COLOR_NAMES = shuffleEvenly(
+  Object.entries(colors).flatMap(([key, value]) => {
+    // filter out boring colors, colors used in chart UI, and colors too close to other colors
+    if (
+      typeof value === "string" ||
+      ["bwGray", "gray", "purple", "red"].indexOf(key) !== -1
+    ) {
+      return [];
+    } else if (["honeysuckle", "green"].indexOf(key) !== -1) {
+      // these colors skew too bright so we only return their darker variants
+      return [`${key}.500`, `${key}.800`, `${key}.700`, `${key}.600`];
+    }
+    return [`${key}.400`, `${key}.500`, `${key}.600`, `${key}.300`];
+  })
+);
+
+export const getColorName = (id: string): string => {
+  const intId = parseInt(id, 10) || 0;
+  // so long as our list of colors doesn't change,
+  // the object will always be assigned the same color even on reload
+  return COLOR_NAMES[intId % COLOR_NAMES.length] || COLOR_NAMES[0];
+};
+
+/* customized theme from victory defaults */
 const useMZVictoryTheme = (): VictoryThemeDefinition => {
   const theme = useTheme();
 

@@ -19,7 +19,7 @@ import {
   validDeployment,
   validDeploymentList,
   validRegions,
-} from "./__mocks__";
+} from "../components/metrics/__mocks__";
 import DeploymentListPage from "./ListPage";
 
 const renderDeploymentList = () => {
