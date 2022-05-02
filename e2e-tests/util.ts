@@ -5,7 +5,7 @@ import path from "path";
 import { Client } from "pg";
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
-export const IS_MINIKUBE =
+export const IS_KIND =
   CONSOLE_ADDR === "http://localhost:8000" ||
   CONSOLE_ADDR === "http://backend:8000";
 
@@ -42,7 +42,7 @@ interface FronteggAuthResponse {
 }
 
 const adminPortalHost = () => {
-  if (IS_MINIKUBE) {
+  if (IS_KIND) {
     return "admin.staging.cloud.materialize.com";
   } else {
     const console_url = new URL(CONSOLE_ADDR);
@@ -333,7 +333,7 @@ export class TestContext {
       port: port,
       database: "materialize",
       password,
-      ssl: IS_MINIKUBE ? undefined : { rejectUnauthorized: false },
+      ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
       connectionTimeoutMillis: 1000,
       query_timeout: 1000,
     };
