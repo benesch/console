@@ -79,9 +79,9 @@ async function testPlatformEnvironment<T>(
       FROM S3 DISCOVER OBJECTS MATCHING 'engagement.csv'
       USING BUCKET SCAN 'materialize-sample-data'
       WITH (
-          role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader'
+          role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader',
+          region = 'us-east-1'
       )
-      WITH region = 'us-east-1'
       FORMAT CSV WITH HEADER (id, status, active_time);`);
   } else {
     // In Minikube, we won't have access to the S3 bucket, so just create a
