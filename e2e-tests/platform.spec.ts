@@ -81,6 +81,7 @@ async function testPlatformEnvironment<T>(
       WITH (
           role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader'
       )
+      WITH region = 'us-east-1'
       FORMAT CSV WITH HEADER (id, status, active_time);`);
   } else {
     // In Minikube, we won't have access to the S3 bucket, so just create a
