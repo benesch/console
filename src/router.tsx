@@ -16,10 +16,11 @@ import {
 import AppPasswordsPage from "./access/AppPasswordsPage";
 import analyticsClients from "./analytics";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
-import { AuthProvider, useAuth } from "./api/auth";
+import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
+import HomePage from "./platform/HomePage";
 import PlatformRouter from "./platform/router";
 import { assert } from "./util";
 
@@ -39,6 +40,9 @@ const Router = () => {
         </ProtectedRoute>
         <ProtectedRoute path="/platform">
           <PlatformRouter />
+        </ProtectedRoute>
+        <ProtectedRoute path="/">
+          <HomePage />
         </ProtectedRoute>
         <RedirectIfNotAuthRoute />
       </Switch>
@@ -62,9 +66,7 @@ const RedirectIfNotAuthRoute = () => {
   }
 };
 
-type ProtectedRouteProps = RouteProps;
-
-const ProtectedRoute = (props: ProtectedRouteProps) => {
+const ProtectedRoute = (props: RouteProps) => {
   const location = useLocation();
 
   // Consume Frontegg authentication state.

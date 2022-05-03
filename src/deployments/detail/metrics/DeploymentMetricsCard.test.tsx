@@ -8,8 +8,8 @@ import {
   createApiLayerMock,
   validDeploymentId,
 } from "../../../api/__mocks__/api";
+import { validDeployment } from "../../../components/metrics/__mocks__";
 import { renderFragmentInTestMode } from "../../../utils/tests-utils";
-import { validDeployment } from "../../__mocks__";
 import CpuMetrics from "./CpuMetrics";
 import DeploymentMetricsCard from "./DeploymentMetricsCard";
 import MemoryMetrics from "./MemoryMetrics";

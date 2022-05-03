@@ -1,4 +1,4 @@
-import { mockDate } from "../../../__mocks__/date";
+import { mockDate } from "../../__mocks__/date";
 import { xDomainFromMetrics, yDomainFromMetrics } from "./domains";
 import { VictoryMetric } from "./types";
 

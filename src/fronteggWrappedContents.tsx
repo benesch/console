@@ -28,7 +28,7 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
         contextOptions={{ baseUrl }}
         authOptions={{
           routes: {
-            authenticatedUrl: "/deployments",
+            authenticatedUrl: "",
           },
         }}
         backgroundImage={fronteggAuthPageBackground}

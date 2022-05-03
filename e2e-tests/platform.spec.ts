@@ -1,13 +1,8 @@
 import { APIRequestContext, Locator, Page, test } from "@playwright/test";
+import assert from "assert";
 import { Client } from "pg";
 
-import {
-  CONSOLE_ADDR,
-  EMAIL,
-  IS_MINIKUBE,
-  STATE_NAME,
-  TestContext,
-} from "./util";
+import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
 test.afterEach(async ({ page }) => {
   // Update the refresh token for future tests.
@@ -74,27 +69,86 @@ async function testPlatformEnvironment<T>(
   password: string,
   row: Locator
 ) {
+  const client = await connectRegionPostgres(page, password, row);
+  await client.query("CREATE CLUSTER c SIZE 'xsmall';");
+  await client.query("SET CLUSTER = c");
+  if (!IS_KIND) {
+    // This S3 bucket lives in the "Materialize Sample Data" AWS account and is
+    // managed in the i2 repository.
+    await client.query(`CREATE MATERIALIZED SOURCE engagement
+      FROM S3 DISCOVER OBJECTS MATCHING 'engagement.csv'
+      USING BUCKET SCAN 'materialize-sample-data'
+      WITH (
+          role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader'
+      )
+      FORMAT CSV WITH HEADER (id, status, active_time);`);
+  } else {
+    // In Minikube, we won't have access to the S3 bucket, so just create a
+    // table with the expected contents. This still tests that the cluster
+    // can be created and perform computation.
+    await client.query(
+      "CREATE TABLE engagement (id text, status text, active_time text, mz_record integer)"
+    );
+    await client.query(
+      `INSERT INTO engagement VALUES
+        ('9999', 'active', '8 hours', 1),
+        ('888', 'inactive', '', 2),
+        ('777', 'active', '3 hours', 3)
+      `
+    );
+  }
+  // Try reading from the source repeatedly to give it time to populate. This
+  // won't be necessary once the following issue is resolved:
+  // https://github.com/MaterializeInc/materialize/issues/11048
+  for (let i = 0; i < 30; i++) {
+    try {
+      const result = await client.query(
+        "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
+      );
+      assert.deepStrictEqual(result.rows, [
+        { id: "9999", status: "active", active_time: "8 hours" },
+        { id: "888", status: "inactive", active_time: "" },
+        { id: "777", status: "active", active_time: "3 hours" },
+      ]);
+      return;
+    } catch (error) {
+      console.log(error);
+      await page.waitForTimeout(1000);
+    }
+  }
+  throw new Error("source never contained expected records");
+}
+
+async function connectRegionPostgres(
+  page: Page,
+  password: string,
+  row: Locator
+): Promise<Client> {
   const fields = row.locator("td");
 
   const url = new URL(await fields.nth(1).innerText());
   const pgParams = {
     user: EMAIL,
     host: url.hostname,
-    port: url.port,
+    port: parseInt(url.port, 10),
     database: url.pathname.slice(1),
     password,
-    ssl: IS_MINIKUBE ? undefined : { rejectUnauthorized: false },
-    connectionTimeoutMillis: 1000,
-    query_timeout: 1000,
+    ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
+    // 5 second connection timeout, because Frontegg authentication can be slow.
+    connectionTimeoutMillis: 5 * 1000,
+    // 10 minute query timeout, because spinning up a cluster can involve
+    // turning on new EC2 machines, which may take many minutes.
+    query_timeout: 10 * 60 * 1000,
   };
   for (let i = 0; i < 600; i++) {
     try {
       const client = new Client(pgParams);
       await client.connect();
-      await client.query("SELECT 1;");
+      return client;
     } catch (error) {
       console.log(error);
       await page.waitForTimeout(1000);
     }
   }
+  throw new Error("unable to connect to region");
 }

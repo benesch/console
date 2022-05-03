@@ -1,12 +1,8 @@
 import { HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import {
-  BaseLayout,
-  PageBreadcrumbs,
-  PageHeader,
-  PageHeading,
-} from "../../layouts/BaseLayout";
+import { BaseLayout, PageHeader, PageHeading } from "../../layouts/BaseLayout";
+import MetricsCard from "./MetricsCard";
 
 const Dashboard = () => {
   return (
@@ -18,8 +14,8 @@ const Dashboard = () => {
           </HStack>
         </HStack>
       </PageHeader>
-      <VStack>
-        <div>hello world</div>
+      <VStack pb={6}>
+        <MetricsCard />
       </VStack>
     </BaseLayout>
   );

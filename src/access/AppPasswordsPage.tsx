@@ -50,11 +50,14 @@ const AppPasswordsPage = () => {
   }, [tokensState.apiTokensDataUser]);
 
   const newPassword = React.useMemo(() => {
+    if (createInProgress) {
+      return "";
+    }
     if (tokensState && tokensState.successDialog) {
-      return `${(tokensState.successDialog.clientId || "").replaceAll(
-        "-",
-        ""
-      )}${(tokensState.successDialog.secret || "").replaceAll("-", "")}`;
+      const { clientId, secret } = tokensState.successDialog;
+      const formattedClientId = (clientId || "").replaceAll("-", "");
+      const formattedSecret = (secret || "").replaceAll("-", "");
+      return `${formattedClientId}${formattedSecret}`;
     }
     return "";
   }, [tokensState]);
