@@ -49,7 +49,7 @@ test(`creating and using an app password`, async ({ page, request }) => {
 
   // Delete key
   await page.goto(`${CONSOLE_ADDR}/access`);
-  await page.click("[aria-label='Delete password']");
+  await page.click(`[aria-label='${name}'] [aria-label='Delete password']`);
   await page.type("[aria-modal] input", name);
   await Promise.all([
     page.waitForSelector("[aria-modal]", { state: "detached" }),

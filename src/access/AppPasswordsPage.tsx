@@ -179,6 +179,7 @@ const PasswordsTable = ({
                   key={token.clientId}
                   bg={isDeleting ? disabledBg : "default"}
                   textColor={isDeleting ? disabledColor : "default"}
+                  aria-label={token.description}
                 >
                   <Td>{token.description}</Td>
                   <Td>{user.name}</Td>
