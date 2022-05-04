@@ -4,6 +4,7 @@ import { Configuration } from "webpack";
 
 const additionalPlugins = [];
 let additionalTSOptions: { [index: string]: any } = {};
+
 if (process.env.SOURCE_MAPS) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const SentryPlugin = require("@sentry/webpack-plugin");
@@ -36,6 +37,10 @@ const config: Configuration = {
         options: {
           // Type checking is provided by fork-ts-checker.
           transpileOnly: true,
+          compilerOptions: {
+            sourceMap:
+              process.env.NODE_ENV !== "production" || process.env.SOURCE_MAPS,
+          },
           ...additionalTSOptions,
         },
       },
@@ -62,7 +67,8 @@ const config: Configuration = {
       },
     },
   },
-  devtool: "source-map",
+  devtool:
+    process.env.NODE_ENV === "production" ? "source-map" : "eval-source-map",
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist", "frontend"),
