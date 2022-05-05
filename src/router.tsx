@@ -14,7 +14,6 @@ import {
 } from "react-router-dom";
 
 import AppPasswordsPage from "./access/AppPasswordsPage";
-import analyticsClients from "./analytics";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
@@ -46,7 +45,7 @@ const Router = () => {
         </ProtectedRoute>
         <RedirectIfNotAuthRoute />
       </Switch>
-      <AnalyticsOnEveryPage clients={analyticsClients} />
+      <AnalyticsOnEveryPage config={window.CONFIG} />
     </>
   );
 };

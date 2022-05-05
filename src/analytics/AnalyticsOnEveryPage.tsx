@@ -2,22 +2,25 @@ import { useAuth } from "@frontegg/react";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 
+import { GlobalConfig } from "../types";
+import useAnalyticsClients from "./hook";
 import { AnalyticsClient } from "./types";
 
 /**
  * A react component that will emit analytics page event on location change
  * for all provided analytics clients.
- * @param analyticsClients - An array of analytics clients.
  * @returns A react component.
  */
-const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
-  clients,
-}) => {
+const AnalyticsOnEveryPage: React.FC<{
+  config?: GlobalConfig;
+  clients?: AnalyticsClient[];
+}> = ({ config, clients }) => {
   const auth = useAuth((state) => state);
-
+  const allClients = useAnalyticsClients({ config, clients });
   const location = useLocation();
+
   useEffect(() => {
-    clients.forEach((client) => {
+    allClients.forEach((client) => {
       client.page();
     });
   }, [location]);
@@ -26,11 +29,12 @@ const AnalyticsOnEveryPage: React.FC<{ clients: AnalyticsClient[] }> = ({
   // otherwise, logout
   useEffect(() => {
     if (auth.user) {
-      clients.forEach((client) => {
-        client.identify(auth.user?.id ?? "");
+      const u = auth.user;
+      allClients.forEach((client) => {
+        client.identify(u.id ?? "");
       });
     } else {
-      clients.forEach((client) => {
+      allClients.forEach((client) => {
         client.reset();
       });
     }

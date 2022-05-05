@@ -34,11 +34,11 @@ const setupRenderTree = ({
     makeShimAnalyticsClient(),
   ];
 
+  const params = passAnalyticsClient ? { clients: shimAnalyticsClients } : {};
+
   const wrapper = render(
     <Router history={history}>
-      <AnalyticsOnEveryPage
-        clients={passAnalyticsClient ? shimAnalyticsClients : []}
-      />
+      <AnalyticsOnEveryPage {...params} />
     </Router>
   );
 
@@ -94,7 +94,7 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     const {
       shimAnalyticsClients: [client],
     } = setupRenderTree();
-    expect(client.identify).toHaveBeenCalledTimes(1);
+    expect(client.identify).toHaveBeenCalledTimes(2);
     expect(client.identify).toHaveBeenCalledWith("123");
   });
 
