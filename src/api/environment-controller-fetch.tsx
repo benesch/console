@@ -25,18 +25,23 @@ export const useEnvironments = () => {
   let regionEnvErrorMessage = "";
 
   async function fetchRegionEnvironments(region: SupportedCloudRegion) {
-    const res = await fetchAuthed(
-      `${region.environmentControllerUrl}/api/environment`
-    );
-    if (res.status === 200) {
-      const environments: Environment[] = JSON.parse(await res.text());
-      return environments.map((e) => ({
-        provider: region.provider,
-        region: region.region,
-        address: e.coordd_address,
-      }));
-    } else {
-      regionEnvErrorMessage += `Fetch region ${region.provider} failed: ${res.status} ${res.statusText}. `;
+    try {
+      const res = await fetchAuthed(
+        `${region.environmentControllerUrl}/api/environment`
+      );
+      if (res.status === 200) {
+        const environments: Environment[] = JSON.parse(await res.text());
+        return environments.map((e) => ({
+          provider: region.provider,
+          region: region.region,
+          address: e.coordd_address,
+        }));
+      } else {
+        regionEnvErrorMessage += `Fetch region ${region.provider} failed: ${res.status} ${res.statusText}. `;
+        return [];
+      }
+    } catch (err) {
+      console.error("Error fetching environments: ", err);
       return [];
     }
   }
