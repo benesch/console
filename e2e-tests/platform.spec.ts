@@ -136,12 +136,12 @@ async function connectRegionPostgres(
     password,
     ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
     // 5 second connection timeout, because Frontegg authentication can be slow.
-    connectionTimeoutMillis: 5 * 1000,
+    connectionTimeoutMillis: 5 * 10000,
     // 10 minute query timeout, because spinning up a cluster can involve
     // turning on new EC2 machines, which may take many minutes.
     query_timeout: 10 * 60 * 1000,
   };
-  for (let i = 0; i < 600; i++) {
+  for (let i = 0; i < 60; i++) {
     try {
       const client = new Client(pgParams);
       await client.connect();
