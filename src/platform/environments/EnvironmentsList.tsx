@@ -12,10 +12,12 @@ import {
   useInterval,
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
-import React from "react";
+import React, { useState } from "react";
+import { useRecoilState } from "recoil";
 
 import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
+import { useSql } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -27,6 +29,7 @@ import {
   EmptyList,
   ListPageHeaderContent,
 } from "../../layouts/listPageComponents";
+import { currentEnvironment } from "../../recoil/currentEnvironment";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
@@ -84,11 +87,31 @@ interface RegionEnvironmentRowProps {
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
+  /**
+   * States
+   */
   const { user } = useAuth();
   const { data: environments, refetch } = useEnvironmentsList({
     base: props.region.environmentControllerUrl,
   });
-  useInterval(refetch, 5000);
+  const [current] = useRecoilState(currentEnvironment);
+  const [destroying, setDestroying] = useState<boolean>(false);
+
+  // Simple SQL state used as a way to monitor instance status
+  const { data, refetch: refetchSql } = useSql("SELECT 1");
+  const negativeHealth = data === null || (data && data.length === 0);
+
+  /**
+   * Hydrate state
+   */
+  useInterval(() => {
+    refetch();
+    refetchSql();
+  }, 5000);
+
+  /**
+   * Vars
+   */
   const isLoading = environments === null;
   const environment =
     !isLoading && environments?.length > 0 ? environments[0] : null;
@@ -97,19 +120,36 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   let url;
   if (isLoading) {
     url = <Spinner />;
-  } else if (environment) {
-    url = (
-      <Code padding="1">
-        <CopyableText fontSize="xs">
-          {`postgres://${encodeURIComponent(user.email)}@${
-            environment.coordd_address
-          }/materialize`}
-        </CopyableText>
-      </Code>
-    );
+  } else if (environment && current !== null && destroying === false) {
+    // _Current_ is populated in other part of the code outside the local scope. (inside useEnvironments())
+    // The idea is to use current as a way to know when a environment is available for usqSql()
+    if (negativeHealth) {
+      url = <Text color="gray">Starting</Text>;
+    } else {
+      url = (
+        <Code padding="1">
+          <CopyableText fontSize="xs">
+            {`postgres://${encodeURIComponent(user.email)}@${
+              environment.coordd_address
+            }/materialize`}
+          </CopyableText>
+        </Code>
+      );
+    }
   } else {
     url = <Text color="gray">Not enabled</Text>;
   }
+
+  /**
+   * Handlers
+   */
+  const handleDidDelete = () => {
+    setDestroying(true);
+  };
+
+  const handleRegionEnabled = () => {
+    setDestroying(false);
+  };
 
   return (
     <Tr>
@@ -124,6 +164,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
+            handleRegionEnabled={handleRegionEnabled}
           />
         )}
         {environment && (
@@ -131,6 +172,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
+            handleDidDelete={handleDidDelete}
           />
         )}
       </Td>

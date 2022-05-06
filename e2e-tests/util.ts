@@ -305,10 +305,10 @@ export class TestContext {
         cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
         rejectUnauthorized: false,
       },
-      connectionTimeoutMillis: 1000,
-      query_timeout: 1000,
+      connectionTimeoutMillis: 10000,
+      query_timeout: 10000,
     };
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i < 60; i++) {
       try {
         const client = new Client(pgParams);
         await client.connect();
@@ -334,10 +334,10 @@ export class TestContext {
       database: "materialize",
       password,
       ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
-      connectionTimeoutMillis: 1000,
-      query_timeout: 1000,
+      connectionTimeoutMillis: 10000,
+      query_timeout: 10000,
     };
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i < 60; i++) {
       try {
         const client = new Client(pgParams);
         await client.connect();
