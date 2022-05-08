@@ -4,25 +4,35 @@
  */
 
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 
+import { currentEnvironment } from "../recoil/currentEnvironment";
 import { useAuth } from "./auth";
-import { useEnvironments } from "./environment-controller-fetch";
+
+interface Results {
+  columns: Array<string>;
+  rows: Array<any>;
+}
 
 /**
  * A React hook that runs a SQL query against the current environment.
  */
-export function useSql(sql: string) {
+export function useSql(sql: string | undefined) {
   const { fetchAuthed } = useAuth();
-  const { current } = useEnvironments();
-  const [results, setResults] = useState<any[] | null>(null);
+  const [current, _] = useRecoilState(currentEnvironment);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [results, setResults] = useState<Results | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * _Current_ variable can be a value not available
    */
   async function executeSql() {
-    if (!current) return;
+    if (!current || !sql) return;
 
     try {
+      setLoading(true);
+
       const response = await fetchAuthed(`//${current.address}/api/sql`, {
         method: "POST",
         headers: {
@@ -30,11 +40,25 @@ export function useSql(sql: string) {
         },
         body: JSON.stringify({ sql: sql }),
       });
-      const results = JSON.parse(await response.text());
-      setResults(results.results[0].rows);
+      const parsedResponse = JSON.parse(await response.text());
+      const { results: responseResults } = parsedResponse;
+      const [firstResult] = responseResults;
+      const { error: resultsError, rows, col_names } = firstResult;
+
+      if (resultsError) {
+        setError(resultsError);
+      } else {
+        setResults({
+          rows: rows,
+          columns: col_names,
+        });
+        setError(null);
+      }
     } catch (err) {
-      console.error("Error running SQL: ", err);
-      setResults(null);
+      console.error(err);
+      setError("Error running query.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -42,7 +66,7 @@ export function useSql(sql: string) {
     executeSql();
   }, [current, sql]);
 
-  return { data: results, refetch: executeSql };
+  return { data: results, error, loading, refetch: executeSql };
 }
 
 export interface Cluster {
@@ -60,7 +84,9 @@ export function useClusters() {
 
   let clusters = null;
   if (data) {
-    clusters = data.map(
+    const { rows } = data;
+
+    clusters = rows.map(
       (row) =>
         ({
           id: row[0],

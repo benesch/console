@@ -89,19 +89,20 @@ const MetricsLineChart: React.FC<Props> = ({
               ]}
             />
           )}
-          {chart.data.map((metric) => (
-            <VictoryArea
-              key={metric.name}
-              interpolation="linear"
-              data={[
-                ...metric.values,
-                {
-                  ...metric.values[metric.values.length - 1],
-                  x: chart.domains.x[1],
-                },
-              ]}
-            />
-          ))}
+          {chart.data &&
+            chart.data.map((metric) => (
+              <VictoryArea
+                key={metric.name}
+                interpolation="linear"
+                data={[
+                  ...metric.values,
+                  {
+                    ...metric.values[metric.values.length - 1],
+                    x: chart.domains.x[1],
+                  },
+                ]}
+              />
+            ))}
           <VictoryAxis
             standalone={false}
             tickCount={4}
