@@ -58,11 +58,9 @@ export const BaseLayout = (props: BaseLayoutProps) => {
   return (
     <Flex direction="column" height="100vh">
       <NavBar />
-      <Box as="main" py="3" flex="1">
-        <Container maxW="7xl" px="5">
-          {props.children}
-        </Container>
-      </Box>
+      <Container as="main" maxW="7xl" px="5" py="3" flex={1}>
+        {props.children}
+      </Container>
       <PageFooter />
     </Flex>
   );
