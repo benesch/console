@@ -46,10 +46,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     }
     const createButton = row.locator('button:text("Enable region")');
     await createButton.click();
-    await Promise.all([
-      page.click("[aria-modal] button:text('Enable')"),
-      row.locator("td >> text=/^postgres:/").waitFor(),
-    ]);
+    await page.click("[aria-modal] button:text('Enable')");
   }
 
   // Next, connect to each environment's environment, simultaneously:
@@ -125,8 +122,11 @@ async function connectRegionPostgres(
   password: string,
   row: Locator
 ): Promise<Client> {
-  const fields = row.locator("td");
+  await row
+    .locator("td >> text=/^postgres:/")
+    .waitFor({ timeout: 10 * 60 * 1000 });
 
+  const fields = row.locator("td");
   const url = new URL(await fields.nth(1).innerText());
   const pgParams = {
     user: EMAIL,
