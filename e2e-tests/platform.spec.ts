@@ -122,7 +122,9 @@ async function connectRegionPostgres(
   password: string,
   row: Locator
 ): Promise<Client> {
-  await row.locator("td >> text=/^postgres:/").waitFor({timeout: 10 * 60 * 1000});
+  await row
+    .locator("td >> text=/^postgres:/")
+    .waitFor({ timeout: 10 * 60 * 1000 });
 
   const fields = row.locator("td");
   const url = new URL(await fields.nth(1).innerText());
