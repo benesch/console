@@ -1,5 +1,6 @@
 import { APIRequestContext, Locator, Page, test } from "@playwright/test";
 import assert from "assert";
+import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 
 import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
@@ -127,21 +128,27 @@ async function connectRegionPostgres(
 
   const fields = row.locator("td");
   const url = new URL(await fields.nth(1).innerText());
-  const pgParams = {
-    user: EMAIL,
-    host: url.hostname,
-    port: parseInt(url.port, 10),
-    database: url.pathname.slice(1),
-    password,
-    ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
-    // 5 second connection timeout, because Frontegg authentication can be slow.
-    connectionTimeoutMillis: 5 * 10000,
-    // 10 minute query timeout, because spinning up a cluster can involve
-    // turning on new EC2 machines, which may take many minutes.
-    query_timeout: 10 * 60 * 1000,
-  };
+  const dns = new CacheableLookup({
+    maxTtl: 0, // always re-lookup
+    errorTtl: 0,
+  });
+
   for (let i = 0; i < 60; i++) {
     try {
+      const entry = await dns.lookupAsync(url.hostname);
+      const pgParams = {
+        user: EMAIL,
+        host: entry.address,
+        port: parseInt(url.port, 10),
+        database: url.pathname.slice(1),
+        password,
+        ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
+        // 5 second connection timeout, because Frontegg authentication can be slow.
+        connectionTimeoutMillis: 5 * 10000,
+        // 10 minute query timeout, because spinning up a cluster can involve
+        // turning on new EC2 machines, which may take many minutes.
+        query_timeout: 10 * 60 * 1000,
+      };
       const client = new Client(pgParams);
       await client.connect();
       return client;
