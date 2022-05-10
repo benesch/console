@@ -99,7 +99,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
 
   // Simple SQL state used as a way to monitor instance status
   const { data, refetch: refetchSql } = useSql("SELECT 1");
-  const negativeHealth = data === null || (data && data.rows.length === 0);
+  const negativeHealth = !data || data.rows.length === 0;
 
   /**
    * Hydrate state
