@@ -34,8 +34,8 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
       row.locator('button:text("Enable region")').waitFor(),
     ]);
     const region = await fields.first().innerText();
-    const startURL = await fields.nth(1).innerText();
-    if (startURL.startsWith("postgres")) {
+    const buttonLabel = await fields.nth(2).innerText();
+    if (buttonLabel.startsWith("Destroy")) {
       // Delete an old env if one exists.
       await row.locator('button:text("Destroy")').click();
       page.type("[aria-modal] input", region);
@@ -44,8 +44,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
         page.click("[aria-modal] button:text('Destroy')"),
       ]);
     }
-    const createButton = row.locator('button:text("Enable region")');
-    await createButton.click();
+    await row.locator('button:text("Enable region")').click();
     await page.click("[aria-modal] button:text('Enable')");
   }
 
