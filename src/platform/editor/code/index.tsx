@@ -41,7 +41,7 @@ const Code = (props: Props): JSX.Element => {
         size="sm"
         onClick={onClick}
         position="absolute"
-        zIndex={10}
+        zIndex={1}
         top={2}
         right={2}
         backgroundColor={"green.700"}
