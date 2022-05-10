@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { Cluster, useClusters, useSql } from "../../api/materialized";
+import { Cluster, useClusters } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
 import {
   BaseLayout,

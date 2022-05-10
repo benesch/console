@@ -6,18 +6,17 @@
 import {
   Alert,
   AlertIcon,
+  Flex,
   Heading,
   HStack,
   Text,
   useColorModeValue,
-  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
 import CloudSvg from "../svg/CloudSvg";
 import colors from "../theme/colors";
 import { PageHeading } from "./BaseLayout";
-import EnvironmentSelectField from "./EnvironmentSelect";
 
 type ListPageHeaderContentProps = {
   title: string;
@@ -57,18 +56,20 @@ export const EmptyList = ({ title }: EmptyListProps) => {
   const borderColor = useColorModeValue(colors.purple[600], colors.purple[400]);
 
   return (
-    <VStack
+    <Flex
       border={`1px dashed ${borderColor}`}
       borderRadius="4px"
-      minHeight="600px"
+      height={"100%"}
       alignItems="center"
       justifyContent="center"
-      spacing="5"
+      gap="5"
+      flex={1}
+      flexFlow="column"
     >
       <CloudSvg />
       <Heading fontWeight="400" fontSize="2xl">
         {`No ${title} yet.`}
       </Heading>
-    </VStack>
+    </Flex>
   );
 };
