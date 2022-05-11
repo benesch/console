@@ -16,7 +16,7 @@ import React, { useMemo } from "react";
 
 import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
-import { useSql } from "../../api/materialized";
+import { useSql, useSqlOnCoordinator } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -28,7 +28,7 @@ import {
   EmptyList,
   ListPageHeaderContent,
 } from "../../layouts/listPageComponents";
-import { currentEnvironment } from "../../recoil/currentEnvironment";
+import getDefaultEnvironment from "../../utils/platform";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
@@ -93,12 +93,16 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   const { data: environments, refetch } = useEnvironmentsList({
     base: props.region.environmentControllerUrl,
   });
-  const environment =
-    environments && environments.length > 0 ? environments[0] : null;
-  const extraParams = useMemo(() => ({ environment }), [environment]);
+  const environment = useMemo(
+    () => getDefaultEnvironment(environments),
+    [environments]
+  );
 
   // Simple SQL state used as a way to monitor instance status
-  const { data, refetch: refetchSql } = useSql("SELECT 1", extraParams);
+  const { data, refetch: refetchSql } = useSqlOnCoordinator(
+    "SELECT 1",
+    environment
+  );
   const negativeHealth = !data || data.rows.length === 0;
 
   /**

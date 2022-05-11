@@ -23,25 +23,21 @@ interface ExtraParams {
 }
 
 /**
- * A React hook that runs a SQL query against the current environment.
- * @params {string} sql to execute in the environment coord or current global coord.
- * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
+ * useSql hook state implementation
+ * @param sql
+ * @param address
+ * @returns
  */
-export function useSql(sql: string | undefined, extraParams?: ExtraParams) {
+function useSqlInternal(
+  sql: string | undefined,
+  address: string | undefined | null
+) {
   const { fetchAuthed } = useAuth();
-  const [current, _] = useRecoilState(currentEnvironment);
   const [loading, setLoading] = useState<boolean>(false);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * _Current_ variable can be a value not available
-   */
   async function executeSql() {
-    const address = extraParams
-      ? extraParams.environment && extraParams.environment.coordd_address
-      : current && current.address;
-
     if (!address || !sql) {
       setResults(null);
       return;
@@ -82,9 +78,35 @@ export function useSql(sql: string | undefined, extraParams?: ExtraParams) {
 
   useEffect(() => {
     executeSql();
-  }, [current, extraParams, sql]);
+  }, [address, sql]);
 
   return { data: results, error, loading, refetch: executeSql };
+}
+
+/**
+ * useSql hook for a particular environment coordinator address.
+ * @param sql
+ * @param coordinatorAddress
+ * @returns
+ */
+export function useSqlOnCoordinator(
+  sql: string | undefined,
+  coordinatorAddress: Environment | null
+) {
+  return useSqlInternal(
+    sql,
+    coordinatorAddress && coordinatorAddress.coordd_address
+  );
+}
+
+/**
+ * A React hook that runs a SQL query against the current environment.
+ * @params {string} sql to execute in the environment coord or current global coord.
+ * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
+ */
+export function useSql(sql: string | undefined) {
+  const [current, _] = useRecoilState(currentEnvironment);
+  return useSqlInternal(sql, current && current.address);
 }
 
 export interface Cluster {
