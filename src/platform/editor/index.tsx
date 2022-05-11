@@ -1,5 +1,6 @@
 import { Box, Flex, useToast } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
+import { Column } from "react-table";
 
 import { useSql } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
@@ -30,7 +31,7 @@ function columnCell(): (cellData: any) => JSX.Element {
 
 interface State {
   rows: Array<any>;
-  columns: Array<string>;
+  columns: Array<Column>;
 }
 
 const GridLayout = (): JSX.Element => {
@@ -65,7 +66,7 @@ const GridLayout = (): JSX.Element => {
 
       setState({
         rows: dataRows || [],
-        columns: tableColumns as any,
+        columns: tableColumns,
       });
     }
   }, [data]);
