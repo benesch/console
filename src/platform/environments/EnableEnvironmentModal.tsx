@@ -26,18 +26,12 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { useAuth } from "../../api/auth";
-import {
-  Deployment,
-  SupportedCloudRegion,
-  useCloudProvidersList,
-} from "../../api/backend";
-import { EnvironmentRequest } from "../../api/environment-controller";
+import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { SubmitButton, TextField } from "../../components/formComponents";
 
 interface Props extends ButtonProps {
   refetch: () => Promise<any>;
   region: SupportedCloudRegion;
-  handleRegionEnabled: () => void;
 }
 
 /// The image SHA that we spin up all new materialize platform
@@ -48,7 +42,7 @@ interface Props extends ButtonProps {
 const ImageTag = "unstable-fbe764f4fe6ce5d3d5d9deaf22040f2cd0f2eead";
 
 const EnableEnvironmentModal = (props: Props) => {
-  const { refetch, handleRegionEnabled, ...buttonProps } = props;
+  const { refetch, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const initialFocusRef = useRef(null);
@@ -97,7 +91,6 @@ const EnableEnvironmentModal = (props: Props) => {
                   title: "Region enabled.",
                   status: "success",
                 });
-                handleRegionEnabled();
               } catch (e: any) {
                 console.log(e);
                 if (e.status === 400) {

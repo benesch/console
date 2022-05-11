@@ -6,18 +6,28 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { currentEnvironment } from "../recoil/currentEnvironment";
+import {
+  currentEnvironment,
+  RegionEnvironment,
+} from "../recoil/currentEnvironment";
 import { useAuth } from "./auth";
+import { Environment } from "./environment-controller";
 
 interface Results {
   columns: Array<string>;
   rows: Array<any>;
 }
 
+interface ExtraParams {
+  environment: Environment | null;
+}
+
 /**
  * A React hook that runs a SQL query against the current environment.
+ * @params {string} sql to execute in the environment coord or current global coord.
+ * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
  */
-export function useSql(sql: string | undefined) {
+export function useSql(sql: string | undefined, extraParams?: ExtraParams) {
   const { fetchAuthed } = useAuth();
   const [current, _] = useRecoilState(currentEnvironment);
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,12 +38,19 @@ export function useSql(sql: string | undefined) {
    * _Current_ variable can be a value not available
    */
   async function executeSql() {
-    if (!current || !sql) return;
+    const address = extraParams
+      ? extraParams.environment && extraParams.environment.coordd_address
+      : current && current.address;
+
+    if (!address || !sql) {
+      setResults(null);
+      return;
+    }
 
     try {
       setLoading(true);
 
-      const response = await fetchAuthed(`//${current.address}/api/sql`, {
+      const response = await fetchAuthed(`//${address}/api/sql`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,6 +64,7 @@ export function useSql(sql: string | undefined) {
 
       if (resultsError) {
         setError(resultsError);
+        setResults(null);
       } else {
         setResults({
           rows: rows,
@@ -64,7 +82,7 @@ export function useSql(sql: string | undefined) {
 
   useEffect(() => {
     executeSql();
-  }, [current, sql]);
+  }, [current, extraParams, sql]);
 
   return { data: results, error, loading, refetch: executeSql };
 }

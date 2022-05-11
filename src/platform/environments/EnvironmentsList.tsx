@@ -12,8 +12,7 @@ import {
   useInterval,
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
-import React, { useState } from "react";
-import { useRecoilState } from "recoil";
+import React, { useMemo } from "react";
 
 import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
@@ -94,11 +93,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   const { data: environments, refetch } = useEnvironmentsList({
     base: props.region.environmentControllerUrl,
   });
-  const [current] = useRecoilState(currentEnvironment);
-  const [destroying, setDestroying] = useState<boolean>(false);
+  const environment =
+    environments && environments.length > 0 ? environments[0] : null;
+  const extraParams = useMemo(() => ({ environment }), [environment]);
 
   // Simple SQL state used as a way to monitor instance status
-  const { data, refetch: refetchSql } = useSql("SELECT 1");
+  const { data, refetch: refetchSql } = useSql("SELECT 1", extraParams);
   const negativeHealth = !data || data.rows.length === 0;
 
   /**
@@ -113,14 +113,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
    * Vars
    */
   const isLoading = environments === null;
-  const environment =
-    !isLoading && environments?.length > 0 ? environments[0] : null;
   const allowEnabling = !isLoading && environment === null;
 
   let url;
   if (isLoading) {
     url = <Spinner />;
-  } else if (environment && current !== null && destroying === false) {
+  } else if (environment) {
     // _Current_ is populated in other part of the code outside the local scope. (inside useEnvironments())
     // The idea is to use current as a way to know when a environment is available for usqSql()
     if (negativeHealth) {
@@ -140,17 +138,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     url = <Text color="gray">Not enabled</Text>;
   }
 
-  /**
-   * Handlers
-   */
-  const handleDidDelete = () => {
-    setDestroying(true);
-  };
-
-  const handleRegionEnabled = () => {
-    setDestroying(false);
-  };
-
   return (
     <Tr>
       <Td>
@@ -164,7 +151,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
-            handleRegionEnabled={handleRegionEnabled}
           />
         )}
         {environment && (
@@ -172,7 +158,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
-            handleDidDelete={handleDidDelete}
           />
         )}
       </Td>
