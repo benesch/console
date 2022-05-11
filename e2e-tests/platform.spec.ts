@@ -10,55 +10,58 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
-test(`connecting to the environment controller`, async ({ page, request }) => {
-  const context = await TestContext.start(page, request);
-  const name = "Environment controller test token";
-  const { clientId, secret } = await context.fronteggRequest(
-    "/identity/resources/users/api-tokens/v1",
-    { method: "POST", data: { description: name } }
-  );
-  const password = `${clientId}${secret}`;
-  console.log("environment-controller password", password);
+test.fixme(
+  `connecting to the environment controller`,
+  async ({ page, request }) => {
+    const context = await TestContext.start(page, request);
+    const name = "Environment controller test token";
+    const { clientId, secret } = await context.fronteggRequest(
+      "/identity/resources/users/api-tokens/v1",
+      { method: "POST", data: { description: name } }
+    );
+    const password = `${clientId}${secret}`;
+    console.log("environment-controller password", password);
 
-  await page.goto(`${CONSOLE_ADDR}/platform/regions`);
-  await page.waitForSelector("table tbody tr");
-  const regionRows = page.locator("table tbody tr");
-  // Clean up existing environments and spin them up again - we do
-  // this in sequence because it's happening in the UI with modals.
-  // TODO: replace the cleanup with API calls:
-  for (let i = 0; i < (await regionRows.count()); i++) {
-    const row = regionRows.nth(i);
-    const fields = row.locator("td");
-    await Promise.race([
-      // expect any of the two buttons to be visible:
-      row.locator('button:text("Destroy")').waitFor(),
-      row.locator('button:text("Enable region")').waitFor(),
-    ]);
-    const region = await fields.first().innerText();
-    const buttonLabel = await fields.nth(2).innerText();
-    if (buttonLabel.startsWith("Destroy")) {
-      // Delete an old env if one exists.
-      await row.locator('button:text("Destroy")').click();
-      page.type("[aria-modal] input", region);
-      await Promise.all([
-        page.waitForSelector("[aria-modal]", { state: "detached" }),
-        page.click("[aria-modal] button:text('Destroy')"),
+    await page.goto(`${CONSOLE_ADDR}/platform/regions`);
+    await page.waitForSelector("table tbody tr");
+    const regionRows = page.locator("table tbody tr");
+    // Clean up existing environments and spin them up again - we do
+    // this in sequence because it's happening in the UI with modals.
+    // TODO: replace the cleanup with API calls:
+    for (let i = 0; i < (await regionRows.count()); i++) {
+      const row = regionRows.nth(i);
+      const fields = row.locator("td");
+      await Promise.race([
+        // expect any of the two buttons to be visible:
+        row.locator('button:text("Destroy")').waitFor(),
+        row.locator('button:text("Enable region")').waitFor(),
       ]);
+      const region = await fields.first().innerText();
+      const buttonLabel = await fields.nth(2).innerText();
+      if (buttonLabel.startsWith("Destroy")) {
+        // Delete an old env if one exists.
+        await row.locator('button:text("Destroy")').click();
+        page.type("[aria-modal] input", region);
+        await Promise.all([
+          page.waitForSelector("[aria-modal]", { state: "detached" }),
+          page.click("[aria-modal] button:text('Destroy')"),
+        ]);
+      }
+      await row.locator('button:text("Enable region")').click();
+      await page.click("[aria-modal] button:text('Enable')");
     }
-    await row.locator('button:text("Enable region")').click();
-    await page.click("[aria-modal] button:text('Enable')");
-  }
 
-  // Next, connect to each environment's environment, simultaneously:
-  await Promise.all(
-    Array(await regionRows.count())
-      .fill(0)
-      .map((_, rowN) =>
-        // will be awaited as part of the Promise.all above:
-        testPlatformEnvironment(page, request, password, regionRows.nth(rowN))
-      )
-  );
-});
+    // Next, connect to each environment's environment, simultaneously:
+    await Promise.all(
+      Array(await regionRows.count())
+        .fill(0)
+        .map((_, rowN) =>
+          // will be awaited as part of the Promise.all above:
+          testPlatformEnvironment(page, request, password, regionRows.nth(rowN))
+        )
+    );
+  }
+);
 
 async function testPlatformEnvironment<T>(
   page: Page,
