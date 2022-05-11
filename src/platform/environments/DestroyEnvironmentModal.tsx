@@ -16,11 +16,10 @@ import { currentEnvironment } from "../../recoil/currentEnvironment";
 
 interface Props extends ButtonProps {
   region: SupportedCloudRegion;
-  handleDidDelete: () => void;
 }
 
 const DestroyEnvironmentModal = (props: Props) => {
-  const { region, handleDidDelete, ...buttonProps } = props;
+  const { region, ...buttonProps } = props;
   const { mutate: destroyEnvironment } = useEnvironmentsDestroy({
     base: region.environmentControllerUrl,
   });
@@ -58,8 +57,6 @@ const DestroyEnvironmentModal = (props: Props) => {
   };
 
   if (didDelete) {
-    handleDidDelete();
-
     return (
       <Button
         disabled

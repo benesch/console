@@ -6,34 +6,47 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { currentEnvironment } from "../recoil/currentEnvironment";
+import {
+  currentEnvironment,
+  RegionEnvironment,
+} from "../recoil/currentEnvironment";
 import { useAuth } from "./auth";
+import { Environment } from "./environment-controller";
 
 interface Results {
   columns: Array<string>;
   rows: Array<any>;
 }
 
+interface ExtraParams {
+  environment: Environment | null;
+}
+
 /**
- * A React hook that runs a SQL query against the current environment.
+ * useSql hook state implementation
+ * @param sql
+ * @param address
+ * @returns
  */
-export function useSql(sql: string | undefined) {
+function useSqlInternal(
+  sql: string | undefined,
+  address: string | undefined | null
+) {
   const { fetchAuthed } = useAuth();
-  const [current, _] = useRecoilState(currentEnvironment);
   const [loading, setLoading] = useState<boolean>(false);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * _Current_ variable can be a value not available
-   */
   async function executeSql() {
-    if (!current || !sql) return;
+    if (!address || !sql) {
+      setResults(null);
+      return;
+    }
 
     try {
       setLoading(true);
 
-      const response = await fetchAuthed(`//${current.address}/api/sql`, {
+      const response = await fetchAuthed(`//${address}/api/sql`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,6 +60,7 @@ export function useSql(sql: string | undefined) {
 
       if (resultsError) {
         setError(resultsError);
+        setResults(null);
       } else {
         setResults({
           rows: rows,
@@ -64,9 +78,35 @@ export function useSql(sql: string | undefined) {
 
   useEffect(() => {
     executeSql();
-  }, [current, sql]);
+  }, [address, sql]);
 
   return { data: results, error, loading, refetch: executeSql };
+}
+
+/**
+ * useSql hook for a particular environment coordinator address.
+ * @param sql
+ * @param coordinatorAddress
+ * @returns
+ */
+export function useSqlOnCoordinator(
+  sql: string | undefined,
+  coordinatorAddress: Environment | null
+) {
+  return useSqlInternal(
+    sql,
+    coordinatorAddress && coordinatorAddress.coordd_address
+  );
+}
+
+/**
+ * A React hook that runs a SQL query against the current environment.
+ * @params {string} sql to execute in the environment coord or current global coord.
+ * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
+ */
+export function useSql(sql: string | undefined) {
+  const [current, _] = useRecoilState(currentEnvironment);
+  return useSqlInternal(sql, current && current.address);
 }
 
 export interface Cluster {
