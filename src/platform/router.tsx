@@ -4,6 +4,7 @@ import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { useAuth } from "../api/auth";
 import ClustersListPage from "./clusters/ClustersList";
 import Dashboard from "./dashboard/Dashboard";
+import Editor from "./editor";
 import EnvironmentsListPage from "./environments/EnvironmentsList";
 
 const PlatformRouter = () => {
@@ -24,6 +25,9 @@ const PlatformRouter = () => {
       </Route>
       <Route path={`${path}/clusters`}>
         <ClustersListPage />
+      </Route>
+      <Route path={`${path}/editor`}>
+        <Editor />
       </Route>
     </Switch>
   );

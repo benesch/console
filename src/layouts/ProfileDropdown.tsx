@@ -34,7 +34,8 @@ const ProfileDropdown = () => {
           name={user.name}
         />
       </MenuButton>
-      <MenuList>
+      {/* zIndex superior to Code Editor Run button */}
+      <MenuList zIndex={2}>
         <VStack px="3" pt="3" pb="2" align="left" lineHeight="1.3" spacing="0">
           <Text fontWeight="semibold">{user.name}</Text>
           <Text mt="1" fontSize="xs" color={emailColor}>

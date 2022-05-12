@@ -37,30 +37,33 @@ import { semanticColors } from "../theme/colors";
  * </Card>
  * ```
  */
-export const Card = (props: BoxProps) => {
-  const bg = useColorModeValue(
-    semanticColors.card.bg.light,
-    semanticColors.card.bg.dark
-  );
-  const borderColor = useColorModeValue(
-    semanticColors.card.border.light,
-    semanticColors.card.border.dark
-  );
-  const shadow = useColorModeValue("glowLight", "glowDark");
-  return (
-    <Box
-      bg={bg}
-      shadow={shadow}
-      border={`1px solid`}
-      borderColor={borderColor}
-      width="100%"
-      borderRadius="xl"
-      {...props}
-    >
-      {props.children}
-    </Box>
-  );
-};
+export const Card = React.forwardRef(
+  (props: BoxProps, ref: React.LegacyRef<HTMLDivElement> | undefined) => {
+    const bg = useColorModeValue(
+      semanticColors.card.bg.light,
+      semanticColors.card.bg.dark
+    );
+    const borderColor = useColorModeValue(
+      semanticColors.card.border.light,
+      semanticColors.card.border.dark
+    );
+    const shadow = useColorModeValue("glowLight", "glowDark");
+    return (
+      <Box
+        ref={ref}
+        bg={bg}
+        shadow={shadow}
+        border={`1px solid`}
+        borderColor={borderColor}
+        width="100%"
+        borderRadius="xl"
+        {...props}
+      >
+        {props.children}
+      </Box>
+    );
+  }
+);
 
 export interface CardTitleProps extends HeadingProps {
   children: React.ReactNode;

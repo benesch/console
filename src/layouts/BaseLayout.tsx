@@ -18,24 +18,27 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  ResponsiveValue,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
+import * as CSS from "csstype";
 import { differenceInDays } from "date-fns";
 import * as React from "react";
-import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Token } from "typescript";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
-import { assert } from "../util";
 import PageFooter from "./PageFooter";
 import ProfileDropdown from "./ProfileDropdown";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
+  overflow?: CSS.Property.Overflow;
 }
 
 /**
@@ -55,11 +58,19 @@ export interface BaseLayoutProps {
  * ```
  */
 export const BaseLayout = (props: BaseLayoutProps) => {
+  const { overflow, children } = props;
   return (
     <Flex direction="column" height="100vh">
       <NavBar />
-      <Container as="main" maxW="7xl" px="5" py="3" flex={1}>
-        {props.children}
+      <Container
+        as="main"
+        maxW="7xl"
+        px="5"
+        py="3"
+        flex={1}
+        overflow={overflow}
+      >
+        {children}
       </Container>
       <PageFooter />
     </Flex>
@@ -139,6 +150,7 @@ const platformNavItems: NavItem[] = [
   { label: "Dashboard", href: "/platform" },
   { label: "Regions", href: "/platform/regions" },
   { label: "Clusters", href: "/platform/clusters" },
+  { label: "Editor", href: "/platform/editor" },
   { label: "Deployments", href: "/deployments", legacy: true },
 ];
 const legacyNavItems: NavItem[] = [
