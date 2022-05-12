@@ -107,7 +107,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     loading: loadingQuery,
     refetch: refetchSql,
   } = useSqlOnCoordinator("SELECT 1", environment);
-  const negativeHealth = data === null || data.rows.length === 0;
+  const negativeHealth = !data || data.rows.length === 0;
 
   const intervalCallback = useCallback(() => {
     refetch();
