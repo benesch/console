@@ -58,6 +58,10 @@ const Code = (props: Props): JSX.Element => {
           mode: "text/x-pgsql",
           theme: "material",
           lineNumbers: true,
+          extraKeys: {
+            // Change Ctrl-Space by other.
+            "Ctrl-Space": "autocomplete",
+          },
         }}
       />
     </Box>
