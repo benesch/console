@@ -12,11 +12,11 @@ import {
   useInterval,
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
-import { useSql, useSqlOnCoordinator } from "../../api/materialized";
+import { useSqlOnCoordinator } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
 import {
@@ -97,34 +97,47 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     () => getDefaultEnvironment(environments),
     [environments]
   );
+  // It's useful to know that the useSql() has executed once
+  // and results from query can be used.
+  const [firstQuery, setFirstQuery] = useState<boolean>(true);
 
   // Simple SQL state used as a way to monitor instance status
-  const { data, refetch: refetchSql } = useSqlOnCoordinator(
-    "SELECT 1",
-    environment
-  );
-  const negativeHealth = !data || data.rows.length === 0;
+  const {
+    data,
+    loading: loadingQuery,
+    refetch: refetchSql,
+  } = useSqlOnCoordinator("SELECT 1", environment);
+  const negativeHealth = data === null || data.rows.length === 0;
+
+  const intervalCallback = useCallback(() => {
+    refetch();
+    if (environment) {
+      refetchSql();
+    }
+  }, [refetch, refetchSql]);
 
   /**
    * Hydrate state
    */
-  useInterval(() => {
-    refetch();
-    refetchSql();
-  }, 5000);
+  useInterval(intervalCallback, 5000);
+
+  /**
+   * Know when the first query to the environment is ran
+   */
+  useEffect(() => {
+    if (firstQuery && environment && !loadingQuery) {
+      setFirstQuery(false);
+    }
+  }, [loadingQuery]);
 
   /**
    * Vars
    */
-  const isLoading = environments === null;
-  const allowEnabling = !isLoading && environment === null;
+  let url = <Text color="gray">Not enabled</Text>;
 
-  let url;
-  if (isLoading) {
+  if (environment && firstQuery) {
     url = <Spinner />;
   } else if (environment) {
-    // _Current_ is populated in other part of the code outside the local scope. (inside useEnvironments())
-    // The idea is to use current as a way to know when a environment is available for usqSql()
     if (negativeHealth) {
       url = <Text color="gray">Starting</Text>;
     } else {
@@ -138,8 +151,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         </Code>
       );
     }
-  } else {
-    url = <Text color="gray">Not enabled</Text>;
   }
 
   return (
@@ -149,7 +160,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       </Td>
       <Td>{url}</Td>
       <Td>
-        {allowEnabling && (
+        {!environment && (
           <EnableEnvironmentModal
             refetch={refetch}
             region={props.region}

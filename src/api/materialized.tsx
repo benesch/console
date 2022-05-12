@@ -33,13 +33,14 @@ function useSqlInternal(
   address: string | undefined | null
 ) {
   const { fetchAuthed } = useAuth();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function executeSql() {
     if (!address || !sql) {
       setResults(null);
+      setLoading(false);
       return;
     }
 
