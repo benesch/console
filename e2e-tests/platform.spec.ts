@@ -67,7 +67,7 @@ async function testPlatformEnvironment<T>(
   row: Locator
 ) {
   const client = await connectRegionPostgres(page, password, row);
-  await client.query("CREATE CLUSTER c SIZE 'xsmall';");
+  await client.query("CREATE CLUSTER c REPLICA r1 (SIZE 'xsmall');");
   await client.query("SET CLUSTER = c");
   if (!IS_KIND) {
     // This S3 bucket lives in the "Materialize Sample Data" AWS account and is
