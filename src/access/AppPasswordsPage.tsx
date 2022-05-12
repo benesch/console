@@ -57,7 +57,7 @@ const AppPasswordsPage = () => {
       const { clientId, secret } = tokensState.successDialog;
       const formattedClientId = (clientId || "").replaceAll("-", "");
       const formattedSecret = (secret || "").replaceAll("-", "");
-      return `${formattedClientId}${formattedSecret}`;
+      return `mzp_${formattedClientId}${formattedSecret}`;
     }
     return "";
   }, [tokensState]);

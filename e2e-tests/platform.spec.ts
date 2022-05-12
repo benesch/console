@@ -19,7 +19,7 @@ test.fixme(
       "/identity/resources/users/api-tokens/v1",
       { method: "POST", data: { description: name } }
     );
-    const password = `${clientId}${secret}`;
+    const password = `mzp_${clientId}${secret}`;
     console.log("environment-controller password", password);
 
     await page.goto(`${CONSOLE_ADDR}/platform/regions`);
