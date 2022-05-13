@@ -38,7 +38,6 @@ function useSqlInternal(
   const [error, setError] = useState<string | null>(null);
 
   async function executeSql() {
-    console.log("Address: ", address, sql);
     if (!address || !sql) {
       setResults(null);
       setLoading(false);
