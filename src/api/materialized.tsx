@@ -38,6 +38,7 @@ function useSqlInternal(
   const [error, setError] = useState<string | null>(null);
 
   async function executeSql() {
+    console.log("Address: ", address, sql);
     if (!address || !sql) {
       setResults(null);
       setLoading(false);
@@ -57,7 +58,7 @@ function useSqlInternal(
       const parsedResponse = JSON.parse(await response.text());
       const { results: responseResults } = parsedResponse;
       const [firstResult] = responseResults;
-      const { error: resultsError, rows, col_names } = firstResult;
+      const { error: resultsError, rows, col_names } = firstResult || {};
 
       if (resultsError) {
         setError(resultsError);
