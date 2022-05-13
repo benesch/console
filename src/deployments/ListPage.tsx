@@ -55,38 +55,36 @@ const DeploymentListPage = () => {
   // FIXME: flatten the conditional branches by extracting returned components
 
   return (
-    <BaseLayout>
-      <Flex flexFlow={"column"} height="100%" maxHeight="100%">
-        <Box>
-          <PageBreadcrumbs />
-          <PageHeader>
-            <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-              <ListPageHeaderContent title="Deployments" />
-            </HStack>
-            {!!error && (
-              <ListFetchError
-                data-testid="fetch-deployment-issue-alert"
-                message={`Failed to load list of deployments`}
-              />
-            )}
-            <Spacer />
-            <CreateDeploymentModal
-              refetch={refetch}
-              isDisabled={!canCreateDeployments}
-              size="sm"
+    <Flex flexFlow={"column"} height="100%" maxHeight="100%">
+      <Box>
+        <PageBreadcrumbs />
+        <PageHeader>
+          <HStack spacing={4} alignItems="center" justifyContent="flex-start">
+            <ListPageHeaderContent title="Deployments" />
+          </HStack>
+          {!!error && (
+            <ListFetchError
+              data-testid="fetch-deployment-issue-alert"
+              message={`Failed to load list of deployments`}
             />
-          </PageHeader>
-        </Box>
-        <Box flex={1}>
-          {isLoading && <Spinner data-testid="loading-spinner" />}
-          {isEmpty && <EmptyList title="deployments" />}
-          {!canCreateDeployments && <DeploymentLimitWarning />}
-          {!isLoading && !isEmpty && (
-            <DeploymentTable deployments={deployments} />
           )}
-        </Box>
-      </Flex>
-    </BaseLayout>
+          <Spacer />
+          <CreateDeploymentModal
+            refetch={refetch}
+            isDisabled={!canCreateDeployments}
+            size="sm"
+          />
+        </PageHeader>
+      </Box>
+      <Box flex={1}>
+        {isLoading && <Spinner data-testid="loading-spinner" />}
+        {isEmpty && <EmptyList title="deployments" />}
+        {!canCreateDeployments && <DeploymentLimitWarning />}
+        {!isLoading && !isEmpty && (
+          <DeploymentTable deployments={deployments} />
+        )}
+      </Box>
+    </Flex>
   );
 };
 

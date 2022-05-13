@@ -95,58 +95,56 @@ const GridLayout = (): JSX.Element => {
   };
 
   return (
-    <BaseLayout overflow={"scroll"}>
-      <Flex height={"100%"} gap={5}>
+    <Flex height={"100%"} gap={5}>
+      <Card
+        ref={ref}
+        key={"schema"}
+        data-grid={{
+          h: 50,
+          i: "schema",
+          w: 2,
+          x: 0,
+          y: 0,
+        }}
+        overflow={"scroll"}
+        background={"purple.900"}
+        width="20%"
+        minWidth={"20%"}
+        height={"100%"}
+      >
+        <Schema />
+      </Card>
+      <Flex flexDirection={"column"} flex={1} gap={2} width="100%">
         <Card
-          ref={ref}
-          key={"schema"}
+          key={"editor"}
           data-grid={{
-            h: 50,
-            i: "schema",
-            w: 2,
-            x: 0,
+            h: 25,
+            i: "editor",
+            w: 9.5,
+            x: 2,
             y: 0,
           }}
-          overflow={"scroll"}
-          background={"purple.900"}
-          width="20%"
-          minWidth={"20%"}
-          height={"100%"}
+          overflow="hidden"
         >
-          <Schema />
+          <Code handleQuery={handleQuery} />
         </Card>
-        <Flex flexDirection={"column"} flex={1} gap={2} width="100%">
-          <Card
-            key={"editor"}
-            data-grid={{
-              h: 25,
-              i: "editor",
-              w: 9.5,
-              x: 2,
-              y: 0,
-            }}
-            overflow="hidden"
-          >
-            <Code handleQuery={handleQuery} />
-          </Card>
-          <Card
-            key={"table"}
-            data-grid={{
-              h: 25,
-              i: "table",
-              w: 9.5,
-              x: 2,
-              y: 2,
-            }}
-            overflow="hidden"
-          >
-            <Box overflow={"scroll"} background={"purple.900"}>
-              <Table columns={columns} rows={rows} />
-            </Box>
-          </Card>
-        </Flex>
+        <Card
+          key={"table"}
+          data-grid={{
+            h: 25,
+            i: "table",
+            w: 9.5,
+            x: 2,
+            y: 2,
+          }}
+          overflow="hidden"
+        >
+          <Box overflow={"scroll"} background={"purple.900"}>
+            <Table columns={columns} rows={rows} />
+          </Box>
+        </Card>
       </Flex>
-    </BaseLayout>
+    </Flex>
   );
 };
 

@@ -60,6 +60,7 @@ export interface BaseLayoutProps {
  */
 export const BaseLayout = (props: BaseLayoutProps) => {
   const { overflow, children } = props;
+
   return (
     <Flex direction="column" height="100vh">
       <NavBar />

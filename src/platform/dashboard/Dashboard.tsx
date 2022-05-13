@@ -6,7 +6,7 @@ import MetricsCard from "./MetricsCard";
 
 const Dashboard = () => {
   return (
-    <BaseLayout>
+    <>
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
           <HStack>
@@ -17,7 +17,7 @@ const Dashboard = () => {
       <VStack pb={6}>
         <MetricsCard />
       </VStack>
-    </BaseLayout>
+    </>
   );
 };
 

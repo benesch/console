@@ -37,7 +37,7 @@ const EnvironmentsListPage = () => {
   const isLoading = regions === null;
   const isEmpty = !isLoading && regions.length === 0;
   return (
-    <BaseLayout>
+    <>
       <PageBreadcrumbs />
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
@@ -47,7 +47,7 @@ const EnvironmentsListPage = () => {
       {isLoading && <Spinner data-testid="loading-spinner" />}
       {isEmpty && <EmptyList title="available regions" />}
       {!isLoading && !isEmpty && <EnvironmentTable regions={regions} />}
-    </BaseLayout>
+    </>
   );
 };
 

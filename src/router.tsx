@@ -19,31 +19,42 @@ import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
+import { BaseLayout } from "./layouts/BaseLayout";
 import HomePage from "./platform/HomePage";
 import PlatformRouter from "./platform/router";
 import { assert } from "./util";
 
 /** The root router for the application. */
 const Router = () => {
+  const location = useLocation();
+  const layoutOverflow =
+    location.pathname === "/platform/editor" ? "scroll" : undefined;
+
   return (
     <>
       <Switch>
-        <ProtectedRoute path="/deployments/:id">
-          <DeploymentDetailPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/deployments">
-          <DeploymentListPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/access">
-          <AppPasswordsPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/platform">
-          <PlatformRouter />
-        </ProtectedRoute>
         <ProtectedRoute path="/">
-          <HomePage />
+          <BaseLayout overflow={layoutOverflow}>
+            <ProtectedRoute path="/deployments/:id">
+              <DeploymentDetailPage />
+            </ProtectedRoute>
+            <ProtectedRoute path="/deployments" exact>
+              <DeploymentListPage />
+            </ProtectedRoute>
+            <ProtectedRoute path="/access">
+              <AppPasswordsPage />
+            </ProtectedRoute>
+            <ProtectedRoute path="/platform">
+              <PlatformRouter />
+            </ProtectedRoute>
+            <ProtectedRoute path="/">
+              <HomePage />
+            </ProtectedRoute>
+          </BaseLayout>
         </ProtectedRoute>
-        <RedirectIfNotAuthRoute />
+        <ProtectedRoute path="/deployments/:id">
+          <RedirectIfNotAuthRoute />
+        </ProtectedRoute>
       </Switch>
       <AnalyticsOnEveryPage config={window.CONFIG} />
     </>

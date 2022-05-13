@@ -76,7 +76,7 @@ const AppPasswordsPage = () => {
   };
 
   return (
-    <BaseLayout>
+    <>
       <PageHeader>
         <PageHeading>App-specific passwords</PageHeading>
       </PageHeader>
@@ -136,7 +136,7 @@ const AppPasswordsPage = () => {
           </HStack>
         </VStack>
       )}
-    </BaseLayout>
+    </>
   );
 };
 
