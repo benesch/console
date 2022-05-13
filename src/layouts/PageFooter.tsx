@@ -8,6 +8,7 @@ import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
+import TextLink from "../components/TextLink";
 import Version from "../version/Version";
 
 /**
@@ -34,15 +35,18 @@ const PageFooter: React.FC = () => {
       boxShadow="footer"
     >
       <Text>© {getCurrentYear()} Materialize, Inc.</Text>
-      <Link href="https://materialize.com/privacy-policy" target="_blank">
+      <TextLink href="https://materialize.com/privacy-policy" target="_blank">
         Privacy Policy
-      </Link>
-      <Link href="https://materialize.com/terms-and-conditions" target="_blank">
+      </TextLink>
+      <TextLink
+        href="https://materialize.com/terms-and-conditions"
+        target="_blank"
+      >
         Terms &amp; Conditions
-      </Link>
-      <Link href="https://status.materialize.com/" target="_blank">
+      </TextLink>
+      <TextLink href="https://status.materialize.com/" target="_blank">
         System Status
-      </Link>
+      </TextLink>
       <Version />
     </HStack>
   );

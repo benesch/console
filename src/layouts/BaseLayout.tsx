@@ -359,7 +359,7 @@ export interface PageHeadingProps {
  */
 export const PageHeading = (props: PageHeadingProps) => {
   return (
-    <Heading fontWeight="400" fontSize="2xl">
+    <Heading fontWeight="400" fontSize="3xl">
       {props.children}
     </Heading>
   );

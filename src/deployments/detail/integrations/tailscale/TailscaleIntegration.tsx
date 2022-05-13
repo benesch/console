@@ -1,6 +1,7 @@
-import { HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
+import TextLink from "../../../../components/TextLink";
 import {
   DeploymentIntegrationCallToActionProps,
   DeploymentIntegrationTabProps,
@@ -21,22 +22,14 @@ const TailscaleIntegration: React.FC<DeploymentIntegrationTabProps> = ({
   return (
     <VStack w="full" alignItems="flex-start">
       <Text>
-        <Link
-          href="https://tailscale.com"
-          target="_blank"
-          textDecoration="underline"
-        >
+        <TextLink href="https://tailscale.com" target="_blank">
           Tailscale
-        </Link>{" "}
+        </TextLink>{" "}
         is a VPN service that enables encrypted point-to-point connections using
         the open source{" "}
-        <Link
-          href="https://wireguard.com"
-          target="_blank"
-          textDecoration="underline"
-        >
+        <TextLink href="https://wireguard.com" target="_blank">
           WireGuard
-        </Link>{" "}
+        </TextLink>{" "}
         protocol. This means only devices on your private network can
         communicate with each other.
       </Text>
