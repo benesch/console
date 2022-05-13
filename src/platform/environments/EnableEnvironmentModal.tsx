@@ -69,7 +69,7 @@ const EnableEnvironmentModal = (props: Props) => {
         <ModalContent>
           <Formik
             initialValues={{
-              image: `materialize/materialized:${ImageTag}`,
+              image: `materialize/materialized-slim:${ImageTag}`,
             }}
             onSubmit={async (values, actions) => {
               try {
