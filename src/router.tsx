@@ -16,11 +16,11 @@ import {
 import AppPasswordsPage from "./access/AppPasswordsPage";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
+import { useAuth } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
 import { BaseLayout } from "./layouts/BaseLayout";
-import HomePage from "./platform/HomePage";
 import PlatformRouter from "./platform/router";
 import { assert } from "./util";
 
@@ -48,12 +48,9 @@ const Router = () => {
               <PlatformRouter />
             </ProtectedRoute>
             <ProtectedRoute path="/">
-              <HomePage />
+              <RedirectToHome />
             </ProtectedRoute>
           </BaseLayout>
-        </ProtectedRoute>
-        <ProtectedRoute path="/deployments/:id">
-          <RedirectIfNotAuthRoute />
         </ProtectedRoute>
       </Switch>
       <AnalyticsOnEveryPage config={window.CONFIG} />
@@ -61,18 +58,20 @@ const Router = () => {
   );
 };
 
-const RedirectIfNotAuthRoute = () => {
+const RedirectToHome = () => {
   const location = useLocation();
   const { routes: authRoutes } = useFronteggAuth((state) => state);
-  if (Object.values(authRoutes).includes(location.pathname)) {
-    // Suppress the redirect to give Frontegg time to notice that it is
-    // responsible for handling the URL. Otherwise we get stuck in a redirect
-    // loop.
-    //
-    // NOTE(benesch): I've filed this bug upstream via our shared Slack channel.
+  const { platformEnabled } = useAuth();
+  if (
+    location.pathname !== authRoutes.authenticatedUrl &&
+    Object.values(authRoutes).includes(location.pathname)
+  ) {
+    // If this is an authentication route, it's Frontegg's responsibility to
+    // handle it. Return null rather than redirecting so Frontegg has time to
+    // notice it.
     return null;
   } else {
-    return <Redirect to={authRoutes.authenticatedUrl} />;
+    return <Redirect to={platformEnabled ? "/platform" : "/deployments"} />;
   }
 };
 
@@ -118,7 +117,7 @@ const ProtectedRoute = (props: RouteProps) => {
   assert(organization);
   assert(user);
 
-  //
+  // Render the route.
   return (
     <AuthProvider organization={organization} user={user}>
       <Route {...props} />
