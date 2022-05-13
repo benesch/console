@@ -33,23 +33,25 @@ const Router = () => {
   return (
     <>
       <Switch>
-        <ProtectedRoute path="/">
+        <ProtectedRoute>
           <BaseLayout overflow={layoutOverflow}>
-            <ProtectedRoute path="/deployments/:id">
-              <DeploymentDetailPage />
-            </ProtectedRoute>
-            <ProtectedRoute path="/deployments" exact>
-              <DeploymentListPage />
-            </ProtectedRoute>
-            <ProtectedRoute path="/access">
-              <AppPasswordsPage />
-            </ProtectedRoute>
-            <ProtectedRoute path="/platform">
-              <PlatformRouter />
-            </ProtectedRoute>
-            <ProtectedRoute path="/">
-              <RedirectToHome />
-            </ProtectedRoute>
+            <Switch>
+              <Route path="/deployments/:id">
+                <DeploymentDetailPage />
+              </Route>
+              <Route path="/deployments" exact>
+                <DeploymentListPage />
+              </Route>
+              <Route path="/access">
+                <AppPasswordsPage />
+              </Route>
+              <Route path="/platform">
+                <PlatformRouter />
+              </Route>
+              <Route path="/">
+                <RedirectToHome />
+              </Route>
+            </Switch>
           </BaseLayout>
         </ProtectedRoute>
       </Switch>
