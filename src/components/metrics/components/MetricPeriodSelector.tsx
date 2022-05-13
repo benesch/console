@@ -12,13 +12,14 @@ export const durationsInMinutes = {
 export const defaultMetricPeriod = durationsInMinutes.hour;
 
 const MetricPeriodSelector = (props: {
+  period?: number;
   onSelect: (period: number) => void;
 }) => (
   <HStack>
     <Text>Last&nbsp;</Text>
     <Select
       data-testid="metrics-period-selector-dropdown"
-      defaultValue={defaultMetricPeriod}
+      defaultValue={props.period || defaultMetricPeriod}
       onChange={(e) => props.onSelect(parseInt(e.target.value))}
     >
       <option value={durationsInMinutes.hour}>hour</option>

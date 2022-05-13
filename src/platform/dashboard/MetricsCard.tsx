@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   HStack,
-  Spinner,
   Table,
   Tbody,
   Td,
@@ -13,7 +12,7 @@ import {
   useColorModeValue,
   useInterval,
 } from "@chakra-ui/react";
-import { TabPanel, TabPanels } from "@chakra-ui/tabs";
+import { TabPanels } from "@chakra-ui/tabs";
 import React from "react";
 
 import { Cluster, useClusters } from "../../api/materialized";
@@ -24,16 +23,17 @@ import {
   CardTabsHeaders,
   CardTitle,
 } from "../../components/cardComponents";
-import MetricsLineChart from "../../components/metrics/components/MetricsLineChart";
 import { EmptyList } from "../../layouts/listPageComponents";
 import { semanticColors } from "../../theme/colors";
 import { getColorName } from "../../theme/victoryChart";
+import { CpuMetricsTabPanel, MemoryMetricsTabPanel } from "./MetricsTabPanels";
 
 const MetricsCard = () => {
   const { clusters, refetch } = useClusters();
   useInterval(refetch, 5000);
-  const isLoading = clusters === null;
-  const isEmpty = !isLoading && clusters.length === 0;
+  const [period, setPeriod] = React.useState(60);
+  const isLoadingClusters = clusters === null;
+  const isEmptyClusters = !isLoadingClusters && clusters.length === 0;
   const borderColor = useColorModeValue(
     semanticColors.divider.light,
     semanticColors.divider.dark
@@ -48,45 +48,24 @@ const MetricsCard = () => {
           borderBottomWidth="1px"
           borderBottomColor={borderColor}
           borderBottomStyle="solid"
+          isLazy
         >
           <CardTabsHeaders>
             <CardTitle>Monitoring</CardTitle>
             <HStack>
-              <CardTab>Memory</CardTab>
               <CardTab>CPU</CardTab>
+              <CardTab>Memory</CardTab>
             </HStack>
           </CardTabsHeaders>
           <TabPanels>
-            <TabPanel>
-              {isLoading ? (
-                <Spinner data-test-id="loading-spinner" />
-              ) : allMetricsHook ? (
-                <MetricsLineChart
-                  {...allMetricsHook}
-                  testId="fetch-memory-metric-error"
-                  errorMessage="Failed to load cluster memory metrics"
-                />
-              ) : (
-                "Coming soon."
-              )}
-            </TabPanel>
-            <TabPanel>
-              {isLoading ? (
-                <Spinner />
-              ) : allMetricsHook ? (
-                <MetricsLineChart
-                  {...allMetricsHook}
-                  testId="fetch-cpu-metric-error"
-                  errorMessage="Failed to load cluster CPU metrics"
-                />
-              ) : (
-                "Coming soon."
-              )}
-            </TabPanel>
+            <CpuMetricsTabPanel period={period} setPeriod={setPeriod} />
+            <MemoryMetricsTabPanel period={period} setPeriod={setPeriod} />
           </TabPanels>
         </CardTabs>
-        {!isLoading && !isEmpty && <ClusterTable clusters={clusters} />}
-        {isEmpty && <EmptyList title="clusters" />}
+        {!isLoadingClusters && !isEmptyClusters && (
+          <ClusterTable clusters={clusters} />
+        )}
+        {isEmptyClusters && <EmptyList title="clusters" />}
       </>
     </Card>
   );

@@ -79,7 +79,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
 
   const sansSerif = theme.fonts.body as string;
   const letterSpacing = "normal";
-  const fontSize = 12;
+  const fontSize = 18;
   const baseProps = {
     width: 450,
     height: 200,
@@ -135,7 +135,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
           size: 1,
           stroke: "transparent",
         },
-        tickLabels: { ...baseLabelStyles, fontSize: 10 },
+        tickLabels: { ...baseLabelStyles, fontSize: 12 },
       },
       ...baseProps,
     },
@@ -226,6 +226,8 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
           fill: "transparent",
           stroke: primaryLineStroke,
           strokeWidth: 2,
+          strokeLinecap,
+          strokeLinejoin,
         },
         labels: baseLabelStyles,
       },
@@ -262,7 +264,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
     tooltip: {
       style: {
         ...baseLabelStyles,
-        padding: 0,
+        padding: 5,
         pointerEvents: "none",
         backgroundColor: "red",
       },
@@ -271,7 +273,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
         strokeWidth: 1,
         pointerEvents: "none",
       },
-      flyoutPadding: 5,
+      flyoutPadding: { top: 5, left: 10, bottom: 5, right: 10 },
       cornerRadius: 5,
       pointerLength: 10,
     },
@@ -286,7 +288,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
           ...baseLabelStyles,
           fill: flyoutTextColor,
           pointerEvents: "none",
-          fontSize: 11,
+          fontSize: 12,
         },
         flyout: {
           zIndex: 1000,

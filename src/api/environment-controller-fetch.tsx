@@ -32,9 +32,8 @@ export const useEnvironments = () => {
       if (res.status === 200) {
         const environments: Environment[] = JSON.parse(await res.text());
         return environments.map((e) => ({
-          provider: region.provider,
-          region: region.region,
-          address: e.coordd_address,
+          ...e,
+          ...region,
         }));
       } else {
         regionEnvErrorMessage += `Fetch region ${region.provider} failed: ${res.status} ${res.statusText}. `;
