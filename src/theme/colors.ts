@@ -183,13 +183,24 @@ const gradients = {
     fallback: colors.indigo[900],
   },
   accentDark1: {
-    gradient: `linear(
+    gradient: `linear-gradient(
       280.8deg,
       ${colors.indigo[400]} 15.21%,
-      ${colors.orchid[200]} 56.5%,
-      ${colors.orange[200]} 85.53%
+      ${colors.orchid[300]} 56.5%,
+      ${colors.orange[300]} 85.53%
     )`,
     fallback: colors.lavender[400],
+    animation: {
+      backgroundPosition: "0% 100%",
+      backgroundSize: "200% 200%",
+      transition: "background-position 0.2s ease-out",
+      ":hover": {
+        backgroundPosition: "80% 100%",
+      },
+      ":active": {
+        backgroundPosition: "100% 100%",
+      },
+    },
   },
   accentDark1Text: {
     gradient: `linear-gradient(
@@ -207,6 +218,14 @@ const gradients = {
       #B634CB 82.13%
     )`,
     fallback: colors.purple[500],
+    animation: {
+      backgroundPosition: "0% 100%",
+      backgroundSize: "300% 300%",
+      transition: "background-position 0.3s ease-out",
+      ":hover": {
+        backgroundPosition: "100% 100%",
+      },
+    },
   },
   accentLight1: {
     gradient: `linear-gradient(

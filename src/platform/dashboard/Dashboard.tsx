@@ -1,4 +1,10 @@
-import { HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import {
+  HStack,
+  Spacer,
+  Text,
+  useColorModeValue,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
@@ -8,6 +14,7 @@ import {
   PageHeading,
 } from "../../layouts/BaseLayout";
 import { currentEnvironment } from "../../recoil/currentEnvironment";
+import ConnectButton from "./Connect";
 import MetricsCard from "./MetricsCard";
 
 const Dashboard = () => {
@@ -17,7 +24,12 @@ const Dashboard = () => {
     <>
       <PageBreadcrumbs />
       <PageHeader>
-        <HStack spacing={4} alignItems="center" justifyContent="flex-start">
+        <HStack
+          spacing={4}
+          alignItems="center"
+          justifyContent="flex-start"
+          width="100%"
+        >
           <VStack alignItems="flex-start">
             <PageHeading>Dashboard</PageHeading>
             <Text fontSize="md" textColor={grayText}>
@@ -26,6 +38,8 @@ const Dashboard = () => {
                 : "No region active"}
             </Text>
           </VStack>
+          <Spacer />
+          <ConnectButton />
         </HStack>
       </PageHeader>
       <VStack pb={6}>

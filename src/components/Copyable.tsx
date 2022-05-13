@@ -63,14 +63,21 @@ export const CopyableText: React.FC<TextProps & { children: string | null }> = (
       </Text>
     );
   }
+  const hoverColor = useColorModeValue("purple.400", "purple.300");
   return (
     <Button
       variant="link"
       onClick={onCopy}
       fontWeight="normal"
       textColor="normal"
+      title={props.title || "Copy"}
+      sx={{
+        ":hover svg": {
+          color: hoverColor,
+        },
+      }}
     >
-      <HStack>
+      <HStack alignItems="flex-start" py={1}>
         <Text color="inherit" {...props}></Text>
         {shouldDisplayIcon && <CopyStateIcon copied={copied} />}
       </HStack>
