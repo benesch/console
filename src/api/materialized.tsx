@@ -57,7 +57,8 @@ function useSqlInternal(
       const parsedResponse = JSON.parse(await response.text());
       const { results: responseResults } = parsedResponse;
       const [firstResult] = responseResults;
-      const { error: resultsError, rows, col_names } = firstResult;
+      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
+      const { error: resultsError, rows, col_names } = firstResult || {};
 
       if (resultsError) {
         setError(resultsError);
