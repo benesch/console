@@ -8,8 +8,8 @@ import React from "react";
 import {
   Redirect,
   Route,
-  RouteProps,
   Switch,
+  SwitchProps,
   useLocation,
 } from "react-router-dom";
 
@@ -32,29 +32,25 @@ const Router = () => {
 
   return (
     <>
-      <Switch>
-        <ProtectedRoute>
-          <BaseLayout overflow={layoutOverflow}>
-            <Switch>
-              <Route path="/deployments/:id">
-                <DeploymentDetailPage />
-              </Route>
-              <Route path="/deployments" exact>
-                <DeploymentListPage />
-              </Route>
-              <Route path="/access">
-                <AppPasswordsPage />
-              </Route>
-              <Route path="/platform">
-                <PlatformRouter />
-              </Route>
-              <Route path="/">
-                <RedirectToHome />
-              </Route>
-            </Switch>
-          </BaseLayout>
-        </ProtectedRoute>
-      </Switch>
+      <ProtectedSwitch>
+        <BaseLayout overflow={layoutOverflow}>
+          <Route path="/deployments/:id">
+            <DeploymentDetailPage />
+          </Route>
+          <Route path="/deployments" exact>
+            <DeploymentListPage />
+          </Route>
+          <Route path="/access">
+            <AppPasswordsPage />
+          </Route>
+          <Route path="/platform">
+            <PlatformRouter />
+          </Route>
+          <Route path="/">
+            <RedirectToHome />
+          </Route>
+        </BaseLayout>
+      </ProtectedSwitch>
       <AnalyticsOnEveryPage config={window.CONFIG} />
     </>
   );
@@ -77,7 +73,7 @@ const RedirectToHome = () => {
   }
 };
 
-const ProtectedRoute = (props: RouteProps) => {
+const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
 
   // Consume Frontegg authentication state.
@@ -119,10 +115,10 @@ const ProtectedRoute = (props: RouteProps) => {
   assert(organization);
   assert(user);
 
-  // Render the route.
+  // Render the switch.
   return (
     <AuthProvider organization={organization} user={user}>
-      <Route {...props} />
+      <Switch {...props} />
     </AuthProvider>
   );
 };
