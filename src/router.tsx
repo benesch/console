@@ -8,8 +8,8 @@ import React from "react";
 import {
   Redirect,
   Route,
-  RouteProps,
   Switch,
+  SwitchProps,
   useLocation,
 } from "react-router-dom";
 
@@ -20,6 +20,7 @@ import { useAuth } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
+import { BaseLayout } from "./layouts/BaseLayout";
 import PlatformRouter from "./platform/router";
 import { assert } from "./util";
 
@@ -27,23 +28,23 @@ import { assert } from "./util";
 const Router = () => {
   return (
     <>
-      <Switch>
-        <ProtectedRoute path="/deployments/:id">
+      <ProtectedSwitch>
+        <Route path="/deployments/:id">
           <DeploymentDetailPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/deployments">
+        </Route>
+        <Route path="/deployments" exact>
           <DeploymentListPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/access">
+        </Route>
+        <Route path="/access">
           <AppPasswordsPage />
-        </ProtectedRoute>
-        <ProtectedRoute path="/platform">
+        </Route>
+        <Route path="/platform">
           <PlatformRouter />
-        </ProtectedRoute>
-        <ProtectedRoute path="/">
+        </Route>
+        <Route path="/">
           <RedirectToHome />
-        </ProtectedRoute>
-      </Switch>
+        </Route>
+      </ProtectedSwitch>
       <AnalyticsOnEveryPage config={window.CONFIG} />
     </>
   );
@@ -66,8 +67,10 @@ const RedirectToHome = () => {
   }
 };
 
-const ProtectedRoute = (props: RouteProps) => {
+const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
+  const layoutOverflow =
+    location.pathname === "/platform/editor" ? "hidden" : undefined;
 
   // Consume Frontegg authentication state.
   const {
@@ -108,10 +111,12 @@ const ProtectedRoute = (props: RouteProps) => {
   assert(organization);
   assert(user);
 
-  // Render the route.
+  // Render the switch.
   return (
     <AuthProvider organization={organization} user={user}>
-      <Route {...props} />
+      <BaseLayout overflow={layoutOverflow}>
+        <Switch {...props} />
+      </BaseLayout>
     </AuthProvider>
   );
 };

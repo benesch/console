@@ -79,12 +79,12 @@ const DetailPage = () => {
   }
 
   return (
-    <BaseLayout>
+    <>
       <PageBreadcrumbs>
         <RouterLink to="/deployments">Deployments</RouterLink> /
       </PageBreadcrumbs>
       {deploymentView}
-    </BaseLayout>
+    </>
   );
 };
 

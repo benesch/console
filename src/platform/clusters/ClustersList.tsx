@@ -30,7 +30,7 @@ const ClustersListPage = () => {
   const isLoading = clusters === null;
   const isEmpty = !isLoading && clusters.length === 0;
   return (
-    <BaseLayout>
+    <>
       <PageBreadcrumbs />
       <PageHeader>
         <HStack spacing={4} alignItems="center" justifyContent="flex-start">
@@ -42,7 +42,7 @@ const ClustersListPage = () => {
       {isLoading && <Spinner data-testid="loading-spinner" />}
       {isEmpty && <EmptyList title="clusters" />}
       {!isLoading && !isEmpty && <ClusterTable clusters={clusters} />}
-    </BaseLayout>
+    </>
   );
 };
 
