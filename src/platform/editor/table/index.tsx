@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   Table as ChakraTable,
   Tbody,
   Td,
@@ -7,10 +8,10 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React from "react";
-import { useFlexLayout, useTable } from "react-table";
-import AutoSizer from "react-virtualized-auto-sizer";
-import { FixedSizeList } from "react-window";
+import React, { ChangeEvent } from "react";
+import { usePagination, useTable } from "react-table";
+
+import Pagination from "./pagination";
 
 interface Props {
   columns: Array<any>;
@@ -23,7 +24,7 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
    */
   const defaultColumn = React.useMemo(
     () => ({
-      minWidth: 20,
+      // minWidth: 20,
       width: 150,
       maxWidth: 150,
       whiteSpace: "nowrap",
@@ -33,68 +34,51 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns,
-        data,
-        defaultColumn,
-      },
-      useFlexLayout
-    );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    prepareRow,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    // Get the state from the instance
+    state: { pageIndex, pageSize },
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn,
+      // initialState: { pageIndex: 0 }, // Pass our hoisted table state
+    },
+    // useFlexLayout,
+    usePagination
+  ) as any;
 
   /**
-   * Renders
+   * Handlers
    */
-  const RenderRow = React.useCallback(
-    ({ index, style }) => {
-      const row = rows[index];
-      prepareRow(row);
-      return (
-        <Tr {...row.getRowProps({ style })}>
-          {row.cells.map((cell) => {
-            return (
-              <Td
-                {...cell.getCellProps()}
-                margin="0"
-                padding="0.5rem"
-                width="1%"
-                borderBottom="1px"
-                borderColor={"gray.700"}
-                key={cell.getCellProps().key}
-              >
-                {cell.render("Cell")}
-              </Td>
-            );
-          })}
-        </Tr>
-      );
-    },
-    [prepareRow, rows]
-  );
+  const handlePageSize = (e: ChangeEvent<HTMLSelectElement> | undefined) => {
+    if (e) {
+      setPageSize(e.target.value);
+    }
+  };
 
   return (
-    <Box style={{ display: "block" }}>
-      <Box
-        display="block"
-        height={"360px"}
-        maxWidth="100%"
-        overflowX="scroll"
-        overflowY="hidden"
-        borderBottom="1px"
-        borderColor="gray.700"
-      >
-        {/* Add border spacing */}
-        <ChakraTable
-          {...getTableProps()}
-          width="100%"
-          height="100%"
-          style={{ borderSpacing: 0 }}
-        >
+    <Flex flexFlow={"column"} height="100%">
+      {/* Add border spacing */}
+      <Box flex={1} overflowX={"scroll"}>
+        <ChakraTable {...getTableProps()} style={{ borderSpacing: 0 }}>
           <Thead>
-            {headerGroups.map((headerGroup) => (
+            {headerGroups.map((headerGroup: any) => (
               <Tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                {headerGroup.headers.map((column) => (
+                {headerGroup.headers.map((column: any) => (
                   <Th
                     {...column.getHeaderProps({})}
                     margin="0"
@@ -111,26 +95,39 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
             ))}
           </Thead>
           <Tbody {...getTableBodyProps()}>
-            <AutoSizer>
-              {({ width: autoWidth }) => {
-                return (
-                  <>
-                    <FixedSizeList
-                      height={305}
-                      itemCount={rows.length}
-                      itemSize={35}
-                      width={autoWidth}
-                    >
-                      {RenderRow}
-                    </FixedSizeList>
-                  </>
-                );
-              }}
-            </AutoSizer>
+            {page.map((row: any, i: number) => {
+              prepareRow(row);
+              return (
+                <Tr {...row.getRowProps()} key={row.key}>
+                  {row.cells.map((cell: any) => {
+                    return (
+                      <Td key={cell.key} {...cell.getCellProps()} padding={0.5}>
+                        {cell.render("Cell")}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              );
+            })}
           </Tbody>
         </ChakraTable>
       </Box>
-    </Box>
+      {/* Pagination */}
+      <Box padding={1}>
+        <Pagination
+          canNextPage={canNextPage}
+          canPreviousPage={canPreviousPage}
+          gotoPage={gotoPage}
+          handlePageSize={handlePageSize}
+          nextPage={nextPage}
+          pageCount={pageCount}
+          pageIndex={pageIndex}
+          pageOptions={pageOptions}
+          pageSize={pageSize}
+          previousPage={previousPage}
+        />
+      </Box>
+    </Flex>
   );
 };
 
