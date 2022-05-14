@@ -102,25 +102,25 @@ const GridLayout = (): JSX.Element => {
 
   return (
     <BaseLayout overflow={"hidden"}>
-      <Flex
-        height={"100%"}
-        width={"100%"}
-        gap={5}
-        overflow="hidden"
-        padding={6}
-      >
-        <Card
-          ref={ref}
-          key={"schema"}
-          overflow={"scroll"}
-          width="20%"
-          minWidth={"20%"}
-          height={"100%"}
-          shadow={shadow}
+      <Flex height={"100%"} width={"100%"} gap={5} overflow="hidden">
+        <Box paddingY={6} minWidth={"20%"} width="20%">
+          <Card
+            ref={ref}
+            key={"schema"}
+            overflow={"scroll"}
+            height={"100%"}
+            shadow={shadow}
+          >
+            <Schema />
+          </Card>
+        </Box>
+        <Flex
+          flexDirection={"column"}
+          flex={1}
+          gap={2}
+          overflowX={"hidden"}
+          padding={6}
         >
-          <Schema />
-        </Card>
-        <Flex flexDirection={"column"} flex={1} gap={2} overflow={"hidden"}>
           <Card key={"editor"} overflow="hidden" flex={1} shadow={shadow}>
             <Code handleQuery={handleQuery} />
           </Card>
