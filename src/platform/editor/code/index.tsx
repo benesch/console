@@ -6,6 +6,7 @@ import "codemirror/mode/sql/sql";
 import "codemirror/addon/hint/show-hint";
 import "codemirror/addon/hint/sql-hint";
 import "codemirror/addon/hint/show-hint.css";
+import "./Codemirror.css";
 
 import { Box, Button } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";
@@ -35,7 +36,7 @@ const Code = (props: Props): JSX.Element => {
   }, []);
 
   return (
-    <Box width={"100%"} position="relative" overflow={"scroll"}>
+    <Box width={"100%"} height="100%" position="relative">
       <Button
         height="1.75rem"
         size="sm"
@@ -44,7 +45,8 @@ const Code = (props: Props): JSX.Element => {
         zIndex={1}
         top={2}
         right={2}
-        backgroundColor={"green.700"}
+        textColor="white"
+        backgroundColor={"green.600"}
         _hover={{
           backgroundColor: "green.500",
         }}
