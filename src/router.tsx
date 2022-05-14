@@ -26,30 +26,24 @@ import { assert } from "./util";
 
 /** The root router for the application. */
 const Router = () => {
-  const location = useLocation();
-  const layoutOverflow =
-    location.pathname === "/platform/editor" ? "scroll" : undefined;
-
   return (
     <>
       <ProtectedSwitch>
-        <BaseLayout overflow={layoutOverflow}>
-          <Route path="/deployments/:id">
-            <DeploymentDetailPage />
-          </Route>
-          <Route path="/deployments" exact>
-            <DeploymentListPage />
-          </Route>
-          <Route path="/access">
-            <AppPasswordsPage />
-          </Route>
-          <Route path="/platform">
-            <PlatformRouter />
-          </Route>
-          <Route path="/">
-            <RedirectToHome />
-          </Route>
-        </BaseLayout>
+        <Route path="/deployments/:id">
+          <DeploymentDetailPage />
+        </Route>
+        <Route path="/deployments" exact>
+          <DeploymentListPage />
+        </Route>
+        <Route path="/access">
+          <AppPasswordsPage />
+        </Route>
+        <Route path="/platform">
+          <PlatformRouter />
+        </Route>
+        <Route path="/">
+          <RedirectToHome />
+        </Route>
       </ProtectedSwitch>
       <AnalyticsOnEveryPage config={window.CONFIG} />
     </>
@@ -75,6 +69,8 @@ const RedirectToHome = () => {
 
 const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
+  // const layoutOverflow =
+  //   location.pathname === "/platform/editor" ? "hidden" : undefined;
 
   // Consume Frontegg authentication state.
   const {
@@ -118,7 +114,9 @@ const ProtectedSwitch = (props: SwitchProps) => {
   // Render the switch.
   return (
     <AuthProvider organization={organization} user={user}>
-      <Switch {...props} />
+      <BaseLayout overflow={"hidden"}>
+        <Switch {...props} />
+      </BaseLayout>
     </AuthProvider>
   );
 };
