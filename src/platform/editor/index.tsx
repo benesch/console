@@ -1,4 +1,4 @@
-import { Box, Flex, useToast } from "@chakra-ui/react";
+import { Box, Flex, useColorModeValue, useToast } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
 
@@ -22,6 +22,7 @@ function columnCell(): (cellData: any) => JSX.Element {
         textOverflow={"ellipsis"}
         overflow={"hidden"}
         fontWeight={300}
+        fontSize="sm"
       >
         {cellData.value}
       </Box>
@@ -45,6 +46,11 @@ const GridLayout = (): JSX.Element => {
     columns: [],
   });
   const ref = useRef(null);
+
+  /**
+   * Styles (Smaller glow due to background and overflows)
+   */
+  const shadow = useColorModeValue("glowLight", "smallGlowDark");
 
   /**
    * Hooks
@@ -95,52 +101,31 @@ const GridLayout = (): JSX.Element => {
   };
 
   return (
-    <BaseLayout overflow={"scroll"}>
-      <Flex height={"100%"} gap={5}>
-        <Card
-          ref={ref}
-          key={"schema"}
-          data-grid={{
-            h: 50,
-            i: "schema",
-            w: 2,
-            x: 0,
-            y: 0,
-          }}
-          overflow={"scroll"}
-          background={"purple.900"}
-          width="20%"
-          minWidth={"20%"}
-          height={"100%"}
-        >
-          <Schema />
-        </Card>
-        <Flex flexDirection={"column"} flex={1} gap={2} width="100%">
+    <BaseLayout overflow={"hidden"}>
+      <Flex height={"100%"} width={"100%"} gap={5} overflow="hidden">
+        <Box paddingY={6} minWidth={"20%"} width="20%">
           <Card
-            key={"editor"}
-            data-grid={{
-              h: 25,
-              i: "editor",
-              w: 9.5,
-              x: 2,
-              y: 0,
-            }}
-            overflow="hidden"
+            ref={ref}
+            key={"schema"}
+            overflow={"scroll"}
+            height={"100%"}
+            shadow={shadow}
           >
+            <Schema />
+          </Card>
+        </Box>
+        <Flex
+          flexDirection={"column"}
+          flex={1}
+          gap={2}
+          overflowX={"hidden"}
+          padding={6}
+        >
+          <Card key={"editor"} overflow="hidden" flex={1} shadow={shadow}>
             <Code handleQuery={handleQuery} />
           </Card>
-          <Card
-            key={"table"}
-            data-grid={{
-              h: 25,
-              i: "table",
-              w: 9.5,
-              x: 2,
-              y: 2,
-            }}
-            overflow="hidden"
-          >
-            <Box overflow={"scroll"} background={"purple.900"}>
+          <Card key={"table"} overflow="hidden" flex={1} shadow={shadow}>
+            <Box height={"100%"}>
               <Table columns={columns} rows={rows} />
             </Box>
           </Card>
