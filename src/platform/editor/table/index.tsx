@@ -9,12 +9,19 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { ChangeEvent } from "react";
-import { usePagination, useTable } from "react-table";
+import {
+  Cell,
+  Column,
+  HeaderGroup,
+  Row,
+  usePagination,
+  useTable,
+} from "react-table";
 
 import Pagination from "./pagination";
 
 interface Props {
-  columns: Array<any>;
+  columns: Array<Column>;
   rows: Array<any>;
 }
 
@@ -24,7 +31,6 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
    */
   const defaultColumn = React.useMemo(
     () => ({
-      // minWidth: 20,
       width: 150,
       maxWidth: 150,
       whiteSpace: "nowrap",
@@ -55,11 +61,9 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
       columns,
       data,
       defaultColumn,
-      // initialState: { pageIndex: 0 }, // Pass our hoisted table state
     },
-    // useFlexLayout,
     usePagination
-  ) as any;
+  );
 
   /**
    * Handlers
@@ -72,13 +76,12 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
 
   return (
     <Flex flexFlow={"column"} height="100%">
-      {/* Add border spacing */}
       <Box flex={1} overflowX={"scroll"}>
         <ChakraTable {...getTableProps()} style={{ borderSpacing: 0 }}>
           <Thead>
-            {headerGroups.map((headerGroup: any) => (
+            {headerGroups.map((headerGroup: HeaderGroup) => (
               <Tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                {headerGroup.headers.map((column: any) => (
+                {headerGroup.headers.map((column: HeaderGroup) => (
                   <Th
                     {...column.getHeaderProps({})}
                     margin="0"
@@ -95,14 +98,20 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
             ))}
           </Thead>
           <Tbody {...getTableBodyProps()}>
-            {page.map((row: any, i: number) => {
+            {page.map((row: Row) => {
               prepareRow(row);
+              const { getRowProps } = row;
               return (
-                <Tr {...row.getRowProps()} key={row.key}>
-                  {row.cells.map((cell: any) => {
+                <Tr key={getRowProps().key} height={5}>
+                  {row.cells.map((cell: Cell) => {
+                    const { getCellProps, render } = cell;
                     return (
-                      <Td key={cell.key} {...cell.getCellProps()} padding={0.5}>
-                        {cell.render("Cell")}
+                      <Td
+                        {...getCellProps()}
+                        key={getCellProps().key}
+                        padding={0.5}
+                      >
+                        {render("Cell")}
                       </Td>
                     );
                   })}
