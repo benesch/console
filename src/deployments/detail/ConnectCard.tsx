@@ -6,7 +6,6 @@
 import {
   Button,
   HStack,
-  Link,
   ListItem,
   OrderedList,
   Spacer,
@@ -28,6 +27,7 @@ import {
   CardTitle,
 } from "../../components/cardComponents";
 import CodeBlock from "../../components/CodeBlock";
+import TextLink from "../../components/TextLink";
 
 interface DeploymentConnectCardProps {
   deployment: Deployment;
@@ -70,10 +70,8 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
                 </UnorderedList>
               </ListItem>
               <ListItem>
-                <Link textDecoration="underline" onClick={handleDownloadCerts}>
-                  Download
-                </Link>{" "}
-                and unzip certificates.
+                <TextLink onClick={handleDownloadCerts}>Download</TextLink> and
+                unzip certificates.
               </ListItem>
               <ListItem>
                 Open a terminal and run psql from the directory containing the
@@ -84,12 +82,9 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
               </ListItem>
               <ListItem>
                 If this is your first time using Materialize, check out{" "}
-                <Link
-                  href="https://materialize.com/docs/cloud/get-started-with-cloud/"
-                  textDecoration="underline"
-                >
+                <TextLink href="https://materialize.com/docs/cloud/get-started-with-cloud/">
                   our getting started guide
-                </Link>
+                </TextLink>
                 !
               </ListItem>
             </OrderedList>
@@ -97,10 +92,8 @@ const ConnectCard = ({ deployment }: DeploymentConnectCardProps) => {
           <TabPanel>
             <OrderedList ml="6" spacing="3">
               <ListItem>
-                <Link textDecoration="underline" onClick={handleDownloadCerts}>
-                  Download
-                </Link>{" "}
-                and unzip certificates in a location that is accessible to your
+                <TextLink onClick={handleDownloadCerts}>Download</TextLink> and
+                unzip certificates in a location that is accessible to your
                 Prometheus deployment.
               </ListItem>
               <ListItem>

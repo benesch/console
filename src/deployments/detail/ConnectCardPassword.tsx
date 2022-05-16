@@ -5,7 +5,6 @@
 
 import {
   HStack,
-  Link,
   ListItem,
   OrderedList,
   TabPanel,
@@ -24,7 +23,7 @@ import {
   CardTitle,
 } from "../../components/cardComponents";
 import CodeBlock from "../../components/CodeBlock";
-import { CopyableText } from "../../components/Copyable";
+import TextLink from "../../components/TextLink";
 
 interface DeploymentConnectCardProps {
   deployment: Deployment;
@@ -60,9 +59,9 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
                 </UnorderedList>
               </ListItem>
               <ListItem>
-                <Link href="/access" textDecoration="underline">
+                <TextLink href="/access">
                   Generate an app-specific password
-                </Link>{" "}
+                </TextLink>{" "}
                 if you do not yet have one, and set the <code>PGPASSWORD</code>{" "}
                 environment variable to the password you generated.
               </ListItem>
@@ -78,12 +77,9 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
               </ListItem>
               <ListItem>
                 If this is your first time using Materialize, check out{" "}
-                <Link
-                  href="https://materialize.com/docs/cloud/get-started-with-cloud/"
-                  textDecoration="underline"
-                >
+                <TextLink href="https://materialize.com/docs/cloud/get-started-with-cloud/">
                   our getting started guide
-                </Link>
+                </TextLink>
                 !
               </ListItem>
             </OrderedList>
@@ -91,9 +87,9 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
           <TabPanel>
             <OrderedList ml="6" spacing="3">
               <ListItem>
-                <Link href="/access" textDecoration="underline">
+                <TextLink href="/access">
                   Generate an app-specific password
-                </Link>{" "}
+                </TextLink>{" "}
                 for prometheus.
               </ListItem>
               <ListItem>
