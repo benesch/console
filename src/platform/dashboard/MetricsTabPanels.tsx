@@ -1,4 +1,4 @@
-import { Spinner, useInterval } from "@chakra-ui/react";
+import { Flex, Spinner, useInterval } from "@chakra-ui/react";
 import { TabPanel, TabPanelProps } from "@chakra-ui/tabs";
 import React from "react";
 
@@ -49,11 +49,13 @@ const MetricsTabPanel = ({
       },
     };
   }, [data, period]);
-  const isLoading = chartData.chart === null;
+  const isLoading = chartData.chart.data.length === 0;
   return (
     <TabPanel {...props}>
       {isLoading ? (
-        <Spinner my={6} />
+        <Flex alignItems="center" justifyContent="center">
+          <Spinner my={6} />
+        </Flex>
       ) : (
         <MetricsLineChart
           {...chartData}
