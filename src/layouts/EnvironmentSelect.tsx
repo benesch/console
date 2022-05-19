@@ -29,6 +29,7 @@ const EnvironmentSelectField = () => {
       size="sm"
       disabled={environments.length < 1}
     >
+      {environments.length < 1 && <option>No regions active</option>}
       {environments.map((e) => (
         <option
           key={e.coordd_address}
