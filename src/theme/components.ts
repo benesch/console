@@ -4,7 +4,7 @@ import {
   transparentize,
 } from "@chakra-ui/theme-tools";
 
-import { semanticColors } from "./colors";
+import { gradients, semanticColors, shadows } from "./colors";
 
 export const Alert = {
   variants: {
@@ -29,6 +29,25 @@ export const Button = {
   baseStyle: {
     borderRadius: "sm",
     colorScheme: "purple",
+  },
+  variants: {
+    "gradient-1": {
+      color: "offWhite",
+      backgroundColor: gradients.accentDark1.fallback,
+      background: gradients.accentDark1.gradient,
+      shadow: shadows.glowLight,
+      ...gradients.accentDark1.animation,
+      ":hover": {
+        color: "white",
+        ...gradients.accentDark1.animation[":hover"],
+      },
+      "[disabled], :hover[disabled]": {
+        color: "white",
+        background: gradients.accentDark1.gradient,
+        backgroundPosition: gradients.accentDark1.animation.backgroundPosition,
+        backgroundSize: gradients.accentDark1.animation.backgroundSize,
+      },
+    },
   },
 };
 
