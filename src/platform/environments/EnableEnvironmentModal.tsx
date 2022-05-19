@@ -5,7 +5,6 @@
 
 import { AddIcon } from "@chakra-ui/icons";
 import {
-  Alert,
   Box,
   Button,
   ButtonProps,
@@ -17,7 +16,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   useDisclosure,
   useToast,
   VStack,
@@ -26,12 +24,13 @@ import { Form, Formik } from "formik";
 import React, { useRef } from "react";
 
 import { useAuth } from "../../api/auth";
-import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
+import { SupportedCloudRegion } from "../../api/backend";
 import { SubmitButton, TextField } from "../../components/formComponents";
 
 interface Props extends ButtonProps {
   refetch: () => Promise<any>;
   region: SupportedCloudRegion;
+  isAdmin: boolean;
 }
 
 /// The image SHA that we spin up all new materialize platform
@@ -42,11 +41,10 @@ interface Props extends ButtonProps {
 const ImageTag = "unstable-69d1f3a1b31c89c519c6c2e4ed799ba5226f5188";
 
 const EnableEnvironmentModal = (props: Props) => {
-  const { refetch, ...buttonProps } = props;
+  const { refetch, isAdmin, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const initialFocusRef = useRef(null);
-  const cloudProviders = useCloudProvidersList({});
   const { fetchAuthed } = useAuth();
 
   return (
@@ -56,6 +54,8 @@ const EnableEnvironmentModal = (props: Props) => {
         colorScheme="purple"
         onClick={onOpen}
         {...buttonProps}
+        disabled={!isAdmin}
+        title={isAdmin ? "" : "Only admins can enable new regions."}
       >
         Enable region
       </Button>

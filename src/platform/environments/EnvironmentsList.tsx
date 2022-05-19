@@ -11,19 +11,15 @@ import {
   Tr,
   useInterval,
 } from "@chakra-ui/react";
-import { useAuth } from "@frontegg/react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { isAdmin, useAuth } from "../../api/auth";
 import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
 import { useSqlOnCoordinator } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
-import {
-  BaseLayout,
-  PageBreadcrumbs,
-  PageHeader,
-} from "../../layouts/BaseLayout";
+import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
   EmptyList,
   ListPageHeaderContent,
@@ -90,6 +86,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
    * States
    */
   const { user } = useAuth();
+  const admin = isAdmin(user);
   const { data: environments, refetch } = useEnvironmentsList({
     base: props.region.environmentControllerUrl,
   });
@@ -166,6 +163,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
+            isAdmin={admin}
           />
         )}
         {environment && (
@@ -173,6 +171,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
+            isAdmin={admin}
           />
         )}
       </Td>
