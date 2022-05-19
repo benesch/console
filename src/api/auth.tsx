@@ -108,3 +108,7 @@ export const RestfulProvider = (props: RestfulProviderProps) => {
     <BaseRestfulProvider base="/" requestOptions={{ headers }} {...props} />
   );
 };
+
+export function isAdmin(user: User): boolean {
+  return !!user.roles.find((role) => role.name === "MaterializeAdmin");
+}
