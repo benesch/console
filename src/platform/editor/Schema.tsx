@@ -16,7 +16,7 @@ import {
   HiOutlineTemplate,
 } from "react-icons/hi";
 
-import { useSql } from "../../../api/materialized";
+import { useSql } from "../../api/materialized";
 
 const Schema = (): JSX.Element => {
   /**

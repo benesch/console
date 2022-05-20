@@ -18,7 +18,7 @@ import {
   useTable,
 } from "react-table";
 
-import Pagination from "./pagination";
+import Pagination from "./Pagination";
 
 interface Props {
   columns: Array<Column>;
