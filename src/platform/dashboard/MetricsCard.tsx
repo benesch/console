@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   HStack,
-  Spinner,
   Table,
   Tbody,
   Td,
@@ -39,7 +38,6 @@ const MetricsCard = () => {
     semanticColors.divider.light,
     semanticColors.divider.dark
   );
-  const allMetricsHook = false;
   return (
     <Card pb={4}>
       <>

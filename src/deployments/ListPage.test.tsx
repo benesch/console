@@ -3,7 +3,7 @@ mockUseAuth();
 
 import "@testing-library/jest-dom";
 
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Response } from "miragejs";
 import React from "react";
 import { MemoryRouter } from "react-router";
@@ -15,11 +15,7 @@ import {
   createApiLayerMock,
   testApiBase,
 } from "../api/__mocks__/api";
-import {
-  validDeployment,
-  validDeploymentList,
-  validRegions,
-} from "../components/metrics/__mocks__";
+import { validDeployment } from "../components/metrics/__mocks__";
 import DeploymentListPage from "./ListPage";
 
 const renderDeploymentList = () => {

@@ -12,7 +12,7 @@ import {
 import { AdminPortal } from "@frontegg/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import { useAuth } from "../api/auth";
 import { assert } from "../util";

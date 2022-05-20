@@ -13,11 +13,7 @@ import React from "react";
 
 import { Cluster, useClusters } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
-import {
-  BaseLayout,
-  PageBreadcrumbs,
-  PageHeader,
-} from "../../layouts/BaseLayout";
+import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import EnvironmentSelectField from "../../layouts/EnvironmentSelect";
 import {
   EmptyList,

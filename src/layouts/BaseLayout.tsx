@@ -18,7 +18,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  ResponsiveValue,
   Text,
   useColorModeValue,
   VStack,
@@ -27,7 +26,6 @@ import * as CSS from "csstype";
 import { differenceInDays } from "date-fns";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { Token } from "typescript";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";

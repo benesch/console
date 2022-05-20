@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Input, Select, Text } from "@chakra-ui/react";
-import React, { ChangeEvent, ChangeEventHandler } from "react";
+import { Button, Flex, Input, Select, Text } from "@chakra-ui/react";
+import React, { ChangeEvent } from "react";
 
 interface Props {
   canPreviousPage: boolean;

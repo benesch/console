@@ -33,7 +33,7 @@ import {
 } from "../api/backend";
 import { Card, CardContent } from "../components/cardComponents";
 import SupportLink from "../components/SupportLink";
-import { BaseLayout, PageBreadcrumbs, PageHeader } from "../layouts/BaseLayout";
+import { PageBreadcrumbs, PageHeader } from "../layouts/BaseLayout";
 import {
   EmptyList,
   ListFetchError,

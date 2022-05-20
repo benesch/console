@@ -30,7 +30,7 @@ interface DeploymentConnectCardProps {
 }
 
 const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
-  const { fetchAuthed, user } = useAuth();
+  const { user } = useAuth();
 
   return (
     <Card>

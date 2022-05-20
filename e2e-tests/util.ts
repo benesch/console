@@ -23,8 +23,6 @@ export const LEGACY_VERSION = "v0.20.0";
 
 export const STATE_NAME = "state.json";
 
-const REFRESH_MILLIS = 60000;
-
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
   timeout?: number;

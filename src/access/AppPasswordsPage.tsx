@@ -31,7 +31,7 @@ import {
 } from "../components/cardComponents";
 import { CopyButton } from "../components/Copyable";
 import { SubmitButton, TextField } from "../components/formComponents";
-import { BaseLayout, PageHeader, PageHeading } from "../layouts/BaseLayout";
+import { PageHeader, PageHeading } from "../layouts/BaseLayout";
 import DeleteKeyModal from "./DeleteKeyModal";
 
 const AppPasswordsPage = () => {

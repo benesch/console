@@ -3,7 +3,6 @@
  * A code block.
  */
 
-import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
   BoxProps,
