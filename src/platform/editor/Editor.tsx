@@ -39,7 +39,7 @@ const GridLayout = (): JSX.Element => {
    * States
    */
   const [query, setQuery] = useState<string>();
-  const { data, error } = useSql(query);
+  const { data, loading, error } = useSql(query);
   const [{ rows, columns }, setState] = useState<State>({
     rows: [],
     columns: [],
@@ -105,7 +105,7 @@ const GridLayout = (): JSX.Element => {
         <Card
           ref={ref}
           key="schema"
-          overflow="scroll"
+          overflow="auto"
           height="100%"
           shadow={shadow}
         >
@@ -116,15 +116,28 @@ const GridLayout = (): JSX.Element => {
         flexDirection="column"
         flex={1}
         gap={2}
-        overflowX="hidden"
         padding={6}
+        overflow="hidden"
       >
-        <Card key="editor" overflow="hidden" flex={1} shadow={shadow}>
-          <Code handleQuery={handleQuery} />
+        <Card
+          key="editor"
+          flex={1}
+          py={2}
+          bg="#263238"
+          overflow="hidden"
+          shadow={shadow}
+        >
+          <Code handleQuery={handleQuery} loading={loading} />
         </Card>
-        <Card key="table" overflow="hidden" flex={1} shadow={shadow}>
-          <Box height="100%">
-            <Table columns={columns} rows={rows} />
+        <Card key="table" flex={1} overflowY="hidden" shadow={shadow}>
+          <Box
+            height="100%"
+            bg={loading ? "whiteAlpha.100" : "transparent"}
+            color={loading ? "gray.400" : "default"}
+            borderRadius="xl"
+            overflow="hidden"
+          >
+            <Table columns={columns} rows={rows} loading={loading} />
           </Box>
         </Card>
       </Flex>

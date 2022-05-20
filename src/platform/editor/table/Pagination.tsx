@@ -1,4 +1,4 @@
-import { Button, Flex, Input, Select, Text } from "@chakra-ui/react";
+import { Button, Flex, Input, Select, Spinner, Text } from "@chakra-ui/react";
 import React, { ChangeEvent } from "react";
 
 interface Props {
@@ -12,22 +12,22 @@ interface Props {
   handlePageSize: (e: ChangeEvent<HTMLSelectElement> | undefined) => void;
   nextPage: () => void;
   previousPage: () => void;
+  loading?: boolean;
 }
 
-const Pagination = (props: Props): JSX.Element => {
-  const {
-    canPreviousPage,
-    canNextPage,
-    pageCount,
-    pageIndex,
-    pageOptions,
-    pageSize,
-    gotoPage,
-    handlePageSize,
-    previousPage,
-    nextPage,
-  } = props;
-
+const Pagination = ({
+  canPreviousPage,
+  canNextPage,
+  pageCount,
+  pageIndex,
+  pageOptions,
+  pageSize,
+  gotoPage,
+  handlePageSize,
+  previousPage,
+  nextPage,
+  loading,
+}: Props): JSX.Element => {
   const handleGoToPage = (e: ChangeEvent<HTMLInputElement> | undefined) => {
     if (e) {
       const page = e.target.value ? Number(e.target.value) - 1 : 0;
@@ -36,12 +36,18 @@ const Pagination = (props: Props): JSX.Element => {
   };
 
   return (
-    <Flex flexFlow="row" alignItems="center" justifyContent="space-around">
+    <Flex
+      flexFlow="row"
+      alignItems="center"
+      justifyContent="space-around"
+      position="relative"
+    >
+      {loading && <Spinner position="absolute" left={2} size="sm" />}
       <Flex flexFlow="row" justifyContent="space-around">
         <Button
           size="xs"
           onClick={() => gotoPage(0)}
-          disabled={!canPreviousPage}
+          disabled={loading || !canPreviousPage}
           marginX={1}
         >
           {"<<"}
@@ -49,7 +55,7 @@ const Pagination = (props: Props): JSX.Element => {
         <Button
           size="xs"
           onClick={() => previousPage()}
-          disabled={!canPreviousPage}
+          disabled={loading || !canPreviousPage}
           marginX={1}
         >
           {"<"}
@@ -57,7 +63,7 @@ const Pagination = (props: Props): JSX.Element => {
         <Button
           size="xs"
           onClick={() => nextPage()}
-          disabled={!canNextPage}
+          disabled={loading || !canNextPage}
           marginX={1}
         >
           {">"}
@@ -65,7 +71,7 @@ const Pagination = (props: Props): JSX.Element => {
         <Button
           size="xs"
           onClick={() => gotoPage(pageCount - 1)}
-          disabled={!canNextPage}
+          disabled={loading || !canNextPage}
           marginX={1}
         >
           {">>"}
@@ -86,6 +92,7 @@ const Pagination = (props: Props): JSX.Element => {
           onChange={handleGoToPage}
           width={100}
           marginLeft={2}
+          disabled={loading}
         />
       </Flex>{" "}
       <Select

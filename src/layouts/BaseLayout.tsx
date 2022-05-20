@@ -37,7 +37,7 @@ import ProfileDropdown from "./ProfileDropdown";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
-  overflow?: CSS.Property.Overflow;
+  overflowY?: CSS.Property.Overflow;
 }
 
 /**
@@ -56,9 +56,7 @@ export interface BaseLayoutProps {
  * </BaseLayout>
  * ```
  */
-export const BaseLayout = (props: BaseLayoutProps) => {
-  const { overflow, children } = props;
-
+export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
   return (
     <Flex direction="column" height="100vh">
       <NavBar />
@@ -68,7 +66,7 @@ export const BaseLayout = (props: BaseLayoutProps) => {
         px="5"
         py="3"
         flex={1}
-        overflow={overflow}
+        overflowY={overflowY}
       >
         {children}
       </Container>
