@@ -29,6 +29,7 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
         backgroundImage={fronteggAuthPageBackground}
         themeOptions={theme}
         customLoader={setLoading}
+        authOptions={{ keepSessionAlive: true }}
       >
         <RestfulProvider>
           <RecoilRoot>
