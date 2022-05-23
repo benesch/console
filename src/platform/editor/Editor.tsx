@@ -4,9 +4,9 @@ import { Column } from "react-table";
 
 import { useSql } from "../../api/materialized";
 import { Card } from "../../components/cardComponents";
-import Code from "./code";
-import Schema from "./schema";
-import Table from "./table";
+import Code from "./code/Code";
+import Schema from "./Schema";
+import Table from "./table/Table";
 
 /**
  * Column rendering for text
