@@ -1,11 +1,7 @@
 import { useFormikContext } from "formik";
 import * as React from "react";
 
-import {
-  DeploymentRequest,
-  SupportedCloudRegion,
-  useRegionsList,
-} from "../../api/backend";
+import { DeploymentRequest, SupportedCloudRegion } from "../../api/backend";
 import { SelectField } from "../../components/formComponents";
 
 const useFilterProviders = (cloudProviders: SupportedCloudRegion[]) => {

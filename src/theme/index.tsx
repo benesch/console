@@ -11,11 +11,7 @@
  */
 
 import { extendTheme } from "@chakra-ui/react";
-import {
-  createBreakpoints,
-  mode,
-  StyleFunctionProps,
-} from "@chakra-ui/theme-tools";
+import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
 

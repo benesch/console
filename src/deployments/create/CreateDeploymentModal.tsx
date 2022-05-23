@@ -31,11 +31,7 @@ import {
   useCloudProvidersList,
   useDeploymentsCreate,
 } from "../../api/backend";
-import {
-  SelectField,
-  SubmitButton,
-  TextField,
-} from "../../components/formComponents";
+import { SubmitButton, TextField } from "../../components/formComponents";
 import { petname } from "../../util";
 import DeploymentSizeField from "../DeploymentSizeField";
 import CloudProviderSelectField from "./CloudProviderSelect";

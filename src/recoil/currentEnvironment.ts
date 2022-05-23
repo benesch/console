@@ -1,5 +1,4 @@
 import { atom } from "recoil";
-import { EnvironmentPlugin } from "webpack";
 
 import { SupportedCloudRegion } from "../api/backend";
 import { Environment } from "../api/environment-controller";

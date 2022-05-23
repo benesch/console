@@ -1,4 +1,4 @@
-import { Tag, Text } from "@chakra-ui/react";
+import { Tag } from "@chakra-ui/react";
 import * as React from "react";
 
 import { isValidString } from "../utils/validators";

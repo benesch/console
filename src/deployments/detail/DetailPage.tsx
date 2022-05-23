@@ -33,7 +33,6 @@ import {
 } from "../../components/cardComponents";
 import { CopyableText } from "../../components/Copyable";
 import {
-  BaseLayout,
   PageBreadcrumbs,
   PageHeader,
   PageHeading,

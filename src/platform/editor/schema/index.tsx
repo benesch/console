@@ -1,9 +1,7 @@
 import {
-  Box,
   Flex,
   Icon,
   Table,
-  TableCaption,
   Tbody,
   Td,
   Text,

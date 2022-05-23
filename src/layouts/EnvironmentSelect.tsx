@@ -7,13 +7,11 @@ import { currentEnvironment } from "../recoil/currentEnvironment";
 
 const EnvironmentSelectField = () => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
-  const { environments, refetch, error } = useEnvironments();
+  const { environments } = useEnvironments();
 
   if (environments === null) {
     return <Spinner />;
   }
-
-  const options: string[] = [];
 
   return (
     <Select

@@ -6,20 +6,13 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import {
-  currentEnvironment,
-  RegionEnvironment,
-} from "../recoil/currentEnvironment";
+import { currentEnvironment } from "../recoil/currentEnvironment";
 import { useAuth } from "./auth";
 import { Environment } from "./environment-controller";
 
 interface Results {
   columns: Array<string>;
   rows: Array<any>;
-}
-
-interface ExtraParams {
-  environment: Environment | null;
 }
 
 /**

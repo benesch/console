@@ -3,7 +3,7 @@
  * Components and utils display at the bottom of layouts
  */
 
-import { HStack, Link } from "@chakra-ui/layout";
+import { HStack } from "@chakra-ui/layout";
 import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";

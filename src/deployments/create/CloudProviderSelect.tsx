@@ -1,11 +1,6 @@
-import { useFormikContext } from "formik";
 import * as React from "react";
 
-import {
-  DeploymentRequest,
-  SupportedCloudRegion,
-  useCloudProvidersList,
-} from "../../api/backend";
+import { SupportedCloudRegion } from "../../api/backend";
 import { SelectField } from "../../components/formComponents";
 
 interface Props {
