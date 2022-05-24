@@ -23,11 +23,6 @@ import * as components from "./components";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 
-/**
- * Extend toast default position
- */
-defaultStandaloneParam.defaultOptions.position = "top";
-
 export const chakraTheme = extendTheme({
   global: {
     body: {
@@ -71,6 +66,11 @@ export const chakraTheme = extendTheme({
     useSystemColorMode: true,
   },
 });
+
+/**
+ * Extend toast default position
+ */
+defaultStandaloneParam.defaultOptions.position = "top";
 
 // Extracted from Figma.
 export const fronteggAuthPageBackground = `
