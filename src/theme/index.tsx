@@ -69,6 +69,9 @@ export const chakraTheme = extendTheme({
 
 /**
  * Extend toast default position
+ * TODO:
+ * It would be better to have a custom defaultParams/defaultUptions inside ./components folder
+ * But neither Alert, Toast or useToast seems to apply for <Toast>
  */
 defaultStandaloneParam.defaultOptions.position = "top";
 
