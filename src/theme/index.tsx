@@ -10,7 +10,7 @@
  * Frontegg.
  */
 
-import { extendTheme } from "@chakra-ui/react";
+import { defaultStandaloneParam, extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
@@ -22,6 +22,11 @@ import colors, { gradients, semanticColors, shadows } from "./colors";
 import * as components from "./components";
 
 const fontDefault = "intervariable, Arial, sans-serif";
+
+/**
+ * Extend toast default position
+ */
+defaultStandaloneParam.defaultOptions.position = "top";
 
 export const chakraTheme = extendTheme({
   global: {
