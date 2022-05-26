@@ -29,6 +29,7 @@ function useSqlInternal(
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const defaultError = "Error running query.";
 
   async function executeSql() {
     if (!address || !sql) {
@@ -47,25 +48,32 @@ function useSqlInternal(
         },
         body: JSON.stringify({ sql: sql }),
       });
-      const parsedResponse = JSON.parse(await response.text());
-      const { results: responseResults } = parsedResponse;
-      const [firstResult] = responseResults;
-      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-      const { error: resultsError, rows, col_names } = firstResult || {};
 
-      if (resultsError) {
-        setError(resultsError);
-        setResults(null);
+      const responseText = await response.text();
+
+      if (response.status === 400) {
+        setError(responseText || defaultError);
       } else {
-        setResults({
-          rows: rows,
-          columns: col_names,
-        });
-        setError(null);
+        const parsedResponse = JSON.parse(responseText);
+        const { results: responseResults } = parsedResponse;
+        const [firstResult] = responseResults;
+        // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
+        const { error: resultsError, rows, col_names } = firstResult || {};
+
+        if (resultsError) {
+          setError(resultsError);
+          setResults(null);
+        } else {
+          setResults({
+            rows: rows,
+            columns: col_names,
+          });
+          setError(null);
+        }
       }
     } catch (err) {
       console.error(err);
-      setError("Error running query.");
+      setError(defaultError);
     } finally {
       setLoading(false);
     }
