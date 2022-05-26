@@ -53,7 +53,7 @@ interface EnvironmentTableProps {
 
 const EnvironmentTable = (props: EnvironmentTableProps) => {
   return (
-    <Card pt="2" px="0" pb="6">
+    <Card pt="2" px="0" pb="6" overflow={"scroll"}>
       {
         <Table data-testid="cluster-table" borderRadius="xl">
           <Thead>
