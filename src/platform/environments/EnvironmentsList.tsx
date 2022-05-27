@@ -143,7 +143,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     } else {
       url = (
         <Code padding="1">
-          <CopyableText fontSize="xs">
+          <CopyableText
+            fontSize="xs"
+            maxWidth={"lg"}
+            overflow="hidden"
+            textOverflow={"ellipsis"}
+          >
             {`postgres://${encodeURIComponent(user.email)}@${
               environment.coordd_address
             }/materialize`}
