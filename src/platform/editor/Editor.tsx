@@ -85,7 +85,7 @@ const GridLayout = (): JSX.Element => {
         error.length > 0 && error.charAt(0).toUpperCase() + error.slice(1);
 
       toast({
-        title: `Ouch. ${capError}`,
+        title: capError,
         status: "error",
       });
     }
