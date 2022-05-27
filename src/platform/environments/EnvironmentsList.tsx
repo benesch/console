@@ -3,6 +3,7 @@ import {
   HStack,
   Spinner,
   Table,
+  TableContainer,
   Tbody,
   Td,
   Text,
@@ -53,25 +54,27 @@ interface EnvironmentTableProps {
 
 const EnvironmentTable = (props: EnvironmentTableProps) => {
   return (
-    <Card pt="2" px="0" pb="6" overflow={"scroll"}>
+    <Card pt="2" px="0" pb="6">
       {
-        <Table data-testid="cluster-table" borderRadius="xl">
-          <Thead>
-            <Tr>
-              <Th>Region</Th>
-              <Th>URL</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {props.regions.map((r) => (
-              <RegionEnvironmentRow
-                key={r.environmentControllerUrl}
-                region={r}
-              />
-            ))}
-          </Tbody>
-        </Table>
+        <TableContainer>
+          <Table data-testid="cluster-table" borderRadius="xl">
+            <Thead>
+              <Tr>
+                <Th>Region</Th>
+                <Th>URL</Th>
+                <Th></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {props.regions.map((r) => (
+                <RegionEnvironmentRow
+                  key={r.environmentControllerUrl}
+                  region={r}
+                />
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       }
     </Card>
   );
@@ -140,7 +143,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     } else {
       url = (
         <Code padding="1">
-          <CopyableText fontSize="xs">
+          <CopyableText
+            fontSize="xs"
+            maxWidth={"lg"}
+            overflow="hidden"
+            textOverflow={"ellipsis"}
+          >
             {`postgres://${encodeURIComponent(user.email)}@${
               environment.coordd_address
             }/materialize`}
