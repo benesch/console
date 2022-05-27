@@ -17,7 +17,7 @@ export const prometheusMetricsToVictoryMetrics = (
       values: metric.values.map((value) => {
         return {
           x: new Date(parseFloat(value[0]) * 1000),
-          y: parseFloat(value[1]),
+          y: parseFloat(value[1]) || 0,
         };
       }),
     };

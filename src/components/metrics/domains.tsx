@@ -21,7 +21,7 @@ export const yDomainFromMetrics = (
   const maxY = Math.max(...onlyValues);
 
   // empirical heuristics to show the relevant part of the graph +/- some buffer
-  // since our ticks go by 20, we extend the graph to the next 20%
+  // since our ticks usually go by 20, we extend the graph to the next 20%
   // if it goes over 100
   const maxYWithBuffer = maxY < 1 ? 1 : Math.ceil(maxY / 0.2) * 0.2;
   return [0, maxYWithBuffer];
@@ -37,23 +37,16 @@ export const inferDomainFromValues = (metrics: VictoryMetric[]): Domains => {
   };
 };
 
-const Y_TICK_LENGTH = 0.2;
-const defaultTicks = [0];
-let tick = 0;
-while (tick < 1) {
-  tick += Y_TICK_LENGTH;
-  defaultTicks.push(tick);
-}
-
 export const inferTicksFromDomain = (domains: Domains) => {
-  const ticks = [...defaultTicks];
-  if (domains.y[1] > 1) {
-    const extraTickCount = Math.ceil((domains.y[1] - 1.0) / Y_TICK_LENGTH);
-    let i = 1;
-    while (i <= extraTickCount) {
-      ticks.push(1 + i * Y_TICK_LENGTH);
-      i += 1;
-    }
+  const DEFAULT_Y_TICK_LENGTH = 0.2;
+  let tick = 0;
+  const yTickLength =
+    Math.floor(Math.max(domains.y[1] / 5, DEFAULT_Y_TICK_LENGTH) * 10) / 10;
+  const ticks = [];
+
+  while (tick < domains.y[1] + yTickLength) {
+    ticks.push(tick);
+    tick += yTickLength;
   }
   return ticks;
 };
