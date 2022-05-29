@@ -1,6 +1,4 @@
 import {
-  Code,
-  HStack,
   Spinner,
   Table,
   TableContainer,
@@ -15,38 +13,12 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { isAdmin, useAuth } from "../../api/auth";
-import { SupportedCloudRegion, useCloudProvidersList } from "../../api/backend";
+import { SupportedCloudRegion } from "../../api/backend";
 import { useEnvironmentsList } from "../../api/environment-controller";
 import { useSqlOnCoordinator } from "../../api/materialized";
-import { Card } from "../../components/cardComponents";
-import { CopyableText } from "../../components/Copyable";
-import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
-import {
-  EmptyList,
-  ListPageHeaderContent,
-} from "../../layouts/listPageComponents";
 import getDefaultEnvironment from "../../utils/platform";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
-
-const EnvironmentsListPage = () => {
-  const { data: regions } = useCloudProvidersList({});
-  const isLoading = regions === null;
-  const isEmpty = !isLoading && regions.length === 0;
-  return (
-    <>
-      <PageBreadcrumbs />
-      <PageHeader>
-        <HStack spacing={4} alignItems="center" justifyContent="flex-start">
-          <ListPageHeaderContent title="Regions" />
-        </HStack>
-      </PageHeader>
-      {isLoading && <Spinner data-testid="loading-spinner" />}
-      {isEmpty && <EmptyList title="available regions" />}
-      {!isLoading && !isEmpty && <EnvironmentTable regions={regions} />}
-    </>
-  );
-};
 
 interface EnvironmentTableProps {
   regions: SupportedCloudRegion[];
@@ -54,27 +26,21 @@ interface EnvironmentTableProps {
 
 const EnvironmentTable = (props: EnvironmentTableProps) => {
   return (
-    <Card pt="2" px="0" pb="6">
-      <TableContainer>
-        <Table data-testid="cluster-table" borderRadius="xl">
-          <Thead>
-            <Tr>
-              <Th>Region</Th>
-              <Th>URL</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {props.regions.map((r) => (
-              <RegionEnvironmentRow
-                key={r.environmentControllerUrl}
-                region={r}
-              />
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Card>
+    <TableContainer>
+      <Table data-testid="cluster-table" borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th>Region</Th>
+            <Th>Status</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.regions.map((r) => (
+            <RegionEnvironmentRow key={r.environmentControllerUrl} region={r} />
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 };
 
@@ -139,20 +105,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     if (negativeHealth) {
       url = <Text color="gray">Starting</Text>;
     } else {
-      url = (
-        <Code padding="1">
-          <CopyableText
-            fontSize="xs"
-            maxWidth="lg"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {`postgres://${encodeURIComponent(user.email)}@${
-              environment.coordd_address
-            }/materialize`}
-          </CopyableText>
-        </Code>
-      );
+      url = <Text color="gray">Enabled</Text>;
     }
   }
 
@@ -185,4 +138,4 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   );
 };
 
-export default EnvironmentsListPage;
+export default EnvironmentTable;

@@ -150,9 +150,6 @@ type NavItem = {
 
 const platformNavItems: NavItem[] = [
   { label: "Dashboard", href: "/platform" },
-  { label: "Regions", href: "/platform/regions" },
-  { label: "Clusters", href: "/platform/clusters" },
-  { label: "Editor", href: "/platform/editor" },
   { label: "Deployments", href: "/deployments", legacy: true },
 ];
 const legacyNavItems: NavItem[] = [
