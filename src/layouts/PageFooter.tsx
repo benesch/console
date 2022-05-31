@@ -27,8 +27,8 @@ const PageFooter: React.FC = () => {
       bg={footerBg}
       color={color}
       textAlign="center"
-      alignItems={"center"}
-      justifyContent={"center"}
+      alignItems="center"
+      justifyContent="center"
       py="3"
       fontWeight="400"
       fontSize="sm"

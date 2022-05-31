@@ -162,7 +162,7 @@ export type CloudProvidersListProps = Omit<
  */
 export const CloudProvidersList = (props: CloudProvidersListProps) => (
   <Get<SupportedCloudRegion[], unknown, void, void>
-    path={`/api/cloud-providers`}
+    path="/api/cloud-providers"
     {...props}
   />
 );
@@ -190,10 +190,7 @@ export type DeploymentsListProps = Omit<
  * List the available deployments.
  */
 export const DeploymentsList = (props: DeploymentsListProps) => (
-  <Get<Deployment[], unknown, void, void>
-    path={`/api/deployments`}
-    {...props}
-  />
+  <Get<Deployment[], unknown, void, void> path="/api/deployments" {...props} />
 );
 
 export type UseDeploymentsListProps = Omit<
@@ -218,7 +215,7 @@ export type DeploymentsCreateProps = Omit<
 export const DeploymentsCreate = (props: DeploymentsCreateProps) => (
   <Mutate<Deployment, unknown, void, DeploymentRequest, void>
     verb="POST"
-    path={`/api/deployments`}
+    path="/api/deployments"
     {...props}
   />
 );
@@ -359,7 +356,7 @@ export type DeploymentsDestroyProps = Omit<
 export const DeploymentsDestroy = (props: DeploymentsDestroyProps) => (
   <Mutate<void, unknown, void, string, void>
     verb="DELETE"
-    path={`/api/deployments`}
+    path="/api/deployments"
     {...props}
   />
 );
@@ -939,7 +936,7 @@ export type HealthRetrieveProps = Omit<
  * live.
  */
 export const HealthRetrieve = (props: HealthRetrieveProps) => (
-  <Get<void, unknown, void, void> path={`/api/health`} {...props} />
+  <Get<void, unknown, void, void> path="/api/health" {...props} />
 );
 
 export type UseHealthRetrieveProps = Omit<
@@ -968,7 +965,7 @@ export type MzVersionsListProps = Omit<
  * Versions are listed in order from oldest to newest.
  */
 export const MzVersionsList = (props: MzVersionsListProps) => (
-  <Get<string[], unknown, void, void> path={`/api/mz-versions`} {...props} />
+  <Get<string[], unknown, void, void> path="/api/mz-versions" {...props} />
 );
 
 export type UseMzVersionsListProps = Omit<
@@ -1000,7 +997,7 @@ export const MzVersionsLatestRetrieve = (
   props: MzVersionsLatestRetrieveProps
 ) => (
   <Get<string, unknown, MzVersionsLatestRetrieveQueryParams, void>
-    path={`/api/mz-versions/latest`}
+    path="/api/mz-versions/latest"
     {...props}
   />
 );
@@ -1120,7 +1117,7 @@ export type SchemaRetrieveProps = Omit<
  */
 export const SchemaRetrieve = (props: SchemaRetrieveProps) => (
   <Get<SchemaRetrieveResponse, unknown, SchemaRetrieveQueryParams, void>
-    path={`/api/schema`}
+    path="/api/schema"
     {...props}
   />
 );

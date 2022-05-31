@@ -27,8 +27,8 @@ const Schema = (): JSX.Element => {
   const { data: tablesData } = useSql("SHOW TABLES;");
 
   return (
-    <Table variant="simple" textAlign={"center"}>
-      <Thead position={"sticky"}>
+    <Table variant="simple" textAlign="center">
+      <Thead position="sticky">
         <Tr>
           <Th>Schema</Th>
         </Tr>
@@ -38,7 +38,7 @@ const Schema = (): JSX.Element => {
           sourcesData.rows.map(([sourceName]) => (
             <Tr key={sourceName}>
               <Td>
-                <Flex alignItems={"center"} gap={"0.5rem"}>
+                <Flex alignItems="center" gap="0.5rem">
                   <Icon as={HiOutlineDatabase} /> {sourceName}
                 </Flex>
               </Td>
@@ -48,7 +48,7 @@ const Schema = (): JSX.Element => {
           viewsData.rows.map(([viewName]) => (
             <Tr key={viewName}>
               <Td>
-                <Flex alignItems={"center"} gap={"0.5rem"}>
+                <Flex alignItems="center" gap="0.5rem">
                   <Icon as={HiOutlineTemplate} /> <Text>{viewName}</Text>
                 </Flex>
               </Td>
@@ -58,7 +58,7 @@ const Schema = (): JSX.Element => {
           tablesData.rows.map(([tableName]) => (
             <Tr key={tableName}>
               <Td>
-                <Flex alignItems={"center"} gap={"0.5rem"}>
+                <Flex alignItems="center" gap="0.5rem">
                   <Icon as={HiOutlineTable} /> <Text>{tableName}</Text>
                 </Flex>
               </Td>

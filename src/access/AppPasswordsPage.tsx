@@ -161,49 +161,47 @@ const PasswordsTable = ({
   const disabledColor = useColorModeValue("gray.500", "gray.500");
   return (
     <Card pt="2" px="0" pb="6" {...props}>
-      {
-        <Table borderRadius="xl">
-          <Thead>
-            <Tr>
-              <Th width="50%">Name</Th>
-              <Th>Owner</Th>
-              <Th>Created</Th>
-              <Th />
-            </Tr>
-          </Thead>
-          <Tbody>
-            {tokens.map((token) => {
-              const isDeleting = token.clientId === latestDeletionId;
-              return (
-                <Tr
-                  key={token.clientId}
-                  bg={isDeleting ? disabledBg : "default"}
-                  textColor={isDeleting ? disabledColor : "default"}
-                  aria-label={token.description}
-                >
-                  <Td>{token.description}</Td>
-                  <Td>{user.name}</Td>
-                  <Td>{format(new Date(token.createdAt), "yyyy/MM/dd")}</Td>
-                  <Td>
-                    <DeleteKeyModal
-                      description={token.description}
-                      clientId={token.clientId}
-                      tenantName={token.tenantName}
-                      disabled={isDeleting}
-                      deleteCb={deleteCb}
-                    />
-                  </Td>
-                </Tr>
-              );
-            })}
-            {tokens.length === 0 && (
-              <Tr>
-                <Td colSpan={4}>No app-specific passwords yet.</Td>
+      <Table borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th width="50%">Name</Th>
+            <Th>Owner</Th>
+            <Th>Created</Th>
+            <Th />
+          </Tr>
+        </Thead>
+        <Tbody>
+          {tokens.map((token) => {
+            const isDeleting = token.clientId === latestDeletionId;
+            return (
+              <Tr
+                key={token.clientId}
+                bg={isDeleting ? disabledBg : "default"}
+                textColor={isDeleting ? disabledColor : "default"}
+                aria-label={token.description}
+              >
+                <Td>{token.description}</Td>
+                <Td>{user.name}</Td>
+                <Td>{format(new Date(token.createdAt), "yyyy/MM/dd")}</Td>
+                <Td>
+                  <DeleteKeyModal
+                    description={token.description}
+                    clientId={token.clientId}
+                    tenantName={token.tenantName}
+                    disabled={isDeleting}
+                    deleteCb={deleteCb}
+                  />
+                </Td>
               </Tr>
-            )}
-          </Tbody>
-        </Table>
-      }
+            );
+          })}
+          {tokens.length === 0 && (
+            <Tr>
+              <Td colSpan={4}>No app-specific passwords yet.</Td>
+            </Tr>
+          )}
+        </Tbody>
+      </Table>
     </Card>
   );
 };
