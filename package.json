@@ -147,7 +147,15 @@
           "namedComponents": "arrow-function"
         }
       ],
-      "react/prop-types": "off"
+      "react/prop-types": "off",
+      "react/jsx-curly-brace-presence": [
+        1,
+        {
+          "props": "never",
+          "children": "never",
+          "propElementValues": "always"
+        }
+      ]
     },
     "extends": [
       "eslint:recommended",

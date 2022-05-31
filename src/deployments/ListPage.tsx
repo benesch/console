@@ -55,7 +55,7 @@ const DeploymentListPage = () => {
   // FIXME: flatten the conditional branches by extracting returned components
 
   return (
-    <Flex flexFlow={"column"} height="100%" maxHeight="100%">
+    <Flex flexFlow="column" height="100%" maxHeight="100%">
       <Box>
         <PageBreadcrumbs />
         <PageHeader>
@@ -65,7 +65,7 @@ const DeploymentListPage = () => {
           {!!error && (
             <ListFetchError
               data-testid="fetch-deployment-issue-alert"
-              message={`Failed to load list of deployments`}
+              message="Failed to load list of deployments"
             />
           )}
           <Spacer />

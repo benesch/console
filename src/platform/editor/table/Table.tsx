@@ -75,8 +75,8 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
   };
 
   return (
-    <Flex flexFlow={"column"} height="100%">
-      <Box flex={1} overflowX={"scroll"}>
+    <Flex flexFlow="column" height="100%">
+      <Box flex={1} overflowX="scroll">
         <ChakraTable {...getTableProps()} style={{ borderSpacing: 0 }}>
           <Thead>
             {headerGroups.map((headerGroup: HeaderGroup) => (

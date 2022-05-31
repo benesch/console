@@ -230,8 +230,8 @@ const NavItem = (props: NavItem) => {
         borderRight: "3px solid transparent",
         paddingTop: "3px",
       }}
-      borderLeft={"3px solid transparent"}
-      borderRight={"3px solid transparent"}
+      borderLeft="3px solid transparent"
+      borderRight="3px solid transparent"
     >
       <Box fontWeight="semibold">{props.label}</Box>
       {props.legacy && <Badge>Legacy</Badge>}

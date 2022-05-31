@@ -88,7 +88,7 @@ const Calendar = ({
             </PopoverHeader>
             <PopoverBody padding={0}>
               <Container centerContent paddingX={0}>
-                <Flex width={"100%"}>
+                <Flex width="100%">
                   <Button
                     {...getBackProps({ calendars })}
                     size="xs"

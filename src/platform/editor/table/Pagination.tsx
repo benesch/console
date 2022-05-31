@@ -36,10 +36,10 @@ const Pagination = (props: Props): JSX.Element => {
   };
 
   return (
-    <Flex flexFlow={"row"} alignItems="center" justifyContent={"space-around"}>
-      <Flex flexFlow={"row"} justifyContent={"space-around"}>
+    <Flex flexFlow="row" alignItems="center" justifyContent="space-around">
+      <Flex flexFlow="row" justifyContent="space-around">
         <Button
-          size={"xs"}
+          size="xs"
           onClick={() => gotoPage(0)}
           disabled={!canPreviousPage}
           marginX={1}
@@ -47,7 +47,7 @@ const Pagination = (props: Props): JSX.Element => {
           {"<<"}
         </Button>{" "}
         <Button
-          size={"xs"}
+          size="xs"
           onClick={() => previousPage()}
           disabled={!canPreviousPage}
           marginX={1}
@@ -55,7 +55,7 @@ const Pagination = (props: Props): JSX.Element => {
           {"<"}
         </Button>{" "}
         <Button
-          size={"xs"}
+          size="xs"
           onClick={() => nextPage()}
           disabled={!canNextPage}
           marginX={1}
@@ -63,7 +63,7 @@ const Pagination = (props: Props): JSX.Element => {
           {">"}
         </Button>{" "}
         <Button
-          size={"xs"}
+          size="xs"
           onClick={() => gotoPage(pageCount - 1)}
           disabled={!canNextPage}
           marginX={1}
@@ -71,8 +71,8 @@ const Pagination = (props: Props): JSX.Element => {
           {">>"}
         </Button>{" "}
       </Flex>
-      <Flex flexFlow={"row"} flexShrink={0} alignItems="center">
-        <Text fontSize={"sm"}>
+      <Flex flexFlow="row" flexShrink={0} alignItems="center">
+        <Text fontSize="sm">
           Page{" "}
           <strong>
             {pageIndex + 1} of {pageOptions.length || 1}
@@ -80,7 +80,7 @@ const Pagination = (props: Props): JSX.Element => {
           | Go to page:{" "}
         </Text>
         <Input
-          size={"xs"}
+          size="xs"
           type="number"
           defaultValue={pageIndex + 1}
           onChange={handleGoToPage}
@@ -89,10 +89,10 @@ const Pagination = (props: Props): JSX.Element => {
         />
       </Flex>{" "}
       <Select
-        size={"xs"}
+        size="xs"
         value={pageSize}
         onChange={handlePageSize}
-        width={"20%"}
+        width="20%"
         height={8}
       >
         {[10, 50, 100, 500, 1000].map((pageSize) => (

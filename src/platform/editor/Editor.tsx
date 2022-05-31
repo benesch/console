@@ -18,8 +18,8 @@ function columnCell(): (cellData: any) => JSX.Element {
       <Box
         maxWidth={150}
         whiteSpace="nowrap"
-        textOverflow={"ellipsis"}
-        overflow={"hidden"}
+        textOverflow="ellipsis"
+        overflow="hidden"
         fontWeight={300}
         fontSize="sm"
       >
@@ -100,30 +100,30 @@ const GridLayout = (): JSX.Element => {
   };
 
   return (
-    <Flex height={"100%"} width={"100%"} gap={5} overflow="hidden">
-      <Box paddingY={6} minWidth={"20%"} width="20%">
+    <Flex height="100%" width="100%" gap={5} overflow="hidden">
+      <Box paddingY={6} minWidth="20%" width="20%">
         <Card
           ref={ref}
-          key={"schema"}
-          overflow={"scroll"}
-          height={"100%"}
+          key="schema"
+          overflow="scroll"
+          height="100%"
           shadow={shadow}
         >
           <Schema />
         </Card>
       </Box>
       <Flex
-        flexDirection={"column"}
+        flexDirection="column"
         flex={1}
         gap={2}
-        overflowX={"hidden"}
+        overflowX="hidden"
         padding={6}
       >
-        <Card key={"editor"} overflow="hidden" flex={1} shadow={shadow}>
+        <Card key="editor" overflow="hidden" flex={1} shadow={shadow}>
           <Code handleQuery={handleQuery} />
         </Card>
-        <Card key={"table"} overflow="hidden" flex={1} shadow={shadow}>
-          <Box height={"100%"}>
+        <Card key="table" overflow="hidden" flex={1} shadow={shadow}>
+          <Box height="100%">
             <Table columns={columns} rows={rows} />
           </Box>
         </Card>

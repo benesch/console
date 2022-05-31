@@ -59,7 +59,7 @@ export const EmptyList = ({ title }: EmptyListProps) => {
     <Flex
       border={`1px dashed ${borderColor}`}
       borderRadius="4px"
-      height={"100%"}
+      height="100%"
       alignItems="center"
       justifyContent="center"
       gap="5"

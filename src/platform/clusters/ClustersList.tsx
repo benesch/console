@@ -49,24 +49,22 @@ interface ClusterTableProps {
 const ClusterTable = (props: ClusterTableProps) => {
   return (
     <Card pt="2" px="0" pb="6">
-      {
-        <Table data-testid="cluster-table" borderRadius="xl">
-          <Thead>
-            <Tr>
-              <Th>ID</Th>
-              <Th>Name</Th>
+      <Table data-testid="cluster-table" borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th>ID</Th>
+            <Th>Name</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.clusters.map((c) => (
+            <Tr key={c.id}>
+              <Td>{c.id}</Td>
+              <Td>{c.name}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {props.clusters.map((c) => (
-              <Tr key={c.id}>
-                <Td>{c.id}</Td>
-                <Td>{c.name}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      }
+          ))}
+        </Tbody>
+      </Table>
     </Card>
   );
 };

@@ -31,10 +31,7 @@ export type EnvironmentsListProps = Omit<
  * List the available environments
  */
 export const EnvironmentsList = (props: EnvironmentsListProps) => (
-  <Get<Environment[], unknown, void, void>
-    path={`/api/environment`}
-    {...props}
-  />
+  <Get<Environment[], unknown, void, void> path="/api/environment" {...props} />
 );
 
 export type UseEnvironmentsListProps = Omit<
@@ -59,7 +56,7 @@ export type EnvironmentsCreateProps = Omit<
 export const EnvironmentsCreate = (props: EnvironmentsCreateProps) => (
   <Mutate<Environment, unknown, void, EnvironmentRequest, void>
     verb="POST"
-    path={`/api/environment`}
+    path="/api/environment"
     {...props}
   />
 );
@@ -90,7 +87,7 @@ export type EnvironmentsDestroyProps = Omit<
 export const EnvironmentsDestroy = (props: EnvironmentsDestroyProps) => (
   <Mutate<void, unknown, void, void, void>
     verb="DELETE"
-    path={`/api/environment`}
+    path="/api/environment"
     {...props}
   />
 );
@@ -121,7 +118,7 @@ export type HealthRetrieveProps = Omit<
  * live.
  */
 export const HealthRetrieve = (props: HealthRetrieveProps) => (
-  <Get<void, unknown, void, void> path={`/api/health`} {...props} />
+  <Get<void, unknown, void, void> path="/api/health" {...props} />
 );
 
 export type UseHealthRetrieveProps = Omit<

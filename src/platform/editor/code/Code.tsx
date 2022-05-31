@@ -36,7 +36,7 @@ const Code = (props: Props): JSX.Element => {
   }, []);
 
   return (
-    <Box width={"100%"} height="100%" position="relative">
+    <Box width="100%" height="100%" position="relative">
       <Button
         height="1.75rem"
         size="sm"
@@ -46,7 +46,7 @@ const Code = (props: Props): JSX.Element => {
         top={2}
         right={2}
         textColor="white"
-        backgroundColor={"green.600"}
+        backgroundColor="green.600"
         _hover={{
           backgroundColor: "green.500",
         }}
