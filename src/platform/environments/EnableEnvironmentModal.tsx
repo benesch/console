@@ -30,7 +30,7 @@ import { SubmitButton, TextField } from "../../components/formComponents";
 interface Props extends ButtonProps {
   refetch: () => Promise<any>;
   region: SupportedCloudRegion;
-  isAdmin: boolean;
+  canWrite: boolean;
 }
 
 /// The image SHA that we spin up all new materialize platform
@@ -41,7 +41,7 @@ interface Props extends ButtonProps {
 const ImageTag = "unstable-5ae377002bc1aa4a9ab6a037f6fc0bc8e9f034fe";
 
 const EnableEnvironmentModal = (props: Props) => {
-  const { refetch, isAdmin, ...buttonProps } = props;
+  const { refetch, canWrite, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const initialFocusRef = useRef(null);
@@ -54,8 +54,8 @@ const EnableEnvironmentModal = (props: Props) => {
         colorScheme="purple"
         onClick={onOpen}
         {...buttonProps}
-        disabled={!isAdmin}
-        title={isAdmin ? "" : "Only admins can enable new regions."}
+        disabled={!canWrite}
+        title={canWrite ? "" : "Only admins can enable new regions."}
       >
         Enable region
       </Button>
