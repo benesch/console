@@ -127,9 +127,11 @@ export const Menu = {
 };
 
 export const Accordion = {
-  baseStyle: {
-    container: {
-      border: "none",
+  variants: {
+    borderless: {
+      container: {
+        border: "none",
+      },
     },
   },
 };

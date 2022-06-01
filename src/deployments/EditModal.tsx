@@ -110,7 +110,7 @@ const EditDeploymentModal = ({
                       maxLength={64}
                     />
                     <DeploymentSizeField />
-                    <Accordion allowMultiple w="100%">
+                    <Accordion allowMultiple w="100%" variant="borderless">
                       <AccordionItem>
                         <AccordionButton>
                           <Box flex="1" textAlign="left">

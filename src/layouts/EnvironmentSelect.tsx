@@ -1,4 +1,10 @@
-import { Button, Select, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  ButtonProps,
+  Select,
+  SelectProps,
+  Spinner,
+} from "@chakra-ui/react";
 import React, { ChangeEventHandler, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -6,7 +12,7 @@ import { useEnvironments } from "../api/environment-controller-fetch";
 import EnvironmentListModal from "../platform/environments/EnvironmentsListModal";
 import { currentEnvironment } from "../recoil/currentEnvironment";
 
-const EnvironmentSelectField = () => {
+const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
   const { environments, refetch } = useEnvironments();
   const [state, setState] = useState(false);
@@ -43,7 +49,7 @@ const EnvironmentSelectField = () => {
     <>
       {environments.length < 1 ? (
         <>
-          <Button size="sm" onClick={enableHandler} border="1px">
+          <Button size="sm" {...props} onClick={enableHandler} border="1px">
             + Enable Regions
           </Button>
         </>
@@ -51,9 +57,10 @@ const EnvironmentSelectField = () => {
         <Select
           aria-label="Environment"
           name="environment-select"
+          size="sm"
+          {...props}
           value={current?.coordd_address || ""}
           onChange={selectHandler}
-          size="sm"
         >
           {environments.map((e) => (
             <option

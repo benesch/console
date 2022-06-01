@@ -19,7 +19,7 @@ const ConnectSteps = (): JSX.Element => {
   const [current, _] = useRecoilState(currentEnvironment);
 
   return current ? (
-    <OrderedList spacing="6">
+    <OrderedList spacing="6" type="a">
       <ListItem>
         In your terminal, enter:
         <CodeBlock
@@ -27,7 +27,7 @@ const ConnectSteps = (): JSX.Element => {
             current?.coordd_address
           }/materialize"`}
         />
-        <Alert status="info">
+        <Alert status="info" mt={2}>
           <AlertIcon />
           Deployments can take a few minutes. In the meantime follow the next
           steps!
@@ -48,7 +48,7 @@ const ConnectSteps = (): JSX.Element => {
     </OrderedList>
   ) : (
     <>
-      <EnvironmentSelectField />
+      <EnvironmentSelectField size="lg" />
     </>
   );
 };
