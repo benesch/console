@@ -14,11 +14,10 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 
 interface Props {
   handleQuery: (query: string) => void;
+  loading: boolean;
 }
 
-const Code = (props: Props): JSX.Element => {
-  const { handleQuery } = props;
-
+const Code = ({ handleQuery, loading }: Props): JSX.Element => {
   /**
    * State
    */
@@ -45,11 +44,8 @@ const Code = (props: Props): JSX.Element => {
         zIndex={1}
         top={2}
         right={2}
-        textColor="white"
-        backgroundColor="green.600"
-        _hover={{
-          backgroundColor: "green.500",
-        }}
+        colorScheme="green"
+        disabled={loading}
       >
         Run
       </Button>

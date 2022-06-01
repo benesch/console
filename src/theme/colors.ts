@@ -298,12 +298,12 @@ const shadows = {
     0px -3px 3.25px rgb(80 26 251 / 4%)
   `,
   smallGlowDark: `
-  0px 12px 15px rgb(80 26 251 / 8%),
-  0px 7px 8px rgb(80 26 251 / 6%),
-  0px 3px 3.25px rgb(80 26 251 / 4%),
-  0px -7px 8px rgb(80 26 251 / 6%),
-  0px -3px 3.25px rgb(80 26 251 / 4%)
-`,
+    0px 12px 15px rgb(80 26 251 / 8%),
+    0px 7px 8px rgb(80 26 251 / 6%),
+    0px 3px 3.25px rgb(80 26 251 / 4%),
+    0px -7px 8px rgb(80 26 251 / 6%),
+    0px -3px 3.25px rgb(80 26 251 / 4%)
+  `,
 };
 
 export default colors;

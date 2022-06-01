@@ -7,6 +7,7 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { ChangeEvent } from "react";
 import {
@@ -18,14 +19,20 @@ import {
   useTable,
 } from "react-table";
 
+import { semanticColors } from "../../../theme/colors";
 import Pagination from "./Pagination";
 
 interface Props {
   columns: Array<Column>;
   rows: Array<any>;
+  loading?: boolean;
 }
 
-const Table = ({ columns, rows: data }: Props): JSX.Element => {
+const Table: React.FC<Props> = ({
+  columns,
+  rows: data,
+  loading,
+}: Props): JSX.Element => {
   /**
    * Hooks
    */
@@ -65,6 +72,11 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
     usePagination
   );
 
+  const dividerColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
+
   /**
    * Handlers
    */
@@ -75,8 +87,14 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
   };
 
   return (
-    <Flex flexFlow="column" height="100%">
-      <Box flex={1} overflowX="scroll">
+    <Flex flexFlow="column" height="100%" mx="1px" overflowY="hidden">
+      <Box
+        flex={1}
+        overflow="auto"
+        borderBottom="1px solid"
+        borderColor={dividerColor}
+        py={1}
+      >
         <ChakraTable {...getTableProps()} style={{ borderSpacing: 0 }}>
           <Thead>
             {headerGroups.map((headerGroup: HeaderGroup) => (
@@ -85,10 +103,12 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
                   <Th
                     {...column.getHeaderProps({})}
                     margin="0"
-                    padding="0.5rem"
+                    px={2}
+                    py={1}
                     width="1%"
-                    borderBottom="1px"
-                    borderColor="gray.700"
+                    borderBottom="1px solid"
+                    borderColor={loading ? "gray.200" : "gray.500"}
+                    color={loading ? "gray.400" : "default"}
                     key={column.id}
                   >
                     {column.render("Header")}
@@ -109,7 +129,8 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
                       <Td
                         {...getCellProps()}
                         key={getCellProps().key}
-                        padding={0.5}
+                        px={2}
+                        py={1}
                       >
                         {render("Cell")}
                       </Td>
@@ -124,6 +145,7 @@ const Table = ({ columns, rows: data }: Props): JSX.Element => {
       {/* Pagination */}
       <Box padding={1}>
         <Pagination
+          loading={loading}
           canNextPage={canNextPage}
           canPreviousPage={canPreviousPage}
           gotoPage={gotoPage}

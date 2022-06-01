@@ -71,7 +71,6 @@ const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
   const layoutOverflow =
     location.pathname === "/platform/editor" ? "hidden" : undefined;
-
   // Consume Frontegg authentication state.
   const {
     isAuthenticated,
@@ -114,7 +113,7 @@ const ProtectedSwitch = (props: SwitchProps) => {
   // Render the switch.
   return (
     <AuthProvider organization={organization} user={user}>
-      <BaseLayout overflow={layoutOverflow}>
+      <BaseLayout overflowY={layoutOverflow}>
         <Switch {...props} />
       </BaseLayout>
     </AuthProvider>
