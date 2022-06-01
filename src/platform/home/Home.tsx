@@ -22,10 +22,9 @@ import {
   PageHeading,
 } from "../../layouts/BaseLayout";
 import { currentEnvironment } from "../../recoil/currentEnvironment";
-import ConnectButton from "../dashboard/Connect";
 import ConnectSteps from "../dashboard/ConnectSteps";
 
-const Dashboard = () => {
+const Home = () => {
   const [current, _] = useRecoilState(currentEnvironment);
   const grayText = useColorModeValue("gray.600", "gray.200");
   return (
@@ -53,8 +52,8 @@ const Dashboard = () => {
         <Accordion
           defaultIndex={[0]}
           allowMultiple
-          width={"100%"}
-          background={"gray.500"}
+          width="100%"
+          background="gray.500"
           rounded="md"
         >
           <AccordionItem>
@@ -64,7 +63,7 @@ const Dashboard = () => {
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel py={8} background={"gray.600"}>
+            <AccordionPanel py={8} background="gray.600">
               <ConnectSteps />
             </AccordionPanel>
           </AccordionItem>
@@ -76,7 +75,7 @@ const Dashboard = () => {
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel pb={4} background={"gray.600"}>
+            <AccordionPanel pb={4} background="gray.600">
               <Code>CREATE SOURCE</Code> connects Materialize to your external
               data sources. Read more about sources in our{" "}
               <TextLink href="https://materialize.com/docs/sql/create-source/">
@@ -92,7 +91,7 @@ const Dashboard = () => {
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel pb={4} background={"gray.600"}>
+            <AccordionPanel pb={4} background="gray.600">
               <Code>CREATE VIEW</Code> does X. (dock) If you&apos;ve created the
               sample cource, try creating the following view:
               <Code>CREATE VIEW ...</Code>
@@ -105,7 +104,7 @@ const Dashboard = () => {
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel pb={4} background={"gray.600"}>
+            <AccordionPanel pb={4} background="gray.600">
               <Code>CREATE MATERIALIZED VIEWS</Code> does Y (docs). If
               you&apos;ve created the sample marleet data Lource and view, try:
               <Code>CREATE MATERIALIZED VIEW ...</Code>
@@ -120,9 +119,9 @@ const Dashboard = () => {
             </AccordionButton>
             <AccordionPanel
               pb={4}
-              background={"gray.600"}
+              background="gray.600"
               rounded="md"
-              roundedTop={"none"}
+              roundedTop="none"
             >
               <li>Select</li>
               <li>Tail</li>
@@ -135,4 +134,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Home;

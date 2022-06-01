@@ -43,7 +43,7 @@ const EnvironmentSelectField = () => {
     <>
       {environments.length < 1 ? (
         <>
-          <Button size={"sm"} onClick={enableHandler} border={"1px"}>
+          <Button size="sm" onClick={enableHandler} border="1px">
             + Enable Regions
           </Button>
         </>
@@ -65,7 +65,7 @@ const EnvironmentSelectField = () => {
             </option>
           ))}
           <option
-            key={"edit_regions"}
+            key="edit_regions"
             value={editEnvironmentValue}
             data-testid="edit-option"
           >
