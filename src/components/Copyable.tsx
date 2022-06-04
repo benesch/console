@@ -76,8 +76,9 @@ export const CopyableText: React.FC<TextProps & { children: string | null }> = (
           color: hoverColor,
         },
       }}
+      maxW="100%"
     >
-      <HStack alignItems="flex-start" py={1}>
+      <HStack alignItems="flex-start" py={1} width="100%">
         <Text color="inherit" {...props}></Text>
         {shouldDisplayIcon && <CopyStateIcon copied={copied} />}
       </HStack>
