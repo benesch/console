@@ -8,7 +8,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
 } from "@chakra-ui/react";
 import { Button, HStack } from "@chakra-ui/react";
 import React, { useRef } from "react";

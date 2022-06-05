@@ -63,7 +63,7 @@ test.fixme(
   }
 );
 
-async function testPlatformEnvironment<T>(
+async function testPlatformEnvironment(
   page: Page,
   request: APIRequestContext,
   password: string,

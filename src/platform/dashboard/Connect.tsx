@@ -7,14 +7,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/modal";
-import {
-  Button,
-  Code,
-  ListItem,
-  OrderedList,
-  Spinner,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Spinner, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
