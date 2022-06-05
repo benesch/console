@@ -17,6 +17,7 @@ import React from "react";
 import { useRecoilState } from "recoil";
 
 import { Card, CardHeader } from "../../components/cardComponents";
+import CodeBlock from "../../components/CodeBlock";
 import TextLink from "../../components/TextLink";
 import {
   PageBreadcrumbs,
@@ -105,10 +106,21 @@ const Home = () => {
                   <AccordionPanel {...accordionPanelStyles}>
                     <Code>CREATE SOURCE</Code> connects Materialize to your
                     external data sources. Read more about sources in our{" "}
-                    <TextLink href="https://materialize.com/docs/sql/create-source/">
+                    <TextLink href="https://materialize.com/docs/sql/create-source/" target="_blank" rel="noopener noreferrer">
                       docs
                     </TextLink>
                     . If you don&apos;t have a source ready, use ours:
+                    <CodeBlock
+                      contents={"CREATE SOURCE market_orders_raw" +"\n" +
+                                "FROM PUBNUB" + "\n" +
+                                "SUBSCRIBE KEY 'sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe'" + "\n" +
+                                "CHANNEL 'pubnub-market-orders';"
+                      }
+                    /> <br/>
+                    Check out your new source object with these <Code>SHOW</Code> commands: <br/>
+                    <CodeBlock
+                      contents={"SHOW SOURCES;\nSHOW COLUMNS IN market_orders_raw;"}
+                    />
                   </AccordionPanel>
                 </>
               )}
@@ -123,9 +135,18 @@ const Home = () => {
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel {...accordionPanelStyles}>
-                    <Code>CREATE VIEW</Code> does X. (dock) If you&apos;ve
+                  <Code><TextLink href="https://materialize.com/docs/sql/create-view/" target="_blank" rel="noopener noreferrer">CREATE VIEW</TextLink></Code> creates a non-materialized view. If you&apos;ve
                     created the sample cource, try creating the following view:{" "}
-                    <Code>CREATE VIEW ...</Code>
+                    <CodeBlock
+                      contents={"CREATE VIEW market_orders AS" + "\n" +
+                      "SELECT" + "\n\t" +
+                          "((text::jsonb)->>'bid_price')::float AS bid_price," + "\n\t" +
+                          "(text::jsonb)->>'order_quantity' AS order_quantity," + "\n\t" +
+                          "(text::jsonb)->>'symbol' AS symbol," + "\n\t" +
+                          "(text::jsonb)->>'trade_type' AS trade_type," + "\n\t" +
+                          "to_timestamp(((text::jsonb)->'timestamp')::bigint) AS ts" + "\n" +
+                      "FROM market_orders_raw;"}
+                    />
                   </AccordionPanel>
                 </>
               )}
@@ -140,9 +161,17 @@ const Home = () => {
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel {...accordionPanelStyles}>
-                    <Code>CREATE MATERIALIZED VIEWS</Code> does Y (docs). If
-                    you&apos;ve created the sample marleet data source and view,
-                    try: <Code>CREATE MATERIALIZED VIEW ...</Code>
+                    <Code><TextLink href="https://materialize.com/docs/sql/create-materialized-view/" target="_blank" rel="noopener noreferrer">CREATE MATERIALIZED VIEWS</TextLink></Code> lets you retrieve incrementally updated results of a SELECT query. If
+                    you&apos;ve created the sample market data source and view,
+                    try:
+                    <CodeBlock contents={
+                    "CREATE MATERIALIZED VIEW avg_bid AS" + "\n" +
+                    "SELECT" + "\n\t" +
+                      "symbol," + "\n\t" +
+                      "AVG(bid_price) AS avg" + "\n\t" +
+                      "FROM market_orders" + "\n\t" +
+                      "GROUP BY symbol;"
+                    } />
                   </AccordionPanel>
                 </>
               )}
@@ -157,9 +186,29 @@ const Home = () => {
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel {...accordionPanelStyles}>
-                    <li>Select</li>
-                    <li>Tail</li>
-                    <li>Sink</li>
+                    <ul>
+                    <li>
+                      <TextLink href="https://materialize.com/docs/sql/select/" target="_blank" rel="noopener noreferrer">SELECT</TextLink>
+                      &nbsp;queries materialized views, materialized sources and tables.
+                      <CodeBlock contents="SELECT * FROM avg_bid LIMIT 5;" />
+                      <br/>
+                    </li>
+                    <li>
+                      <TextLink href="https://materialize.com/docs/sql/tail/" target="_blank" rel="noopener noreferrer">TAIL</TextLink>
+                      &nbsp;streams updates from a source, table, or view as they occur.
+                      <CodeBlock contents="COPY( TAIL (SELECT * FROM avg_bid) ) TO STDOUT;" />
+                      <br/>
+                    </li>
+                    <li>
+                      <TextLink href="https://materialize.com/docs/sql/create-sink/" target="_blank" rel="noopener noreferrer">SINK</TextLink>
+                      &nbsp;sends data from Materialize to an external sink
+                      <CodeBlock contents={"CREATE SINK market_data_sink" + "\n" +
+                                            "FROM market_orders" + "\n" +
+                                            "INTO KAFKA BROKER 'self-hosted-kafka' TOPIC 'quotes-sink'" + "\n" +
+                                            "FORMAT JSON;"}
+                      />
+                    </li>
+                    </ul>
                   </AccordionPanel>
                 </>
               )}

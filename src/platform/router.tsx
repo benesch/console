@@ -20,7 +20,6 @@ const PlatformRouter = () => {
   return (
     <Switch>
       <Route exact path={`${path}`}>
-        {/* <Dashboard /> */}
         <Home />
       </Route>
       {/* <Route path={`${path}/regions`}>
