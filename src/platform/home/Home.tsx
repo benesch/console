@@ -25,7 +25,7 @@ import {
   PageHeading,
 } from "../../layouts/BaseLayout";
 import { currentEnvironment } from "../../recoil/currentEnvironment";
-import ConnectSteps from "../dashboard/ConnectSteps";
+import ConnectSteps from "./ConnectSteps";
 
 const Home = () => {
   const [current, _] = useRecoilState(currentEnvironment);

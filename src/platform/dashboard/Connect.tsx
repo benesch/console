@@ -12,7 +12,7 @@ import React from "react";
 import { useRecoilState } from "recoil";
 
 import { currentEnvironment } from "../../recoil/currentEnvironment";
-import ConnectSteps from "./ConnectSteps";
+import ConnectSteps from "../home/ConnectSteps";
 
 const ConnectButton = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
+import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
 import CodeBlock from "../../components/CodeBlock";
@@ -40,7 +41,9 @@ const ConnectSteps = (): JSX.Element => {
         <ListItem>
           Paste in your app-specific password when prompted. If you don&apos;t
           have one yet you can{" "}
-          <TextLink href="/access">generate one here</TextLink>!
+          <Link to="/access">
+            <TextLink>generate one here</TextLink>!
+          </Link>
         </ListItem>
         <ListItem>
           Try out <Code>SHOW CLUSTERS;</Code> and{" "}
