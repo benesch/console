@@ -104,7 +104,7 @@ const Home = () => {
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel {...accordionPanelStyles}>
-                    <Code>CREATE SOURCE</Code> connects Materialize to your
+                  <Code><TextLink href="https://materialize.com/docs/sql/create-source/" target="_blank" rel="noopener noreferrer">CREATE SOURCE</TextLink></Code> connects Materialize to your
                     external data sources. Read more about sources in our{" "}
                     <TextLink href="https://materialize.com/docs/sql/create-source/" target="_blank" rel="noopener noreferrer">
                       docs
@@ -113,7 +113,7 @@ const Home = () => {
                     <CodeBlock
                       contents={"CREATE SOURCE market_orders_raw" +"\n" +
                                 "FROM PUBNUB" + "\n" +
-                                "SUBSCRIBE KEY 'sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe'" + "\n" +
+                                "SUBSCRIBE KEY 'sub-c-abe5eda1-9123-4bad-bb39-4414d87b1966'" + "\n" +
                                 "CHANNEL 'pubnub-market-orders';"
                       }
                     /> <br/>
