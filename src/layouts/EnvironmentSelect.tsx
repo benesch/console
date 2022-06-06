@@ -4,6 +4,7 @@ import {
   Select,
   SelectProps,
   Spinner,
+  useInterval,
 } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -15,8 +16,9 @@ import { currentEnvironment } from "../recoil/currentEnvironment";
 const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
   const { environments, refetch } = useEnvironments();
-  const [state, setState] = useState(false);
-  const editEnvironmentValue = "+ Edit Environments";
+  const [modalState, setModalState] = useState(false);
+  useInterval(refetch, 5000);
+  const editEnvValue = "+ Edit Regions";
 
   if (environments === null) {
     return <Spinner />;
@@ -26,8 +28,8 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
     const { target } = e;
     const { value: environmentValue } = target;
 
-    if (environmentValue === editEnvironmentValue) {
-      setState(true);
+    if (environmentValue === editEnvValue) {
+      setModalState(true);
     } else {
       setCurrent(
         environments.find((env) => environmentValue === env.coordd_address) ||
@@ -37,27 +39,32 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   };
 
   const closeHandler = () => {
-    setState(false);
+    setModalState(false);
     refetch();
   };
 
   const enableHandler = () => {
-    setState(true);
+    setModalState(true);
   };
 
   return (
     <>
       {environments.length < 1 ? (
         <>
-          <Button size="sm" {...props} onClick={enableHandler} border="1px">
-            + Enable Regions
+          <Button
+            size="md"
+            {...props}
+            onClick={enableHandler}
+            variant="gradient-1"
+          >
+            + Enable Region
           </Button>
         </>
       ) : (
         <Select
           aria-label="Environment"
           name="environment-select"
-          size="sm"
+          size="md"
           {...props}
           value={current?.coordd_address || ""}
           onChange={selectHandler}
@@ -73,14 +80,14 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
           ))}
           <option
             key="edit_regions"
-            value={editEnvironmentValue}
+            value={editEnvValue}
             data-testid="edit-option"
           >
             + Edit Regions
           </option>
         </Select>
       )}
-      <EnvironmentListModal isOpen={state} onClose={closeHandler} />
+      <EnvironmentListModal isOpen={modalState} onClose={closeHandler} />
     </>
   );
 };

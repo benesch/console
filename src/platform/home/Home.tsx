@@ -56,7 +56,7 @@ const Home = () => {
     },
   });
   const accordionPanelStyles = {
-    px: 12,
+    p: 8,
     py: 4,
   };
 
