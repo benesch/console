@@ -63,16 +63,17 @@ export const CopyableText: React.FC<TextProps & { children: string | null }> = (
       </Text>
     );
   }
-  const hoverColor = useColorModeValue("purple.400", "purple.300");
+  const textColor = useColorModeValue("purple.900", "purple.100");
+  const hoverColor = useColorModeValue("purple.500", "purple.300");
   return (
     <Button
       variant="link"
       onClick={onCopy}
       fontWeight="normal"
-      textColor="normal"
+      color={textColor}
       title={props.title || "Copy"}
       sx={{
-        ":hover svg": {
+        ":hover": {
           color: hoverColor,
         },
       }}

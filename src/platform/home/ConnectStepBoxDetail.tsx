@@ -1,7 +1,8 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 import { CopyableText } from "../../components/Copyable";
+import { semanticColors } from "../../theme/colors";
 
 interface Props {
   header: string;
@@ -10,22 +11,27 @@ interface Props {
 
 const ConnectStepBoxDetail = (props: Props): JSX.Element => {
   const { content, header } = props;
+  const headerTextColor = useColorModeValue("gray.700", "gray.100");
+  const borderColor = useColorModeValue(
+    semanticColors.divider.light,
+    "gray.700"
+  );
   return (
-    <Box textColor="gray.600" height="fit-content">
+    <Box height="fit-content" flex="1 1 50px">
       <Text
-        fontSize="sm"
+        fontSize={{ base: "sm", md: "md", xl: "sm" }}
+        color={headerTextColor}
         borderBottom="1px"
-        borderColor="gray.700"
+        borderColor={borderColor}
         width="fit-content"
       >
         {header}
       </Text>
-      <Box padding={1} overflow="hidden">
+      <Box pb={1} overflow="hidden">
         <CopyableText
-          fontSize="xs"
+          fontSize={{ base: "xs", md: "sm", xl: "xs" }}
           overflowWrap="break-word"
           overflow="hidden"
-          textColor="gray.400"
           width="100%"
         >
           {content}
