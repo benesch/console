@@ -122,7 +122,7 @@ const NavBar = () => {
               Materialize Cloud
             </Text>
             <Text fontWeight="400" fontSize="sm" color="gray.200">
-              open beta
+              private beta
             </Text>
           </VStack>
         </HStack>
