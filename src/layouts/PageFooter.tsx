@@ -10,6 +10,7 @@ import React from "react";
 
 import TextLink from "../components/TextLink";
 import Version from "../version/Version";
+import Org from "../org/Org";
 
 /**
  * the current year as four digit
@@ -48,6 +49,7 @@ const PageFooter: React.FC = () => {
         System Status
       </TextLink>
       <Version />
+      <Org />
     </HStack>
   );
 };
