@@ -32,11 +32,6 @@ const ConnectSteps = (): JSX.Element => {
               user.email
             )}@${coorddAddress}/materialize"`}
           />
-          <Alert status="info" mt={2}>
-            <AlertIcon />
-            Deployments can take a few minutes. In the meantime follow the next
-            steps!
-          </Alert>
         </ListItem>
         <ListItem>
           Paste in your app-specific password when prompted. If you don&apos;t
