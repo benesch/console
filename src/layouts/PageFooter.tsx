@@ -9,7 +9,6 @@ import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
 import TextLink from "../components/TextLink";
-import Org from "../org/Org";
 import Version from "../version/Version";
 
 /**
@@ -49,7 +48,6 @@ const PageFooter: React.FC = () => {
         System Status
       </TextLink>
       <Version />
-      <Org />
     </HStack>
   );
 };
