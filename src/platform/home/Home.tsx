@@ -328,13 +328,13 @@ const Home = () => {
             width="fit-content"
             px={4}
             margin="auto"
-            marginTop={20}
+            marginTop={14}
           >
             <AlertIcon />
             Deployments can take a few minutes. In the meantime follow the next
             steps!
           </Alert>
-          <Box py={16} margin="auto" width="100%">
+          <Box py={20} margin="auto" width="100%">
             <Flex flexFlow="row">
               <Card>
                 <LinkBox as="article">
