@@ -13,7 +13,7 @@ import React from "react";
 
 import { isAdmin, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
-import useIsCurrentEnvironmentState from "../home/useEnvironmentState";
+import useEnvironmentState from "../home/useEnvironmentState";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
@@ -55,7 +55,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     environment,
     state: environmentState,
     refetch,
-  } = useIsCurrentEnvironmentState(props.region.environmentControllerUrl);
+  } = useEnvironmentState(props.region.environmentControllerUrl);
 
   /**
    * Vars
