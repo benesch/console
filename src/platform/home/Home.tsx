@@ -60,8 +60,6 @@ const Home = () => {
     py: 4,
   };
 
-  console.log(environmentState);
-
   return (
     <>
       <PageBreadcrumbs />
