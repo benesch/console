@@ -341,7 +341,7 @@ const Home = () => {
                   <LinkOverlay href="/access">
                     <CardHeader>1. Create a password</CardHeader>
                     <CardContent>
-                      Passwords are now available! Press here to generate one
+                      Passwords are now available! Click here to generate one
                     </CardContent>
                   </LinkOverlay>
                 </LinkBox>
@@ -351,7 +351,7 @@ const Home = () => {
                   <LinkOverlay href="https://materialize.com/docs/quickstarts/">
                     <CardHeader>2. Check our quickstarts</CardHeader>
                     <CardContent>
-                      Our demos can help you turn your idea into something real
+                      Our demos can help you turn your ideas into something real
                       faster!
                     </CardContent>
                   </LinkOverlay>
