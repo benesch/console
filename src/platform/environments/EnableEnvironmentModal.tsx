@@ -38,7 +38,7 @@ interface Props extends ButtonProps {
 /// value whenever you wish to try new materialized functions in
 /// cloud.
 // TODO: Use something like the release tracks we use for materialize cloud deployments.
-const ImageTag = "unstable-197545e6fc01be236ec502f4b8a9ccf68637e38a";
+const ImageTag = "unstable-5ae377002bc1aa4a9ab6a037f6fc0bc8e9f034fe";
 
 const EnableEnvironmentModal = (props: Props) => {
   const { refetch, isAdmin, ...buttonProps } = props;
