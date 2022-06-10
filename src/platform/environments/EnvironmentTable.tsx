@@ -8,15 +8,12 @@ import {
   Th,
   Thead,
   Tr,
-  useInterval,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 
 import { isAdmin, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
-import { useEnvironmentsList } from "../../api/environment-controller";
-import { useSqlOnCoordinator } from "../../api/materialized";
-import getDefaultEnvironment from "../../utils/platform";
+import useEnvironmentState from "../home/useEnvironmentState";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
@@ -54,59 +51,32 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
    */
   const { user } = useAuth();
   const admin = isAdmin(user);
-  const { data: environments, refetch } = useEnvironmentsList({
-    base: props.region.environmentControllerUrl,
-  });
-  const environment = useMemo(
-    () => getDefaultEnvironment(environments),
-    [environments]
-  );
-  // It's useful to know that the useSql() has executed once
-  // and results from query can be used.
-  const [firstQuery, setFirstQuery] = useState<boolean>(true);
-
-  // Simple SQL state used as a way to monitor instance status
   const {
-    data,
-    loading: loadingQuery,
-    refetch: refetchSql,
-  } = useSqlOnCoordinator("SELECT 1", environment);
-  const negativeHealth = !data || data.rows.length === 0;
-
-  const intervalCallback = useCallback(() => {
-    refetch();
-    if (environment) {
-      refetchSql();
-    }
-  }, [refetch, refetchSql]);
-
-  /**
-   * Hydrate state
-   */
-  useInterval(intervalCallback, 5000);
-
-  /**
-   * Know when the first query to the environment is ran
-   */
-  useEffect(() => {
-    if (firstQuery && environment && !loadingQuery) {
-      setFirstQuery(false);
-    }
-  }, [loadingQuery]);
+    environment,
+    state: environmentState,
+    refetch,
+  } = useEnvironmentState(props.region.environmentControllerUrl);
 
   /**
    * Vars
    */
   let url = <Text color="gray">Not enabled</Text>;
 
-  if (environment && firstQuery) {
-    url = <Spinner />;
-  } else if (environment) {
-    if (negativeHealth) {
-      url = <Text color="gray">Starting</Text>;
-    } else {
+  switch (environmentState) {
+    case "Enabled":
       url = <Text color="gray">Enabled</Text>;
-    }
+      break;
+
+    case "Starting":
+      url = <Text color="gray">Starting</Text>;
+      break;
+
+    case "Loading":
+      url = <Spinner />;
+      break;
+
+    default:
+      break;
   }
 
   return (
