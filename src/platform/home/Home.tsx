@@ -1,4 +1,5 @@
 import {
+  Box,
   HStack,
   Spacer,
   Text,
@@ -8,18 +9,24 @@ import {
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import { Card } from "../../components/cardComponents";
+import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import {
   PageBreadcrumbs,
   PageHeader,
   PageHeading,
 } from "../../layouts/BaseLayout";
+import EnvironmentSelectField from "../../layouts/EnvironmentSelect";
 import { currentEnvironment } from "../../recoil/currentEnvironment";
 import AdditionalSteps from "./AdditionalSteps";
 import ConnectSteps from "./ConnectSteps";
+import StepsWhileLoading from "./StepsWhileLoading";
+import useEnvironmentState from "./useEnvironmentState";
 
 const Home = () => {
   const [current, _] = useRecoilState(currentEnvironment);
+  const { state: environmentState } = useEnvironmentState(
+    current?.environmentControllerUrl
+  );
   const grayText = useColorModeValue("gray.600", "gray.200");
 
   return (
@@ -33,7 +40,7 @@ const Home = () => {
           width="100%"
         >
           <VStack alignItems="flex-start">
-            <PageHeading>Welcome to Materialize</PageHeading>
+            <PageHeading>Welcome to Materialize!</PageHeading>
             <Text fontSize="md" textColor={grayText}>
               Region:{" "}
               {current
@@ -45,10 +52,26 @@ const Home = () => {
         </HStack>
       </PageHeader>
       <VStack spacing={6} mb={6}>
-        <ConnectSteps />
-        <Card>
-          <AdditionalSteps />
-        </Card>
+        {environmentState === "Enabled" && (
+          <>
+            <Card>
+              <CardHeader>Connect</CardHeader>
+              <CardContent>
+                <ConnectSteps />
+              </CardContent>
+            </Card>
+            <Card>
+              <AdditionalSteps />
+            </Card>
+          </>
+        )}
+        {(environmentState === "Loading" ||
+          environmentState === "Starting") && <StepsWhileLoading />}
+        {environmentState === "Not enabled" && (
+          <Box textAlign="center">
+            <EnvironmentSelectField size="lg" margin="auto" />
+          </Box>
+        )}
       </VStack>
     </>
   );

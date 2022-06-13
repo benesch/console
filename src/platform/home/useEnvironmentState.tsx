@@ -1,5 +1,5 @@
 import { useInterval } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 
 import {
   Environment,
@@ -20,13 +20,13 @@ const useEnvironmentState = (
   const { data: environments, refetch } = useEnvironmentsList({
     base: environmentControllerUrl,
   });
-  const environment = useMemo(
+  const environment = React.useMemo(
     () => getDefaultEnvironment(environments),
     [environments]
   );
   // It's useful to know that the useSql() has executed once
   // and results from query can be used.
-  const [firstQuery, setFirstQuery] = useState<boolean>(true);
+  const [firstQuery, setFirstQuery] = React.useState<boolean>(true);
 
   // Simple SQL state used as a way to monitor instance status
   const {
@@ -36,7 +36,7 @@ const useEnvironmentState = (
   } = useSqlOnCoordinator("SELECT 1", environment);
   const negativeHealth = !data || data.rows.length === 0;
 
-  const intervalCallback = useCallback(() => {
+  const intervalCallback = React.useCallback(() => {
     refetch();
     if (environment) {
       refetchSql();
@@ -51,7 +51,7 @@ const useEnvironmentState = (
   /**
    * Know when the first query to the environment is ran
    */
-  useEffect(() => {
+  React.useEffect(() => {
     if (firstQuery && environment && !loadingQuery) {
       setFirstQuery(false);
     }
