@@ -29,6 +29,7 @@ const EnvironmentTable = (props: EnvironmentTableProps) => {
           <Tr>
             <Th>Region</Th>
             <Th>Status</Th>
+            <Th />
           </Tr>
         </Thead>
         <Tbody>

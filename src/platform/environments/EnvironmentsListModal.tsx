@@ -44,15 +44,12 @@ const EnvironmentListModal = (props: Props): JSX.Element => {
           </Text> */}
           {isLoading && <Spinner data-testid="loading-spinner" />}
           {isEmpty && <EmptyList title="available regions" />}
-          {!isLoading && !isEmpty && <EnvironmentTable regions={regions} />}
+          {!isLoading && !isEmpty && (
+            <Box mx={-6}>
+              <EnvironmentTable regions={regions} />
+            </Box>
+          )}
         </ModalBody>
-        <ModalFooter>
-          <HStack>
-            <Button size="sm" onClick={onClose} variant="outline">
-              Close
-            </Button>
-          </HStack>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
