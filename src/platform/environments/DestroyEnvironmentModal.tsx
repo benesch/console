@@ -16,11 +16,11 @@ import { currentEnvironment } from "../../recoil/currentEnvironment";
 
 interface Props extends ButtonProps {
   region: SupportedCloudRegion;
-  isAdmin: boolean;
+  canWrite: boolean;
 }
 
 const DestroyEnvironmentModal = (props: Props) => {
-  const { region, isAdmin, ...buttonProps } = props;
+  const { region, canWrite, ...buttonProps } = props;
   const { mutate: destroyEnvironment } = useEnvironmentsDestroy({
     base: region.environmentControllerUrl,
   });
@@ -71,7 +71,7 @@ const DestroyEnvironmentModal = (props: Props) => {
     );
   }
 
-  if (!isAdmin) {
+  if (!canWrite) {
     return (
       <Button
         disabled

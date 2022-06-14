@@ -109,6 +109,8 @@ export const RestfulProvider = (props: RestfulProviderProps) => {
   );
 };
 
-export function isAdmin(user: User): boolean {
-  return !!user.roles.find((role) => role.name === "MaterializeAdmin");
+export function hasEnvironmentWritePermission(user: User): boolean {
+  return !!user.permissions.find(
+    (permission) => permission.key === "materialize.environment.write"
+  );
 }

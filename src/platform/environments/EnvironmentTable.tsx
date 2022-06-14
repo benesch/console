@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { isAdmin, useAuth } from "../../api/auth";
+import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
 import useEnvironmentState from "../home/useEnvironmentState";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
@@ -51,7 +51,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
    * States
    */
   const { user } = useAuth();
-  const admin = isAdmin(user);
+  const canWriteEnvironments = hasEnvironmentWritePermission(user);
   const {
     environment,
     state: environmentState,
@@ -93,7 +93,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
-            isAdmin={admin}
+            canWrite={canWriteEnvironments}
           />
         )}
         {environment && (
@@ -101,7 +101,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
             region={props.region}
             size="sm"
             float="right"
-            isAdmin={admin}
+            canWrite={canWriteEnvironments}
           />
         )}
       </Td>
