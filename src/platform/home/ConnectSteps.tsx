@@ -18,7 +18,7 @@ import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();
   const [current, _] = useRecoilState(currentEnvironment);
-  const coorddAddress = current?.coordd_address;
+  const coorddAddress = current?.coordd_https_address;
 
   return (
     <Flex flexDir={{ base: "column-reverse", xl: "row" }}>

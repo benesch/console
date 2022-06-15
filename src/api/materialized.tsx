@@ -89,17 +89,14 @@ function useSqlInternal(
 /**
  * useSql hook for a particular environment coordinator address.
  * @param sql
- * @param coordinatorAddress
+ * @param environment
  * @returns
  */
 export function useSqlOnCoordinator(
   sql: string | undefined,
-  coordinatorAddress: Environment | null
+  environment: Environment | null
 ) {
-  return useSqlInternal(
-    sql,
-    coordinatorAddress && coordinatorAddress.coordd_address
-  );
+  return useSqlInternal(sql, environment && environment.coordd_https_address);
 }
 
 /**
@@ -109,7 +106,7 @@ export function useSqlOnCoordinator(
  */
 export function useSql(sql: string | undefined) {
   const [current, _] = useRecoilState(currentEnvironment);
-  return useSqlInternal(sql, current && current.coordd_address);
+  return useSqlInternal(sql, current && current.coordd_https_address);
 }
 
 export interface Cluster {
