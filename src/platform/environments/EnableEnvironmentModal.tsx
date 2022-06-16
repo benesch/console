@@ -38,7 +38,7 @@ interface Props extends ButtonProps {
 /// value whenever you wish to try new materialized functions in
 /// cloud.
 // TODO: Use something like the release tracks we use for materialize cloud deployments.
-const ImageTag = "unstable-5ae377002bc1aa4a9ab6a037f6fc0bc8e9f034fe";
+const ImageTag = "unstable-45e2acde087c27a661b5e67db587375c0b628fde";
 
 const EnableEnvironmentModal = (props: Props) => {
   const { refetch, canWrite, ...buttonProps } = props;
@@ -69,7 +69,7 @@ const EnableEnvironmentModal = (props: Props) => {
         <ModalContent>
           <Formik
             initialValues={{
-              image: `materialize/materialized-slim:${ImageTag}`,
+              image: `materialize/environmentd:${ImageTag}`,
             }}
             onSubmit={async (values, actions) => {
               try {
