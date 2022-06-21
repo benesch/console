@@ -1,17 +1,19 @@
 import { useInterval } from "@chakra-ui/react";
 import React from "react";
+import { useRecoilState } from "recoil";
 
 import {
-  Environment,
-  useEnvironmentsList,
-} from "../../api/environment-controller";
-import { useSqlOnCoordinator } from "../../api/materialized";
-import getDefaultEnvironment from "../../utils/platform";
+  EnvironmentStatus,
+  hasCreatedEnvironment,
+} from "../recoil/environments";
+import getDefaultEnvironment from "../utils/platform";
+import { Environment, useEnvironmentsList } from "./environment-controller";
+import { useSqlOnCoordinator } from "./materialized";
 
 type EnvironmentState = {
   environment?: Environment;
   refetch: () => Promise<any>;
-  state: "Loading" | "Starting" | "Enabled" | "Not enabled";
+  status: EnvironmentStatus;
 };
 
 const useEnvironmentState = (
@@ -24,6 +26,7 @@ const useEnvironmentState = (
     () => getDefaultEnvironment(environments),
     [environments]
   );
+  const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   // It's useful to know that the useSql() has executed once
   // and results from query can be used.
   const [firstQuery, setFirstQuery] = React.useState<boolean>(true);
@@ -57,30 +60,38 @@ const useEnvironmentState = (
     }
   }, [loadingQuery]);
 
+  /*
+   * Set flag so we don't show the welcome modal
+   * if the user already has had an env
+   */
+  React.useEffect(() => {
+    if (environment) setHasCreatedEnv(true);
+  }, [environment]);
+
   if (environment && firstQuery) {
     return {
       environment,
-      state: "Loading",
+      status: "Loading",
       refetch,
     };
   } else if (environment) {
     if (negativeHealth) {
       return {
         environment,
-        state: "Starting",
+        status: "Starting",
         refetch,
       };
     } else {
       return {
         environment,
-        state: "Enabled",
+        status: "Enabled",
         refetch,
       };
     }
   }
 
   return {
-    state: "Not enabled",
+    status: "Not enabled",
     refetch,
   };
 };

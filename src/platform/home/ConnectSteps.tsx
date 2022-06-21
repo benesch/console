@@ -12,7 +12,7 @@ import { useRecoilState } from "recoil";
 
 import CodeBlock from "../../components/CodeBlock";
 import TextLink from "../../components/TextLink";
-import { currentEnvironment } from "../../recoil/currentEnvironment";
+import { currentEnvironment } from "../../recoil/environments";
 import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
 
 const ConnectSteps = (): JSX.Element => {

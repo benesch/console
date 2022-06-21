@@ -1,10 +1,8 @@
+import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import {
-  currentEnvironment,
-  RegionEnvironment,
-} from "../recoil/currentEnvironment";
+import { currentEnvironment, environmentList } from "../recoil/environments";
 import { useAuth } from "./auth";
 import { SupportedCloudRegion, useCloudProvidersList } from "./backend";
 import { Environment } from "./environment-controller";
@@ -13,9 +11,7 @@ import { Environment } from "./environment-controller";
 export const useEnvironments = () => {
   const { fetchAuthed } = useAuth();
   const [current, setCurrent] = useRecoilState(currentEnvironment);
-  const [environments, setEnvironments] = React.useState<
-    RegionEnvironment[] | null
-  >(null);
+  const [environments, setEnvironments] = useRecoilState(environmentList);
   const {
     data: regions,
     error,
@@ -24,28 +20,31 @@ export const useEnvironments = () => {
 
   let regionEnvErrorMessage = "";
 
-  async function fetchRegionEnvironments(region: SupportedCloudRegion) {
-    try {
-      const res = await fetchAuthed(
-        `${region.environmentControllerUrl}/api/environment`
-      );
-      if (res.status === 200) {
-        const environments: Environment[] = JSON.parse(await res.text());
-        return environments.map((e) => ({
-          ...e,
-          ...region,
-        }));
-      } else {
-        regionEnvErrorMessage += `Fetch region ${region.provider} failed: ${res.status} ${res.statusText}. `;
-        return [];
+  const fetchRegionEnvironments = React.useCallback(
+    async (region: SupportedCloudRegion) => {
+      try {
+        const res = await fetchAuthed(
+          `${region.environmentControllerUrl}/api/environment`
+        );
+        if (res.status === 200) {
+          const environments: Environment[] = JSON.parse(await res.text());
+          return environments.map((e) => ({
+            ...e,
+            ...region,
+          }));
+        } else {
+          regionEnvErrorMessage += `Fetch region ${region.provider} failed: ${res.status} ${res.statusText}. `;
+          return [];
+        }
+      } catch (err) {
+        console.error("Error fetching environments: ", err);
       }
-    } catch (err) {
-      console.error("Error fetching environments: ", err);
       return [];
-    }
-  }
+    },
+    [fetchAuthed]
+  );
 
-  async function fetchAllEnvironments() {
+  const fetchAllEnvironments = React.useCallback(async () => {
     if (!regions) return;
 
     const environments = (
@@ -57,7 +56,7 @@ export const useEnvironments = () => {
     }
 
     setEnvironments(environments);
-  }
+  }, [regions, fetchRegionEnvironments]);
 
   React.useEffect(() => {
     fetchAllEnvironments();
@@ -71,13 +70,17 @@ export const useEnvironments = () => {
     );
   }
 
+  const refetch = React.useCallback(async () => {
+    await refetchProviders();
+    await fetchAllEnvironments();
+  }, [refetchProviders, fetchAllEnvironments]);
+
+  useInterval(refetch, 5000);
+
   return {
     environments,
     current,
-    refetch: async () => {
-      await refetchProviders();
-      await fetchAllEnvironments();
-    },
+    refetch,
     error: {
       message: `${
         error && error?.message ? `${error.message}, ` : ""

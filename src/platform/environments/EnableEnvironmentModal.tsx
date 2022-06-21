@@ -22,10 +22,12 @@ import {
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React, { useRef } from "react";
+import { useRecoilState } from "recoil";
 
 import { useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
 import { SubmitButton, TextField } from "../../components/formComponents";
+import { hasCreatedEnvironment } from "../../recoil/environments";
 
 interface Props extends ButtonProps {
   refetch: () => Promise<any>;
@@ -43,6 +45,7 @@ const ImageTag = "unstable-45e2acde087c27a661b5e67db587375c0b628fde";
 const EnableEnvironmentModal = (props: Props) => {
   const { refetch, canWrite, ...buttonProps } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   const toast = useToast();
   const initialFocusRef = useRef(null);
   const { fetchAuthed } = useAuth();
@@ -85,6 +88,7 @@ const EnableEnvironmentModal = (props: Props) => {
                     method: "POST",
                   }
                 );
+                setHasCreatedEnv(true);
                 await refetch();
                 onClose();
                 toast({

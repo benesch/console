@@ -2,7 +2,7 @@ import React from "react";
 import { useRecoilState } from "recoil";
 import { UseGetProps } from "restful-react";
 
-import { currentEnvironment } from "../recoil/currentEnvironment";
+import { currentEnvironment } from "../recoil/environments";
 import { useAuth } from "./auth";
 import { PrometheusMetrics } from "./backend";
 

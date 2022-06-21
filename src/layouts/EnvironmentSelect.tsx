@@ -11,7 +11,7 @@ import { useRecoilState } from "recoil";
 
 import { useEnvironments } from "../api/environment-controller-fetch";
 import EnvironmentListModal from "../platform/environments/EnvironmentsListModal";
-import { currentEnvironment } from "../recoil/currentEnvironment";
+import { currentEnvironment } from "../recoil/environments";
 
 const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);

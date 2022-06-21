@@ -4,12 +4,12 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { Button, HStack } from "@chakra-ui/react";
 import React, { useRef } from "react";
 
 import { useCloudProvidersList } from "../../api/backend";
@@ -19,10 +19,11 @@ import EnvironmentTable from "./EnvironmentTable";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  isWelcome?: boolean;
 }
 
 const EnvironmentListModal = (props: Props): JSX.Element => {
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose, isWelcome } = props;
   const initialFocusRef = useRef(null);
   const { data: regions } = useCloudProvidersList({});
   const isLoading = regions === null;
@@ -32,16 +33,23 @@ const EnvironmentListModal = (props: Props): JSX.Element => {
     <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Enable your region</ModalHeader>
+        {!isWelcome && (
+          <>
+            <ModalHeader>Regions</ModalHeader>
+            <ModalCloseButton />
+          </>
+        )}
         <ModalCloseButton />
         <ModalBody pt="3" pb="6">
           <Box ref={initialFocusRef} tabIndex={-1} />
-          {/* <Text fontSize="3xl" fontWeight={700}>
-            Welcome to Materialize!
-          </Text> */}
-          {/* <Text>
-            To get started, please enable your first <a href="">region</a>
-          </Text> */}
+          {isWelcome && (
+            <VStack mb={4} spacing={2} alignItems="flex-start">
+              <Text fontSize="2xl" fontWeight={700}>
+                Welcome to Materialize!
+              </Text>
+              <Text>To get started, please enable your first region:</Text>
+            </VStack>
+          )}
           {isLoading && <Spinner data-testid="loading-spinner" />}
           {isEmpty && <EmptyList title="available regions" />}
           {!isLoading && !isEmpty && (
