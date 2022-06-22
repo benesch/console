@@ -30,7 +30,12 @@ const EnvironmentListModal = (props: Props): JSX.Element => {
   const isEmpty = !isLoading && regions.length === 0;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      initialFocusRef={initialFocusRef}
+      size="3xl"
+    >
       <ModalOverlay />
       <ModalContent>
         {!isWelcome && (
