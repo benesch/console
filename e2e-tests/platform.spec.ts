@@ -20,58 +20,25 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     "/identity/resources/users/api-tokens/v1",
     { method: "POST", data: { description: name } }
   );
-  const password = `mzp_${clientId}${secret}`;
-
+  // const password = `mzp_${clientId}${secret}`;
+  const password = `mzp_564c3b5a85fc419aadc2ba5ac90bd0d7b1a66c315fe94e86940a8a30de778d4c`;
+// mzp_564c3b5a85fc419aadc2ba5ac90bd0d7b1a66c315fe94e86940a8a30de778d4c
   await page.goto(`${CONSOLE_ADDR}/platform`);
-  // const hostAddress = await page.locator("div:text('Host')").click();
-  // console.log("Host address: ", hostAddress);
-  // await page.locator("div:key='cs_host'").click();
-  const addr = await page
-    .locator("data-test-id='cs_Host' >> button >> p")
-    .innerText();
 
-  console.log(addr);
+  await page.click("text='+ Enable Region'");
 
-  await page.evaluate(async (text) => {
-    const queryOpts = { name: "clipboard-read", allowWithoutGesture: false };
-    const permissionStatus = await navigator.permissions.query(
-      queryOpts as any
-    );
-    console.log(permissionStatus);
+  await page.waitForSelector("table tbody tr");
+  const regionRows = page.locator("table tbody tr");
 
-    const hostAddress = await navigator.clipboard.readText();
-    console.log("Host address: ", hostAddress);
-  });
+  for (let i = 0; i < (await regionRows.count()); i++) {
+    const row = regionRows.nth(i);
+    await row.locator('button:text("Enable region")').click();
+    await page.click("text='Enable'");
+  }
 
-  await new Promise((res, rej) => {
-    setTimeout(() => {
-      res("W");
-    }, 2000);
-  });
-  // await page.click("text='+ Enable Region'");
+  await page.click("[aria-label='Close']");
 
-  // await page.waitForSelector("table tbody tr");
-  // const regionRows = page.locator("table tbody tr");
-
-  // for (let i = 0; i < (await regionRows.count()); i++) {
-  //   const row = regionRows.nth(i);
-  //   await row.locator('button:text("Enable region")').click();
-  //   await page.click("text='Enable'");
-  // }
-
-  // await page.click("[aria-label='Close']");
-
-  // Next, connect to each environment's environment, simultaneously:
-  // await Promise.all(
-  //   Array(await regionRows.count())
-  //     .fill(0)
-  //     .map((_, rowN) =>
-  // TODO: SELECT FROM THE OPTIONS SELECTOR
-
-  // will be awaited as part of the Promise.all above:
-  // testPlatformEnvironment(page, request, password);
-  //     )
-  // );
+  await testPlatformEnvironment(page, request, password);
 });
 
 async function testPlatformEnvironment(
@@ -134,15 +101,14 @@ async function connectRegionPostgres(
   page: Page,
   password: string
 ): Promise<Client> {
-  await page.waitForSelector("text=Host", { timeout: 1200000 });
-  await page.locator("text='Host'").click();
-
-  const hostAddress = await navigator.clipboard.readText();
-  // .locator("button")
-  // .locator("p");
+  const hostAddress = await page
+    .locator("data-test-id=cs_Host >> button >> p")
+    .innerText();
 
   if (hostAddress) {
-    const url = new URL(hostAddress);
+    const url = new URL(
+      hostAddress.startsWith("http") ? hostAddress : `http://${hostAddress}`
+    );
     const dns = new CacheableLookup({
       maxTtl: 0, // always re-lookup
       errorTtl: 0,
@@ -159,11 +125,12 @@ async function connectRegionPostgres(
           password,
           ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
           // 5 second connection timeout, because Frontegg authentication can be slow.
-          connectionTimeoutMillis: 5 * 10000,
+          connectionTimeoutMillis: 50000,
           // 10 minute query timeout, because spinning up a cluster can involve
           // turning on new EC2 machines, which may take many minutes.
-          query_timeout: 10 * 60 * 1000,
+          query_timeout: 600000,
         };
+        console.log(pgParams);
         const client = new Client(pgParams);
         await client.connect();
         return client;

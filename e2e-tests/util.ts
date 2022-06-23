@@ -27,8 +27,6 @@ export const LEGACY_VERSION = "v0.20.0";
 export const STATE_NAME = "state.json";
 
 const adminPortalHost = () => {
-  return "materialize-staging.frontegg.com";
-
   if (IS_KIND) {
     return "admin.staging.cloud.materialize.com";
   } else {
@@ -36,6 +34,7 @@ const adminPortalHost = () => {
     return `admin.${console_url.host}`;
   }
 };
+
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
   timeout?: number;
@@ -91,7 +90,7 @@ export class TestContext {
     // Provide a clean slate for the test.
     await Promise.all([
       context.deleteAllDeployments(),
-      // context.deleteAllEnvironments(),
+      context.deleteAllEnvironments(),
     ]);
 
     // Ensure they're on the deployments page, whether the test is for platform or not
@@ -242,7 +241,6 @@ export class TestContext {
   /** Delete any existing deployments. */
   async deleteAllDeployments() {
     const deployments = await this.apiRequest("/deployments");
-    console.log("Checking deployments: ", deployments);
     for (const d of deployments) {
       try {
         await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
