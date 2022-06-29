@@ -105,8 +105,7 @@ const ProtectedSwitch = (props: SwitchProps) => {
     // redirectUrl = "/account/login"       /    Not Works
     const pathname =
       location.pathname === "/account/login" ? "/" : location.pathname;
-    const pathnameEncoded = encodeURIComponent(pathname);
-    const redirectUrl = encodeURIComponent(pathnameEncoded);
+    const redirectUrl = encodeURIComponent(pathname);
     const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
     return <Redirect to={loginUrl} />;
   }
