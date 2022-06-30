@@ -99,7 +99,13 @@ const ProtectedSwitch = (props: SwitchProps) => {
   // If unauthenticated, redirect to login page, remembering what page the user
   // was trying to access.
   if (!isAuthenticated) {
-    const redirectUrl = encodeURIComponent(location.pathname);
+    // *Caution* if:
+    // redirectUrl = "%2platform"           /    Not Works (A malformed url)
+    // redirectUrl = "%2Faccount%2Flogin"   /    Not Works
+    // redirectUrl = "/account/login"       /    Not Works
+    const pathname =
+      location.pathname === "/account/login" ? "/" : location.pathname;
+    const redirectUrl = encodeURIComponent(pathname);
     const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
     return <Redirect to={loginUrl} />;
   }
