@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { currentEnvironment } from "../recoil/currentEnvironment";
+import { currentEnvironment } from "../recoil/environments";
 import { useAuth } from "./auth";
 import { Environment } from "./environment-controller";
 

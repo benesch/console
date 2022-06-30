@@ -12,7 +12,7 @@ import { SupportedCloudRegion } from "../../api/backend";
 import { useEnvironmentsDestroy } from "../../api/environment-controller";
 import { useEnvironments } from "../../api/environment-controller-fetch";
 import DangerActionModal from "../../components/DangerActionModal";
-import { currentEnvironment } from "../../recoil/currentEnvironment";
+import { currentEnvironment } from "../../recoil/environments";
 
 interface Props extends ButtonProps {
   region: SupportedCloudRegion;

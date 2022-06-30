@@ -13,7 +13,7 @@ import React from "react";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
-import useEnvironmentState from "../home/useEnvironmentState";
+import useEnvironmentState from "../../api/useEnvironmentState";
 import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 import EnableEnvironmentModal from "./EnableEnvironmentModal";
 
@@ -54,7 +54,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
   const {
     environment,
-    state: environmentState,
+    status: environmentStatus,
     refetch,
   } = useEnvironmentState(props.region.environmentControllerUrl);
 
@@ -63,7 +63,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
    */
   let url = <Text color="gray">Not enabled</Text>;
 
-  switch (environmentState) {
+  switch (environmentStatus) {
     case "Enabled":
       url = <Text color="gray">Enabled</Text>;
       break;
