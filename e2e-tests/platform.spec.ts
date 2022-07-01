@@ -20,9 +20,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     "/identity/resources/users/api-tokens/v1",
     { method: "POST", data: { description: name } }
   );
-  // const password = `mzp_${clientId}${secret}`;
-  const password = `mzp_564c3b5a85fc419aadc2ba5ac90bd0d7b1a66c315fe94e86940a8a30de778d4c`;
-// mzp_564c3b5a85fc419aadc2ba5ac90bd0d7b1a66c315fe94e86940a8a30de778d4c
+  const password = `mzp_${clientId}${secret}`;
   await page.goto(`${CONSOLE_ADDR}/platform`);
 
   await page.click("text='+ Enable Region'");

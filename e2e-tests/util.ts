@@ -102,8 +102,8 @@ export class TestContext {
   }
 
   static async authenticate(request: APIRequestContext) {
-    const authUrl = `https://materialize-staging.frontegg.com/identity/resources/auth/v1/user`;
-    // const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
+    // const authUrl = `https://materialize-staging.frontegg.com/identity/resources/auth/v1/user`;
+    const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const response = await request.post(authUrl, {
       data: {
         email: EMAIL,
@@ -213,10 +213,10 @@ export class TestContext {
     try {
       responsePayload = await response.text();
     } finally {
-      if (!response.ok)
+      if (!response.ok())
         // eslint-disable-next-line no-unsafe-finally
         throw new Error(
-          `API Error ${response.status}  ${url}, req: ${
+          `API Error ${response.status()}  ${url}, req: ${
             request.body ?? "No request body"
           }, res: ${responsePayload ?? "No response body"}`
         );
@@ -228,14 +228,6 @@ export class TestContext {
       // we already consume the body as text, so we need to parse manually
       return JSON.parse(responsePayload);
     }
-  }
-
-  async environmentApiRequest(
-    environmentControllerUrl: string,
-    url: string,
-    request?: any
-  ): Promise<any> {
-    return this.apiRequest(url, request, environmentControllerUrl);
   }
 
   /** Delete any existing deployments. */
@@ -260,12 +252,13 @@ export class TestContext {
 
     for (const { environmentControllerUrl } of providersEnvrionments) {
       try {
-        await this.environmentApiRequest(
-          environmentControllerUrl,
+        await this.apiRequest(
           `/environment`,
-          { method: "DELETE" }
+          { method: "DELETE" },
+          environmentControllerUrl
         );
       } catch (e: unknown) {
+        console.error(e);
         // if the deployment does not exist, it's okay to ignore the error.
         const deploymentDoesNotExist = e.message.includes("API Error 404");
         if (!deploymentDoesNotExist) {
