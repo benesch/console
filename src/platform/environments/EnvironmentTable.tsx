@@ -82,7 +82,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   } = useEnvironmentState(props.region.environmentControllerUrl);
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   const [imageString, setImageString] = React.useState(
-    `materialize/materialized-slim:${IMAGE_TAG}`
+    `materialize/environmentd:${IMAGE_TAG}`
   );
   const toast = useToast();
   const { region: r, isInternal } = props;
