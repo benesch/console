@@ -100,7 +100,6 @@ export class TestContext {
   }
 
   static async authenticate(request: APIRequestContext) {
-    // const authUrl = `https://materialize-staging.frontegg.com/identity/resources/auth/v1/user`;
     const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const response = await request.post(authUrl, {
       data: {
@@ -145,7 +144,6 @@ export class TestContext {
         auth.expiresIn
       );
     }
-    // url = `https://materialize-staging.frontegg.com${url}`;
     url = `https://${adminPortalHost()}${url}`;
     request = {
       ...request,

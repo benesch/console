@@ -23,7 +23,12 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   const password = `mzp_${clientId}${secret}`;
   await page.goto(`${CONSOLE_ADDR}/platform`);
 
-  await page.click("text='+ Enable Region'");
+  // await Promise.race([
+  //   exitWelcomeModal(page),
+  //   page.selectOption('select[name="environment-select"]', "+ Edit Regions"),
+  // ]);
+
+  // await page.click("text='+ Enable Region'");
 
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
@@ -31,7 +36,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   for (let i = 0; i < (await regionRows.count()); i++) {
     const row = regionRows.nth(i);
     await row.locator('button:text("Enable region")').click();
-    await page.click("text='Enable'");
+    // await page.click("text='Enable'");
   }
 
   await page.click("[aria-label='Close']");
