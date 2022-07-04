@@ -81,6 +81,20 @@ export const Modal = {
   defaultProps: {
     size: "xl",
   },
+  variants: {
+    "2xl": {
+      dialog: {
+        minWidth: "2xl",
+        maxWidth: "2xl",
+      },
+    },
+    "3xl": {
+      dialog: {
+        minWidth: "3xl",
+        maxWidth: "3xl",
+      },
+    },
+  },
 };
 
 export const Tabs = {

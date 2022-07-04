@@ -11,7 +11,7 @@ import { Button, Spinner, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import { currentEnvironment } from "../../recoil/currentEnvironment";
+import { currentEnvironment } from "../../recoil/environments";
 import ConnectSteps from "../home/ConnectSteps";
 
 const ConnectButton = () => {

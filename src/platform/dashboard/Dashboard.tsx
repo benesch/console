@@ -13,7 +13,7 @@ import {
   PageHeader,
   PageHeading,
 } from "../../layouts/BaseLayout";
-import { currentEnvironment } from "../../recoil/currentEnvironment";
+import { currentEnvironment } from "../../recoil/environments";
 import ConnectButton from "./Connect";
 import MetricsCard from "./MetricsCard";
 
