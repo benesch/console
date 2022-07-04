@@ -14,6 +14,7 @@ import {
 } from "react-router-dom";
 
 import AppPasswordsPage from "./access/AppPasswordsPage";
+import CLI from "./access/cli";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import { useAuth } from "./api/auth";
@@ -34,6 +35,9 @@ const Router = () => {
         </Route>
         <Route path="/deployments" exact>
           <DeploymentListPage />
+        </Route>
+        <Route path="/access/cli">
+          <CLI />
         </Route>
         <Route path="/access">
           <AppPasswordsPage />
