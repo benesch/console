@@ -121,61 +121,61 @@ async function testPlatformEnvironment(
   console.log("Setting cluster.");
   await client.query("SET CLUSTER = c;");
 
-  if (IS_KIND) {
-    console.log("Creating materialized view.");
-    await client.query(`
-      CREATE MATERIALIZED VIEW series AS SELECT generate_series(0, 1000) as serie_number;
-    `);
-    console.log("Creating index.");
-    await client.query(`
-      CREATE INDEX test_idx ON series (serie_number);
-    `);
-    console.log("Selecting results.");
-    const { rowCount: indexCount } = await client.query(`
-      SELECT * FROM series WHERE serie_number = 5;
-    `);
+  // if (IS_KIND) {
+  //   console.log("Creating materialized view.");
+  //   await client.query(`
+  //     CREATE MATERIALIZED VIEW series AS SELECT generate_series(0, 1000) as serie_number;
+  //   `);
+  //   console.log("Creating index.");
+  //   await client.query(`
+  //     CREATE INDEX test_idx ON series (serie_number);
+  //   `);
+  //   console.log("Selecting results.");
+  //   const { rowCount: indexCount } = await client.query(`
+  //     SELECT * FROM series WHERE serie_number = 5;
+  //   `);
 
-    console.log("Count: ", indexCount);
-    assert.equal(indexCount, 1);
-    return;
-  } else {
-    console.log("Creating source.");
+  //   console.log("Count: ", indexCount);
+  //   assert.equal(indexCount, 1);
+  //   return;
+  // } else {
+  console.log("Creating source.");
 
-    await client.query(`
+  await client.query(`
       CREATE SOURCE IF NOT EXISTS postgres_publication_source
       FROM POSTGRES
       CONNECTION 'host=${postgresHost} port=${postgresPort} user=materialize password=materialize dbname=${postgresDatabase}'
       PUBLICATION 'postgres_publication_source';
     `);
 
-    console.log("Creating materialized views");
-    await client.query(
-      `CREATE MATERIALIZED VIEWS FROM SOURCE postgres_publication_source;`
-    );
-    // Try reading from the source repeatedly to give it time to populate. This
-    // won't be necessary once the following issue is resolved:
-    // https://github.com/MaterializeInc/materialize/issues/11048
-    for (let i = 0; i < 30; i++) {
-      try {
-        console.log("Select results from table.");
+  console.log("Creating materialized views");
+  await client.query(
+    `CREATE MATERIALIZED VIEWS FROM SOURCE postgres_publication_source;`
+  );
+  // Try reading from the source repeatedly to give it time to populate. This
+  // won't be necessary once the following issue is resolved:
+  // https://github.com/MaterializeInc/materialize/issues/11048
+  for (let i = 0; i < 30; i++) {
+    try {
+      console.log("Select results from table.");
 
-        const result = await client.query(
-          "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
-        );
-        assert.deepStrictEqual(result.rows, [
-          { id: "9999", status: "active", active_time: "8 hours" },
-          { id: "888", status: "inactive", active_time: "" },
-          { id: "777", status: "active", active_time: "3 hours" },
-        ]);
-        return;
-      } catch (error) {
-        console.log(error);
-        await page.waitForTimeout(1000);
-      }
+      const result = await client.query(
+        "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
+      );
+      assert.deepStrictEqual(result.rows, [
+        { id: "9999", status: "active", active_time: "8 hours" },
+        { id: "888", status: "inactive", active_time: "" },
+        { id: "777", status: "active", active_time: "3 hours" },
+      ]);
+      return;
+    } catch (error) {
+      console.log(error);
+      await page.waitForTimeout(1000);
     }
-    throw new Error("source never contained expected records");
   }
+  throw new Error("source never contained expected records");
 }
+// }
 
 async function connectRegionPostgres(
   page: Page,
