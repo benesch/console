@@ -2,6 +2,7 @@ import { APIRequestContext, Page, test } from "@playwright/test";
 import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
+import { GenericContainer, StartedTestContainer, Wait } from "testcontainers";
 
 import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
@@ -13,7 +14,80 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
+/**
+ * Setup postgres container
+ */
+let container: StartedTestContainer;
+let pgClient: Client;
+let postgresHost: string;
+let postgresPort: number;
+const postgresUser = "test_user";
+const postgresPassword = "secret_password_shh";
+const postgresDatabase = "db";
+
+test.beforeAll(async () => {
+  console.log("Running Postgres container.");
+  container = await new GenericContainer("postgres")
+    .withExposedPorts(5432)
+    .withEnv("POSTGRES_DB", postgresDatabase)
+    .withEnv("POSTGRES_USER", postgresUser)
+    .withEnv("POSTGRES_PASSWORD", postgresPassword)
+    .withHealthCheck({
+      test: "pg_isready -U postgres",
+      interval: 2000,
+      timeout: 5000,
+      retries: 3,
+    })
+    .start();
+
+  postgresHost = container.getHost();
+  postgresPort = container.getMappedPort(5432);
+  console.log("Mapped host and port: ", postgresHost, " + ", postgresPort);
+
+  pgClient = new Client({
+    host: postgresHost,
+    user: postgresUser,
+    password: postgresPassword,
+    port: postgresPort,
+    database: postgresDatabase,
+  });
+
+  console.log("Connecting client.");
+  await pgClient.connect();
+
+  console.log("Conneted.");
+  console.log("Building Postgres schema.");
+  await pgClient.query(`
+    CREATE TABLE engagement (
+      id TEXT,
+      status TEXT,
+      active_time TEXT,
+      mz_record INT
+    );
+
+    ALTER TABLE engagement REPLICA IDENTITY FULL;
+
+    CREATE PUBLICATION postgres_publication_source FOR TABLE engagement;
+
+    -- Create user and role to be used by Materialize
+    CREATE ROLE materialize REPLICATION LOGIN PASSWORD 'materialize';
+    GRANT SELECT ON engagement TO materialize;
+
+    INSERT INTO engagement VALUES
+        ('9999', 'active', '8 hours', 1),
+        ('888', 'inactive', '', 2),
+        ('777', 'active', '3 hours', 3);
+  `);
+});
+
+test.afterAll(async () => {
+  await pgClient.end();
+  await container.stop();
+});
+
 test(`connecting to the environment controller`, async ({ page, request }) => {
+  test.setTimeout(60000);
+
   const context = await TestContext.start(page, request);
   const name = "Environment controller test token";
   const { clientId, secret } = await context.fronteggRequest(
@@ -23,20 +97,12 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   const password = `mzp_${clientId}${secret}`;
   await page.goto(`${CONSOLE_ADDR}/platform`);
 
-  // await Promise.race([
-  //   exitWelcomeModal(page),
-  //   page.selectOption('select[name="environment-select"]', "+ Edit Regions"),
-  // ]);
-
-  // await page.click("text='+ Enable Region'");
-
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
 
   for (let i = 0; i < (await regionRows.count()); i++) {
     const row = regionRows.nth(i);
     await row.locator('button:text("Enable region")').click();
-    // await page.click("text='Enable'");
   }
 
   await page.click("[aria-label='Close']");
@@ -54,60 +120,61 @@ async function testPlatformEnvironment(
   await client.query("CREATE CLUSTER c REPLICAS (r1 (size 'xsmall'));");
   console.log("Setting cluster.");
   await client.query("SET CLUSTER = c;");
-  // if (!IS_KIND) {
-  //   console.log("Creating S3 source.");
 
-  //   // This S3 bucket lives in the "Materialize Sample Data" AWS account and is
-  //   // managed in the i2 repository.
-  //   await client.query(`CREATE MATERIALIZED SOURCE engagement
-  //     FROM S3 DISCOVER OBJECTS MATCHING 'engagement.csv'
-  //     USING BUCKET SCAN 'materialize-sample-data'
-  //     WITH (
-  //         role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader',
-  //         region = 'us-east-1'
-  //     )
-  //     FORMAT CSV WITH HEADER (id, status, active_time);`);
-  // } else {
-  console.log("Creating table.");
+  if (IS_KIND) {
+    console.log("Creating materialized view.");
+    await client.query(`
+      CREATE MATERIALIZED VIEW series AS SELECT generate_series(0, 1000) as serie_number;
+    `);
+    console.log("Creating index.");
+    await client.query(`
+      CREATE INDEX test_idx ON series (serie_number);
+    `);
+    console.log("Selecting results.");
+    const { rowCount: indexCount } = await client.query(`
+      SELECT * FROM series WHERE serie_number = 5;
+    `);
 
-  // In Minikube, we won't have access to the S3 bucket, so just create a
-  // table with the expected contents. This still tests that the cluster
-  // can be created and perform computation.
-  await client.query(
-    "CREATE TABLE engagement (id text, status text, active_time text, mz_record integer);"
-  );
+    console.log("Count: ", indexCount);
+    assert.equal(indexCount, 1);
+    return;
+  } else {
+    console.log("Creating source.");
 
-  console.log("Insert values into table.");
-  await client.query(
-    `INSERT INTO engagement VALUES
-        ('9999', 'active', '8 hours', 1),
-        ('888', 'inactive', '', 2),
-        ('777', 'active', '3 hours', 3);
-      `
-  );
-  // }
-  // Try reading from the source repeatedly to give it time to populate. This
-  // won't be necessary once the following issue is resolved:
-  // https://github.com/MaterializeInc/materialize/issues/11048
-  for (let i = 0; i < 30; i++) {
-    try {
-      console.log("Select results from table.");
+    await client.query(`
+      CREATE SOURCE IF NOT EXISTS postgres_publication_source
+      FROM POSTGRES
+      CONNECTION 'host=${postgresHost} port=${postgresPort} user=materialize password=materialize dbname=${postgresDatabase}'
+      PUBLICATION 'postgres_publication_source';
+    `);
 
-      const result = await client.query(
-        "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
-      );
-      assert.deepStrictEqual(result.rows, [
-        { id: "9999", status: "active", active_time: "8 hours" },
-        { id: "888", status: "inactive", active_time: "" },
-        { id: "777", status: "active", active_time: "3 hours" },
-      ]);
-      return;
-    } catch (error) {
-      console.log(error);
-      await page.waitForTimeout(1000);
+    console.log("Creating materialized views");
+    await client.query(
+      `CREATE MATERIALIZED VIEWS FROM SOURCE postgres_publication_source;`
+    );
+    // Try reading from the source repeatedly to give it time to populate. This
+    // won't be necessary once the following issue is resolved:
+    // https://github.com/MaterializeInc/materialize/issues/11048
+    for (let i = 0; i < 30; i++) {
+      try {
+        console.log("Select results from table.");
+
+        const result = await client.query(
+          "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
+        );
+        assert.deepStrictEqual(result.rows, [
+          { id: "9999", status: "active", active_time: "8 hours" },
+          { id: "888", status: "inactive", active_time: "" },
+          { id: "777", status: "active", active_time: "3 hours" },
+        ]);
+        return;
+      } catch (error) {
+        console.log(error);
+        await page.waitForTimeout(1000);
+      }
     }
+    throw new Error("source never contained expected records");
   }
-  throw new Error("source never contained expected records");
 }
 
 async function connectRegionPostgres(
