@@ -3,6 +3,7 @@ import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 import { GenericContainer, StartedTestContainer, Wait } from "testcontainers";
+import { sleep } from "../frontend/src/util";
 
 import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
@@ -86,7 +87,7 @@ test.afterAll(async () => {
 });
 
 test(`connecting to the environment controller`, async ({ page, request }) => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
 
   const context = await TestContext.start(page, request);
   const name = "Environment controller test token";
@@ -152,12 +153,16 @@ async function testPlatformEnvironment(
   await client.query(
     `CREATE MATERIALIZED VIEWS FROM SOURCE postgres_publication_source;`
   );
+
+  // Sleep before reading from the views to avoid hangs.
+  sleep(5000);
+
   // Try reading from the source repeatedly to give it time to populate. This
   // won't be necessary once the following issue is resolved:
   // https://github.com/MaterializeInc/materialize/issues/11048
   for (let i = 0; i < 30; i++) {
     try {
-      console.log("Select results from table.");
+      console.log("Select results from view.");
 
       const result = await client.query(
         "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
