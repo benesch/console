@@ -78,6 +78,13 @@ export class TestContext {
       page.goto(CONSOLE_ADDR),
     ]);
 
+    await page.fill('input[name="email"]', EMAIL);
+    await page.click("text='Continue'");
+    await page.fill('input[name="password"]', PASSWORD);
+    await page.click("text='Login'");
+    await sleep(2000);
+    await page.reload();
+
     const context = new TestContext(page, request, auth);
 
     // Provide a clean slate for the test.
