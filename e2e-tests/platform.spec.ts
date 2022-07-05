@@ -86,7 +86,7 @@ test.afterAll(async () => {
 });
 
 test(`connecting to the environment controller`, async ({ page, request }) => {
-  test.setTimeout(60000);
+  test.setTimeout(90000);
 
   const context = await TestContext.start(page, request);
   const name = "Environment controller test token";
