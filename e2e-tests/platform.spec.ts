@@ -50,39 +50,49 @@ async function testPlatformEnvironment(
   password: string
 ) {
   const client = await connectRegionPostgres(page, password);
-  await client.query("CREATE CLUSTER c REPLICA r1 (SIZE 'xsmall');");
-  await client.query("SET CLUSTER = c");
-  if (!IS_KIND) {
-    // This S3 bucket lives in the "Materialize Sample Data" AWS account and is
-    // managed in the i2 repository.
-    await client.query(`CREATE MATERIALIZED SOURCE engagement
-      FROM S3 DISCOVER OBJECTS MATCHING 'engagement.csv'
-      USING BUCKET SCAN 'materialize-sample-data'
-      WITH (
-          role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader',
-          region = 'us-east-1'
-      )
-      FORMAT CSV WITH HEADER (id, status, active_time);`);
-  } else {
-    // In Minikube, we won't have access to the S3 bucket, so just create a
-    // table with the expected contents. This still tests that the cluster
-    // can be created and perform computation.
-    await client.query(
-      "CREATE TABLE engagement (id text, status text, active_time text, mz_record integer)"
-    );
-    await client.query(
-      `INSERT INTO engagement VALUES
+  console.log("Creating cluster.");
+  await client.query("CREATE CLUSTER c REPLICAS (r1 (size 'xsmall'));");
+  console.log("Setting cluster.");
+  await client.query("SET CLUSTER = c;");
+  // if (!IS_KIND) {
+  //   console.log("Creating S3 source.");
+
+  //   // This S3 bucket lives in the "Materialize Sample Data" AWS account and is
+  //   // managed in the i2 repository.
+  //   await client.query(`CREATE MATERIALIZED SOURCE engagement
+  //     FROM S3 DISCOVER OBJECTS MATCHING 'engagement.csv'
+  //     USING BUCKET SCAN 'materialize-sample-data'
+  //     WITH (
+  //         role_arn = 'arn:aws:iam::137301051720:role/sample-data-reader',
+  //         region = 'us-east-1'
+  //     )
+  //     FORMAT CSV WITH HEADER (id, status, active_time);`);
+  // } else {
+  console.log("Creating table.");
+
+  // In Minikube, we won't have access to the S3 bucket, so just create a
+  // table with the expected contents. This still tests that the cluster
+  // can be created and perform computation.
+  await client.query(
+    "CREATE TABLE engagement (id text, status text, active_time text, mz_record integer);"
+  );
+
+  console.log("Insert values into table.");
+  await client.query(
+    `INSERT INTO engagement VALUES
         ('9999', 'active', '8 hours', 1),
         ('888', 'inactive', '', 2),
-        ('777', 'active', '3 hours', 3)
+        ('777', 'active', '3 hours', 3);
       `
-    );
-  }
+  );
+  // }
   // Try reading from the source repeatedly to give it time to populate. This
   // won't be necessary once the following issue is resolved:
   // https://github.com/MaterializeInc/materialize/issues/11048
   for (let i = 0; i < 30; i++) {
     try {
+      console.log("Select results from table.");
+
       const result = await client.query(
         "SELECT id, status, active_time FROM engagement ORDER BY mz_record"
       );
@@ -107,6 +117,12 @@ async function connectRegionPostgres(
   const hostAddress = await page
     .locator("data-test-id=cs_Host >> button >> p")
     .innerText();
+  const port = await page
+    .locator("data-test-id=cs_Port >> button >> p")
+    .innerText();
+  const database = await page
+    .locator("data-test-id=cs_Database >> button >> p")
+    .innerText();
 
   if (hostAddress) {
     const url = new URL(
@@ -123,8 +139,8 @@ async function connectRegionPostgres(
         const pgParams = {
           user: EMAIL,
           host: entry.address,
-          port: parseInt(url.port, 10),
-          database: url.pathname.slice(1),
+          port: parseInt(port, 10),
+          database: database,
           password,
           ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
           // 5 second connection timeout, because Frontegg authentication can be slow.
@@ -133,7 +149,7 @@ async function connectRegionPostgres(
           // turning on new EC2 machines, which may take many minutes.
           query_timeout: 600000,
         };
-        console.log(pgParams);
+
         const client = new Client(pgParams);
         await client.connect();
         return client;
