@@ -62,7 +62,7 @@ const EnvironmentTable = (props: EnvironmentTableProps) => {
 /// value whenever you wish to try new materialized functions in
 /// cloud.
 // TODO: Use something like the release tracks we use for materialize cloud deployments.
-const IMAGE_TAG = "unstable-45e2acde087c27a661b5e67db587375c0b628fde";
+const IMAGE_TAG = "unstable-6a0dec3cd7d469c2d6e6dd4f659fb498b5ff5704";
 
 interface RegionEnvironmentRowProps {
   region: SupportedCloudRegion;
