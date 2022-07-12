@@ -44,7 +44,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     await row.locator('button:text("Enable region")').click();
   }
 
-  await page.click("[aria-label='Close']");
+  await page.click("[aria-label='Close']", { force: true });
 
   for (const regionName of regionsNames) {
     await page.selectOption("[aria-label='Environment']", {
