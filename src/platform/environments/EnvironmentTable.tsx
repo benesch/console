@@ -29,9 +29,6 @@ interface EnvironmentTableProps {
 
 const EnvironmentTable = (props: EnvironmentTableProps) => {
   const { user } = useAuth();
-  // NB: this is not security-load-bearing, it selectively shows UI
-  // but the actual calls will fail if the user isn't authorized
-  const isInternal = user.email.endsWith("@materialize.com");
   return (
     <TableContainer>
       <Table data-testid="cluster-table" borderRadius="xl">
@@ -39,35 +36,21 @@ const EnvironmentTable = (props: EnvironmentTableProps) => {
           <Tr>
             <Th>Region</Th>
             <Th>Status</Th>
-            {isInternal && <Th>Image reference</Th>}
             <Th />
           </Tr>
         </Thead>
         <Tbody>
           {props.regions.map((r) => (
-            <RegionEnvironmentRow
-              key={r.environmentControllerUrl}
-              region={r}
-              isInternal
-            />
+            <RegionEnvironmentRow key={r.environmentControllerUrl} region={r} />
           ))}
         </Tbody>
       </Table>
     </TableContainer>
   );
 };
-
-/// The image SHA that we spin up all new materialize platform
-/// components up with by default.  You need to bump this to a new
-/// value whenever you wish to try new materialized functions in
-/// cloud.
-// TODO: Use something like the release tracks we use for materialize cloud deployments.
-const IMAGE_TAG = "unstable-c2fac86b221996ff452c31b09583d62fac677b1d";
-const ENVIRONMENTD_PREFIX = "materialize/environmentd";
-
+``;
 interface RegionEnvironmentRowProps {
   region: SupportedCloudRegion;
-  isInternal?: boolean;
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
@@ -82,9 +65,8 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     refetch,
   } = useEnvironmentState(props.region.environmentControllerUrl);
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
-  const [imageString, setImageString] = React.useState(`${IMAGE_TAG}`);
   const toast = useToast();
-  const { region: r, isInternal } = props;
+  const { region: r } = props;
 
   /**
    * Vars
@@ -110,13 +92,8 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
 
   const handleCreate = React.useCallback(async () => {
     try {
-      const tag = imageString.includes(":")
-        ? imageString
-        : `${ENVIRONMENTD_PREFIX}:${imageString}`;
       await fetchAuthed(`${r.environmentControllerUrl}/api/environment`, {
-        body: JSON.stringify({
-          coordd_image_ref: tag,
-        }),
+        body: JSON.stringify({}),
         headers: {
           "Content-Type": "application/json",
         },
@@ -137,7 +114,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         });
       }
     }
-  }, [r.environmentControllerUrl, imageString]);
+  }, [r.environmentControllerUrl]);
 
   return (
     <Tr>
@@ -145,21 +122,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         {r.provider}/{r.region}
       </Td>
       <Td>{url}</Td>
-      {isInternal && (
-        <Td>
-          <Input
-            name="image"
-            size="sm"
-            value={imageString}
-            onChange={(e) => setImageString(e.target.value)}
-            disabled={
-              environmentStatus === "Starting" ||
-              !canWriteEnvironments ||
-              !!environment
-            }
-          />
-        </Td>
-      )}
       <Td>
         {!environment && (
           <Button
