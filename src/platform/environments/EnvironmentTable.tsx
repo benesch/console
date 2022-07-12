@@ -63,6 +63,7 @@ const EnvironmentTable = (props: EnvironmentTableProps) => {
 /// cloud.
 // TODO: Use something like the release tracks we use for materialize cloud deployments.
 const IMAGE_TAG = "unstable-6a0dec3cd7d469c2d6e6dd4f659fb498b5ff5704";
+const ENVIRONMENTD_PREFIX = "materialize/environmentd";
 
 interface RegionEnvironmentRowProps {
   region: SupportedCloudRegion;
@@ -81,9 +82,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     refetch,
   } = useEnvironmentState(props.region.environmentControllerUrl);
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
-  const [imageString, setImageString] = React.useState(
-    `materialize/environmentd:${IMAGE_TAG}`
-  );
+  const [imageString, setImageString] = React.useState(`${IMAGE_TAG}`);
   const toast = useToast();
   const { region: r, isInternal } = props;
 
@@ -111,9 +110,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
 
   const handleCreate = React.useCallback(async () => {
     try {
+      const tag = imageString.includes(":")
+        ? imageString
+        : `${ENVIRONMENTD_PREFIX}:${imageString}`;
       await fetchAuthed(`${r.environmentControllerUrl}/api/environment`, {
         body: JSON.stringify({
-          coordd_image_ref: imageString,
+          coordd_image_ref: tag,
         }),
         headers: {
           "Content-Type": "application/json",
