@@ -2,9 +2,12 @@ import { APIRequestContext, expect, Page } from "@playwright/test";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
-import { Client } from "pg";
+import { Client, ClientConfig } from "pg";
+
+import { sleep } from "../frontend/src/util";
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
+
 export const IS_KIND =
   CONSOLE_ADDR === "http://localhost:8000" ||
   CONSOLE_ADDR === "http://backend:8000";
@@ -23,6 +26,15 @@ export const LEGACY_VERSION = "v0.20.0";
 
 export const STATE_NAME = "state.json";
 
+const adminPortalHost = () => {
+  if (IS_KIND) {
+    return "admin.staging.cloud.materialize.com";
+  } else {
+    const console_url = new URL(CONSOLE_ADDR);
+    return `admin.${console_url.host}`;
+  }
+};
+
 interface ContextWaitForSelectorOptions {
   /** Number of milliseconds to wait for the selector to appear. */
   timeout?: number;
@@ -38,15 +50,6 @@ interface FronteggAuthResponse {
   /** Seconds until expiration */
   expiresIn: number;
 }
-
-const adminPortalHost = () => {
-  if (IS_KIND) {
-    return "admin.staging.cloud.materialize.com";
-  } else {
-    const console_url = new URL(CONSOLE_ADDR);
-    return `admin.${console_url.host}`;
-  }
-};
 
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
@@ -125,9 +128,8 @@ export class TestContext {
   /**
    * Make a Frontegg API request using the browser's access token.
    */
-  async fronteggRequest(url: string, request?) {
-    if (Date.now() < this.refreshDeadline) {
-      console.log("Updating auth token...");
+  async fronteggRequest(url: string, request?: any) {
+    if (new Date().getTime() < this.refreshDeadline.getTime()) {
       const auth = await TestContext.authenticate(this.request);
       this.accessToken = auth.accessToken;
       this.refreshToken = auth.refreshToken;
@@ -173,9 +175,8 @@ export class TestContext {
   /**
    * Make an API request using the browser's access token.
    */
-  async apiRequest(url: string, request?) {
-    if (Date.now() < this.refreshDeadline) {
-      console.log("Updating auth token...");
+  async apiRequest(url: string, request?: any, alt_addr?: string) {
+    if (new Date().getTime() < this.refreshDeadline.getTime()) {
       const auth = await TestContext.authenticate(this.request);
       this.accessToken = auth.accessToken;
       this.refreshToken = auth.refreshToken;
@@ -183,7 +184,7 @@ export class TestContext {
         auth.expiresIn
       );
     }
-    url = `${CONSOLE_ADDR}/api${url}`;
+    url = `${alt_addr || CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
       headers: {
@@ -192,7 +193,6 @@ export class TestContext {
         ...(request || {}).headers,
       },
     };
-    console.log("API Request:", request);
     const response = await this.request.fetch(url, request);
 
     // rethrowing the error here if the response is not ok.
@@ -202,16 +202,16 @@ export class TestContext {
     try {
       responsePayload = await response.text();
     } finally {
-      if (!response.ok)
+      if (!response.ok())
         // eslint-disable-next-line no-unsafe-finally
         throw new Error(
-          `API Error ${response.status}  ${url}, req: ${
+          `API Error ${response.status()}  ${url}, req: ${
             request.body ?? "No request body"
           }, res: ${responsePayload ?? "No response body"}`
         );
     }
 
-    if (response.status() === 204) {
+    if (response.status() === 204 || response.status() === 202) {
       return null;
     } else {
       // we already consume the body as text, so we need to parse manually
@@ -232,6 +232,33 @@ export class TestContext {
           throw e;
         }
       }
+    }
+  }
+
+  /** Delete any existing deployments. */
+  async deleteAllEnvironments() {
+    const providersEnvrionments = await this.apiRequest("/cloud-providers");
+
+    for (const { environmentControllerUrl } of providersEnvrionments) {
+      try {
+        await this.apiRequest(
+          `/environment`,
+          { method: "DELETE" },
+          environmentControllerUrl
+        );
+      } catch (e: unknown) {
+        console.error(e);
+        // if the deployment does not exist, it's okay to ignore the error.
+        const deploymentDoesNotExist = e.message.includes("API Error 404");
+        if (!deploymentDoesNotExist) {
+          throw e;
+        }
+      }
+    }
+
+    // Give time to the environment controller to turn off the environments
+    if (providersEnvrionments.length > 0) {
+      sleep(10000);
     }
   }
 
@@ -294,10 +321,10 @@ export class TestContext {
     await extract(certsZip, { dir: path.resolve("scratch") });
 
     // Attempt PostgreSQL connection to Materialize.
-    const pgParams = {
+    const pgParams: ClientConfig = {
       user: "materialize",
-      host: hostname,
-      port: port,
+      host: hostname || undefined,
+      port: Number(port) || undefined,
       database: "materialize",
       ssl: {
         ca: fs.readFileSync("scratch/ca.crt", "utf8"),
@@ -327,10 +354,10 @@ export class TestContext {
     const port = await this.readDeploymentField("Port");
 
     // Attempt PostgreSQL connection to Materialize.
-    const pgParams = {
+    const pgParams: ClientConfig = {
       user: EMAIL,
-      host: hostname,
-      port: port,
+      host: hostname || undefined,
+      port: Number(port) || undefined,
       database: "materialize",
       password,
       ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
@@ -342,7 +369,7 @@ export class TestContext {
         const client = new Client(pgParams);
         await client.connect();
         return client;
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
         if (error.code === "28P01") {
           console.log("app-specific passwords", await this.listAllKeys());
@@ -359,7 +386,9 @@ export class TestContext {
     const field = await this.page.waitForSelector(
       `css=[data-field-name="${name}"] >> text=${name}`
     );
-    return await field.evaluate((e) => e.nextSibling.textContent);
+    return await field.evaluate(
+      (e) => e.nextSibling && e.nextSibling.textContent
+    );
   }
 
   /** Wait until a deployment details field has the given value. */
