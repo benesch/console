@@ -27,10 +27,10 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   await page.goto(`${CONSOLE_ADDR}/platform`);
 
   // close welcome modal
-  const welcomeModalOpen = await page.$("[aria-label=Close]");
-  if (welcomeModalOpen) {
-    welcomeModalOpen.click();
-  }
+  await Promise.race([
+    exitWelcomeModal(page),
+    page.selectOption('select[name="environment-select"]', "+ Edit Regions"),
+  ]);
 
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
