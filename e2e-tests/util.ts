@@ -79,8 +79,14 @@ export class TestContext {
 
     // Provide a clean slate for the test.
     context.deleteAllDeployments();
-    // close welcome modal
-    await page.click("[aria-label=Close]");
+    // Close welcome modal if it appears. Simply timing out after 5s was
+    // empirically determined to be more reliable than any Promise.race based
+    // solution.
+    try {
+      await page.click("[aria-label=Close]", { timeout: 5000 });
+    } catch (e) {
+      // Modal didn't appear. Move on.
+    }
     // Ensure they're on the deployments page, whether the test is for platform or not
     // TODO make start() not deployments-centric once we're in platform world
     await page.click('a:has-text("Deployments")');
