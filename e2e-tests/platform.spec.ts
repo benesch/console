@@ -35,7 +35,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     const regionName = await row.locator("td").first().innerText();
     regionsNames.push(regionName);
 
-    await row.locator('button:text("Enable region")').click();
+    await row.locator('button:text("Enable region")').click({ force: true });
   }
 
   await page.click("[aria-label='Close']", { force: true });
