@@ -1,28 +1,33 @@
-import { Button, Code, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
 
+import { useAuth } from "../../api/auth";
 import { PageBreadcrumbs } from "../../layouts/BaseLayout";
 
 const CLI = () => {
+  const [redirect, setRedirect] = useState(false);
   const { addUserApiToken } = useApiTokensActions();
+  const { user } = useAuth();
   const tokensState = useApiTokensState();
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
+  const { email } = user;
   const tokenDescription = "Token for the CLI";
 
   /**
    * Redirect to the CLI server after the token is created.
+   * It would be a 100 if we could only limit access to only users using the CLI or even out of this app.
    */
   useEffect(() => {
     const asyncRequest = async () => {
       try {
         const { clientId, secret } = tokensState.successDialog;
-        console.log("Console: ", clientId, secret);
         if (clientId && secret) {
           const encodedSecret = encodeURIComponent(secret);
           const encodedClientId = encodeURIComponent(clientId);
           const encodedDescription = encodeURIComponent(tokenDescription);
-          const url = `http://localhost:8808/?secret=${encodedSecret}&clientId=${encodedClientId}&description=${encodedDescription}`;
+          const url = `http://localhost:8808/?secret=${encodedSecret}&clientId=${encodedClientId}&description=${encodedDescription}&email=${email}`;
 
           window.location.assign(url);
         } else {
@@ -44,6 +49,12 @@ const CLI = () => {
     });
   };
 
+  const onNoClick = () => {
+    const url = `http://localhost:8808/?cancel`;
+
+    window.location.assign(url);
+  };
+
   return (
     <>
       <PageBreadcrumbs />
@@ -54,6 +65,7 @@ const CLI = () => {
         alignContent="center"
       >
         <VStack textAlign="center" marginX="auto" marginTop="8%">
+          {redirect && <Redirect to="/home" />}
           {createInProgress ? (
             <Spinner data-testid="loading-spinner" size="xl" />
           ) : (
@@ -66,14 +78,10 @@ const CLI = () => {
                 <Button colorScheme="purple" size="lg" onClick={onYesClick}>
                   Yes
                 </Button>
-                <Button colorScheme="red" size="lg">
+                <Button colorScheme="red" size="lg" onClick={onNoClick}>
                   No
                 </Button>
               </HStack>
-              <Text fontSize="md" paddingTop={20} fontWeight={300}>
-                The details will store in your configuration file:{" "}
-                <Code>~/.config/mz/profiles.toml</Code>
-              </Text>
             </>
           )}
         </VStack>
