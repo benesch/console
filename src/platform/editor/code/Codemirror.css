@@ -1,8 +1,8 @@
 .CodeMirror {
-    min-height: 100%;
-    text-align: left;
-  }
+  height: 100%;
+  text-align: left;
+}
 
-  .react-codemirror2 {
-    height: 100%;
-  }
+.react-codemirror2 {
+  height: 100%;
+}

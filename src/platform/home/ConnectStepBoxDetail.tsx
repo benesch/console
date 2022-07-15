@@ -17,7 +17,7 @@ const ConnectStepBoxDetail = (props: Props): JSX.Element => {
     "gray.700"
   );
   return (
-    <Box height="fit-content" flex="1 1 50px">
+    <Box height="fit-content" flex="1 1 50px" data-test-id={"cs_" + header}>
       <Text
         fontSize={{ base: "sm", md: "md", xl: "sm" }}
         color={headerTextColor}

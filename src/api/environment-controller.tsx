@@ -18,7 +18,7 @@ export interface Environment {
 }
 
 export interface EnvironmentRequest {
-  coordd_image_ref: string;
+  coordd_image_ref?: string;
   important?: boolean;
   materializedExtraArgs?: string[];
 }
