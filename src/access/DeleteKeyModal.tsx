@@ -42,7 +42,8 @@ const DeleteKeyModal = (props: Props) => {
       variant="outline"
     >
       <Text fontSize="sm">
-        <strong>Are you sure?</strong> Deleting this API key is irreversible.
+        <strong>Are you sure?</strong> Deleting this app-specific password is
+        irreversible.
       </Text>
     </DangerActionModal>
   );
