@@ -87,7 +87,7 @@ const AdditionalSteps = () => {
                           "\n" +
                           "FROM PUBNUB" +
                           "\n" +
-                          "SUBSCRIBE KEY 'sub-c-abe5eda1-9123-4bad-bb39-4414d87b1966'" +
+                          "SUBSCRIBE KEY 'sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe'" +
                           "\n" +
                           "CHANNEL 'pubnub-market-orders';"
                         }
@@ -132,7 +132,7 @@ const AdditionalSteps = () => {
                         "\n" +
                         "FROM PUBNUB" +
                         "\n" +
-                        "SUBSCRIBE KEY 'sub-c-abe5eda1-9123-4bad-bb39-4414d87b1966'" +
+                        "SUBSCRIBE KEY 'sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe'" +
                         "\n" +
                         "CHANNEL 'pubnub-market-orders';"
                       }
