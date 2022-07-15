@@ -1,13 +1,11 @@
 import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
-import React, { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
+import React, { useEffect } from "react";
 
 import { useAuth } from "../../api/auth";
 import { PageBreadcrumbs } from "../../layouts/BaseLayout";
 
 const CLI = () => {
-  const [redirect, setRedirect] = useState(false);
   const { addUserApiToken } = useApiTokensActions();
   const { user } = useAuth();
   const tokensState = useApiTokensState();
@@ -65,7 +63,6 @@ const CLI = () => {
         alignContent="center"
       >
         <VStack textAlign="center" marginX="auto" marginTop="8%">
-          {redirect && <Redirect to="/home" />}
           {createInProgress ? (
             <Spinner data-testid="loading-spinner" size="xl" />
           ) : (
