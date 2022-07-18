@@ -18,7 +18,7 @@ import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();
   const [current, _] = useRecoilState(currentEnvironment);
-  const coorddAddress = current?.coordd_pgwire_address;
+  const environmentdAddress = current?.environmentd_pgwire_address;
 
   return (
     <Flex flexDir={{ base: "column-reverse", xl: "row" }}>
@@ -28,7 +28,7 @@ const ConnectSteps = (): JSX.Element => {
           <CodeBlock
             contents={`psql "postgres://${encodeURIComponent(
               user.email
-            )}@${coorddAddress}/materialize"`}
+            )}@${environmentdAddress}/materialize"`}
           />
         </ListItem>
         <ListItem>
@@ -50,19 +50,22 @@ const ConnectSteps = (): JSX.Element => {
           !
         </ListItem>
       </OrderedList>
-      {coorddAddress && (
-        <HostInfo coorddAddress={coorddAddress} email={user.email} />
+      {environmentdAddress && (
+        <HostInfo
+          environmentdAddress={environmentdAddress}
+          email={user.email}
+        />
       )}
     </Flex>
   );
 };
 
 type HostInfoProps = {
-  coorddAddress: string;
+  environmentdAddress: string;
   email: string;
 };
 
-const HostInfo = ({ coorddAddress, email }: HostInfoProps) => {
+const HostInfo = ({ environmentdAddress, email }: HostInfoProps) => {
   const bgColor = useColorModeValue("gray.50", "gray.900");
   return (
     <Flex
@@ -78,11 +81,11 @@ const HostInfo = ({ coorddAddress, email }: HostInfoProps) => {
       bg={bgColor}
     >
       <ConnectStepBoxDetail
-        content={coorddAddress.split(":")[0]}
+        content={environmentdAddress.split(":")[0]}
         header="Host"
       />
       <ConnectStepBoxDetail
-        content={coorddAddress.split(":")[1]}
+        content={environmentdAddress.split(":")[1]}
         header="Port"
       />
       <ConnectStepBoxDetail content={email} header="User" />
