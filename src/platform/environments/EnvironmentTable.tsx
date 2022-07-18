@@ -1,8 +1,6 @@
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Button,
-  Code,
-  Input,
   Spinner,
   Table,
   TableContainer,
@@ -28,7 +26,6 @@ interface EnvironmentTableProps {
 }
 
 const EnvironmentTable = (props: EnvironmentTableProps) => {
-  const { user } = useAuth();
   return (
     <TableContainer>
       <Table data-testid="cluster-table" borderRadius="xl">
@@ -64,6 +61,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     status: environmentStatus,
     refetch,
   } = useEnvironmentState(props.region.environmentControllerUrl);
+  const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   const toast = useToast();
   const { region: r } = props;
@@ -92,6 +90,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
 
   const handleCreate = React.useCallback(async () => {
     try {
+      setIsCreatingEnv(true);
       await fetchAuthed(`${r.environmentControllerUrl}/api/environment`, {
         body: JSON.stringify({}),
         headers: {
@@ -99,6 +98,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         },
         method: "POST",
       });
+      setIsCreatingEnv(false);
       setHasCreatedEnv(true);
       await refetch();
       toast({
@@ -107,6 +107,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       });
     } catch (e: any) {
       console.log(e);
+      setIsCreatingEnv(false);
       if (e.status === 400) {
         toast({
           title: "Failed to enable region.",
@@ -125,17 +126,17 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       <Td>
         {!environment && (
           <Button
-            leftIcon={<AddIcon />}
+            leftIcon={isCreatingEnv ? <Spinner size="sm" /> : <AddIcon />}
             colorScheme="purple"
             size="sm"
             float="right"
             onClick={handleCreate}
-            disabled={!canWriteEnvironments}
+            disabled={!canWriteEnvironments || isCreatingEnv}
             title={
               canWriteEnvironments ? "" : "Only admins can enable new regions."
             }
           >
-            Enable region
+            {isCreatingEnv ? "Enabling region..." : "Enable region"}
           </Button>
         )}
         {environment && (
