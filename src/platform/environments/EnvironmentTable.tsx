@@ -19,7 +19,6 @@ import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
 import useEnvironmentState from "../../api/useEnvironmentState";
 import { hasCreatedEnvironment } from "../../recoil/environments";
-import DestroyEnvironmentModal from "./DestroyEnvironmentModal";
 
 interface EnvironmentTableProps {
   regions: SupportedCloudRegion[];
@@ -138,14 +137,6 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
           >
             {isCreatingEnv ? "Enabling region..." : "Enable region"}
           </Button>
-        )}
-        {environment && (
-          <DestroyEnvironmentModal
-            region={r}
-            size="sm"
-            float="right"
-            canWrite={canWriteEnvironments}
-          />
         )}
       </Td>
     </Tr>
