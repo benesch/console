@@ -48,7 +48,7 @@ const CLI = () => {
   };
 
   const onNoClick = () => {
-    const url = `http://localhost:8808/?cancel`;
+    const url = `http://localhost:8808/?secret=&clientId=&description=&email=`;
 
     window.location.assign(url);
   };
