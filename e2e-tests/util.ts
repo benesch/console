@@ -266,7 +266,7 @@ export class TestContext {
 
           await sleep(1000);
 
-          row.locator('button:text("Destroy")').waitFor();
+          await row.locator('button:text("Destroy")').waitFor();
 
           const buttonLabel = await fields.nth(3).innerText();
 
