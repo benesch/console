@@ -13,12 +13,12 @@ import {
 } from "restful-react";
 export const SPEC_VERSION = "0.1.0";
 export interface Environment {
-  coordd_pgwire_address: string;
-  coordd_https_address: string;
+  environmentd_pgwire_address: string;
+  environmentd_https_address: string;
 }
 
 export interface EnvironmentRequest {
-  coordd_image_ref?: string;
+  environmentd_image_ref?: string;
   important?: boolean;
   materializedExtraArgs?: string[];
 }
