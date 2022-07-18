@@ -523,14 +523,4 @@ export class TestContext {
   async exitModal(page: Page) {
     await page.click('[aria-label="Close"]', { force: true });
   }
-
-  /**
-   * Exits the welcome modal
-   * @param page
-   */
-  async exitModalAndEnterRegions(page: Page) {
-    await page.click('[aria-label="Close"]', { force: true });
-    console.log("Closing");
-    await page.click("+ Enable Regions");
-  }
 }
