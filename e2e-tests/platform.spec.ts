@@ -14,7 +14,8 @@ test.afterEach(async ({ page }) => {
 });
 
 test(`connecting to the environment controller`, async ({ page, request }) => {
-  // This is like ten minutes. It is a lot but also it takes a lot to deploy.
+  // This is about fifteen minutes. It is a lot but also it takes a lot to
+  // deploy.
   test.setTimeout(1000000);
 
   const context = await TestContext.start(page, request);
@@ -25,6 +26,10 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
   );
   const password = `mzp_${clientId}${secret}`;
   await page.goto(`${CONSOLE_ADDR}/platform`);
+
+  // May need to re-close the intro modal after navigating to `/platform`.
+  await context.deleteAllPlatformDeploymentsAndExitModal(page);
+  await page.click('button:text("Enable region")');
 
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
