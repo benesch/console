@@ -196,7 +196,8 @@ export class TestContext {
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?: any, alt_addr?: string) {
-    if (new Date().getTime() < this.refreshDeadline.getTime()) {
+    if (new Date().getTime() > this.refreshDeadline.getTime()) {
+      console.log("Refreshing API token");
       const auth = await TestContext.authenticate(this.request);
       this.accessToken = auth.accessToken;
       this.refreshToken = auth.refreshToken;
