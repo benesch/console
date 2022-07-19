@@ -272,16 +272,6 @@ export class TestContext {
         // If the deployment does not exist, it's okay to ignore the error.
         if (e.message.includes("API Error 404")) {
           console.log("Environment already deleted.");
-        } else if (
-          e.message.includes("API Error 504") ||
-          e.message.includes("socket hang up")
-        ) {
-          // The environment controller frequently times out instead of
-          // reporting success. This is unfortunate, and we should fix it, but
-          // this works for now.
-          console.log(
-            "Environment controller timed out. Assuming successful deletion"
-          );
         } else {
           throw e;
         }
