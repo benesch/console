@@ -1,17 +1,33 @@
 import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import React, { useEffect } from "react";
+import { useLocation } from "react-router";
 
 import { useAuth } from "../../api/auth";
 import { PageBreadcrumbs } from "../../layouts/BaseLayout";
 
+const DEFAULT_CLI_URL = "http://localhost:8808";
+
 const CLI = () => {
+  /**
+   * Hooks
+   */
+  const { search } = useLocation();
   const { addUserApiToken } = useApiTokensActions();
   const { user } = useAuth();
   const tokensState = useApiTokensState();
+  const searchParams = React.useMemo(
+    () => new URLSearchParams(search),
+    [search]
+  );
+
+  /**
+   * Vars
+   */
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
   const { email } = user;
   const tokenDescription = "Token for the CLI";
+  const redirectUri = searchParams.get("redirectUri") || DEFAULT_CLI_URL;
 
   /**
    * Redirect to the CLI server after the token is created.
@@ -25,7 +41,7 @@ const CLI = () => {
           const encodedSecret = encodeURIComponent(secret);
           const encodedClientId = encodeURIComponent(clientId);
           const encodedDescription = encodeURIComponent(tokenDescription);
-          const url = `http://localhost:8808/?secret=${encodedSecret}&clientId=${encodedClientId}&description=${encodedDescription}&email=${email}`;
+          const url = `${redirectUri}/?secret=${encodedSecret}&clientId=${encodedClientId}&description=${encodedDescription}&email=${email}`;
 
           window.location.assign(url);
         } else {
@@ -48,7 +64,7 @@ const CLI = () => {
   };
 
   const onNoClick = () => {
-    const url = `http://localhost:8808/?secret=&clientId=&description=&email=`;
+    const url = `${redirectUri}/?secret=&clientId=&description=&email=`;
 
     window.location.assign(url);
   };
