@@ -82,7 +82,27 @@ export class TestContext {
 
     // Provide a clean slate for the test.
     await context.deleteAllDeployments();
-    await context.deleteAllPlatformDeploymentsAndExitModal(page);
+    await context.deleteAllEnvironments();
+
+    // Wait up to 10s for the welcome modal to appear.
+    //
+    // TODO(benesch): this adds an irritating amount of latency to our already
+    // slow end-to-end tests. There must be a better way.
+    let welcomeModal;
+    try {
+      await page.locator('[aria-label="Close"]').waitFor({ timeout: 10000 });
+      welcomeModal = true;
+    } catch {
+      welcomeModal = false;
+    }
+
+    // Close the welcome modal if it was detected.
+    if (welcomeModal) {
+      console.log("Detected welcome modal.");
+      await context.exitModal(page);
+    } else {
+      console.log("Did not detect welcome modal.");
+    }
 
     // Ensure they're on the deployments page, whether the test is for platform or not
     // TODO make start() not deployments-centric once we're in platform world
@@ -176,7 +196,8 @@ export class TestContext {
    * Make an API request using the browser's access token.
    */
   async apiRequest(url: string, request?: any, alt_addr?: string) {
-    if (new Date().getTime() < this.refreshDeadline.getTime()) {
+    if (new Date().getTime() > this.refreshDeadline.getTime()) {
+      console.log("Refreshing API token");
       const auth = await TestContext.authenticate(this.request);
       this.accessToken = auth.accessToken;
       this.refreshToken = auth.refreshToken;
@@ -235,60 +256,11 @@ export class TestContext {
     }
   }
 
-  /** Delete any platform deployment. */
-  async deleteAllPlatformDeploymentsAndExitModal(page: Page) {
-    let modalIsAvailable = false;
-    try {
-      await page.locator('[aria-label="Close"]').waitFor({ timeout: 10000 });
-      modalIsAvailable = true;
-    } catch {
-      console.log("No modal.");
-    } finally {
-      // If no modal is available it means that there are platform deployments
-      if (modalIsAvailable === false) {
-        await page
-          .locator('select[aria-label="Environment"]')
-          .waitFor({ timeout: 10000 });
-
-        await page.selectOption('select[aria-label="Environment"]', {
-          label: "+ Edit Regions",
-        });
-        console.log("Editing regions");
-        await page.waitForSelector("table tbody tr");
-        const regionRows = page.locator("table tbody tr");
-        const regionsNames = [];
-
-        for (let i = 0; i < (await regionRows.count()); i++) {
-          const row = regionRows.nth(i);
-          const fields = row.locator("td");
-          const regionName = await row.locator("td").first().innerText();
-          regionsNames.push(regionName);
-
-          await sleep(1000);
-
-          await row.locator('button:text("Destroy")').waitFor();
-
-          const buttonLabel = await fields.nth(3).innerText();
-
-          if (buttonLabel.startsWith("Destroy")) {
-            await row.locator('button:text("Destroy")').click();
-            const modal = await page.locator(".chakra-portal").nth(1);
-            await modal.locator("input").type(regionName);
-            await modal.locator("button:text('Destroy')").click();
-            await modal.waitFor({ state: "detached" });
-          }
-        }
-      }
-
-      await this.exitModal(page);
-    }
-  }
-
-  /** Delete any existing deployments. */
+  /** Delete any existing environments. */
   async deleteAllEnvironments() {
-    const providersEnvrionments = await this.apiRequest("/cloud-providers");
+    const providers = await this.apiRequest("/cloud-providers");
 
-    for (const { environmentControllerUrl } of providersEnvrionments) {
+    for (const { environmentControllerUrl } of providers) {
       try {
         await this.apiRequest(
           `/environment`,
@@ -297,17 +269,23 @@ export class TestContext {
         );
       } catch (e: unknown) {
         console.error(e);
-        // if the deployment does not exist, it's okay to ignore the error.
-        const deploymentDoesNotExist = e.message.includes("API Error 404");
-        if (!deploymentDoesNotExist) {
+        // If the deployment does not exist, it's okay to ignore the error.
+        if (e.message.includes("API Error 404")) {
+          console.log("Environment already deleted.");
+        } else if (
+          e.message.includes("API Error 504") ||
+          e.message.includes("socket hang up")
+        ) {
+          // The environment controller frequently times out instead of
+          // reporting success. This is unfortunate, and we should fix it, but
+          // this works for now.
+          console.log(
+            "Environment controller timed out. Assuming successful deletion"
+          );
+        } else {
           throw e;
         }
       }
-    }
-
-    // Give time to the environment controller to turn off the environments
-    if (providersEnvrionments.length > 0) {
-      sleep(10000);
     }
   }
 
@@ -521,6 +499,7 @@ export class TestContext {
    * @param page
    */
   async exitModal(page: Page) {
-    await page.click('[aria-label="Close"]', { force: true });
+    // More reliable than clicking the close button, for some reason.
+    await page.keyboard.press("Escape");
   }
 }
