@@ -25,25 +25,23 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
     { method: "POST", data: { description: name } }
   );
   const password = `mzp_${clientId}${secret}`;
-  await page.goto(`${CONSOLE_ADDR}/platform`);
 
-  // May need to re-close the intro modal after navigating to `/platform`.
-  await context.deleteAllPlatformDeploymentsAndExitModal(page);
+  // Navigate to the platform dashboard.
+  await page.click('a:has-text("Dashboard")');
+
+  // Click each enable region button.
   await page.click('button:text("Enable region")');
-
   await page.waitForSelector("table tbody tr");
   const regionRows = page.locator("table tbody tr");
   const regionsNames = [];
-
   for (let i = 0; i < (await regionRows.count()); i++) {
     const row = regionRows.nth(i);
     const regionName = await row.locator("td").first().innerText();
     regionsNames.push(regionName);
 
-    await row.locator('button:text("Enable region")').click({ force: true });
+    await row.locator('button:text("Enable region")').click();
   }
-
-  await page.click("[aria-label='Close']", { force: true });
+  await context.exitModal(page);
 
   for (const regionName of regionsNames) {
     await page.selectOption("[aria-label='Environment']", {
