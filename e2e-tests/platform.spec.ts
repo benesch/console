@@ -3,7 +3,7 @@ import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 
-import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
+import { EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
 /**
  * Setup state storage
@@ -41,7 +41,7 @@ test(`connecting to the environment controller`, async ({ page, request }) => {
 
     await row.locator('button:text("Enable region")').click();
   }
-  await context.exitModal(page);
+  await context.exitModal();
 
   for (const regionName of regionsNames) {
     await page.selectOption("[aria-label='Environment']", {

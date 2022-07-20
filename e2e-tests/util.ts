@@ -4,8 +4,6 @@ import fs from "fs";
 import path from "path";
 import { Client, ClientConfig } from "pg";
 
-import { sleep } from "../frontend/src/util";
-
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
 
 export const IS_KIND =
@@ -13,14 +11,13 @@ export const IS_KIND =
   CONSOLE_ADDR === "http://backend:8000";
 
 export const EMAIL = "infra+cloud-integration-tests@materialize.com";
-
-export const USER_ID = "40065de2-e723-4bda-a411-8cbc1d7f5c14";
-export const TENANT_ID = "d376e19f-64bf-4d39-9268-5f7f1c3ddec4";
-
 // TODO(benesch): avoid hardcoding this password in the repository. There's
 // nothing sensitive in the account, though, so the worst that could happen if
 // leaked is that someone could spin up a bunch of deployments in this account.
 export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
+
+export const USER_ID = "40065de2-e723-4bda-a411-8cbc1d7f5c14";
+export const TENANT_ID = "d376e19f-64bf-4d39-9268-5f7f1c3ddec4";
 
 export const LEGACY_VERSION = "v0.20.0";
 
@@ -59,30 +56,24 @@ export class TestContext {
   refreshToken: string;
   refreshDeadline: Date;
 
-  constructor(
-    page: Page,
-    request: APIRequestContext,
-    auth: FronteggAuthResponse
-  ) {
+  constructor(page: Page, request: APIRequestContext) {
     this.page = page;
     this.request = request;
-    this.accessToken = auth.accessToken;
-    this.refreshToken = auth.refreshToken;
-    this.refreshDeadline = TestContext.calculateRefreshDeadline(auth.expiresIn);
+    this.accessToken = "";
+    this.refreshToken = "";
+    this.refreshDeadline = new Date(0);
   }
 
   /** Start a new test. */
   static async start(page: Page, request: APIRequestContext) {
-    const [auth] = await Promise.all([
-      TestContext.authenticate(request),
-      page.goto(CONSOLE_ADDR),
-    ]);
-
-    const context = new TestContext(page, request, auth);
+    const context = new TestContext(page, request);
 
     // Provide a clean slate for the test.
     await context.deleteAllDeployments();
     await context.deleteAllEnvironments();
+
+    // Navigate to the home page.
+    await page.goto(CONSOLE_ADDR);
 
     // Wait up to 10s for the welcome modal to appear.
     //
@@ -99,7 +90,7 @@ export class TestContext {
     // Close the welcome modal if it was detected.
     if (welcomeModal) {
       console.log("Detected welcome modal.");
-      await context.exitModal(page);
+      await context.exitModal();
     } else {
       console.log("Did not detect welcome modal.");
     }
@@ -112,9 +103,13 @@ export class TestContext {
     return context;
   }
 
-  static async authenticate(request: APIRequestContext) {
+  async ensureAuthenticated() {
+    if (new Date().getTime() < this.refreshDeadline.getTime()) {
+      return;
+    }
+
     const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
-    const response = await request.post(authUrl, {
+    const response = await this.request.post(authUrl, {
       data: {
         email: EMAIL,
         password: PASSWORD,
@@ -127,6 +122,7 @@ export class TestContext {
       // TODO: figure out why we see occasional timeouts and remove this.
       timeout: 61 * 1000,
     });
+
     const text = await response.text();
     let auth: FronteggAuthResponse;
     try {
@@ -135,28 +131,22 @@ export class TestContext {
       console.error(`Invalid json from ${authUrl}:\n${text}`);
       throw e as SyntaxError;
     }
-    return auth;
-  }
 
-  static calculateRefreshDeadline(expiresIn: number) {
-    // Use the expiresIn instead of expires, since expires is a hard to work with string.
-    const expires = new Date();
-    expires.setUTCSeconds(expires.getUTCSeconds() + expiresIn / 2);
-    return expires;
+    this.accessToken = auth.accessToken;
+    this.refreshToken = auth.refreshToken;
+    // Use the expiresIn instead of expires, since expires is a hard to work
+    // with string.
+    this.refreshDeadline = new Date();
+    this.refreshDeadline.setUTCSeconds(
+      this.refreshDeadline.getUTCSeconds() + auth.expiresIn / 2
+    );
   }
 
   /**
-   * Make a Frontegg API request using the browser's access token.
+   * Make an authenticated Frontegg API request.
    */
   async fronteggRequest(url: string, request?: any) {
-    if (new Date().getTime() < this.refreshDeadline.getTime()) {
-      const auth = await TestContext.authenticate(this.request);
-      this.accessToken = auth.accessToken;
-      this.refreshToken = auth.refreshToken;
-      this.refreshDeadline = TestContext.calculateRefreshDeadline(
-        auth.expiresIn
-      );
-    }
+    await this.ensureAuthenticated();
     url = `https://${adminPortalHost()}${url}`;
     request = {
       ...request,
@@ -193,19 +183,11 @@ export class TestContext {
   }
 
   /**
-   * Make an API request using the browser's access token.
+   * Make an authenticated API request.
    */
-  async apiRequest(url: string, request?: any, alt_addr?: string) {
-    if (new Date().getTime() > this.refreshDeadline.getTime()) {
-      console.log("Refreshing API token");
-      const auth = await TestContext.authenticate(this.request);
-      this.accessToken = auth.accessToken;
-      this.refreshToken = auth.refreshToken;
-      this.refreshDeadline = TestContext.calculateRefreshDeadline(
-        auth.expiresIn
-      );
-    }
-    url = `${alt_addr || CONSOLE_ADDR}/api${url}`;
+  async apiRequest(url: string, request?: any, baseUrl?: string) {
+    await this.ensureAuthenticated();
+    url = `${baseUrl || CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
       headers: {
@@ -244,6 +226,7 @@ export class TestContext {
   async deleteAllDeployments() {
     const deployments = await this.apiRequest("/deployments");
     for (const d of deployments) {
+      console.log(`Deleting deployment ${d.id}`);
       try {
         await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
       } catch (e: unknown) {
@@ -261,6 +244,7 @@ export class TestContext {
     const providers = await this.apiRequest("/cloud-providers");
 
     for (const { environmentControllerUrl } of providers) {
+      console.log(`Deleting environment from ${environmentControllerUrl}`);
       try {
         await this.apiRequest(
           `/environment`,
@@ -269,7 +253,7 @@ export class TestContext {
         );
       } catch (e: unknown) {
         console.error(e);
-        // If the deployment does not exist, it's okay to ignore the error.
+        // If the environment does not exist, it's okay to ignore the error.
         if (e.message.includes("API Error 404")) {
           console.log("Environment already deleted.");
         } else {
@@ -488,8 +472,8 @@ export class TestContext {
    * Exits the welcome modal
    * @param page
    */
-  async exitModal(page: Page) {
+  async exitModal() {
     // More reliable than clicking the close button, for some reason.
-    await page.keyboard.press("Escape");
+    await this.page.keyboard.press("Escape");
   }
 }
