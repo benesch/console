@@ -277,6 +277,10 @@ const semanticColors = {
       light: colors.gray[100],
     },
   },
+  grayText: {
+    light: colors.gray[500],
+    dark: colors.gray[200],
+  },
 };
 
 const shadows = {

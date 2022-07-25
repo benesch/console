@@ -1,13 +1,6 @@
-import {
-  Code,
-  Flex,
-  ListItem,
-  OrderedList,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Code, Flex, useColorModeValue, VStack } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
-import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 
 import CodeBlock from "../../components/CodeBlock";
@@ -18,27 +11,27 @@ import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();
   const [current, _] = useRecoilState(currentEnvironment);
+
   const environmentdAddress = current?.environmentd_pgwire_address;
 
   return (
-    <Flex flexDir={{ base: "column-reverse", xl: "row" }}>
-      <OrderedList spacing="6" type="a" flex="1">
-        <ListItem>
+    <Flex flexDir={{ base: "column", xl: "row" }}>
+      <VStack
+        alignItems="flex-start"
+        spacing={4}
+        flex="1"
+        mb={{ base: 8, xl: 0 }}
+      >
+        <Box>
           In your terminal, enter:
           <CodeBlock
             contents={`psql "postgres://${encodeURIComponent(
               user.email
             )}@${environmentdAddress}/materialize"`}
           />
-        </ListItem>
-        <ListItem>
-          Paste in your app-specific password when prompted. If you don&apos;t
-          have one yet you can{" "}
-          <Link to="/access">
-            <TextLink>generate one here</TextLink>!
-          </Link>
-        </ListItem>
-        <ListItem>
+        </Box>
+        <Box>Paste in your Materialize key when prompted.</Box>
+        <Box>
           Try out <Code>SHOW CLUSTERS;</Code> and{" "}
           <TextLink
             href="https://materialize.com/docs/unstable/get-started/"
@@ -48,8 +41,8 @@ const ConnectSteps = (): JSX.Element => {
             get started
           </TextLink>
           !
-        </ListItem>
-      </OrderedList>
+        </Box>
+      </VStack>
       {environmentdAddress && (
         <HostInfo
           environmentdAddress={environmentdAddress}

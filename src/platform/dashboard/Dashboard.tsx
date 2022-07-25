@@ -14,7 +14,6 @@ import {
   PageHeading,
 } from "../../layouts/BaseLayout";
 import { currentEnvironment } from "../../recoil/environments";
-import ConnectButton from "./Connect";
 import MetricsCard from "./MetricsCard";
 
 const Dashboard = () => {
@@ -39,7 +38,6 @@ const Dashboard = () => {
             </Text>
           </VStack>
           <Spacer />
-          <ConnectButton />
         </HStack>
       </PageHeader>
       <VStack pb={6}>

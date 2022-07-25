@@ -18,8 +18,9 @@ import {
 } from "../../layouts/BaseLayout";
 import EnvironmentSelectField from "../../layouts/EnvironmentSelect";
 import { currentEnvironment } from "../../recoil/environments";
-import AdditionalSteps from "./AdditionalSteps";
+import { semanticColors } from "../../theme/colors";
 import ConnectSteps from "./ConnectSteps";
+import PasswordStep from "./PasswordStep";
 import StarterEnvironmentModal from "./StarterEnvironmentModal";
 import StepsWhileLoading from "./StepsWhileLoading";
 
@@ -28,7 +29,11 @@ const Home = () => {
   const { status: environmentStatus } = useEnvironmentState(
     current?.environmentControllerUrl
   );
-  const grayText = useColorModeValue("gray.600", "gray.200");
+
+  const grayText = useColorModeValue(
+    semanticColors.grayText.light,
+    semanticColors.grayText.dark
+  );
 
   return (
     <>
@@ -56,17 +61,16 @@ const Home = () => {
         {environmentStatus === "Enabled" && (
           <>
             <Card>
-              <CardHeader>Connect</CardHeader>
+              <CardHeader>Connect to Materialize</CardHeader>
               <CardContent>
+                <PasswordStep mb={4} />
                 <ConnectSteps />
               </CardContent>
             </Card>
-            <Card>
-              <AdditionalSteps />
-            </Card>
           </>
         )}
-        {environmentStatus === "Starting" && <StepsWhileLoading />}
+        {(environmentStatus === "Starting" ||
+          environmentStatus === "Loading") && <StepsWhileLoading />}
         {!current && environmentStatus === "Not enabled" && (
           <Box textAlign="center">
             <EnvironmentSelectField size="lg" margin="auto" />

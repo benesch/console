@@ -45,15 +45,11 @@ const AppPasswordsPage = () => {
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
 
-  const tokens = React.useMemo(() => {
-    return tokensState.apiTokensDataUser;
-  }, [tokensState.apiTokensDataUser]);
-
   const newPassword = React.useMemo(() => {
     if (createInProgress) {
       return "";
     }
-    if (tokensState && tokensState.successDialog) {
+    if (tokensState.successDialog) {
       const { clientId, secret } = tokensState.successDialog;
       const formattedClientId = (clientId || "").replaceAll("-", "");
       const formattedSecret = (secret || "").replaceAll("-", "");
@@ -94,7 +90,7 @@ const AppPasswordsPage = () => {
           <HStack spacing="5" alignItems="top" display="flex">
             <VStack flex="1" spacing="5" minWidth="0">
               <PasswordsTable
-                tokens={tokens}
+                tokens={tokensState.apiTokensDataUser}
                 latestDeletionId={latestDeletionId}
                 deleteCb={deleteCb}
               />
