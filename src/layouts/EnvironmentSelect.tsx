@@ -34,7 +34,7 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
     } else {
       setCurrent(
         environments.find(
-          (env) => environmentValue === env.environmentd_https_address
+          (env) => environmentValue === env.environmentdHttpsAddress
         ) || null
       );
     }
@@ -68,13 +68,13 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
           name="environment-select"
           size="md"
           {...props}
-          value={current?.environmentd_https_address || ""}
+          value={current?.environmentdHttpsAddress || ""}
           onChange={selectHandler}
         >
           {environments.map((e) => (
             <option
-              key={e.environmentd_https_address}
-              value={e.environmentd_https_address}
+              key={e.environmentdHttpsAddress}
+              value={e.environmentdHttpsAddress}
               data-testid="environment-option"
             >
               {e.provider}/{e.region}

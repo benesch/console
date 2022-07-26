@@ -13,13 +13,13 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
-test(`connecting to the environment controller`, async ({ page, request }) => {
+test(`enable region`, async ({ page, request }) => {
   // This is about fifteen minutes. It is a lot but also it takes a lot to
   // deploy.
   test.setTimeout(1000000);
 
   const context = await TestContext.start(page, request);
-  const name = "Environment controller test token";
+  const name = "enable region test token";
   const { clientId, secret } = await context.fronteggRequest(
     "/identity/resources/users/api-tokens/v1",
     { method: "POST", data: { description: name } }

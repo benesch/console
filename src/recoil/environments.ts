@@ -2,6 +2,7 @@ import { atom } from "recoil";
 
 import { SupportedCloudRegion } from "../api/backend";
 import { Environment } from "../api/environment-controller";
+import { EnvironmentAssignment } from "../api/region-controller";
 import keys from "./keyConstants";
 
 export type EnvironmentStatus =
@@ -10,7 +11,9 @@ export type EnvironmentStatus =
   | "Enabled"
   | "Not enabled";
 
-export type RegionEnvironment = SupportedCloudRegion & Environment;
+export type RegionEnvironment = EnvironmentAssignment &
+  Environment &
+  SupportedCloudRegion;
 
 export const currentEnvironment = atom<RegionEnvironment | null>({
   key: keys.CURRENT_ENVIRONMENT,

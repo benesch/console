@@ -70,7 +70,7 @@ export class TestContext {
 
     // Provide a clean slate for the test.
     await context.deleteAllDeployments();
-    await context.deleteAllEnvironments();
+    await context.deleteAllEnvironmentAssignments();
 
     // Navigate to the home page.
     await page.goto(CONSOLE_ADDR);
@@ -239,23 +239,23 @@ export class TestContext {
     }
   }
 
-  /** Delete any existing environments. */
-  async deleteAllEnvironments() {
+  /** Delete any existing EnvironmentAssignments. */
+  async deleteAllEnvironmentAssignments() {
     const providers = await this.apiRequest("/cloud-providers");
 
-    for (const { environmentControllerUrl } of providers) {
-      console.log(`Deleting environment from ${environmentControllerUrl}`);
+    for (const { regionControllerUrl } of providers) {
+      console.log(`Deleting EnvironmentAssignment from ${regionControllerUrl}`);
       try {
         await this.apiRequest(
-          `/environment`,
+          `/environmentassignment`,
           { method: "DELETE" },
-          environmentControllerUrl
+          regionControllerUrl
         );
       } catch (e: unknown) {
         console.error(e);
         // If the environment does not exist, it's okay to ignore the error.
         if (e.message.includes("API Error 404")) {
-          console.log("Environment already deleted.");
+          console.log("EnvironmentAssignment already deleted.");
         } else {
           throw e;
         }

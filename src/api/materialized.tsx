@@ -98,7 +98,7 @@ export function useSqlOnCoordinator(
 ) {
   return useSqlInternal(
     sql,
-    environment && environment.environmentd_https_address
+    environment && environment.environmentdHttpsAddress
   );
 }
 
@@ -109,7 +109,7 @@ export function useSqlOnCoordinator(
  */
 export function useSql(sql: string | undefined) {
   const [current, _] = useRecoilState(currentEnvironment);
-  return useSqlInternal(sql, current && current.environmentd_https_address);
+  return useSqlInternal(sql, current && current.environmentdHttpsAddress);
 }
 
 export interface Cluster {

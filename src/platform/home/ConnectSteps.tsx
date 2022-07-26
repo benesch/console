@@ -28,7 +28,7 @@ const ConnectSteps = (): JSX.Element => {
     semanticColors.divider.dark
   );
 
-  const environmentdAddress = current?.environmentd_pgwire_address;
+  const environmentdAddress = current?.environmentdPgwireAddress;
 
   const selectHandler: ChangeEventHandler<HTMLSelectElement> =
     React.useCallback((e) => {

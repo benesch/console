@@ -17,7 +17,7 @@ import { useRecoilState } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { SupportedCloudRegion } from "../../api/backend";
-import useEnvironmentState from "../../api/useEnvironmentState";
+import { useRegionEnvironmentState } from "../../api/useEnvironmentState";
 import { hasCreatedEnvironment } from "../../recoil/environments";
 
 interface EnvironmentTableProps {
@@ -37,7 +37,7 @@ const EnvironmentTable = (props: EnvironmentTableProps) => {
         </Thead>
         <Tbody>
           {props.regions.map((r) => (
-            <RegionEnvironmentRow key={r.environmentControllerUrl} region={r} />
+            <RegionEnvironmentRow key={r.regionControllerUrl} region={r} />
           ))}
         </Tbody>
       </Table>
@@ -59,7 +59,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
     environment,
     status: environmentStatus,
     refetch,
-  } = useEnvironmentState(props.region.environmentControllerUrl);
+  } = useRegionEnvironmentState(props.region.regionControllerUrl);
   const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   const toast = useToast();
@@ -90,7 +90,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
   const handleCreate = React.useCallback(async () => {
     try {
       setIsCreatingEnv(true);
-      await fetchAuthed(`${r.environmentControllerUrl}/api/environment`, {
+      await fetchAuthed(`${r.regionControllerUrl}/api/environmentassignment`, {
         body: JSON.stringify({}),
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         });
       }
     }
-  }, [r.environmentControllerUrl]);
+  }, [r.regionControllerUrl]);
 
   return (
     <Tr>
