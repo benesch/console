@@ -41,7 +41,7 @@ const ConnectSteps = (): JSX.Element => {
         <ListItem>
           Try out <Code>SHOW CLUSTERS;</Code> and{" "}
           <TextLink
-            href="https://materialize.com/docs/get-started/"
+            href="https://materialize.com/docs/unstable/get-started/"
             target="_blank"
             rel="noopener noreferrer"
           >
