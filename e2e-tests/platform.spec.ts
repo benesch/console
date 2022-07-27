@@ -86,6 +86,9 @@ async function connectRegionPostgres(
   page: Page,
   password: string
 ): Promise<Client> {
+  await page.selectOption("[aria-label='Connection option']", {
+    label: "external tool",
+  });
   const hostAddress = await page
     .locator("data-test-id=cs_Host >> button >> p")
     .innerText();

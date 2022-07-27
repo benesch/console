@@ -17,9 +17,13 @@ const ConnectStepBoxDetail = (props: Props): JSX.Element => {
     "gray.700"
   );
   return (
-    <Box height="fit-content" flex="1 1 50px" data-test-id={"cs_" + header}>
+    <Box
+      height="fit-content"
+      flex={{ base: "1 1 50%", md: "1 1 50px" }}
+      data-test-id={"cs_" + header}
+    >
       <Text
-        fontSize={{ base: "sm", md: "md", xl: "sm" }}
+        fontSize={{ base: "sm", md: "md" }}
         color={headerTextColor}
         borderBottom="1px"
         borderColor={borderColor}
@@ -29,7 +33,7 @@ const ConnectStepBoxDetail = (props: Props): JSX.Element => {
       </Text>
       <Box pb={1} overflow="hidden">
         <CopyableText
-          fontSize={{ base: "xs", md: "sm", xl: "xs" }}
+          fontSize={{ base: "xs", md: "sm" }}
           overflowWrap="break-word"
           overflow="hidden"
           width="100%"

@@ -64,7 +64,8 @@ const CodeBlock = ({ wrap, lineNumbers, contents, ...props }: Props) => {
       <CopyButton contents={contents} />
       <chakra.pre
         fontSize="sm"
-        p="3"
+        p={4}
+        pr="84px"
         overflow="auto"
         sx={{ wordWrap: "normal" }}
         {...preProps}
