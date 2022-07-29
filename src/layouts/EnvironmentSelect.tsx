@@ -1,27 +1,23 @@
 import {
-  Button,
   ButtonProps,
   Select,
   SelectProps,
   Spinner,
   useInterval,
 } from "@chakra-ui/react";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler } from "react";
 import { useRecoilState } from "recoil";
 
-import { useEnvironments } from "../api/environment-controller-fetch";
-import EnvironmentListModal from "../platform/environments/EnvironmentsListModal";
+import useAvailableEnvironments from "../api/useAvailableEnvironments";
 import { currentEnvironment } from "../recoil/environments";
 
 const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
-  const { environments, refetch, canWriteEnvironments, canReadEnvironments } =
-    useEnvironments();
-  const [modalState, setModalState] = useState(false);
+  const { environments, activeEnvironments, refetch, canReadEnvironments } =
+    useAvailableEnvironments();
   useInterval(refetch, 5000);
-  const editEnvValue = "+ Edit Regions";
 
-  if (environments === null) {
+  if (!environments || environments.length < 1) {
     return <Spinner />;
   }
 
@@ -29,69 +25,43 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
     const { target } = e;
     const { value: environmentValue } = target;
 
-    if (environmentValue === editEnvValue) {
-      setModalState(true);
-    } else {
-      setCurrent(
-        environments.find(
-          (env) => environmentValue === env.environmentdHttpsAddress
-        ) || null
-      );
-    }
+    setCurrent(
+      environments?.find(
+        (env) =>
+          environmentValue === `${env.region.provider}/${env.region.region}`
+      ) || null
+    );
   };
 
-  const closeHandler = () => {
-    setModalState(false);
-    refetch();
-  };
+  if (
+    (activeEnvironments && activeEnvironments.length < 1 && !current) ||
+    !canReadEnvironments
+  ) {
+    return null;
+  }
 
-  const enableHandler = () => {
-    setModalState(true);
-  };
-
-  return canReadEnvironments ? (
-    <>
-      {environments.length < 1 && canWriteEnvironments ? (
-        <>
-          <Button
-            size="md"
-            {...props}
-            onClick={enableHandler}
-            variant="gradient-1"
-          >
-            + Enable Region
-          </Button>
-        </>
-      ) : (
-        <Select
-          aria-label="Environment"
-          name="environment-select"
-          size="md"
-          {...props}
-          value={current?.environmentdHttpsAddress || ""}
-          onChange={selectHandler}
+  return (
+    <Select
+      aria-label="Environment"
+      name="environment-select"
+      size="md"
+      {...props}
+      value={
+        current ? `${current.region.provider}/${current.region.region}` : ""
+      }
+      onChange={selectHandler}
+    >
+      {environments.map(({ region }) => (
+        <option
+          key={`${region.provider}/${region.region}`}
+          value={`${region.provider}/${region.region}`}
+          data-testid="environment-option"
         >
-          {environments.map((e) => (
-            <option
-              key={e.environmentdHttpsAddress}
-              value={e.environmentdHttpsAddress}
-              data-testid="environment-option"
-            >
-              {e.provider}/{e.region}
-            </option>
-          ))}
-          <option
-            key="edit_regions"
-            value={editEnvValue}
-            data-testid="edit-option"
-          >
-            + Edit Regions
-          </option>
-        </Select>
-      )}
-      <EnvironmentListModal isOpen={modalState} onClose={closeHandler} />
-    </>
-  ) : null;
+          {region.provider}/{region.region}
+        </option>
+      ))}
+    </Select>
+  );
 };
 
 export default EnvironmentSelectField;

@@ -108,26 +108,6 @@ export class TestContext {
     // Navigate to the home page.
     await page.goto(CONSOLE_ADDR);
 
-    // Wait up to 10s for the welcome modal to appear.
-    //
-    // TODO(benesch): this adds an irritating amount of latency to our already
-    // slow end-to-end tests. There must be a better way.
-    let welcomeModal;
-    try {
-      await page.locator('[aria-label="Close"]').waitFor({ timeout: 10000 });
-      welcomeModal = true;
-    } catch {
-      welcomeModal = false;
-    }
-
-    // Close the welcome modal if it was detected.
-    if (welcomeModal) {
-      console.log("Detected welcome modal.");
-      await context.exitModal();
-    } else {
-      console.log("Did not detect welcome modal.");
-    }
-
     // Ensure they're on the deployments page, whether the test is for platform or not
     // TODO make start() not deployments-centric once we're in platform world
     await page.click('a:has-text("Deployments")');
@@ -509,14 +489,5 @@ export class TestContext {
   async assertDeploymentSize(expectedSize: string) {
     const size = await this.readDeploymentField("Size");
     expect(size).toEqual(expectedSize);
-  }
-
-  /**
-   * Exits the welcome modal
-   * @param page
-   */
-  async exitModal() {
-    // More reliable than clicking the close button, for some reason.
-    await this.page.keyboard.press("Escape");
   }
 }

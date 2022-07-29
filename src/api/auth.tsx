@@ -15,6 +15,11 @@ import {
 import { versionHeaders } from "../version/api";
 import { Organization } from "./backend";
 
+export type FetchAuthedType = (
+  input: RequestInfo,
+  init?: RequestInit
+) => Promise<Response>;
+
 /**
  * The authentication state.
  *
@@ -34,7 +39,7 @@ export interface IAuthContext extends AuthState {
    * The API of `fetchAuthed` is identical to `window.fetch`, except that the
    * credentials of the current user, if any, will be attached to the request.
    */
-  fetchAuthed(input: RequestInfo, init?: RequestInit): Promise<Response>;
+  fetchAuthed: FetchAuthedType;
 }
 
 export interface AuthProviderProps {

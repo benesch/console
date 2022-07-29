@@ -46,7 +46,7 @@ const useMetricsRetrieve = ({
     if (!current) return;
     try {
       const response = await fetchAuthed(
-        `${current?.environmentControllerUrl}/api/metrics/${type}?period=${period}`,
+        `${current?.assignment?.environmentControllerUrl}/api/metrics/${type}?period=${period}`,
         {
           method: "GET",
           headers: {

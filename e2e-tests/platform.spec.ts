@@ -30,19 +30,20 @@ test(`enable region`, async ({ page, request }) => {
   await page.click('a:has-text("Dashboard")');
 
   // Click each enable region button.
-  await page.click('button:text("Enable region")');
-  await page.waitForSelector("table tbody tr");
-  const regionRows = page.locator("table tbody tr");
+  await page.waitForSelector(
+    "[data-test-id='regions-list'] .regions-list-item"
+  );
+  const regionRows = page.locator(
+    "[data-testid='regions-list'] .regions-list-item"
+  );
   const regionsNames = [];
   for (let i = 0; i < (await regionRows.count()); i++) {
     const row = regionRows.nth(i);
-    const regionName = await row.locator("td").first().innerText();
+    const regionName = await row.locator(" > div").first().innerText();
     regionsNames.push(regionName);
 
     await row.locator('button:text("Enable region")').click();
   }
-  await context.exitModal();
-
   for (const regionName of regionsNames) {
     await page.selectOption("[aria-label='Environment']", {
       label: regionName,
