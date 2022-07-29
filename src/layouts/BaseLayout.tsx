@@ -103,28 +103,31 @@ const NavBar = () => {
           order={2}
           flex={1}
           height="full"
-          minWidth={200}
+          minWidth={{ base: 7, md: "140px" }}
         >
           <VStack
             position="relative"
             flex="0 0 24px"
-            mr={{ base: 1, md: 2, lg: 4 }}
+            mr={{ base: 1, md: 2, lg: 2 }}
           >
-            <chakra.img src={logo} height={{ sm: 6, md: 9 }}></chakra.img>
+            <chakra.img
+              src={logo}
+              height={{ base: 6, md: 9 }}
+              aria-label="Logo"
+            ></chakra.img>
             <WhatsNew
               position="absolute"
               top={{ base: -5, md: -4 }}
               right={{ base: -3, md: -4 }}
             />
           </VStack>
-          <VStack spacing="-7px" align="flex-start">
-            <Text fontWeight="700" fontSize="md">
-              Materialize Cloud
-            </Text>
-            <Text fontWeight="400" fontSize="sm" color="gray.200">
-              private beta
-            </Text>
-          </VStack>
+          <Text
+            fontWeight="700"
+            fontSize="md"
+            display={{ base: "none", md: "block" }}
+          >
+            Materialize
+          </Text>
         </HStack>
         <NavMenu />
         <HStack spacing={{ base: 2, md: 5 }} order={2}>
