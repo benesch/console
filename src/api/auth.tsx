@@ -5,6 +5,7 @@
 
 import { useAuth as useFronteggAuth } from "@frontegg/react";
 import { AuthState, User } from "@frontegg/redux-store";
+import type { ITenantsResponse } from "@frontegg/rest-api";
 import React from "react";
 import {
   RestfulProvider as BaseRestfulProvider,
@@ -113,4 +114,15 @@ export function hasEnvironmentWritePermission(user: User): boolean {
   return !!user.permissions.find(
     (permission) => permission.key === "materialize.environment.write"
   );
+}
+
+export function getCurrentTenant(
+  user: User,
+  tenants: ITenantsResponse[]
+): ITenantsResponse {
+  const tenant = tenants.find((tenant) => tenant.tenantId === user.tenantId);
+  if (!tenant) {
+    throw new Error(`Unknown tenant: ${user.tenantId}`);
+  }
+  return tenant;
 }
