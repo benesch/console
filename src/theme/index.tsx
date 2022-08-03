@@ -16,7 +16,6 @@ import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
 
 import logo from "../../img/wordmark.svg";
-import LoginFooter from "../layouts/LoginFooter";
 import SignupFooter from "../layouts/SignupFooter";
 import colors, { gradients, semanticColors, shadows } from "./colors";
 import * as components from "./components";
@@ -84,9 +83,6 @@ const fronteggTheme: FronteggThemeOptions = {
   loginBox: {
     boxStyle: {
       backgroundColor: "white",
-    },
-    login: {
-      boxFooter: () => <LoginFooter />,
     },
     signup: {
       boxFooter: () => SignupFooter,
