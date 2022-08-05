@@ -52,7 +52,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@playwright/test": "^1.17.1",
+    "@playwright/test": "^1.24.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.2",
@@ -94,7 +94,7 @@
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
     "build": "cd frontend && NODE_ENV=production webpack",
     "test:unit": "cd frontend && jest",
-    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test --workers=1",
+    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",

@@ -1,4 +1,4 @@
-import { APIRequestContext, expect, Page } from "@playwright/test";
+import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
@@ -10,18 +10,47 @@ export const IS_KIND =
   CONSOLE_ADDR === "http://localhost:8000" ||
   CONSOLE_ADDR === "http://backend:8000";
 
-export const EMAIL = "infra+cloud-integration-tests@materialize.com";
+export const PULUMI_STACK = (() => {
+  const url = new URL(CONSOLE_ADDR);
+  if (IS_KIND) {
+    return "staging";
+  } else {
+    const hostnameRe = /^([^.]+)?\.?(staging)?\.?cloud.materialize.com$/;
+    const matches = url.hostname.match(hostnameRe);
+    return !matches ? "staging" : matches[1] || matches[2] || "production";
+  }
+})();
+
 // TODO(benesch): avoid hardcoding this password in the repository. There's
 // nothing sensitive in the account, though, so the worst that could happen if
 // leaked is that someone could spin up a bunch of deployments in this account.
-export const PASSWORD = "4PbT*fgq2fLNkNLLq3vnqqvj";
+export const PASSWORD = "_f-X={oK8=>[MS@0";
+
+// TODO: figure out the stack name:
+export const EMAIL = () =>
+  `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_WORKER_INDEX}@materialize.com`;
+
+export const STATE_NAME = `state-${process.env.TEST_WORKER_INDEX}.json`;
+
+export const ensureLoggedIn = async (page: Page) => {
+  // Wait up to two minutes for the page to become available initially, as
+  // Webpack can take a while to compile in CI.
+  await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 2 });
+  await page.type("[name=email]", EMAIL());
+  await page.press("[name=email]", "Enter");
+  await page.waitForSelector("[name=password]"); // wait for animation
+  await page.type("[name=password]", PASSWORD);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.press("[name=password]", "Enter"),
+  ]);
+  await page.context().storageState({ path: STATE_NAME });
+};
 
 export const USER_ID = "40065de2-e723-4bda-a411-8cbc1d7f5c14";
 export const TENANT_ID = "d376e19f-64bf-4d39-9268-5f7f1c3ddec4";
 
 export const LEGACY_VERSION = "v0.20.0";
-
-export const STATE_NAME = "state.json";
 
 const adminPortalHost = () => {
   if (IS_KIND) {
@@ -68,6 +97,7 @@ export class TestContext {
   static async start(page: Page, request: APIRequestContext) {
     const context = new TestContext(page, request);
 
+    await ensureLoggedIn(page);
     // Provide a clean slate for the test.
     await context.deleteAllDeployments();
     await context.deleteAllEnvironmentAssignments();
@@ -111,7 +141,7 @@ export class TestContext {
     const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const response = await this.request.post(authUrl, {
       data: {
-        email: EMAIL,
+        email: EMAIL(),
         password: PASSWORD,
       },
 
@@ -218,6 +248,7 @@ export class TestContext {
       return null;
     } else {
       // we already consume the body as text, so we need to parse manually
+      console.log("API response to", url, responsePayload);
       return JSON.parse(responsePayload);
     }
   }
@@ -356,7 +387,7 @@ export class TestContext {
 
     // Attempt PostgreSQL connection to Materialize.
     const pgParams: ClientConfig = {
-      user: EMAIL,
+      user: EMAIL(),
       host: hostname || undefined,
       port: Number(port) || undefined,
       database: "materialize",

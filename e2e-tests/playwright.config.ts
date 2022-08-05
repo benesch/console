@@ -8,7 +8,8 @@ const config: PlaywrightTestConfig = {
     storageState: "state.json",
     trace: "retain-on-failure",
   },
-  workers: 1,
+  workers: 5,
+  fullyParallel: true,
 };
 
 export default config;
