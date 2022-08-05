@@ -37,7 +37,7 @@ const StepsWhileLoading = () => {
     <Flex flexDirection="column" alignItems="flex-start">
       <Alert status="info" rounded="md" width="fit-content" p={4} marginTop={2}>
         <AlertIcon />
-        Deployments can take a few minutes. In the meantime, here are some next
+        New regions can take a few minutes to set up. In the meantime, here are some next
         steps!
       </Alert>
       <Box py={8} margin="auto" width="100%">
