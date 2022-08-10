@@ -31,9 +31,9 @@ export const PASSWORD = (() => {
 })();
 
 export const EMAIL = () =>
-  `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_WORKER_INDEX}@materialize.com`;
+  `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_PARALLEL_INDEX}@materialize.com`;
 
-export const STATE_NAME = `state-${process.env.TEST_WORKER_INDEX}.json`;
+export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
 
 export const ensureLoggedIn = async (page: Page) => {
   // Wait up to two minutes for the page to become available initially, as
