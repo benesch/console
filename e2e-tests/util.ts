@@ -21,12 +21,15 @@ export const PULUMI_STACK = (() => {
   }
 })();
 
-// TODO(benesch): avoid hardcoding this password in the repository. There's
-// nothing sensitive in the account, though, so the worst that could happen if
-// leaked is that someone could spin up a bunch of deployments in this account.
-export const PASSWORD = "_f-X={oK8=>[MS@0";
+export const PASSWORD = (() => {
+  if (!process.env.E2E_TEST_PASSWORD) {
+    throw new Error(
+      `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets e2e_test_user_password' to retrieve the value.`
+    );
+  }
+  return process.env.E2E_TEST_PASSWORD;
+})();
 
-// TODO: figure out the stack name:
 export const EMAIL = () =>
   `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_WORKER_INDEX}@materialize.com`;
 
