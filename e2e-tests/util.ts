@@ -251,7 +251,6 @@ export class TestContext {
       return null;
     } else {
       // we already consume the body as text, so we need to parse manually
-      console.log("API response to", url, responsePayload);
       return JSON.parse(responsePayload);
     }
   }
