@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
     acceptDownloads: true,
     trace: "retain-on-failure",
   },
-  workers: 3, // More workers than that might not be advisable on a kind cluster.
+  workers: 5,
   fullyParallel: true,
 };
 
