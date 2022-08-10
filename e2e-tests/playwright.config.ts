@@ -5,7 +5,6 @@ const config: PlaywrightTestConfig = {
   timeout: 900000, // 15 minutes
   use: {
     acceptDownloads: true,
-    storageState: "state.json",
     trace: "retain-on-failure",
   },
   workers: 5,
