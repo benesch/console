@@ -1,4 +1,5 @@
 import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
+import CacheableLookup from "cacheable-lookup";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
@@ -354,22 +355,28 @@ export class TestContext {
     const certsZip = await download.path();
     await extract(certsZip, { dir: path.resolve("scratch") });
 
+    const dns = new CacheableLookup({
+      maxTtl: 0, // always re-lookup
+      errorTtl: 0,
+    });
+
     // Attempt PostgreSQL connection to Materialize.
-    const pgParams: ClientConfig = {
-      user: "materialize",
-      host: hostname || undefined,
-      port: Number(port) || undefined,
-      database: "materialize",
-      ssl: {
-        ca: fs.readFileSync("scratch/ca.crt", "utf8"),
-        key: fs.readFileSync("scratch/materialize.key", "utf8"),
-        cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
-        rejectUnauthorized: false,
-      },
-      connectionTimeoutMillis: 10000,
-      query_timeout: 10000,
-    };
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 5 * 60; i++) {
+      const entry = hostname && (await dns.lookupAsync(hostname));
+      const pgParams: ClientConfig = {
+        user: "materialize",
+        host: entry ? entry.address : undefined,
+        port: Number(port) || undefined,
+        database: "materialize",
+        ssl: {
+          ca: fs.readFileSync("scratch/ca.crt", "utf8"),
+          key: fs.readFileSync("scratch/materialize.key", "utf8"),
+          cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
+          rejectUnauthorized: false,
+        },
+        connectionTimeoutMillis: 10000,
+        query_timeout: 10000,
+      };
       try {
         const client = new Client(pgParams);
         await client.connect();
@@ -386,19 +393,23 @@ export class TestContext {
     // Determine hostname and port.
     const hostname = await this.readDeploymentField("Hostname");
     const port = await this.readDeploymentField("Port");
+    const dns = new CacheableLookup({
+      maxTtl: 0, // always re-lookup
+      errorTtl: 0,
+    });
 
-    // Attempt PostgreSQL connection to Materialize.
-    const pgParams: ClientConfig = {
-      user: EMAIL(),
-      host: hostname || undefined,
-      port: Number(port) || undefined,
-      database: "materialize",
-      password,
-      ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
-      connectionTimeoutMillis: 10000,
-      query_timeout: 10000,
-    };
     for (let i = 0; i < 60; i++) {
+      const entry = hostname && (await dns.lookupAsync(hostname));
+      const pgParams: ClientConfig = {
+        user: EMAIL(),
+        host: entry ? entry.address : undefined,
+        port: Number(port) || undefined,
+        database: "materialize",
+        password,
+        ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
+        connectionTimeoutMillis: 10000,
+        query_timeout: 10000,
+      };
       try {
         const client = new Client(pgParams);
         await client.connect();
