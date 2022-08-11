@@ -361,22 +361,22 @@ export class TestContext {
 
     // Attempt PostgreSQL connection to Materialize.
     for (let i = 0; i < 5 * 60; i++) {
-      const entry = hostname && (await dns.lookupAsync(hostname));
-      const pgParams: ClientConfig = {
-        user: "materialize",
-        host: entry ? entry.address : undefined,
-        port: Number(port) || undefined,
-        database: "materialize",
-        ssl: {
-          ca: fs.readFileSync("scratch/ca.crt", "utf8"),
-          key: fs.readFileSync("scratch/materialize.key", "utf8"),
-          cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
-          rejectUnauthorized: false,
-        },
-        connectionTimeoutMillis: 10000,
-        query_timeout: 10000,
-      };
       try {
+        const entry = hostname && (await dns.lookupAsync(hostname));
+        const pgParams: ClientConfig = {
+          user: "materialize",
+          host: entry ? entry.address : undefined,
+          port: Number(port) || undefined,
+          database: "materialize",
+          ssl: {
+            ca: fs.readFileSync("scratch/ca.crt", "utf8"),
+            key: fs.readFileSync("scratch/materialize.key", "utf8"),
+            cert: fs.readFileSync("scratch/materialize.crt", "utf8"),
+            rejectUnauthorized: false,
+          },
+          connectionTimeoutMillis: 10000,
+          query_timeout: 10000,
+        };
         const client = new Client(pgParams);
         await client.connect();
         return client;
@@ -398,18 +398,18 @@ export class TestContext {
     });
 
     for (let i = 0; i < 60; i++) {
-      const entry = hostname && (await dns.lookupAsync(hostname));
-      const pgParams: ClientConfig = {
-        user: EMAIL,
-        host: entry ? entry.address : undefined,
-        port: Number(port) || undefined,
-        database: "materialize",
-        password,
-        ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
-        connectionTimeoutMillis: 10000,
-        query_timeout: 10000,
-      };
       try {
+        const entry = hostname && (await dns.lookupAsync(hostname));
+        const pgParams: ClientConfig = {
+          user: EMAIL,
+          host: entry ? entry.address : undefined,
+          port: Number(port) || undefined,
+          database: "materialize",
+          password,
+          ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
+          connectionTimeoutMillis: 10000,
+          query_timeout: 10000,
+        };
         const client = new Client(pgParams);
         await client.connect();
         return client;
