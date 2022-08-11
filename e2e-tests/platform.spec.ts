@@ -112,7 +112,7 @@ async function connectRegionPostgres(
       try {
         const entry = await dns.lookupAsync(url.hostname);
         const pgParams = {
-          user: EMAIL(),
+          user: EMAIL,
           host: entry.address,
           port: parseInt(port, 10),
           database: database,

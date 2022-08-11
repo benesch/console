@@ -31,8 +31,7 @@ export const PASSWORD = (() => {
   return process.env.E2E_TEST_PASSWORD;
 })();
 
-export const EMAIL = () =>
-  `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_PARALLEL_INDEX}@materialize.com`;
+export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-${process.env.TEST_PARALLEL_INDEX}@materialize.com`;
 
 export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
 
@@ -40,7 +39,7 @@ export const ensureLoggedIn = async (page: Page) => {
   // Wait up to two minutes for the page to become available initially, as
   // Webpack can take a while to compile in CI.
   await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 2 });
-  await page.type("[name=email]", EMAIL());
+  await page.type("[name=email]", EMAIL);
   await page.press("[name=email]", "Enter");
   await page.waitForSelector("[name=password]"); // wait for animation
   await page.type("[name=password]", PASSWORD);
@@ -145,7 +144,7 @@ export class TestContext {
     const authUrl = `https://${adminPortalHost()}/identity/resources/auth/v1/user`;
     const response = await this.request.post(authUrl, {
       data: {
-        email: EMAIL(),
+        email: EMAIL,
         password: PASSWORD,
       },
 
@@ -401,7 +400,7 @@ export class TestContext {
     for (let i = 0; i < 60; i++) {
       const entry = hostname && (await dns.lookupAsync(hostname));
       const pgParams: ClientConfig = {
-        user: EMAIL(),
+        user: EMAIL,
         host: entry ? entry.address : undefined,
         port: Number(port) || undefined,
         database: "materialize",
