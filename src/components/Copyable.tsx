@@ -8,6 +8,7 @@ import { HStack, Text, TextProps } from "@chakra-ui/layout";
 import {
   Button,
   ButtonProps,
+  IconButton,
   useClipboard,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -96,22 +97,20 @@ export const CopyButton = ({ contents, ...props }: CopyButtonProps) => {
   const buttonBg = useColorModeValue("white", "black");
 
   return (
-    <Button
-      leftIcon={<CopyIcon />}
-      opacity="0"
+    <IconButton
+      icon={<CopyIcon />}
+      opacity="0.75"
       position="absolute"
-      _groupHover={{ opacity: 1 }}
       size="xs"
       bg={buttonBg}
       colorScheme="purple"
       variant="outline"
       top="2"
       right="2"
-      transition="opacity 0.1s"
       {...props}
       onClick={onCopy}
-    >
-      Copy
-    </Button>
+      title="Copy"
+      aria-label="Copy"
+    />
   );
 };
