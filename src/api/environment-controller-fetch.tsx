@@ -3,13 +3,19 @@ import React from "react";
 import { useRecoilState } from "recoil";
 
 import { currentEnvironment, environmentList } from "../recoil/environments";
-import { useAuth } from "./auth";
+import {
+  hasEnvironmentReadPermission,
+  hasEnvironmentWritePermission,
+  useAuth,
+} from "./auth";
 import { SupportedCloudRegion, useCloudProvidersList } from "./backend";
 import { Environment } from "./environment-controller";
 
 /* eslint-disable import/prefer-default-export */
 export const useEnvironments = () => {
-  const { fetchAuthed } = useAuth();
+  const { user, fetchAuthed } = useAuth();
+  const canReadEnvironments = hasEnvironmentReadPermission(user);
+  const canWriteEnvironments = hasEnvironmentWritePermission(user);
   const [current, setCurrent] = useRecoilState(currentEnvironment);
   const [environments, setEnvironments] = useRecoilState(environmentList);
   const {
@@ -81,6 +87,8 @@ export const useEnvironments = () => {
     environments,
     current,
     refetch,
+    canReadEnvironments,
+    canWriteEnvironments,
     error: {
       message: `${
         error && error?.message ? `${error.message}, ` : ""

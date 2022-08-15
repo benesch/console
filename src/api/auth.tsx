@@ -110,9 +110,23 @@ export const RestfulProvider = (props: RestfulProviderProps) => {
   );
 };
 
-export function hasEnvironmentWritePermission(user: User): boolean {
+export function hasEnvironmentReadPermission(user: User): boolean {
+  const isMaterializeEmployee = user.email.endsWith("@materialize.com");
   return !!user.permissions.find(
-    (permission) => permission.key === "materialize.environment.write"
+    (permission) =>
+      permission.key === "materialize.environment.read" ||
+      // TODO: Once we assigned the correct user roles to materialize folks, delete this
+      (isMaterializeEmployee && permission.key == "materialize.legacy.read")
+  );
+}
+
+export function hasEnvironmentWritePermission(user: User): boolean {
+  const isMaterializeEmployee = user.email.endsWith("@materialize.com");
+  return !!user.permissions.find(
+    (permission) =>
+      permission.key === "materialize.environment.write" ||
+      // TODO: Once we assigned the correct user roles to materialize folks, delete this
+      (isMaterializeEmployee && permission.key == "materialize.legacy.write")
   );
 }
 
