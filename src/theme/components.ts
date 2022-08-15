@@ -134,6 +134,12 @@ const menuListBase = (props: StyleFunctionProps) => {
 export const Menu = {
   baseStyle: (props: StyleFunctionProps) => ({
     list: menuListBase(props),
+    groupTitle: {
+      textTransform: "uppercase",
+      fontSize: "0.9em",
+      marginInlineStart: "0.8rem",
+      marginInlineEnd: "0.8rem",
+    },
   }),
   defaultProps: {
     colorScheme: "gray",
