@@ -15,7 +15,8 @@ import { currentEnvironment } from "../recoil/environments";
 
 const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
-  const { environments, refetch } = useEnvironments();
+  const { environments, refetch, canWriteEnvironments, canReadEnvironments } =
+    useEnvironments();
   const [modalState, setModalState] = useState(false);
   useInterval(refetch, 5000);
   const editEnvValue = "+ Edit Regions";
@@ -48,9 +49,9 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
     setModalState(true);
   };
 
-  return (
+  return canReadEnvironments ? (
     <>
-      {environments.length < 1 ? (
+      {environments.length < 1 && canWriteEnvironments ? (
         <>
           <Button
             size="md"
@@ -90,7 +91,7 @@ const EnvironmentSelectField = (props: ButtonProps & SelectProps) => {
       )}
       <EnvironmentListModal isOpen={modalState} onClose={closeHandler} />
     </>
-  );
+  ) : null;
 };
 
 export default EnvironmentSelectField;
