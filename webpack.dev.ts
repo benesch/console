@@ -28,4 +28,7 @@ module.exports = merge(base, {
       overlay: { sockPort: 3000 },
     }),
   ],
+  output: {
+    publicPath: "/static/frontend/",
+  },
 });

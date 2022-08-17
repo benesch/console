@@ -72,7 +72,7 @@ const config: Configuration = {
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist", "frontend"),
-    publicPath: "/static/frontend/",
+    publicPath: "auto",
   },
 };
 
