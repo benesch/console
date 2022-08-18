@@ -12,6 +12,7 @@ export interface GlobalConfig {
   sentryEnvironment: string | null;
   sentryRelease: string | null;
   googleAnalyticsId: string | null;
+  statuspageId: string;
   releaseNotesRootURL: string | null;
   lastReleaseNoteId: string | null;
   isDevelopment: boolean | null;

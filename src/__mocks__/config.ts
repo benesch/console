@@ -6,6 +6,7 @@ export const globalConfigStub: GlobalConfig = {
   sentryDsn: "https://sentry.io/sentry-key",
   sentryEnvironment: "sentry-environment",
   sentryRelease: "sentry-release",
+  statuspageId: "statuspage-dummy-id",
   googleAnalyticsId: "google-analytics-id",
   releaseNotesRootURL: null,
   lastReleaseNoteId: null,
