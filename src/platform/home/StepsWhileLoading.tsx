@@ -60,14 +60,14 @@ const StepsWhileLoading = () => {
           <Card>
             <LinkBox as="article" {...interimStepStyles}>
               <LinkOverlay
-                href="https://materialize.com/docs/quickstarts/"
+                href="https://materialize.com/docs/unstable/get-started/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <CardHeader>2. Check our quickstart demos</CardHeader>
+                <CardHeader>2. Follow our Get Started guide</CardHeader>
                 <CardContent>
-                  Our demos can help you turn your ideas into something real
-                  more quickly!
+                  Connect a streaming source and create your first materialized
+                  view in seconds.
                 </CardContent>
               </LinkOverlay>
             </LinkBox>
