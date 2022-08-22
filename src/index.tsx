@@ -12,6 +12,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
+import StatusPageWidget from "./components/StatusPageWidget";
 import FronteggWrappedContents from "./fronteggWrappedContents";
 import * as theme from "./theme";
 
@@ -41,6 +42,7 @@ ReactDOM.render(
         <FronteggWrappedContents baseUrl={config.fronteggUrl} />
       </ChakraProvider>
     </BrowserRouter>
+    <StatusPageWidget id={config.statuspageId} />
   </>,
   root
 );
