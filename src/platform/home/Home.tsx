@@ -8,6 +8,7 @@ import { PageBreadcrumbs } from "../../layouts/BaseLayout";
 import EnvironmentSelectField from "../../layouts/EnvironmentSelect";
 import { currentEnvironment } from "../../recoil/environments";
 import ConnectSteps from "./ConnectSteps";
+import GetStartedDocs from "./GetStartedDocs";
 import PasswordStep from "./PasswordStep";
 import StarterEnvironmentModal from "./StarterEnvironmentModal";
 import StepsWhileLoading from "./StepsWhileLoading";
@@ -23,15 +24,16 @@ const Home = () => {
       <PageBreadcrumbs />
       <VStack spacing={6} mb={6}>
         {environmentStatus === "Enabled" && (
-          <>
-            <Card>
-              <CardHeader>Connect to Materialize</CardHeader>
-              <CardContent>
-                <PasswordStep mb={4} />
+          <Card>
+            <CardHeader>Connect to Materialize</CardHeader>
+            <CardContent>
+              <VStack spacing={4} alignItems="stretch">
+                <PasswordStep />
                 <ConnectSteps />
-              </CardContent>
-            </Card>
-          </>
+                <GetStartedDocs />
+              </VStack>
+            </CardContent>
+          </Card>
         )}
         {(environmentStatus === "Starting" ||
           environmentStatus === "Loading") && <StepsWhileLoading />}
