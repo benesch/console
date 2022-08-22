@@ -20,7 +20,6 @@ export const dummyValidUser: User = {
 
 export const dummyValidOrganization = {
   id: "org",
-  admitted: true,
   deploymentLimit: 100,
   trialExpiresAt: null,
 };
