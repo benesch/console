@@ -76,7 +76,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
 };
 
 const NavBar = () => {
-  const { organization } = useAuth();
+  const { organization, platformEnabled } = useAuth();
   const borderWidth = useColorModeValue("0", "1px");
   const borderColor = useColorModeValue("transparent", "gray.700");
 
@@ -98,7 +98,7 @@ const NavBar = () => {
       >
         <HStack
           as={RouterLink}
-          to={organization.platformEnabled ? "/platform/" : "/"}
+          to={platformEnabled ? "/platform" : "/"}
           mr={2}
           order={2}
           flex={1}

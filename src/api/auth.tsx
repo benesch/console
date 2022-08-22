@@ -61,7 +61,8 @@ export const AuthProvider = ({
       },
     });
   const platformEnabled =
-    user.email.endsWith("@materialize.com") || organization.platformEnabled;
+    user.email.endsWith("@materialize.com") ||
+    user.roles.some((role) => role.name.startsWith("MaterializePlatform"));
 
   return (
     <AuthContext.Provider
