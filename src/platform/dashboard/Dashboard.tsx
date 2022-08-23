@@ -33,7 +33,7 @@ const Dashboard = () => {
             <PageHeading>Dashboard</PageHeading>
             <Text fontSize="md" textColor={grayText}>
               {current
-                ? `${current?.provider}/${current?.region}`
+                ? `${current?.region.provider}/${current?.region.region}`
                 : "No region active"}
             </Text>
           </VStack>

@@ -8,23 +8,12 @@ import {
 } from "../recoil/environments";
 import getDefaultEnvironment from "../utils/platform";
 import { Environment, useEnvironmentsList } from "./environment-controller";
-import { useEnvironments } from "./environment-controller-fetch";
 import { useSqlOnCoordinator } from "./materialized";
 
 type EnvironmentState = {
   environment?: Environment;
   refetch: () => Promise<any>;
   status: EnvironmentStatus;
-};
-
-export const useRegionEnvironmentState = (
-  regionControllerUrl: string | undefined
-): EnvironmentState => {
-  const { environments } = useEnvironments();
-  return useEnvironmentState(
-    environments?.find((env) => env.regionControllerUrl === regionControllerUrl)
-      ?.environmentControllerUrl
-  );
 };
 
 const useEnvironmentState = (

@@ -11,9 +11,16 @@ export type EnvironmentStatus =
   | "Enabled"
   | "Not enabled";
 
-export type RegionEnvironment = EnvironmentAssignment &
-  Environment &
-  SupportedCloudRegion;
+export type RegionEnvironment = {
+  region: SupportedCloudRegion;
+  assignment?: EnvironmentAssignment;
+  env?: Environment;
+};
+
+export type ActiveRegionEnvironment = RegionEnvironment & {
+  assignment: EnvironmentAssignment;
+  env: Environment;
+};
 
 export const currentEnvironment = atom<RegionEnvironment | null>({
   key: keys.CURRENT_ENVIRONMENT,
@@ -22,6 +29,11 @@ export const currentEnvironment = atom<RegionEnvironment | null>({
 
 export const environmentList = atom<RegionEnvironment[] | null>({
   key: keys.ENVIRONMENTS,
+  default: null,
+});
+
+export const activeEnvironmentList = atom<ActiveRegionEnvironment[] | null>({
+  key: keys.ACTIVE_ENVIRONMENTS,
   default: null,
 });
 
