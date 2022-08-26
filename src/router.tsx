@@ -18,6 +18,7 @@ import CLI from "./access/cli";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
+import config from "./config";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
 import { BaseLayout } from "./layouts/BaseLayout";
@@ -49,7 +50,7 @@ const Router = () => {
           <RedirectToHome />
         </Route>
       </ProtectedSwitch>
-      <AnalyticsOnEveryPage config={window.CONFIG} />
+      <AnalyticsOnEveryPage config={config} />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { GlobalConfig } from "../types";
+import { GlobalConfig } from "../config";
 
 /**
  * A generic analytics event emitter

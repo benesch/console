@@ -1,6 +1,7 @@
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
-import { Configuration } from "webpack";
+import { Configuration, DefinePlugin } from "webpack";
 
 const additionalPlugins = [];
 let additionalTSOptions: { [index: string]: any } = {};
@@ -21,6 +22,28 @@ if (process.env.SOURCE_MAPS) {
   // Ensure the Typescript compiler knows to generate source maps
   additionalTSOptions = require("./tsconfig.json");
   additionalTSOptions.compilerOptions.sourceMap = true;
+}
+
+const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
+  favicon: "public/favicon.ico",
+  template: "public/index.html",
+};
+
+// Webpack doesn't export this type, so extract it from the function
+type RuntimeValue = ReturnType<typeof DefinePlugin.runtimeValue>;
+
+export interface IDefinePluginOptions
+  extends Record<string, string | RuntimeValue> {
+  __FRONTEGG_URL__: string | RuntimeValue;
+  __SEGMENT_API_KEY__: string;
+  __SENTRY_DSN__: string;
+  __SENTRY_ENVIRONMENT__: string;
+  __SENTRY_RELEASE__: string;
+  __STATUSPAGE_ID__: string;
+  __GOOGLE_ANALYTICS_ID__: string;
+  __RELEASE_NOTES_ROOT_URL__: string;
+  __LAST_RELEASE_NOTE_ID__: string;
+  __IS_DEVELOPMENT__: string;
 }
 
 const config: Configuration = {
@@ -54,7 +77,11 @@ const config: Configuration = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin(), ...additionalPlugins],
+  plugins: [
+    new HtmlWebpackPlugin(HtmlWebpackPluginOptions),
+    new MiniCssExtractPlugin(),
+    ...additionalPlugins,
+  ],
   optimization: {
     splitChunks: {
       cacheGroups: {

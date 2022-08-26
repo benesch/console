@@ -6,7 +6,7 @@ test("admin requires authentication", async ({ page }) => {
   await page.goto(CONSOLE_ADDR + "/admin");
 
   if (
-    CONSOLE_ADDR.startsWith("http://backend") ||
+    CONSOLE_ADDR.startsWith("http://frontend") ||
     CONSOLE_ADDR.startsWith("http://localhost")
   ) {
     console.log(

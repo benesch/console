@@ -2,24 +2,18 @@
 
 /**
  * Required configuration properties for the frontend.
- *
- * These are set by the backend on `window.CONFIG`.
  */
-export interface GlobalConfig {
-  fronteggUrl: string;
-  segmentApiKey: string | null;
-  sentryDsn: string | null;
-  sentryEnvironment: string | null;
-  sentryRelease: string | null;
-  googleAnalyticsId: string | null;
-  statuspageId: string;
-  releaseNotesRootURL: string | null;
-  lastReleaseNoteId: string | null;
-  isDevelopment: boolean | null;
-}
+export {};
 
 declare global {
-  interface Window {
-    CONFIG: GlobalConfig;
-  }
+  const __FRONTEGG_URL__: string;
+  const __SEGMENT_API_KEY__: string | null;
+  const __SENTRY_DSN__: string | null;
+  const __SENTRY_ENVIRONMENT__: string | null;
+  const __SENTRY_RELEASE__: string | null;
+  const __GOOGLE_ANALYTICS_ID__: string | null;
+  const __STATUSPAGE_ID__: string;
+  const __RELEASE_NOTES_ROOT_URL__: string | null;
+  const __LAST_RELEASE_NOTE_ID__: string | null;
+  const __IS_DEVELOPMENT__: boolean | null;
 }

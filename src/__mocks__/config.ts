@@ -1,4 +1,7 @@
-import { GlobalConfig } from "../types";
+import type { GlobalConfig } from "../config";
+import * as configModule from "../config";
+
+const mockConfig = configModule as { default: GlobalConfig };
 
 export const globalConfigStub: GlobalConfig = {
   fronteggUrl: "https://frontegg.com",
@@ -14,8 +17,12 @@ export const globalConfigStub: GlobalConfig = {
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {
-  window.CONFIG = {
-    ...(window.CONFIG || {}),
+  jest.mock("./config", () => ({
+    __esModule: true,
+    default: null,
+  }));
+  mockConfig.default = {
+    ...((configModule as any).config as GlobalConfig),
     ...globalConfigStub,
     ...overrides,
   };

@@ -1,15 +1,15 @@
-import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
+import { APIRequestContext, expect, Page } from "@playwright/test";
 import CacheableLookup from "cacheable-lookup";
 import extract from "extract-zip";
 import fs from "fs";
 import path from "path";
 import { Client, ClientConfig } from "pg";
 
-export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:8000";
+export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:3000";
 
 export const IS_KIND =
-  CONSOLE_ADDR === "http://localhost:8000" ||
-  CONSOLE_ADDR === "http://backend:8000";
+  CONSOLE_ADDR === "http://localhost:3000" ||
+  CONSOLE_ADDR === "http://frontend:3000";
 
 export const PULUMI_STACK = (() => {
   const url = new URL(CONSOLE_ADDR);

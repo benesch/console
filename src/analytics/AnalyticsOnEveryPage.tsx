@@ -2,7 +2,7 @@ import { useAuth } from "@frontegg/react";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
 
-import { GlobalConfig } from "../types";
+import { GlobalConfig } from "../config";
 import useAnalyticsClients from "./hook";
 import { AnalyticsClient } from "./types";
 

@@ -9,11 +9,15 @@ import {
 } from "./releaseNote";
 
 const baseConfig = { releaseNotesRootURL: "https://materialize.com/eng/blog" };
-mockGlobalConfig(baseConfig);
 
 describe("What's New", () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
   describe("release notes", () => {
     test("getReleaseNotesRootURL should return the blog url from the global config", () => {
+      mockGlobalConfig(baseConfig);
       const url = getReleaseNotesRootURL();
       expect(url).toBe("https://materialize.com/eng/blog");
     });

@@ -1,6 +1,6 @@
 import ReactGA from "react-ga";
 
-import { GlobalConfig } from "../types";
+import { GlobalConfig } from "../config";
 import { AnalyticsClient } from "./types";
 
 export default class GAAnalyticsClient extends AnalyticsClient {

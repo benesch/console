@@ -1,10 +1,12 @@
+import config from "../../config";
+
 export const LAST_RELEASENOTEID_KEY = "mz_last_releasenoteid";
 
 export const getReleaseNotesRootURL = (): string | null => {
-  return window.CONFIG.releaseNotesRootURL;
+  return config.releaseNotesRootURL;
 };
 export const getMostRecentReleaseNoteId = (): string | null => {
-  return window.CONFIG.lastReleaseNoteId;
+  return config.lastReleaseNoteId;
 };
 
 export const getLastAckReleaseNoteId = (): string | null =>

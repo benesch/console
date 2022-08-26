@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { GlobalConfig } from "../types";
+import { GlobalConfig } from "../config";
 import GAAnalyticsClient from "./googleAnalytics";
 import SegmentAnalyticsClient from "./segment";
 import { AnalyticsClient } from "./types";
