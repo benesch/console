@@ -1,12 +1,15 @@
 import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
+import { GetDataError } from "restful-react";
 
 import {
   activeEnvironmentList,
   ActiveRegionEnvironment,
   currentEnvironment,
   environmentList,
+  EnvironmentStatus,
+  environmentStatusMap,
   RegionEnvironment,
 } from "../recoil/environments";
 import {
@@ -17,14 +20,33 @@ import {
 } from "./auth";
 import { SupportedCloudRegion, useCloudProvidersList } from "./backend";
 import { Environment } from "./environment-controller";
+import { executeSql, Results } from "./materialized";
 import { EnvironmentAssignment } from "./region-controller";
+import { getStatusFromSQLResponse } from "./useEnvironmentState";
+
+type AvailableEnvironmentsData = {
+  environments: RegionEnvironment[] | null;
+  activeEnvironments: RegionEnvironment[] | null;
+  statusMap: { [key: string]: EnvironmentStatus };
+  current: RegionEnvironment | null;
+  refetch: () => void;
+  canReadEnvironments: boolean;
+  canWriteEnvironments: boolean;
+  error: {
+    message: string;
+    data: {
+      providerError: GetDataError<unknown> | null;
+      regionEnvErrors: string | null;
+    };
+  };
+};
 
 /*
  * Get all activateable environments across providers.
  * This first contacts all providers' regionControllerUrl to get their environment assignor(s).
  * Then it contacts those assignors via their environmentControllerUrl to get the actual environments.
  */
-const useAvailableEnvironments = () => {
+const useAvailableEnvironments = (): AvailableEnvironmentsData => {
   const { user, fetchAuthed } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
@@ -33,6 +55,8 @@ const useAvailableEnvironments = () => {
   const [activeEnvironments, setActiveEnvironments] = useRecoilState(
     activeEnvironmentList
   );
+  const [statusMap, setStatusMap] = useRecoilState(environmentStatusMap);
+  const hasPingedSet = React.useRef<Set<string>>(new Set());
   const {
     data: regions,
     error,
@@ -41,6 +65,58 @@ const useAvailableEnvironments = () => {
 
   const envErrorMessages = [];
   let regionEnvErrorMessage = "";
+
+  const fetchEnvStatuses = React.useCallback(() => {
+    if (environments) {
+      environments.map(async (env) => {
+        let newStatus: EnvironmentStatus = "Not enabled";
+        let data: Results | null = null;
+        const idString = `${env.region.provider}/${env.region.region}`;
+        if (env.env?.environmentdHttpsAddress) {
+          if (!hasPingedSet.current.has(idString)) {
+            setStatusMap((currentStatusMap) => {
+              return {
+                ...currentStatusMap,
+                [idString]: "Loading",
+              };
+            });
+          }
+          executeSql(
+            env.env.environmentdHttpsAddress,
+            "SELECT 1",
+            fetchAuthed
+          ).then(({ results }) => {
+            data = results;
+            newStatus = getStatusFromSQLResponse(
+              data,
+              env?.env,
+              hasPingedSet.current.has(idString)
+            );
+            setStatusMap((currentStatusMap) => {
+              return {
+                ...currentStatusMap,
+                [idString]: newStatus,
+              };
+            });
+          });
+
+          hasPingedSet.current.add(idString);
+        } else {
+          newStatus = getStatusFromSQLResponse(
+            data,
+            env?.env,
+            hasPingedSet.current.has(idString)
+          );
+          setStatusMap((currentStatusMap) => {
+            return {
+              ...currentStatusMap,
+              [idString]: newStatus,
+            };
+          });
+        }
+      });
+    }
+  }, [environments, hasPingedSet, fetchAuthed]);
 
   const fetchRegionEnvironments = React.useCallback(
     async (region: SupportedCloudRegion): Promise<RegionEnvironment[]> => {
@@ -57,11 +133,13 @@ const useAvailableEnvironments = () => {
               await fetchEnvironments(assignment, fetchAuthed);
             errorMessage && envErrorMessages.push(errorMessage);
             // ...and frob the data into fully-fledged RegionEnvironments!
-            return envs.map((env) => ({
-              env,
-              assignment,
-              region,
-            }));
+            return envs.map((env) => {
+              return {
+                env,
+                assignment,
+                region,
+              };
+            });
           })
         );
         return activeEnvs.flat();
@@ -107,11 +185,15 @@ const useAvailableEnvironments = () => {
     }
     setEnvironments(envs);
     setActiveEnvironments(activeEnvs);
-  }, [regions, fetchRegionEnvironments]);
+  }, [regions, current, setCurrent, fetchRegionEnvironments]);
 
   React.useEffect(() => {
     fetchAllEnvironments();
   }, [regions]);
+
+  React.useEffect(() => {
+    fetchEnvStatuses();
+  }, [environments]);
 
   if (error || regionEnvErrorMessage) {
     console.warn(
@@ -123,14 +205,16 @@ const useAvailableEnvironments = () => {
 
   const refetch = React.useCallback(async () => {
     await refetchProviders();
-    await fetchAllEnvironments();
-  }, [refetchProviders, fetchAllEnvironments]);
+    fetchAllEnvironments();
+  }, [refetchProviders, fetchAllEnvironments, fetchEnvStatuses]);
 
   useInterval(refetch, 5000);
+  useInterval(fetchEnvStatuses, 5000);
 
   return {
     environments: canReadEnvironments ? environments : [],
     activeEnvironments: canReadEnvironments ? activeEnvironments : [],
+    statusMap,
     current,
     refetch,
     canReadEnvironments,
