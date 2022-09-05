@@ -35,32 +35,36 @@ const ConnectSteps = (): JSX.Element => {
       setConnectionOption(e.target.value as ConnectionOption);
     }, []);
 
-  const instructions = React.useMemo(() => {
-    // switch is pretty overkill atm, but someday there'll be more
-    // pre-baked connection options
-    switch (connectionOption) {
-      case "psql":
-        return (
-          <CodeBlock
-            contents={`psql "postgres://${encodeURIComponent(
-              user.email
-            )}@${environmentdAddress}/materialize"`}
+  if (!user) {
+    return <Spinner />;
+  }
+
+  // switch is pretty overkill atm, but someday there'll be more
+  // pre-baked connection options
+  let instructions;
+  switch (connectionOption) {
+    case "psql":
+      instructions = (
+        <CodeBlock
+          contents={`psql "postgres://${encodeURIComponent(
+            user.email
+          )}@${environmentdAddress}/materialize"`}
+        />
+      );
+      break;
+    case "other":
+      if (environmentdAddress) {
+        instructions = (
+          <HostInfo
+            environmentdAddress={environmentdAddress}
+            email={user.email}
           />
         );
-      case "other":
-        if (environmentdAddress) {
-          return (
-            <HostInfo
-              environmentdAddress={environmentdAddress}
-              email={user.email}
-            />
-          );
-        }
-        break;
-      default:
-        throw new Error(`Unhandled connection option: ${connectionOption}`);
-    }
-  }, [connectionOption, current]);
+      }
+      break;
+    default:
+      throw new Error(`Unhandled connection option: ${connectionOption}`);
+  }
 
   return environmentdAddress ? (
     <VStack
