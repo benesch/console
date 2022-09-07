@@ -9,7 +9,7 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
-test(`creating and using an app password`, async ({ page, request }) => {
+test(`managing api keys`, async ({ page, request }) => {
   const context = await TestContext.start(page, request);
   const now = new Date().getTime();
   const name = `Integration test token ${now}`;
@@ -29,23 +29,6 @@ test(`creating and using an app password`, async ({ page, request }) => {
   const password = await passwordField.evaluate((e) => e.textContent);
   const appPasswords = await context.listAllKeys();
   console.log("app passwords now", appPasswords);
-
-  await page.goto(`${CONSOLE_ADDR}/deployments`);
-  const deployment = await context.apiRequest("/deployments", {
-    method: "POST",
-    data: {
-      cloudProviderRegion: {
-        provider: provider,
-        region: `${region}`,
-      },
-      skipMtlsAuth: true,
-    },
-  });
-  await page.click(`text=${deployment.name}`);
-  await context.waitForDeploymentHealthy();
-  await page.waitForSelector("text=Generate an app-specific password");
-  const version = await context.readDeploymentField("Version");
-  await context.assertDeploymentMzVersion(version, password);
 
   // Delete key
   await page.goto(`${CONSOLE_ADDR}/access`);
