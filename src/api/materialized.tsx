@@ -52,6 +52,7 @@ function useSqlInternal(
       const responseText = await response.text();
 
       if (response.status === 400) {
+        setResults(null);
         setError(responseText || defaultError);
       } else {
         const parsedResponse = JSON.parse(responseText);
@@ -80,6 +81,8 @@ function useSqlInternal(
   }
 
   useEffect(() => {
+    // If either the location or the query changed, past results aren't valid anymore.
+    setResults(null);
     executeSql();
   }, [address, sql]);
 
