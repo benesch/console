@@ -24,7 +24,7 @@ enum DashboardState {
 }
 
 for (const region of PLATFORM_REGIONS) {
-  test.fixme(`use region ${region}`, async ({ page, request }) => {
+  test(`use region ${region}`, async ({ page, request }) => {
     test.setTimeout(1000000); // spinning up a region can be slow.
 
     const context = await TestContext.start(page, request);
