@@ -105,13 +105,9 @@ export class TestContext {
     await context.deleteAllDeployments();
     await context.deleteAllEnvironmentAssignments();
 
-    // Navigate to the home page.
+    // Navigate to the home page && wait for that to load.
     await page.goto(CONSOLE_ADDR);
-
-    // Ensure they're on the deployments page, whether the test is for platform or not
-    // TODO make start() not deployments-centric once we're in platform world
-    await page.click('a:has-text("Deployments")');
-    await page.waitForSelector("text=No deployments yet");
+    await page.waitForSelector('text="Dashboard"');
 
     return context;
   }

@@ -13,6 +13,7 @@ test.afterEach(async ({ page }) => {
 for (const region of regions) {
   test(`upgrade deployment in ${region}`, async ({ page, request }) => {
     const context = await TestContext.start(page, request);
+    await page.click('a:has-text("Deployments")');
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Use a raw API request to create a deployment running an old version.
