@@ -250,11 +250,13 @@ export class TestContext {
     const providers = await this.apiRequest("/cloud-providers");
 
     for (const { regionControllerUrl } of providers) {
-      console.log(`Deleting EnvironmentAssignment from ${regionControllerUrl}`);
+      console.log(
+        `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
+      );
       try {
         await this.apiRequest(
           `/environmentassignment`,
-          { method: "DELETE" },
+          { method: "DELETE", timeout: 5 * 60000 },
           regionControllerUrl
         );
       } catch (e: unknown) {
