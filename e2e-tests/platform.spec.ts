@@ -3,7 +3,7 @@ import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 
-import { EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
+import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
 /**
  * Setup state storage
@@ -13,44 +13,107 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
-test(`enable region`, async ({ page, request }) => {
-  // This is about fifteen minutes. It is a lot but also it takes a lot to
-  // deploy.
-  test.setTimeout(1000000);
+const PLATFORM_REGIONS = IS_KIND
+  ? ["local/kind"]
+  : ["AWS/us-east-1", "AWS/eu-west-1"];
 
-  const context = await TestContext.start(page, request);
-  const name = "enable region test token";
-  const { clientId, secret } = await context.fronteggRequest(
-    "/identity/resources/users/api-tokens/v1",
-    { method: "POST", data: { description: name } }
-  );
-  const password = `mzp_${clientId}${secret}`;
+enum DashboardState {
+  NoRegions,
+  SomeRegionsActive,
+  ThisRegionActive,
+}
 
-  // Navigate to the platform dashboard.
-  await page.click('a:has-text("Dashboard")');
+for (const region of PLATFORM_REGIONS) {
+  test(`use region ${region}`, async ({ page, request }) => {
+    test.setTimeout(1000000); // spinning up a region can be slow.
 
-  // Click each enable region button.
-  await page.waitForSelector(
-    "[data-test-id='regions-list'] .regions-list-item"
-  );
-  const regionRows = page.locator(
-    "[data-testid='regions-list'] .regions-list-item"
-  );
-  const regionsNames = [];
-  for (let i = 0; i < (await regionRows.count()); i++) {
-    const row = regionRows.nth(i);
-    const regionName = await row.locator(" > div").first().innerText();
-    regionsNames.push(regionName);
+    const context = await TestContext.start(page, request);
+    const now = new Date().getTime();
+    const apiKeyName = `Integration test token ${now}`;
+    await context.deleteAllKeysOlderThan(2);
 
-    await row.locator('button:text("Enable region")').click();
-  }
-  for (const regionName of regionsNames) {
-    await page.selectOption("[aria-label='Environment']", {
-      label: regionName,
-    });
+    // Create api key
+    await page.goto(`${CONSOLE_ADDR}/access`);
+    console.log("Creating app-specific password", apiKeyName);
+    await page.waitForSelector("text=Generate new password");
+    await page.fill("form [name=name]", apiKeyName);
+    await page.click("form button:text('Submit')");
+    await page.waitForSelector(`text=New password "${apiKeyName}"`);
+    // TODO: test copy to clipboard button once playwright supports that
+    const passwordField = await page.waitForSelector(
+      `css=[aria-label="clientId"]`
+    );
+    const password = await passwordField.evaluate((e) => e.textContent);
+    assert(!!password, "Expected a password to be created");
+    const appPasswords = await context.listAllKeys();
+    console.log("app passwords now", appPasswords);
+
+    await page.click('a:has-text("Dashboard")');
+
+    // Activate the region in the onboarding table we have no regions
+    // active, otherwise pick one in the selector and use it.
+    const regionState = await Promise.race([
+      (async () => {
+        await page.waitForSelector(
+          `[data-test-id=regions-list] button[title="Enable ${region}"]`
+        );
+        return DashboardState.NoRegions;
+      })(),
+      (async () => {
+        await page.selectOption('select[name="environment-select"]', region);
+        return await Promise.race([
+          (async () => {
+            await page.waitForSelector('text="Connect to Materialize"');
+            return DashboardState.ThisRegionActive;
+          })(),
+          (async () => {
+            // TODO: Sleep 5s here, because there's a flash of incorrect state when selecting regions.
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await page.waitForSelector(
+              `text="Region ${region} is not enabled"`
+            );
+            return DashboardState.SomeRegionsActive;
+          })(),
+        ]);
+      })(),
+    ]);
+    switch (regionState) {
+      case DashboardState.NoRegions:
+        console.log("No regions yet activated, activating ours.");
+        await page.click(
+          `[data-test-id=regions-list] button[title="Enable ${region}"]`
+        );
+        break;
+
+      case DashboardState.ThisRegionActive:
+        console.log("Re-using active region");
+        // TODO: If we hit this, we may be seeing a bug.
+        // I need to think through this case a bit more.
+        break;
+
+      case DashboardState.SomeRegionsActive:
+        console.log("Activating yet-inactive region");
+        await page.click(`Enable ${region}`);
+        break;
+
+      default:
+        console.log("welp, this is broken!");
+    }
     await testPlatformEnvironment(page, request, password);
-  }
-});
+
+    //// Delete api key
+    await page.goto(`${CONSOLE_ADDR}/access`);
+    await page.click(
+      `[aria-label='${apiKeyName}'] [aria-label='Delete password']`
+    );
+    await page.type("[aria-modal] input", apiKeyName);
+    await Promise.all([
+      page.waitForSelector("[aria-modal]", { state: "detached" }),
+      page.click("[aria-modal] button:text('Delete')"),
+    ]);
+    await page.waitForSelector(`text=${apiKeyName}`, { state: "detached" });
+  });
+}
 
 async function testPlatformEnvironment(
   page: Page,
