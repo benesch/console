@@ -86,7 +86,9 @@ for (const region of PLATFORM_REGIONS) {
         break;
 
       case DashboardState.ThisRegionActive:
-        console.log("Re-using active region"); // TODO: maybe we do want to delete & re-create it?
+        console.log("Re-using active region");
+        // TODO: If we hit this, we may be seeing a bug.
+        // I need to think through this case a bit more.
         break;
 
       case DashboardState.SomeRegionsActive:
