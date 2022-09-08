@@ -80,7 +80,7 @@ for (const region of PLATFORM_REGIONS) {
     switch (regionState) {
       case DashboardState.NoRegions:
         console.log("No regions yet activated, activating ours.");
-        page.click(
+        await page.click(
           `[data-test-id=regions-list] button[title="Enable ${region}"]`
         );
         break;
@@ -93,7 +93,7 @@ for (const region of PLATFORM_REGIONS) {
 
       case DashboardState.SomeRegionsActive:
         console.log("Activating yet-inactive region");
-        page.click(`Enable ${region}`);
+        await page.click(`Enable ${region}`);
         break;
 
       default:
