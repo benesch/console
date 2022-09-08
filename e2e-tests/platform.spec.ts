@@ -3,7 +3,7 @@ import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 
-import { EMAIL, IS_KIND, STATE_NAME, CONSOLE_ADDR, TestContext } from "./util";
+import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
 
 /**
  * Setup state storage
@@ -13,69 +13,105 @@ test.afterEach(async ({ page }) => {
   await page.context().storageState({ path: STATE_NAME });
 });
 
-test(`enable region`, async ({ page, request }) => {
-  // This is about fifteen minutes. It is a lot but also it takes a lot to
-  // deploy.
-  test.setTimeout(1000000);
+const PLATFORM_REGIONS = IS_KIND
+  ? ["local/kind"]
+  : ["AWS/us-east-1", "AWS/eu-west-1"];
 
-  const context = await TestContext.start(page, request);
-  const now = new Date().getTime();
-  const name = `Integration test token ${now}`;
-  await context.deleteAllKeysOlderThan(2);
-  await page.goto(`${CONSOLE_ADDR}/access`);
+enum DashboardState {
+  NoRegions,
+  SomeRegionsActive,
+  ThisRegionActive,
+}
 
-  // Create api key
-  console.log("Creating app-specific password", name);
-  await page.waitForSelector("text=Generate new password");
-  await page.fill("form [name=name]", name);
-  await page.click("form button:text('Submit')");
-  await page.waitForSelector(`text=New password "${name}"`);
-  // TODO: test copy to clipboard button once playwright supports that
-  const passwordField = await page.waitForSelector(
-    `css=[aria-label="clientId"]`
-  );
-  const password = await passwordField.evaluate((e) => e.textContent);
-  assert(!!password, "Expected a password to be created");
+for (const region of PLATFORM_REGIONS) {
+  test(`use region ${region}`, async ({ page, request }) => {
+    test.setTimeout(1000000); // spinning up a region can be slow.
 
-  const appPasswords = await context.listAllKeys();
-  console.log("app passwords now", appPasswords);
+    const context = await TestContext.start(page, request);
+    const now = new Date().getTime();
+    const apiKeyName = `Integration test token ${now}`;
+    await context.deleteAllKeysOlderThan(2);
 
-  // Navigate to the platform dashboard.
-  await page.click('a:has-text("Dashboard")');
+    // Create api key
+    await page.goto(`${CONSOLE_ADDR}/access`);
+    console.log("Creating app-specific password", apiKeyName);
+    await page.waitForSelector("text=Generate new password");
+    await page.fill("form [name=name]", apiKeyName);
+    await page.click("form button:text('Submit')");
+    await page.waitForSelector(`text=New password "${apiKeyName}"`);
+    // TODO: test copy to clipboard button once playwright supports that
+    const passwordField = await page.waitForSelector(
+      `css=[aria-label="clientId"]`
+    );
+    const password = await passwordField.evaluate((e) => e.textContent);
+    assert(!!password, "Expected a password to be created");
+    const appPasswords = await context.listAllKeys();
+    console.log("app passwords now", appPasswords);
 
-  // Click each enable region button.
-  await page.waitForSelector(
-    "[data-test-id='regions-list'] .regions-list-item"
-  );
-  const regionRows = page.locator(
-    "[data-testid='regions-list'] .regions-list-item"
-  );
-  const regionsNames = [];
-  for (let i = 0; i < (await regionRows.count()); i++) {
-    const row = regionRows.nth(i);
-    const regionName = await row.locator(" > div").first().innerText();
-    regionsNames.push(regionName);
+    await page.click('a:has-text("Dashboard")');
 
-    await row.locator('button:text("Enable region")').click();
-  }
-  await Promise.all(
-    regionsNames.map(async (regionName) => {
-      await page.selectOption("[aria-label='Environment']", {
-        label: regionName,
-      });
-      await testPlatformEnvironment(page, request, password);
-    })
-  );
-  // Delete api key
-  await page.goto(`${CONSOLE_ADDR}/access`);
-  await page.click(`[aria-label='${name}'] [aria-label='Delete password']`);
-  await page.type("[aria-modal] input", name);
-  await Promise.all([
-    page.waitForSelector("[aria-modal]", { state: "detached" }),
-    page.click("[aria-modal] button:text('Delete')"),
-  ]);
-  await page.waitForSelector(`text=${name}`, { state: "detached" });
-});
+    // Activate the region in the onboarding table we have no regions
+    // active, otherwise pick one in the selector and use it.
+    const regionState = await Promise.race([
+      (async () => {
+        await page.waitForSelector(
+          `[data-test-id=regions-list] button[title="Enable ${region}"]`
+        );
+        return DashboardState.NoRegions;
+      })(),
+      (async () => {
+        await page.selectOption('select[name="environment-select"]', region);
+        return await Promise.race([
+          (async () => {
+            await page.waitForSelector('text="Connect to Materialize"');
+            return DashboardState.ThisRegionActive;
+          })(),
+          (async () => {
+            // TODO: Sleep 5s here, because there's a flash of incorrect state when selecting regions.
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await page.waitForSelector(
+              `text="Region ${region} is not enabled"`
+            );
+            return DashboardState.SomeRegionsActive;
+          })(),
+        ]);
+      })(),
+    ]);
+    switch (regionState) {
+      case DashboardState.NoRegions:
+        console.log("No regions yet activated, activating ours.");
+        page.click(
+          `[data-test-id=regions-list] button[title="Enable ${region}"]`
+        );
+        break;
+
+      case DashboardState.ThisRegionActive:
+        console.log("Re-using active region"); // TODO: maybe we do want to delete & re-create it?
+        break;
+
+      case DashboardState.SomeRegionsActive:
+        console.log("Activating yet-inactive region");
+        page.click(`Enable ${region}`);
+        break;
+
+      default:
+        console.log("welp, this is broken!");
+    }
+    await testPlatformEnvironment(page, request, password);
+
+    //// Delete api key
+    await page.goto(`${CONSOLE_ADDR}/access`);
+    await page.click(
+      `[aria-label='${apiKeyName}'] [aria-label='Delete password']`
+    );
+    await page.type("[aria-modal] input", apiKeyName);
+    await Promise.all([
+      page.waitForSelector("[aria-modal]", { state: "detached" }),
+      page.click("[aria-modal] button:text('Delete')"),
+    ]);
+    await page.waitForSelector(`text=${apiKeyName}`, { state: "detached" });
+  });
+}
 
 async function testPlatformEnvironment(
   page: Page,
