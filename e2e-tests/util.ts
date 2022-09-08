@@ -50,9 +50,6 @@ export const ensureLoggedIn = async (page: Page) => {
   await page.context().storageState({ path: STATE_NAME });
 };
 
-export const USER_ID = "40065de2-e723-4bda-a411-8cbc1d7f5c14";
-export const TENANT_ID = "d376e19f-64bf-4d39-9268-5f7f1c3ddec4";
-
 export const LEGACY_VERSION = "v0.20.0";
 
 const adminPortalHost = () => {
@@ -273,18 +270,25 @@ export class TestContext {
   }
 
   async listAllKeys() {
+    const { id, tenantId } = await this.fronteggRequest(
+      `/identity/resources/users/v2/me`
+    );
+
     return await this.fronteggRequest(
       `/identity/resources/users/api-tokens/v1`,
       {
         headers: {
-          "frontegg-tenant-id": TENANT_ID,
-          "frontegg-user-id": USER_ID,
+          "frontegg-tenant-id": tenantId,
+          "frontegg-user-id": id,
         },
       }
     );
   }
 
   async deleteAllKeysOlderThan(hours: number) {
+    const { id, tenantId } = await this.fronteggRequest(
+      `/identity/resources/users/v2/me`
+    );
     const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
       const age = new Date() - Date.parse(k.createdAt);
@@ -297,8 +301,8 @@ export class TestContext {
           {
             method: "DELETE",
             headers: {
-              "frontegg-tenant-id": TENANT_ID,
-              "frontegg-user-id": USER_ID,
+              "frontegg-tenant-id": tenantId,
+              "frontegg-user-id": id,
             },
           }
         );
