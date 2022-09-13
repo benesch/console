@@ -15,9 +15,12 @@ import ReactSelect, {
 } from "react-select";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import useAvailableEnvironments from "../api/useAvailableEnvironments";
+import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
 import {
+  activeEnvironmentList,
   currentEnvironment,
+  environmentList,
+  environmentStatusMap,
   RegionEnvironment,
   singleEnvironmentStatus,
 } from "../recoil/environments";
@@ -27,8 +30,11 @@ import colors from "../theme/colors";
 const EnvironmentSelectField = () => {
   const [current, setCurrent] = useRecoilState(currentEnvironment);
   const colorModeContext = useColorMode();
-  const { statusMap, environments, activeEnvironments, canReadEnvironments } =
-    useAvailableEnvironments();
+  const [environments] = useRecoilState(environmentList);
+  const [activeEnvironments] = useRecoilState(activeEnvironmentList);
+  const [statusMap] = useRecoilState(environmentStatusMap);
+  const { user } = useAuth();
+  const canReadEnvironments = hasEnvironmentReadPermission(user);
 
   const options: EnvOptionType[] = React.useMemo(() => {
     if (environments) {

@@ -10,28 +10,18 @@ import {
   environmentList,
   EnvironmentStatus,
   environmentStatusMap,
+  firstEnvLoad,
+  getRegionId,
   RegionEnvironment,
 } from "../recoil/environments";
-import {
-  FetchAuthedType,
-  hasEnvironmentReadPermission,
-  hasEnvironmentWritePermission,
-  useAuth,
-} from "./auth";
+import { FetchAuthedType, useAuth } from "./auth";
 import { SupportedCloudRegion, useCloudProvidersList } from "./backend";
 import { Environment } from "./environment-controller";
 import { executeSql, Results } from "./materialized";
 import { EnvironmentAssignment } from "./region-controller";
-import { getStatusFromSQLResponse } from "./useEnvironmentState";
 
-type AvailableEnvironmentsData = {
-  environments: RegionEnvironment[] | null;
-  activeEnvironments: RegionEnvironment[] | null;
-  statusMap: { [key: string]: EnvironmentStatus };
-  current: RegionEnvironment | null;
+type EnvironmentGetterResults = {
   refetch: () => void;
-  canReadEnvironments: boolean;
-  canWriteEnvironments: boolean;
   error: {
     message: string;
     data: {
@@ -46,15 +36,11 @@ type AvailableEnvironmentsData = {
  * This first contacts all providers' regionControllerUrl to get their environment assignor(s).
  * Then it contacts those assignors via their environmentControllerUrl to get the actual environments.
  */
-const useAvailableEnvironments = (): AvailableEnvironmentsData => {
-  const { user, fetchAuthed } = useAuth();
-  const canReadEnvironments = hasEnvironmentReadPermission(user);
-  const canWriteEnvironments = hasEnvironmentWritePermission(user);
+const useAvailableEnvironments = (): EnvironmentGetterResults => {
+  const { fetchAuthed } = useAuth();
   const [current, setCurrent] = useRecoilState(currentEnvironment);
   const [environments, setEnvironments] = useRecoilState(environmentList);
-  const [activeEnvironments, setActiveEnvironments] = useRecoilState(
-    activeEnvironmentList
-  );
+  const [_, setActiveEnvironments] = useRecoilState(activeEnvironmentList);
   const [statusMap, setStatusMap] = useRecoilState(environmentStatusMap);
   const hasPingedSet = React.useRef<Set<string>>(new Set());
   const {
@@ -62,6 +48,7 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
     error,
     refetch: refetchProviders,
   } = useCloudProvidersList({});
+  const [hasLoaded, setHasLoaded] = useRecoilState(firstEnvLoad);
 
   const envErrorMessages = [];
   let regionEnvErrorMessage = "";
@@ -70,22 +57,14 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
     if (environments) {
       environments.map(async (env) => {
         let newStatus: EnvironmentStatus = "Not enabled";
-        let data: Results | null = null;
-        const idString = `${env.region.provider}/${env.region.region}`;
+        const data: Results | null = null;
+        const idString = getRegionId(env.region);
         if (env.env?.resolvable && env.env?.environmentdHttpsAddress) {
-          if (!hasPingedSet.current.has(idString)) {
-            setStatusMap((currentStatusMap) => {
-              return {
-                ...currentStatusMap,
-                [idString]: "Loading",
-              };
-            });
-          }
-          executeSql(env.env, "SELECT 1", fetchAuthed).then(({ results }) => {
-            data = results;
+          if (statusMap[idString] === "Not enabled") {
+            // go from not enabled to loading
             newStatus = getStatusFromSQLResponse(
               data,
-              env?.env,
+              env.env,
               hasPingedSet.current.has(idString)
             );
             setStatusMap((currentStatusMap) => {
@@ -94,9 +73,39 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
                 [idString]: newStatus,
               };
             });
-          });
-
-          hasPingedSet.current.add(idString);
+          }
+          executeSql(env.env, "SELECT 1", fetchAuthed)
+            .then(({ results }) => {
+              newStatus = getStatusFromSQLResponse(
+                results,
+                env?.env,
+                hasPingedSet.current.has(idString)
+              );
+              setStatusMap((currentStatusMap) => {
+                return {
+                  ...currentStatusMap,
+                  [idString]: getStatusFromSQLResponse(
+                    results,
+                    env?.env,
+                    hasPingedSet.current.has(idString)
+                  ),
+                };
+              });
+            })
+            .catch(() => {
+              newStatus = getStatusFromSQLResponse(null, env?.env, true);
+              setStatusMap((currentStatusMap) => {
+                return {
+                  ...currentStatusMap,
+                  [idString]: newStatus,
+                };
+              });
+            })
+            .finally(() => {
+              if (!hasPingedSet.current.has(idString)) {
+                hasPingedSet.current.add(idString);
+              }
+            });
         } else {
           newStatus = getStatusFromSQLResponse(
             data,
@@ -181,6 +190,7 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
     }
     setEnvironments(envs);
     setActiveEnvironments(activeEnvs);
+    hasLoaded && setHasLoaded(false);
   }, [regions, current, setCurrent, fetchRegionEnvironments]);
 
   React.useEffect(() => {
@@ -208,13 +218,7 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
   useInterval(fetchEnvStatuses, 5000);
 
   return {
-    environments: canReadEnvironments ? environments : [],
-    activeEnvironments: canReadEnvironments ? activeEnvironments : [],
-    statusMap,
-    current,
     refetch,
-    canReadEnvironments,
-    canWriteEnvironments,
     error: {
       message: `${
         error && error?.message ? `${error.message}, ` : ""
@@ -275,6 +279,28 @@ export const fetchEnvironmentAssignments = async (
     assignments,
     errorMessage: envAssignmentsErrorMessage,
   };
+};
+
+const getStatusFromSQLResponse = (
+  data?: Results | null,
+  env?: Environment | null,
+  hasLoadedOnce?: boolean
+): EnvironmentStatus => {
+  const negativeHealth = !data || data.rows.length === 0;
+
+  if (env) {
+    if (negativeHealth) {
+      if (!hasLoadedOnce) {
+        return "Loading";
+      } else {
+        return "Starting";
+      }
+    } else {
+      return "Enabled";
+    }
+  }
+
+  return "Not enabled";
 };
 
 export default useAvailableEnvironments;

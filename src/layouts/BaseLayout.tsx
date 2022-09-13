@@ -29,6 +29,7 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
+import useAvailableEnvironments from "../api/useAvailableEnvironments";
 import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
 import EnvironmentSelectField from "./EnvironmentSelect";
@@ -57,6 +58,11 @@ export interface BaseLayoutProps {
  * ```
  */
 export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
+  // This populates all environment list and status data for the application,
+  // which other components can access via Recoil.
+  // Big TODO: wire up recoil somehow so we can do this via the recoil atom directly,
+  // rather than having a hook that is only invoked once.
+  const _data = useAvailableEnvironments();
   return (
     <Flex direction="column" height="100vh">
       <NavBar />

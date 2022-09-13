@@ -1,12 +1,16 @@
-import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
 import { useCloudProvidersList } from "../../api/backend";
-import useEnvironmentState from "../../api/useEnvironmentState";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { PageBreadcrumbs } from "../../layouts/BaseLayout";
-import { currentEnvironment } from "../../recoil/environments";
+import {
+  currentEnvironment,
+  environmentStatusMap,
+  firstEnvLoad,
+  getRegionId,
+} from "../../recoil/environments";
 import CreateEnvironmentButton from "../tutorial/CreateEnvironmentButton";
 import EnvironmentList from "../tutorial/EnvironmentList";
 import ConnectSteps from "./ConnectSteps";
@@ -15,15 +19,20 @@ import PasswordStep from "./PasswordStep";
 import StepsWhileLoading from "./StepsWhileLoading";
 
 const Home = () => {
-  const [current, _] = useRecoilState(currentEnvironment);
-  const { status: environmentStatus } = useEnvironmentState(
-    current?.assignment?.environmentControllerUrl
-  );
   const { data: regions } = useCloudProvidersList({});
+  const [current, _] = useRecoilState(currentEnvironment);
+  const [statusMap] = useRecoilState(environmentStatusMap);
+  const idString = current ? getRegionId(current?.region) : "";
+  const environmentStatus = idString ? statusMap[idString] : "Not enabled";
+  const [isLoadingFirstData] = useRecoilState(firstEnvLoad);
 
-  let content = <Spinner />;
+  let content = (
+    <HStack justifyContent="flex-start" width="100%">
+      <Spinner />
+    </HStack>
+  );
 
-  if (regions) {
+  if (regions && !isLoadingFirstData) {
     if (current) {
       switch (environmentStatus) {
         case "Enabled":
@@ -58,7 +67,6 @@ const Home = () => {
           );
           break;
         case "Starting":
-        case "Loading":
           content = <StepsWhileLoading />;
           break;
         default:
