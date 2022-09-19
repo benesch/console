@@ -59,10 +59,8 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
                 </UnorderedList>
               </ListItem>
               <ListItem>
-                <TextLink href="/access">
-                  Generate an app-specific password
-                </TextLink>{" "}
-                if you do not yet have one, and set the <code>PGPASSWORD</code>{" "}
+                <TextLink href="/access">Generate an app password</TextLink> if
+                you do not yet have one, and set the <code>PGPASSWORD</code>{" "}
                 environment variable to the password you generated.
               </ListItem>
               <ListItem>
@@ -87,10 +85,8 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
           <TabPanel>
             <OrderedList ml="6" spacing="3">
               <ListItem>
-                <TextLink href="/access">
-                  Generate an app-specific password
-                </TextLink>{" "}
-                for prometheus.
+                <TextLink href="/access">Generate an app password</TextLink> for
+                prometheus.
               </ListItem>
               <ListItem>
                 Add the following configuration to <code>prometheus.yml</code>:
@@ -100,7 +96,7 @@ const ConnectCardPassword = ({ deployment }: DeploymentConnectCardProps) => {
     scheme: https
     basic_auth:
       username: ${user.email}
-      password: PASSWORD # The app-specific password you generated above
+      password: PASSWORD # The app password you generated above
       # Or use "password_file" to keep the password out of your configuration
     static_configs:
       - targets:

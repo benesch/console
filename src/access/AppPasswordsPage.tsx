@@ -74,7 +74,7 @@ const AppPasswordsPage = () => {
   return (
     <>
       <PageHeader>
-        <PageHeading>App-specific passwords</PageHeading>
+        <PageHeading>App passwords</PageHeading>
       </PageHeader>
       {loadingInProgress ? (
         <Spinner data-testid="loading-spinner" />
@@ -193,7 +193,7 @@ const PasswordsTable = ({
           })}
           {tokens.length === 0 && (
             <Tr>
-              <Td colSpan={4}>No app-specific passwords yet.</Td>
+              <Td colSpan={4}>No app passwords yet.</Td>
             </Tr>
           )}
         </Tbody>
@@ -239,8 +239,8 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
             </HStack>
           </HStack>
           <Text pt={3}>
-            Write this down; you will not be able to see your app-specific
-            password again after you reload!
+            Write this down; you will not be able to see your app password again
+            after you reload!
           </Text>
         </AlertDescription>
       </VStack>
