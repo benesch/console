@@ -14,7 +14,7 @@
     "@frontegg/react": "^4.0.12",
     "@frontegg/react-auth": "^4.0.12",
     "@frontegg/react-core": "^4.0.12",
-    "@segment/analytics-next": "^1.35.1",
+    "@segment/analytics-next": "^1.43.0",
     "@sentry/react": "^6.19.4",
     "@sentry/tracing": "^6.19.4",
     "@sentry/webpack-plugin": "^1.18.8",
