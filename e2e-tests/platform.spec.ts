@@ -34,7 +34,7 @@ for (const region of PLATFORM_REGIONS) {
 
     // Create api key
     await page.goto(`${CONSOLE_ADDR}/access`);
-    console.log("Creating app-specific password", apiKeyName);
+    console.log("Creating app password", apiKeyName);
     await page.waitForSelector("text=Generate new password");
     await page.fill("form [name=name]", apiKeyName);
     await page.click("form button:text('Submit')");

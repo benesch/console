@@ -51,8 +51,7 @@ const StepsWhileLoading = () => {
               >
                 <CardHeader>1. Create a password</CardHeader>
                 <CardContent>
-                  App-specific passwords are now available! Click here to
-                  generate one.
+                  App passwords are now available! Click here to generate one.
                 </CardContent>
               </LinkOverlay>
             </LinkBox>

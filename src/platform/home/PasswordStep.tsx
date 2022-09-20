@@ -16,11 +16,11 @@ import { Link } from "react-router-dom";
 import { CopyButton } from "../../components/Copyable";
 import { semanticColors } from "../../theme/colors";
 
-const NEW_USER_DEFAULT_PASSWORD_NAME = "My MZ key";
+const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
 
 const PasswordStep = (props: BoxProps) => {
-  const keyBg = useColorModeValue("purple.100", "whiteAlpha.100");
-  const keyBorder = useColorModeValue("purple.300", "whiteAlpha.300");
+  const appPasswordBg = useColorModeValue("purple.100", "whiteAlpha.100");
+  const apPasswordBorder = useColorModeValue("purple.300", "whiteAlpha.300");
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
@@ -63,7 +63,7 @@ const PasswordStep = (props: BoxProps) => {
 
   let boxContents = (
     <Text color={grayText}>
-      Keys cannot be displayed after initial creation.
+      App passwords cannot be displayed after initial creation.
     </Text>
   );
 
@@ -78,7 +78,7 @@ const PasswordStep = (props: BoxProps) => {
   if (createInProgress) {
     boxContents = (
       <Flex alignItems="center" color={grayText}>
-        <Spinner size="sm" mr={2} /> Generating new key...
+        <Spinner size="sm" mr={2} /> Generating new app password...
       </Flex>
     );
   }
@@ -87,12 +87,12 @@ const PasswordStep = (props: BoxProps) => {
     boxContents = (
       <>
         <HStack alignItems="center">
-          <Text as="span">New key:</Text>
+          <Text as="span">New app password:</Text>
           <HStack
             role="group"
-            bg={keyBg}
+            bg={appPasswordBg}
             borderWidth="1px"
-            borderColor={keyBorder}
+            borderColor={apPasswordBorder}
             borderRadius={4}
             px={2}
             py={1}
@@ -115,7 +115,7 @@ const PasswordStep = (props: BoxProps) => {
           </HStack>
         </HStack>
         <Text pt={3} fontSize="sm">
-          Copy this key text somewhere safe. Keys{" "}
+          Copy this app password somewhere safe. App passwords{" "}
           <Text fontWeight="bold" as="span">
             cannot
           </Text>{" "}
@@ -136,11 +136,11 @@ const PasswordStep = (props: BoxProps) => {
     >
       <HStack p={4} py={2} borderBottom="1px" borderColor={borderColor}>
         <Text flex={1} fontWeight="500" fontSize="md">
-          Materialize authentication credentials
+          App passwords
         </Text>
         <HStack spacing={2}>
           <Link to="/access" target="_blank">
-            <Button size="sm">Manage keys</Button>
+            <Button size="sm">Manage app passwords</Button>
           </Link>
           <Button
             onClick={() =>

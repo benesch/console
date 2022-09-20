@@ -398,7 +398,7 @@ export class TestContext {
       } catch (error: any) {
         console.log(error);
         if (error.code === "28P01") {
-          console.log("app-specific passwords", await this.listAllKeys());
+          console.log("app passwords", await this.listAllKeys());
           throw new Error("wrong password");
         }
         await this.page.waitForTimeout(1000);

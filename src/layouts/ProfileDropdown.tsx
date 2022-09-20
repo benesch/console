@@ -87,7 +87,7 @@ const ProfileDropdown = () => {
             Account settings
           </MenuItem>
           <MenuItem as={RouterLink} to="/access" fontWeight="medium">
-            App-specific passwords
+            App passwords
           </MenuItem>
           <MenuItem
             fontWeight="medium"
