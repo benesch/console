@@ -8,7 +8,7 @@
     "@chakra-ui/popover": "^1.11.6",
     "@chakra-ui/react": "^1.8.7",
     "@chakra-ui/toast": "^1.5.7",
-    "@emotion/react": "^11.9.0",
+    "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.8.1",
     "@fontsource/inter": "^4.5.7",
     "@frontegg/react": "^4.0.12",
