@@ -8,11 +8,7 @@ import { Environment } from "../api/environment-controller";
 function getDefaultEnvironment(
   environments: Array<Environment> | null
 ): Environment | null {
-  if (environments) {
-    return environments && environments.length > 0 ? environments[0] : null;
-  }
-
-  return null;
+  return environments && environments.length > 0 ? environments[0] : null;
 }
 
 export default getDefaultEnvironment;

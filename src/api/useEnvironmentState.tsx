@@ -8,7 +8,7 @@ import {
 } from "../recoil/environments";
 import getDefaultEnvironment from "../utils/platform";
 import { Environment, useEnvironmentsList } from "./environment-controller";
-import { useSqlOnCoordinator } from "./materialized";
+import { Results, useSqlOnCoordinator } from "./materialized";
 
 type EnvironmentState = {
   environment?: Environment;
@@ -29,7 +29,7 @@ const useEnvironmentState = (
   const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
   // It's useful to know that the useSql() has executed once
   // and results from query can be used.
-  const [firstQuery, setFirstQuery] = React.useState<boolean>(true);
+  const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
 
   // Simple SQL state used as a way to monitor instance status
   const {
@@ -37,7 +37,8 @@ const useEnvironmentState = (
     loading: loadingQuery,
     refetch: refetchSql,
   } = useSqlOnCoordinator("SELECT 1", environment);
-  const negativeHealth = !data || data.rows.length === 0;
+
+  const status = getStatusFromSQLResponse(data, environment, hasLoaded);
 
   const intervalCallback = React.useCallback(() => {
     refetch();
@@ -55,8 +56,8 @@ const useEnvironmentState = (
    * Know when the first query to the environment is ran
    */
   React.useEffect(() => {
-    if (firstQuery && environment && !loadingQuery) {
-      setFirstQuery(false);
+    if (!hasLoaded && environment && !loadingQuery) {
+      setHasLoaded(true);
     }
   }, [loadingQuery]);
 
@@ -68,32 +69,36 @@ const useEnvironmentState = (
     if (environment) setHasCreatedEnv(true);
   }, [environment]);
 
-  if (environment && firstQuery) {
+  if (environment) {
     return {
       environment,
-      status: "Loading",
+      status,
       refetch,
     };
-  } else if (environment) {
+  }
+  return {
+    status,
+    refetch,
+  };
+};
+
+export const getStatusFromSQLResponse = (
+  data?: Results | null,
+  env?: Environment | null,
+  hasLoadedOnce?: boolean
+): EnvironmentStatus => {
+  const negativeHealth = !data || data.rows.length === 0;
+  if (env && !hasLoadedOnce) {
+    return "Loading";
+  } else if (env) {
     if (negativeHealth) {
-      return {
-        environment,
-        status: "Starting",
-        refetch,
-      };
+      return "Starting";
     } else {
-      return {
-        environment,
-        status: "Enabled",
-        refetch,
-      };
+      return "Enabled";
     }
   }
 
-  return {
-    status: "Not enabled",
-    refetch,
-  };
+  return "Not enabled";
 };
 
 export default useEnvironmentState;

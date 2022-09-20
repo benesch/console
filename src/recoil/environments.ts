@@ -41,3 +41,12 @@ export const hasCreatedEnvironment = atom<boolean>({
   key: keys.HAS_CREATED_ENVIRONMENT,
   default: false,
 });
+
+export type StatusMap = {
+  [key: string]: EnvironmentStatus;
+};
+
+export const environmentStatusMap = atom<StatusMap>({
+  key: keys.STATUS_MAP,
+  default: {},
+});

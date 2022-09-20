@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 import { currentEnvironment } from "../recoil/environments";
-import { useAuth } from "./auth";
+import { FetchAuthedType, useAuth } from "./auth";
 import { Environment } from "./environment-controller";
 
-interface Results {
+export interface Results {
   columns: Array<string>;
   rows: Array<any>;
 }
@@ -31,7 +31,7 @@ function useSqlInternal(
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
-  async function executeSql() {
+  async function runSql() {
     if (!address || !sql) {
       setResults(null);
       setLoading(false);
@@ -40,37 +40,17 @@ function useSqlInternal(
 
     try {
       setLoading(true);
-
-      const response = await fetchAuthed(`//${address}/api/sql`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ sql: sql }),
-      });
-
-      const responseText = await response.text();
-
-      if (response.status === 400) {
+      const { results, errorMessage } = await executeSql(
+        address,
+        sql,
+        fetchAuthed
+      );
+      if (errorMessage) {
         setResults(null);
-        setError(responseText || defaultError);
+        setError(errorMessage);
       } else {
-        const parsedResponse = JSON.parse(responseText);
-        const { results: responseResults } = parsedResponse;
-        const [firstResult] = responseResults;
-        // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-        const { error: resultsError, rows, col_names } = firstResult || {};
-
-        if (resultsError) {
-          setError(resultsError);
-          setResults(null);
-        } else {
-          setResults({
-            rows: rows,
-            columns: col_names,
-          });
-          setError(null);
-        }
+        setResults(results);
+        setError(null);
       }
     } catch (err) {
       console.error(err);
@@ -81,13 +61,70 @@ function useSqlInternal(
   }
 
   useEffect(() => {
-    // If either the location or the query changed, past results aren't valid anymore.
     setResults(null);
-    executeSql();
+    setLoading(false);
+    setError(null);
+    runSql();
   }, [address, sql]);
 
-  return { data: results, error, loading, refetch: executeSql };
+  return { data: results, error, loading, refetch: runSql };
 }
+
+interface ExecuteSqlOutput {
+  results: Results | null;
+  errorMessage: string | null;
+}
+
+export const executeSql = async (
+  address: string,
+  sql: string,
+  fetcher: FetchAuthedType
+): Promise<ExecuteSqlOutput> => {
+  const defaultError = "Error running query.";
+  const result: ExecuteSqlOutput = {
+    results: null,
+    errorMessage: null,
+  };
+  if (!address || !sql) {
+    return result;
+  }
+
+  try {
+    const response = await fetcher(`//${address}/api/sql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sql: sql }),
+    });
+
+    const responseText = await response.text();
+
+    if (response.status === 400) {
+      result.errorMessage = responseText || defaultError;
+    } else {
+      const parsedResponse = JSON.parse(responseText);
+      const { results: responseResults } = parsedResponse;
+      const [firstResult] = responseResults;
+      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
+      const { error: resultsError, rows, col_names } = firstResult || {};
+
+      if (resultsError) {
+        result.errorMessage = resultsError;
+      } else {
+        result.results = {
+          rows: rows,
+          columns: col_names,
+        };
+        result.errorMessage = null;
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    result.errorMessage = defaultError;
+  }
+  return result;
+};
 
 /**
  * useSql hook for a particular environment coordinator address.
