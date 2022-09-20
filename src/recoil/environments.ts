@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, selectorFamily } from "recoil";
 
 import { SupportedCloudRegion } from "../api/backend";
 import { Environment } from "../api/environment-controller";
@@ -47,6 +47,18 @@ export type StatusMap = {
 };
 
 export const environmentStatusMap = atom<StatusMap>({
-  key: keys.STATUS_MAP,
+  key: keys.ENVIRONMENT_STATUS_MAP,
   default: {},
+});
+
+export const singleEnvironmentStatus = selectorFamily<
+  EnvironmentStatus,
+  string
+>({
+  key: keys.ENVIRONMENT_STATUS,
+  get:
+    (id: string) =>
+    ({ get }) => {
+      return get(environmentStatusMap)[id];
+    },
 });

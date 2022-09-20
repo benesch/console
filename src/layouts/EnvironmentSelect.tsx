@@ -1,13 +1,25 @@
-import { ColorMode, Spinner, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  ColorMode,
+  HStack,
+  Spinner,
+  useColorMode,
+} from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, { StylesConfig } from "react-select";
-import { useRecoilState } from "recoil";
+import ReactSelect, {
+  MultiValue,
+  OptionProps,
+  SingleValue,
+  SingleValueProps,
+  StylesConfig,
+} from "react-select";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import useAvailableEnvironments from "../api/useAvailableEnvironments";
 import {
   currentEnvironment,
-  EnvironmentStatus,
   RegionEnvironment,
+  singleEnvironmentStatus,
 } from "../recoil/environments";
 import { reactSelectTheme } from "../theme";
 import colors from "../theme/colors";
@@ -18,40 +30,31 @@ const EnvironmentSelectField = () => {
   const { statusMap, environments, activeEnvironments, canReadEnvironments } =
     useAvailableEnvironments();
 
-  const options: EnvOption[] = React.useMemo(() => {
+  const options: EnvOptionType[] = React.useMemo(() => {
     if (environments) {
-      return environments.map((env: RegionEnvironment) => {
-        const status: EnvironmentStatus =
-          statusMap[`${env.region.provider}/${env.region.region}`] ||
-          "Not started";
-        return makeEnvOption(env, status);
-      });
+      return environments.map(makeEnvOption);
     }
     return [];
   }, [environments, statusMap]);
 
   const currentOption = React.useMemo(() => {
-    return current
-      ? makeEnvOption(
-          current,
-          statusMap[`${current.region.provider}/${current.region.region}`]
-        )
-      : undefined;
-  }, [
-    current,
-    statusMap[`${current?.region?.provider}/${current?.region?.region}`],
-  ]);
+    return current ? makeEnvOption(current) : undefined;
+  }, [current]);
 
   const selectHandler = React.useCallback(
-    (option: EnvOption | null) => {
-      setCurrent(
-        option
-          ? environments?.find(
-              (env) =>
-                option.value === `${env.region.provider}/${env.region.region}`
-            ) || null
-          : null
-      );
+    (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
+      /* This should never actually be an array, but typescript doesn't notice the isMulti=false prop >.< */
+      if (!Array.isArray(option)) {
+        setCurrent(
+          option
+            ? environments?.find(
+                (env) =>
+                  (option as EnvOptionType).value ===
+                  `${env.region.provider}/${env.region.region}`
+              ) || null
+            : null
+        );
+      }
     },
     [environments, current, setCurrent]
   );
@@ -76,6 +79,7 @@ const EnvironmentSelectField = () => {
     <ReactSelect
       aria-label="Environment"
       name="environment-select"
+      components={{ Option: EnvOption, SingleValue }}
       options={options}
       value={currentOption}
       onChange={selectHandler}
@@ -86,61 +90,107 @@ const EnvironmentSelectField = () => {
       })}
       isMulti={false}
       isSearchable={false}
+      menuIsOpen={true}
     />
   );
 };
 
-type EnvOption = {
-  key: string;
+type EnvOptionType = {
   label: string;
   value: string;
-  color: string;
 };
 
-function makeEnvOption(
-  { region }: RegionEnvironment,
-  status?: EnvironmentStatus
-): EnvOption {
-  let color: string = colors.gray[300];
-  switch (status) {
-    case "Loading":
-    case "Starting": {
-      color = colors.yellow[400];
-      break;
-    }
-    case "Enabled": {
-      color = colors.green[500];
-      break;
-    }
-    default: {
-      color = colors.gray[300];
-      break;
-    }
-  }
+function makeEnvOption({ region }: RegionEnvironment): EnvOptionType {
   return {
-    key: `${region.provider}/${region.region}`,
     label: `${region.provider}/${region.region}`,
     value: `${region.provider}/${region.region}`,
-    color,
   };
 }
 
-const dot = (color = "transparent") => ({
-  alignItems: "center",
-  display: "flex",
+type DotProps = {
+  id: string;
+};
 
-  ":before": {
-    backgroundColor: color,
-    borderRadius: 10,
-    content: '" "',
-    display: "block",
-    marginRight: 8,
-    height: 10,
-    width: 10,
-  },
-});
+const Dot = ({ id }: DotProps) => {
+  const status = useRecoilValue(singleEnvironmentStatus(id));
+  let color = "gray.300";
+  switch (status) {
+    case "Loading":
+    case "Starting": {
+      color = "yellow.400";
+      break;
+    }
+    case "Enabled": {
+      color = "green.500";
+      break;
+    }
+    default: {
+      color = "gray.300";
+      break;
+    }
+  }
+  return (
+    <Box
+      id={`status-dot-${id}`}
+      height="10px"
+      width="10px"
+      mr={2}
+      backgroundColor={color}
+      borderRadius="10px"
+    />
+  );
+};
 
-const getColorStyles = (mode: ColorMode): StylesConfig<EnvOption> => {
+const SingleValue: React.FunctionComponent<SingleValueProps<EnvOptionType>> = ({
+  innerProps,
+  data,
+}) => {
+  return (
+    <HStack {...innerProps} spacing={0} color="white">
+      <Dot id={data.value} />
+      <Box>{data.label}</Box>
+    </HStack>
+  );
+};
+
+const EnvOption: React.FunctionComponent<OptionProps<EnvOptionType>> = ({
+  innerProps,
+  innerRef,
+  data,
+  ...props
+}) => {
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark";
+  const textColor = isDarkMode ? "white" : "black";
+  const bg = isDarkMode ? "transparent" : "white";
+  const selectedBg = isDarkMode ? `#FFFFFF18` : "gray.50";
+  const hoverBg = isDarkMode ? `#FFFFFF24` : "gray.100";
+  const activeBg = isDarkMode ? `#FFFFFF36` : "gray.200";
+  return (
+    <HStack
+      ref={innerRef}
+      {...innerProps}
+      className="custom-option"
+      color={props.isDisabled ? "gray.400" : textColor}
+      cursor={props.isDisabled ? "not-allowed" : "pointer"}
+      backgroundColor={props.isSelected ? selectedBg : bg}
+      _hover={{
+        backgroundColor: hoverBg,
+      }}
+      _active={{
+        backgroundColor: activeBg,
+      }}
+      px="9px"
+      py={2}
+      spacing={0}
+    >
+      <Dot id={data.value} />
+      <Box>{data.label}</Box>
+    </HStack>
+  );
+};
+
+const getColorStyles = (mode: ColorMode): StylesConfig<EnvOptionType> => {
   const isDarkMode = mode === "dark";
   return {
     control: (styles, state) => ({
@@ -175,42 +225,9 @@ const getColorStyles = (mode: ColorMode): StylesConfig<EnvOption> => {
       borderRadius: "0.375rem",
       backgroundColor: isDarkMode ? colors.gray[700] : styles.backgroundColor,
     }),
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-      const hoverBg = isDarkMode ? `#FFFFFF18` : colors.gray[50];
-      const selectedHoverBg = isDarkMode
-        ? colors.purple[700]
-        : colors.gray[100];
-      let backgroundColor = "transparent";
-      if (isFocused) {
-        backgroundColor = isDarkMode ? colors.purple[800] : colors.gray[100];
-      }
-      if (isSelected) {
-        if (isFocused) {
-          backgroundColor = selectedHoverBg;
-        } else {
-          backgroundColor = hoverBg;
-        }
-      }
-      const textColor = isDarkMode ? colors.white : colors.black;
-      return {
-        ...styles,
-        backgroundColor,
-        color: isDisabled ? colors.gray[400] : textColor,
-        cursor: isDisabled ? "not-allowed" : "default",
-
-        ":active": {
-          ...styles[":active"],
-          backgroundColor: isDarkMode ? colors.purple[900] : colors.gray[200],
-        },
-        ...dot(data.color),
-      };
-    },
-    input: (styles) => ({ ...styles, ...dot() }),
-    placeholder: (styles) => ({ ...styles, ...dot() }),
-    singleValue: (styles, { data }) => ({
+    valueContainer: (styles) => ({
       ...styles,
-      ...dot(data.color),
-      color: "white",
+      display: "flex",
     }),
   };
 };
