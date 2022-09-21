@@ -24,7 +24,7 @@ const GetStartedDocs = () => {
       </HStack>
       <Box p={4} pt={2}>
         <TextLink
-          href="https://materialize.com/docs/unstable/get-started/"
+          href="https://materialize.com/docs/get-started/"
           target="_blank"
         >
           Connect a streaming source
