@@ -1,6 +1,12 @@
 import { expect, Page, test } from "@playwright/test";
 
-import { IS_KIND, LEGACY_VERSION, STATE_NAME, TestContext } from "./util";
+import {
+  CONSOLE_ADDR,
+  IS_KIND,
+  LEGACY_VERSION,
+  STATE_NAME,
+  TestContext,
+} from "./util";
 
 const provider = IS_KIND ? "local" : "AWS";
 const regions = IS_KIND ? ["kind"] : ["us-east-1", "eu-west-1"];
@@ -13,7 +19,7 @@ test.afterEach(async ({ page }) => {
 for (const region of regions) {
   test(`upgrade deployment in ${region}`, async ({ page, request }) => {
     const context = await TestContext.start(page, request);
-    await page.click('a:has-text("Deployments")');
+    await page.goto(`${CONSOLE_ADDR}/deployments`);
     const latestVersion = await context.apiRequest("/mz-versions/latest");
 
     // Use a raw API request to create a deployment running an old version.

@@ -31,8 +31,6 @@ export interface IAuthContext extends AuthState {
   user: User;
   /** The authenticated organization. */
   organization: Organization;
-  /** Whether the user has access to the Materialize Platform experience. */
-  platformEnabled: boolean;
   /**
    * Make an authenticated HTTP request.
    *
@@ -65,13 +63,10 @@ export const AuthProvider = ({
         ...init?.headers,
       },
     });
-  const platformEnabled =
-    user.email.endsWith("@materialize.com") ||
-    user.roles.some((role) => role.name.startsWith("MaterializePlatform"));
 
   return (
     <AuthContext.Provider
-      value={{ ...authState, user, organization, platformEnabled, fetchAuthed }}
+      value={{ ...authState, user, organization, fetchAuthed }}
     >
       {children}
     </AuthContext.Provider>

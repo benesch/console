@@ -76,7 +76,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
 };
 
 const NavBar = () => {
-  const { organization, platformEnabled } = useAuth();
+  const { organization } = useAuth();
   const borderWidth = useColorModeValue("0", "1px");
   const borderColor = useColorModeValue("transparent", "gray.700");
 
@@ -98,7 +98,7 @@ const NavBar = () => {
       >
         <HStack
           as={RouterLink}
-          to={platformEnabled ? "/platform" : "/"}
+          to="/platform"
           mr={2}
           order={2}
           flex={1}
@@ -143,26 +143,24 @@ const NavBar = () => {
   );
 };
 
-type NavItem = {
+type NavItemType = {
   label: string;
   href: string;
   legacy?: boolean;
 };
 
-const platformNavItems: NavItem[] = [
+const navItems: NavItemType[] = [
   { label: "Dashboard", href: "/platform" },
   // { label: "Regions", href: "/platform/regions" },
   // { label: "Clusters", href: "/platform/clusters" },
   // { label: "Editor", href: "/platform/editor" },
-  { label: "Deployments", href: "/deployments", legacy: true },
-];
-const legacyNavItems: NavItem[] = [
-  { label: "Deployments", href: "/deployments" },
+  {
+    label: "Docs",
+    href: "//materialize.com/docs/unstable/get-started/",
+  },
 ];
 
 const NavMenu = () => {
-  const { platformEnabled } = useAuth();
-  const navItems = platformEnabled ? platformNavItems : legacyNavItems;
   return (
     <>
       <HStack
@@ -209,16 +207,16 @@ const NavMenu = () => {
   );
 };
 
-const NavItem = (props: NavItem) => {
+const NavItem = (props: NavItemType) => {
   const location = useLocation();
   const href = props.href || "#";
   const active = location.pathname === href;
-  return (
+
+  const linkContents = (
     <HStack
-      as={RouterLink}
-      to={href}
       aria-current={active ? "page" : undefined}
       spacing="2"
+      height="100%"
       px={3}
       transition="all 0.2s"
       color="gray.200"
@@ -237,6 +235,20 @@ const NavItem = (props: NavItem) => {
       <Box fontWeight="semibold">{props.label}</Box>
       {props.legacy && <Badge>Legacy</Badge>}
     </HStack>
+  );
+
+  /* react-router-dom doesn't support external links, amazingly */
+  if (href.search("//") === -1) {
+    return (
+      <HStack as={RouterLink} to={href}>
+        {linkContents}
+      </HStack>
+    );
+  }
+  return (
+    <a href={href} target="_blank" rel="noreferrer">
+      {linkContents}
+    </a>
   );
 };
 
