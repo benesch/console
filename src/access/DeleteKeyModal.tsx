@@ -13,18 +13,15 @@ import DangerActionModal from "../components/DangerActionModal";
 interface Props extends ButtonProps {
   clientId: string;
   description: string;
-  tenantName?: string;
   deleteCb: (id: string) => void;
 }
 
 const DeleteKeyModal = (props: Props) => {
-  const { deleteUserApiToken, deleteTenantApiToken } = useApiTokensActions();
+  const { deleteUserApiToken } = useApiTokensActions();
 
   const handleDelete = async () => {
     props.deleteCb(props.clientId);
-    props.tenantName
-      ? deleteTenantApiToken(props.clientId)
-      : deleteUserApiToken(props.clientId);
+    deleteUserApiToken(props.clientId);
   };
 
   return (

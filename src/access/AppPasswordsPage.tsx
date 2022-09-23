@@ -98,7 +98,7 @@ const AppPasswordsPage = () => {
             <VStack width="400px">
               <Card>
                 <Formik
-                  initialValues={{ name: "", tenantId: "personal" }}
+                  initialValues={{ name: "" }}
                   onSubmit={(values, actions) => {
                     setLatestPassName(values.name);
                     addUserApiToken({ description: values.name });
@@ -136,9 +136,7 @@ const AppPasswordsPage = () => {
   );
 };
 
-type TableKey = IApiTokensData & {
-  tenantName?: string;
-};
+type TableKey = IApiTokensData;
 
 type APIKeysTableProps = BoxProps & {
   tokens: TableKey[];
@@ -183,7 +181,6 @@ const PasswordsTable = ({
                   <DeleteKeyModal
                     description={token.description}
                     clientId={token.clientId}
-                    tenantName={token.tenantName}
                     disabled={isDeleting}
                     deleteCb={deleteCb}
                   />
