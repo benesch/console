@@ -30,13 +30,13 @@ const PasswordStep = (props: BoxProps) => {
     semanticColors.divider.dark
   );
 
-  const { loadApiTokens, addUserApiToken } = useApiTokensActions();
+  const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
   const tokensState = useApiTokensState();
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
 
   React.useEffect(() => {
-    loadApiTokens();
+    loadUserApiTokens();
   }, []);
   React.useEffect(() => {
     if (

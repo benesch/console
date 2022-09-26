@@ -37,9 +37,9 @@ import DeleteKeyModal from "./DeleteKeyModal";
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
   const [latestDeletionId, setLatestDeletionId] = React.useState("");
-  const { loadApiTokens, addUserApiToken } = useApiTokensActions();
+  const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
   React.useEffect(() => {
-    loadApiTokens();
+    loadUserApiTokens();
   }, []);
   const tokensState = useApiTokensState();
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
