@@ -64,12 +64,10 @@ const CreateEnvironmentButton = (props: Props) => {
       console.log(e);
       setIsCreatingThisEnv(false);
       if (handleEnvCreate) handleEnvCreate(false);
-      if (e.status === 400) {
-        toast({
-          title: "Failed to enable region.",
-          status: "error",
-        });
-      }
+      toast({
+        title: "Failed to enable region.",
+        status: "error",
+      });
     }
   }, [r.regionControllerUrl]);
 
