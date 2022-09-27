@@ -17,12 +17,12 @@ import AppPasswordsPage from "./access/AppPasswordsPage";
 import CLI from "./access/cli";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
-import { useAuth } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import DeploymentDetailPage from "./deployments/detail/DetailPage";
 import DeploymentListPage from "./deployments/ListPage";
 import { BaseLayout } from "./layouts/BaseLayout";
-import PlatformRouter from "./platform/router";
+import Editor from "./platform/editor/Editor";
+import Home from "./platform/home/Home";
 import { assert } from "./util";
 
 /** The root router for the application. */
@@ -42,8 +42,8 @@ const Router = () => {
         <Route path="/access">
           <AppPasswordsPage />
         </Route>
-        <Route path="/platform">
-          <PlatformRouter />
+        <Route path="/editor">
+          <Editor />
         </Route>
         <Route path="/">
           <RedirectToHome />
@@ -57,7 +57,6 @@ const Router = () => {
 const RedirectToHome = () => {
   const location = useLocation();
   const { routes: authRoutes } = useFronteggAuth((state) => state);
-  const { platformEnabled } = useAuth();
   if (
     location.pathname !== authRoutes.authenticatedUrl &&
     Object.values(authRoutes).includes(location.pathname)
@@ -67,14 +66,13 @@ const RedirectToHome = () => {
     // notice it.
     return null;
   } else {
-    return <Redirect to={platformEnabled ? "/platform" : "/deployments"} />;
+    return <Home />;
   }
 };
 
 const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
-  const layoutOverflow =
-    location.pathname === "/platform/editor" ? "hidden" : undefined;
+  const layoutOverflow = location.pathname === "/editor" ? "hidden" : undefined;
   // Consume Frontegg authentication state.
   const {
     isAuthenticated,
