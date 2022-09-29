@@ -90,7 +90,6 @@ const EnvironmentSelectField = () => {
       })}
       isMulti={false}
       isSearchable={false}
-      menuIsOpen={true}
     />
   );
 };
