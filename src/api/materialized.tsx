@@ -23,7 +23,7 @@ export interface Results {
  */
 function useSqlInternal(
   sql: string | undefined,
-  environment: Environment | undefined
+  environment: Environment | undefined | null
 ) {
   const { fetchAuthed } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
@@ -76,7 +76,7 @@ interface ExecuteSqlOutput {
 }
 
 export const executeSql = async (
-  environment: Environment | undefined,
+  environment: Environment | undefined | null,
   sql: string,
   fetcher: FetchAuthedType
 ): Promise<ExecuteSqlOutput> => {
@@ -136,7 +136,7 @@ export const executeSql = async (
  */
 export function useSqlOnCoordinator(
   sql: string | undefined,
-  environment: Environment | undefined
+  environment: Environment | null | undefined
 ) {
   return useSqlInternal(sql, environment);
 }
