@@ -6,6 +6,7 @@ export const SPEC_VERSION = "0.1.0";
 export interface Environment {
   environmentdPgwireAddress: string;
   environmentdHttpsAddress: string;
+  resolvable?: boolean;
 }
 
 export type EnvironmentsListProps = Omit<

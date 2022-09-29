@@ -18,12 +18,12 @@ export interface Results {
 /**
  * useSql hook state implementation
  * @param sql
- * @param address
+ * @param environment
  * @returns
  */
 function useSqlInternal(
   sql: string | undefined,
-  address: string | undefined | null
+  environment: Environment | undefined | null
 ) {
   const { fetchAuthed } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,7 +32,7 @@ function useSqlInternal(
   const defaultError = "Error running query.";
 
   async function runSql() {
-    if (!address || !sql) {
+    if (!environment || !sql) {
       setResults(null);
       setLoading(false);
       return;
@@ -41,7 +41,7 @@ function useSqlInternal(
     try {
       setLoading(true);
       const { results, errorMessage } = await executeSql(
-        address,
+        environment,
         sql,
         fetchAuthed
       );
@@ -65,7 +65,7 @@ function useSqlInternal(
     setLoading(false);
     setError(null);
     runSql();
-  }, [address, sql]);
+  }, [environment?.resolvable, environment?.environmentdHttpsAddress, sql]);
 
   return { data: results, error, loading, refetch: runSql };
 }
@@ -76,10 +76,12 @@ interface ExecuteSqlOutput {
 }
 
 export const executeSql = async (
-  address: string,
+  environment: Environment | undefined | null,
   sql: string,
   fetcher: FetchAuthedType
 ): Promise<ExecuteSqlOutput> => {
+  const address =
+    environment?.resolvable && environment.environmentdHttpsAddress;
   const defaultError = "Error running query.";
   const result: ExecuteSqlOutput = {
     results: null,
@@ -134,12 +136,9 @@ export const executeSql = async (
  */
 export function useSqlOnCoordinator(
   sql: string | undefined,
-  environment: Environment | null
+  environment: Environment | null | undefined
 ) {
-  return useSqlInternal(
-    sql,
-    environment && environment.environmentdHttpsAddress
-  );
+  return useSqlInternal(sql, environment);
 }
 
 /**
@@ -149,7 +148,7 @@ export function useSqlOnCoordinator(
  */
 export function useSql(sql: string | undefined) {
   const [current, _] = useRecoilState(currentEnvironment);
-  return useSqlInternal(sql, current && current.env?.environmentdHttpsAddress);
+  return useSqlInternal(sql, current?.env);
 }
 
 export interface Cluster {

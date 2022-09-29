@@ -72,7 +72,7 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
         let newStatus: EnvironmentStatus = "Not enabled";
         let data: Results | null = null;
         const idString = `${env.region.provider}/${env.region.region}`;
-        if (env.env?.environmentdHttpsAddress) {
+        if (env.env?.resolvable && env.env?.environmentdHttpsAddress) {
           if (!hasPingedSet.current.has(idString)) {
             setStatusMap((currentStatusMap) => {
               return {
@@ -81,11 +81,7 @@ const useAvailableEnvironments = (): AvailableEnvironmentsData => {
               };
             });
           }
-          executeSql(
-            env.env.environmentdHttpsAddress,
-            "SELECT 1",
-            fetchAuthed
-          ).then(({ results }) => {
+          executeSql(env.env, "SELECT 1", fetchAuthed).then(({ results }) => {
             data = results;
             newStatus = getStatusFromSQLResponse(
               data,
