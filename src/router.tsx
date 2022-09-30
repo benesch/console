@@ -15,6 +15,7 @@ import {
 
 import AppPasswordsPage from "./access/AppPasswordsPage";
 import CLI from "./access/cli";
+import PricingPage from "./access/PricingPage";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
@@ -41,6 +42,9 @@ const Router = () => {
         </Route>
         <Route path="/access">
           <AppPasswordsPage />
+        </Route>
+        <Route path="/pricing">
+          <PricingPage />
         </Route>
         <Route path="/editor">
           <Editor />

@@ -89,6 +89,9 @@ const ProfileDropdown = () => {
           <MenuItem as={RouterLink} to="/access" fontWeight="medium">
             App passwords
           </MenuItem>
+          <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
+            Pricing
+          </MenuItem>
           <MenuItem
             fontWeight="medium"
             color={signoutColor}
