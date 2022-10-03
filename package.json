@@ -93,6 +93,7 @@
     "webpack-dev-server": "^4.8.1"
   },
   "scripts": {
+    "proxy": "cd frontend && ENVIRONMENTD_SCHEME=${ENVIRONMENTD_SCHEME:-https} FRONTEGG_URL=${FRONTEGG_URL:-https://admin.staging.cloud.materialize.com} BACKEND_HOST=${BACKEND_HOST:-https://legacy.staging.cloud.materialize.com} webpack serve --config=webpack.dev.ts",
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
     "build": "cd frontend && NODE_ENV=production webpack --config=webpack.prod.ts",
     "test:unit": "cd frontend && jest",

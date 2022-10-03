@@ -16,4 +16,5 @@ window.__GOOGLE_ANALYTICS_ID__ = "google-analytics-id";
 window.__RELEASE_NOTES_ROOT_URL__ = null;
 window.__LAST_RELEASE_NOTE_ID__ = null;
 window.__IS_DEVELOPMENT__ = false;
+window.__ENVIRONMENTD_SCHEME__ = "auto";
 /* eslint-enable */

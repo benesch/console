@@ -16,4 +16,5 @@ declare global {
   const __RELEASE_NOTES_ROOT_URL__: string | null;
   const __LAST_RELEASE_NOTE_ID__: string | null;
   const __IS_DEVELOPMENT__: boolean | null;
+  const __ENVIRONMENTD_SCHEME__: "http" | "https" | "auto" | null;
 }

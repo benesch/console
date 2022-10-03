@@ -22,6 +22,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __RELEASE_NOTES_ROOT_URL__: JSON.stringify("https://materialize.com/blog"),
   __LAST_RELEASE_NOTE_ID__: JSON.stringify(null),
   __IS_DEVELOPMENT__: JSON.stringify(false),
+  __ENVIRONMENTD_SCHEME__: JSON.stringify("auto"),
 };
 
 const appHostname = process.env.APP_HOSTNAME;

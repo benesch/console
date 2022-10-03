@@ -12,11 +12,17 @@ import getCspPolicy from "./csp";
 import base, { IDefinePluginOptions } from "./webpack.config";
 
 function loadFronteggUrl(): string {
+  if (process.env.FRONTEGG_URL) {
+    return JSON.stringify(process.env.FRONTEGG_URL);
+  }
   const buffer = fs.readFileSync("../config/settings/local.outputs.json");
   const outputData = JSON.parse(buffer.toString());
   return JSON.stringify(outputData["frontegg_url"]);
 }
 
+const appHostname = process.env.APP_HOSTNAME || "staging.cloud.materialize.com";
+const provisionHostname =
+  process.env.PROVISION_HOSTNAME || "staging.materialize.cloud";
 const DefinePluginOptions: IDefinePluginOptions = {
   __FRONTEGG_URL__: DefinePlugin.runtimeValue(loadFronteggUrl, [
     path.resolve("../config/settings/local.outputs.json"),
@@ -32,9 +38,15 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __RELEASE_NOTES_ROOT_URL__: JSON.stringify("https://materialize.com/blog"),
   __LAST_RELEASE_NOTE_ID__: JSON.stringify(null),
   __IS_DEVELOPMENT__: JSON.stringify(true),
+  __ENVIRONMENTD_SCHEME__: JSON.stringify(
+    process.env.ENVIRONMENTD_SCHEME || "auto"
+  ),
 };
 
-const backendHost = process.env.BACKEND_HOST || "localhost:8000";
+const backendHostname = process.env.BACKEND_HOST || "localhost:8000";
+const backendHostUrl = backendHostname.startsWith("http")
+  ? backendHostname
+  : `http://${backendHostname}`;
 
 const reportUrl = new URL(
   "https://o561021.ingest.sentry.io/api/5699757/security/?sentry_key=13c8b3a8d1e547c9b9493de997b04337"
@@ -71,7 +83,13 @@ cspPolicy["connect-src"].push(
   "http://invalid:8002",
   // kind IPs on macOS and Linux, for access to `materialized` running in
   //  an environment.
-  "http://127.0.0.1:*"
+  "http://127.0.0.1:*",
+  `https://ec.0.us-east-1.aws.${appHostname}`,
+  `https://ec.0.eu-west-1.aws.${appHostname}`,
+  `https://rc.us-east-1.aws.${appHostname}`,
+  `https://rc.eu-west-1.aws.${appHostname}`,
+  `http://*.us-east-1.aws.${provisionHostname}:443`,
+  `http://*.eu-west-1.aws.${provisionHostname}:443`
 );
 
 const CSP = builder({
@@ -87,9 +105,12 @@ module.exports = merge(base, {
     allowedHosts: ["frontend", "localhost"],
     historyApiFallback: true,
     proxy: {
-      "/api": `http://${backendHost}`,
-      "/admin": `http://${backendHost}`,
-      "/static": `http://${backendHost}`,
+      "/api": {
+        changeOrigin: true,
+        target: backendHostUrl,
+      },
+      "/admin": backendHostUrl,
+      "/static": backendHostUrl,
     },
     headers: {
       "Reporting-Endpoints": `sentry="${reportUrl.toString()}"`,
