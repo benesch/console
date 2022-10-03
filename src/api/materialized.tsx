@@ -77,7 +77,7 @@ interface ExecuteSqlOutput {
 
 export const executeSql = async (
   environment: Environment | undefined | null,
-  sql: string,
+  query: string,
   fetcher: FetchAuthedType
 ): Promise<ExecuteSqlOutput> => {
   const address =
@@ -87,7 +87,7 @@ export const executeSql = async (
     results: null,
     errorMessage: null,
   };
-  if (!address || !sql) {
+  if (!address || !query) {
     return result;
   }
 
@@ -97,7 +97,7 @@ export const executeSql = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ sql: sql }),
+      body: JSON.stringify({ query }),
     });
 
     const responseText = await response.text();
