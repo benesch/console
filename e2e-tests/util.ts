@@ -50,7 +50,7 @@ export const ensureLoggedIn = async (page: Page) => {
   await page.context().storageState({ path: STATE_NAME });
 };
 
-export const LEGACY_VERSION = "v0.20.0";
+export const LEGACY_VERSION = "v0.26.0";
 
 const adminPortalHost = () => {
   if (IS_KIND) {
