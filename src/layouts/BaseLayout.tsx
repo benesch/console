@@ -151,12 +151,10 @@ type NavItemType = {
 
 const navItems: NavItemType[] = [
   { label: "Dashboard", href: "/platform" },
-  // { label: "Regions", href: "/platform/regions" },
-  // { label: "Clusters", href: "/platform/clusters" },
   // { label: "Editor", href: "/platform/editor" },
   {
     label: "Docs",
-    href: "//materialize.com/docs/unstable/get-started/",
+    href: "//materialize.com/docs/get-started/",
   },
 ];
 

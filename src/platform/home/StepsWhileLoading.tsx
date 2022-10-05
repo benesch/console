@@ -59,7 +59,7 @@ const StepsWhileLoading = () => {
           <Card>
             <LinkBox as="article" {...interimStepStyles}>
               <LinkOverlay
-                href="https://materialize.com/docs/unstable/get-started/"
+                href="https://materialize.com/docs/get-started/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
