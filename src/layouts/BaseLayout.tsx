@@ -58,18 +58,20 @@ export interface BaseLayoutProps {
  */
 export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
   return (
-    <Flex direction="column" height="100vh">
+    <Flex direction="column" height="100vh" maxHeight="100vh" minHeight="100vh">
       <NavBar />
-      <Container
-        as="main"
-        maxW="7xl"
-        px="5"
-        py="3"
+      <Flex
+        direction="column"
         flex={1}
         overflowY={overflowY}
+        width="100vw"
+        height="100%"
+        py={4}
       >
-        {children}
-      </Container>
+        <Container flex={1} as="main" maxW="7xl" px={{ base: 4, xl: 6 }}>
+          {children}
+        </Container>
+      </Flex>
       <PageFooter />
     </Flex>
   );

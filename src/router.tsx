@@ -72,7 +72,7 @@ const RedirectToHome = () => {
 
 const ProtectedSwitch = (props: SwitchProps) => {
   const location = useLocation();
-  const layoutOverflow = location.pathname === "/editor" ? "hidden" : undefined;
+  const layoutOverflow = location.pathname === "/editor" ? "hidden" : "auto";
   // Consume Frontegg authentication state.
   const {
     isAuthenticated,
