@@ -22,6 +22,8 @@ export const getCurrentYear = () => new Date().getFullYear();
 const PageFooter: React.FC = () => {
   const footerBg = useColorModeValue("white", "purple.900");
   const color = useColorModeValue("gray.500", "gray.200");
+  const borderWidth = useColorModeValue("0", "1px");
+  const borderColor = useColorModeValue("transparent", "gray.700");
   return (
     <HStack
       spacing="4"
@@ -30,10 +32,12 @@ const PageFooter: React.FC = () => {
       textAlign="center"
       alignItems="center"
       justifyContent="center"
-      py="3"
+      py="2"
       fontWeight="400"
       fontSize="sm"
       boxShadow="footer"
+      borderTopColor={borderColor}
+      borderTopWidth={borderWidth}
     >
       <Text>© {getCurrentYear()} Materialize, Inc.</Text>
       <TextLink href="https://materialize.com/privacy-policy" target="_blank">

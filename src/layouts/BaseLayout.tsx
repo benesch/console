@@ -5,8 +5,8 @@
 
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
-  Badge,
   Box,
+  BoxProps,
   chakra,
   Container,
   Flex,
@@ -16,8 +16,10 @@ import {
   Link,
   Menu,
   MenuButton,
+  MenuButtonProps,
   MenuItem,
   MenuList,
+  Spacer,
   StackProps,
   Text,
   useColorModeValue,
@@ -35,7 +37,10 @@ import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
 import EnvironmentSelectField from "./EnvironmentSelect";
 import PageFooter from "./PageFooter";
-import ProfileDropdown from "./ProfileDropdown";
+import ProfileDropdown, {
+  AVATAR_WIDTH,
+  ProfileMenuItems,
+} from "./ProfileDropdown";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
@@ -65,24 +70,33 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
   // rather than having a hook that is only invoked once.
   const _data = useAvailableEnvironments();
   return (
-    <Flex direction="column" height="100vh" maxHeight="100vh" minHeight="100vh">
+    <Flex
+      direction={{ base: "column", lg: "row" }}
+      maxHeight="100vh"
+      minHeight="100vh"
+      height="100vh"
+      width="100vw"
+    >
       <NavBar />
       <Flex
         direction="column"
         flex={1}
         overflowY={overflowY}
-        width="100vw"
+        width="100%"
         height="100%"
-        py={4}
       >
-        <Container flex={1} as="main" maxW="7xl" px={{ base: 4, xl: 6 }}>
+        <Container flex={1} as="main" maxW="7xl" px={{ base: 4, xl: 6 }} pb={4}>
           {children}
         </Container>
+        <PageFooter />
       </Flex>
-      <PageFooter />
     </Flex>
   );
 };
+
+export const NAV_HORIZONTAL_SPACING = 4;
+export const NAV_HOVER_STYLES = { bg: "whiteAlpha.200" };
+export const NAV_LOGO_HEIGHT = "72px";
 
 const NavBar = () => {
   const { organization } = useAuth();
@@ -91,62 +105,86 @@ const NavBar = () => {
 
   return (
     <Flex
-      justify="space-around"
+      direction={{ base: "row", lg: "column" }}
+      justify="flex-start"
+      align={{ base: "center", lg: "stretch" }}
+      pb={{ base: 0, lg: 2 }}
       bg="purple.900"
       color="white"
-      minH="14"
-      borderBottom={borderWidth}
+      minH={{ base: "auto", lg: "full" }}
+      minW="240px"
+      borderRightWidth={{ base: 0, lg: borderWidth }}
+      borderBottomWidth={{ base: borderWidth, lg: 0 }}
       borderColor={borderColor}
     >
-      <Flex
-        justify={{ base: "flex-start", lg: "space-between" }}
-        align="center"
-        w="full"
-        maxW="7xl"
-        px="5"
+      <HStack
+        as={RouterLink}
+        to="/"
+        mx={0}
+        px={NAV_HORIZONTAL_SPACING}
+        flex={0}
+        width="full"
+        justifyContent="flex-start"
+        minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
+        order={1}
       >
-        <HStack
-          as={RouterLink}
-          to="/"
-          mr={2}
-          order={2}
-          flex={1}
-          height="full"
-          minWidth={{ base: 7, md: "140px" }}
+        <NavMenuCompact
+          display={{ base: "block", lg: "none" }}
+          trialExpiresAt={organization.trialExpiresAt}
+        />
+        <VStack
+          position="relative"
+          flex="0 0 24px"
+          mr={{ base: 1, md: 2, lg: 0 }}
+          ml={0}
         >
-          <VStack
-            position="relative"
-            flex="0 0 24px"
-            mr={{ base: 1, md: 2, lg: 2 }}
-          >
-            <chakra.img
-              src={logo}
-              height={{ base: 6, md: 9 }}
-              aria-label="Logo"
-            ></chakra.img>
-            <WhatsNew
-              position="absolute"
-              top={{ base: -5, md: -4 }}
-              right={{ base: -3, md: -4 }}
-            />
-          </VStack>
-          <Text
-            fontWeight="700"
-            fontSize="md"
-            display={{ base: "none", md: "block" }}
-          >
-            Materialize
-          </Text>
-        </HStack>
-        <NavMenu />
-        <HStack spacing={{ base: 2, md: 5 }} order={2}>
-          <EnvironmentSelectField />
-          {organization.trialExpiresAt && (
-            <TrialBubble trialExpiresAt={organization.trialExpiresAt} />
-          )}
-          <HelpDropdown />
-          <ProfileDropdown />
-        </HStack>
+          <chakra.img
+            src={logo}
+            height={{ base: 6, md: 9 }}
+            aria-label="Logo"
+          ></chakra.img>
+          <WhatsNew
+            position="absolute"
+            top={{ base: -5, md: -4 }}
+            right={{ base: -3, md: -4 }}
+          />
+        </VStack>
+        <Text fontWeight="700" fontSize="md">
+          Materialize
+        </Text>
+      </HStack>
+      <Flex
+        flex={0}
+        minH={{ base: "auto", lg: "54px" }}
+        alignItems="flex-start"
+        justifyContent="stretch"
+        px={NAV_HORIZONTAL_SPACING}
+        pb={{ base: 0, lg: 2 }}
+        order={{ base: 100, lg: 2 }}
+      >
+        <EnvironmentSelectField />
+      </Flex>
+      <NavMenu
+        order={{ base: 2, lg: 3 }}
+        display={{ base: "none", lg: "flex" }}
+      />
+      <Spacer order={{ base: 3, lg: 4 }} />
+      <Flex
+        order={4}
+        direction={{ base: "row", lg: "column" }}
+        align={{ base: "center", lg: "stretch" }}
+        fontSize="sm"
+      >
+        {organization.trialExpiresAt && (
+          <TrialBubble
+            display={{ base: "none", lg: "flex" }}
+            trialExpiresAt={organization.trialExpiresAt}
+            mx={NAV_HORIZONTAL_SPACING}
+            my={{ base: 0, lg: 2 }}
+          />
+        )}
+        <HelpDropdown />
+        <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
     </Flex>
   );
@@ -155,11 +193,10 @@ const NavBar = () => {
 type NavItemType = {
   label: string;
   href: string;
-  legacy?: boolean;
 };
 
 const navItems: NavItemType[] = [
-  { label: "Dashboard", href: "/" },
+  { label: "Connect", href: "/" },
   // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
@@ -167,50 +204,60 @@ const navItems: NavItemType[] = [
   },
 ];
 
-const NavMenu = () => {
+const NavMenu = (props: BoxProps) => {
   return (
-    <>
-      <HStack
-        spacing="3"
-        flex="2"
-        order={2}
-        display={{ base: "none", xl: "flex" }}
-        alignSelf="stretch"
-        alignItems="stretch"
-        ml={{ base: 0.5, xl: 2 }}
-        mr={{ base: 0.5, xl: 1 }}
-      >
+    <VStack
+      data-test-id="nav-lg"
+      spacing="0"
+      flex="2"
+      alignSelf="stretch"
+      alignItems="stretch"
+      mt={0}
+      mb={{ base: 0.5, xl: 1 }}
+      {...props}
+    >
+      {navItems.map((item) => (
+        <NavItem key={`nav-button-${item.label}`} {...item} />
+      ))}
+    </VStack>
+  );
+};
+
+type NavMenuCompactProps = MenuButtonProps & {
+  trialExpiresAt: string | null;
+};
+
+const NavMenuCompact = ({ trialExpiresAt, ...props }: NavMenuCompactProps) => {
+  return (
+    <Menu data-test-id="nav-sm">
+      <MenuButton
+        as={IconButton}
+        aria-label="Menu"
+        title="Menu"
+        icon={<HamburgerIcon />}
+        display={{ base: "block", xl: "none" }}
+        variant="outline"
+        mr={2}
+        {...props}
+      />
+      <MenuList>
         {navItems.map((item) => (
-          <NavItem key={`nav-button-${item.label}`} {...item} />
+          <MenuItem
+            as={RouterLink}
+            key={`menu-item-${item.label}`}
+            to={item.href}
+          >
+            {item.label}
+          </MenuItem>
         ))}
-      </HStack>
-      <Menu>
-        <MenuButton
-          as={IconButton}
-          aria-label="Menu"
-          title="Menu"
-          icon={<HamburgerIcon />}
-          display={{ base: "block", xl: "none" }}
-          sx={{
-            order: 1,
-          }}
-          variant="outline"
-          mr={{ base: 3, md: 4 }}
-        />
-        <MenuList>
-          {navItems.map((item) => (
-            <MenuItem
-              as={RouterLink}
-              key={`menu-item-${item.label}`}
-              to={item.href}
-            >
-              {item.label}
-              {item.legacy && <Badge ml={1}>Legacy</Badge>}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-    </>
+        <ProfileMenuItems />
+        {trialExpiresAt && (
+          <Box p={2} display={{ base: "flex", lg: "none" }}>
+            <TrialBubble trialExpiresAt={trialExpiresAt} flex={1} />
+          </Box>
+        )}
+      </MenuList>
+    </Menu>
   );
 };
 
@@ -223,24 +270,26 @@ const NavItem = (props: NavItemType) => {
     <HStack
       aria-current={active ? "page" : undefined}
       spacing="2"
-      height="100%"
-      px={3}
+      width="full"
+      px={NAV_HORIZONTAL_SPACING}
+      py={2}
       transition="all 0.2s"
       color="gray.200"
-      _hover={{ bg: "whiteAlpha.200" }}
+      _hover={NAV_HOVER_STYLES}
       _activeLink={{
         bg: "whiteAlpha.300",
         color: "white",
-        borderBottom: "3px solid white",
-        borderLeft: "3px solid transparent",
-        borderRight: "3px solid transparent",
-        paddingTop: "3px",
+        paddingLeft: "3px",
+        borderTop: "3px solid transparent",
+        borderBottom: { base: "3px solid white", lg: "3px solid transparent" },
+        borderLeft: { base: "3px solid transparent", lg: 0 },
+        borderRight: { base: "3px solid transparent", lg: "3px solid white" },
+        px: 4,
       }}
-      borderLeft="3px solid transparent"
-      borderRight="3px solid transparent"
+      borderTop="3px solid transparent"
+      borderBottom="3px solid transparent"
     >
       <Box fontWeight="semibold">{props.label}</Box>
-      {props.legacy && <Badge>Legacy</Badge>}
     </HStack>
   );
 
@@ -262,19 +311,36 @@ const NavItem = (props: NavItemType) => {
 const HelpDropdown = () => {
   return (
     <Menu>
-      <MenuButton aria-label="Help" title="Help">
-        <Box
-          bg="white"
-          rounded="full"
-          h="5"
-          w="5"
-          color="purple.900"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          ?
-        </Box>
+      <MenuButton
+        aria-label="Help"
+        title="Help"
+        _hover={NAV_HOVER_STYLES}
+        px={NAV_HORIZONTAL_SPACING}
+        py={2}
+      >
+        <HStack>
+          {/* The wrapper box keeps the centers of the circles aligned */}
+          <Flex
+            h={AVATAR_WIDTH}
+            w={AVATAR_WIDTH}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box
+              bg="white"
+              rounded="full"
+              h="5"
+              w="5"
+              color="purple.900"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              ?
+            </Box>
+          </Flex>
+          <Text>Help</Text>
+        </HStack>
       </MenuButton>
       <MenuList>
         <HelpDropdownLink href="https://materialize.com/docs/cloud/">
@@ -289,41 +355,68 @@ const HelpDropdown = () => {
   );
 };
 
-interface TrialBubble {
+type TrialBubble = BoxProps & {
   trialExpiresAt: string;
-}
+};
 
-const TrialBubble = (props: TrialBubble) => {
-  const trialExpiresAt = Date.parse(props.trialExpiresAt);
+const TrialBubble = ({ trialExpiresAt, ...props }: TrialBubble) => {
+  // This color logic is a mess because if it's size lg, it's always dark
+  // (menu bg varies by colormode, but the regular nav always has a dark bg)
+  const textColor = useColorModeValue("default", "white");
+  const bgColor = useColorModeValue("gray.100", "gray.800");
+  const linkColor = useColorModeValue("blue.600", "blue.200");
+  const trialExpireTime = Date.parse(trialExpiresAt);
   const now = Date.now();
-  const expired = trialExpiresAt < now;
-  const daysRemaining = differenceInDays(trialExpiresAt, now) + 1;
+  const expired = trialExpireTime < now;
+  const daysRemaining = differenceInDays(trialExpireTime, now) + 1;
   let daysRemainingText;
   if (expired) {
     daysRemainingText = "Expired";
-  } else if (daysRemaining == 1) {
+  } else if (daysRemaining === 1) {
     daysRemainingText = "1 day left";
   } else {
     daysRemainingText = `${daysRemaining} days left`;
   }
   return (
-    <HStack
-      spacing={{ base: 3, md: 4 }}
-      bg={expired ? "red.500" : "whiteAlpha.300"}
+    <Flex
+      bg={expired ? "red.500" : { base: bgColor, lg: "gray.800" }}
       borderRadius="md"
-      px={{ sm: 2, md: 3 }}
-      py="1"
+      px={2}
+      py={1}
       fontSize="sm"
       minWidth={180}
+      justify="center"
+      alignItems="center"
+      {...props}
     >
-      <VStack spacing="-1">
+      <VStack
+        spacing="-1"
+        flex={1}
+        color={expired ? "white" : { base: textColor, lg: "white" }}
+      >
         <Text>Free trial</Text>
-        <Text fontWeight="600">{daysRemainingText}</Text>
+        <Text
+          fontWeight="600"
+          color={
+            expired
+              ? "white"
+              : textColor !== "white"
+              ? { base: "black", lg: "white" }
+              : "default"
+          }
+        >
+          {daysRemainingText}
+        </Text>
       </VStack>
-      <Link color={expired ? "white" : "blue.200"} href={SUPPORT_HREF}>
+      <Link
+        color={expired ? "white" : { base: linkColor, lg: "blue.200" }}
+        href={SUPPORT_HREF}
+        textAlign="center"
+        flex={1}
+      >
         Upgrade
       </Link>
-    </HStack>
+    </Flex>
   );
 };
 
@@ -343,9 +436,15 @@ const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
 /** A container for the header block at the top of a page. */
 export const PageHeader = ({ children, ...props }: StackProps) => {
   return (
-    <HStack mb="5" {...props}>
+    <Flex
+      minHeight={{ base: 0, lg: NAV_LOGO_HEIGHT }}
+      {...props}
+      flexDirection="column"
+      alignItems="flex-start"
+      justifyContent="center"
+    >
       {children}
-    </HStack>
+    </Flex>
   );
 };
 
@@ -363,7 +462,7 @@ export interface PageBreadcrumbsProps {
 export const PageBreadcrumbs = (props: PageHeadingProps) => {
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
-  return <Box fontSize="md">{props.children || <>&nbsp;</>}</Box>;
+  return <Box fontSize="sm">{props.children || <>&nbsp;</>}</Box>;
 };
 
 export interface PageHeadingProps {
@@ -377,7 +476,7 @@ export interface PageHeadingProps {
  */
 export const PageHeading = (props: PageHeadingProps) => {
   return (
-    <Heading fontWeight="400" fontSize="3xl">
+    <Heading fontWeight="400" fontSize="2xl" mt={0} mb={4}>
       {props.children}
     </Heading>
   );

@@ -1,5 +1,7 @@
 import {
   Avatar,
+  ButtonProps,
+  HStack,
   Menu,
   MenuButton,
   MenuDivider,
@@ -19,12 +21,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { getCurrentTenant, useAuth } from "../api/auth";
 import TenantSwitcherModal from "../components/TenantSwitcherModal";
 import { assert } from "../util";
+import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "./BaseLayout";
 
-const ProfileDropdown = () => {
-  const history = useHistory();
-  const { user, routes: authRoutes, tenantsState } = useAuth();
+export const AVATAR_WIDTH = 8;
+
+const ProfileDropdown = (props: ButtonProps) => {
+  const { user, tenantsState } = useAuth();
   const emailColor = useColorModeValue("gray.500", "gray.200");
-  const signoutColor = useColorModeValue("red.500", "red.300");
   const [tenantSwitcherOpen, setTenantSwitcherOpen] = useState(false);
   const { switchTenant } = useAuthActions();
 
@@ -42,12 +45,23 @@ const ProfileDropdown = () => {
   return (
     <>
       <Menu>
-        <MenuButton aria-label="Profile" title="Profile">
-          <Avatar
-            size="sm"
-            src={user.profilePictureUrl || user.profileImage}
-            name={user.name}
-          />
+        <MenuButton
+          aria-label="Profile"
+          title="Profile"
+          px={NAV_HORIZONTAL_SPACING}
+          py={2}
+          {...props}
+          _hover={NAV_HOVER_STYLES}
+        >
+          <HStack>
+            <Avatar
+              h={AVATAR_WIDTH}
+              w={AVATAR_WIDTH}
+              src={user.profilePictureUrl || user.profileImage}
+              name={user.name}
+            />
+            <Text>Account</Text>
+          </HStack>
         </MenuButton>
         {/* zIndex superior to Code Editor Run button */}
         <MenuList zIndex={2}>
@@ -83,22 +97,7 @@ const ProfileDropdown = () => {
             </MenuItem>
           </MenuGroup>
           <MenuDivider />
-          <MenuItem fontWeight="medium" onClick={() => AdminPortal.show()}>
-            Account settings
-          </MenuItem>
-          <MenuItem as={RouterLink} to="/access" fontWeight="medium">
-            App passwords
-          </MenuItem>
-          <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
-            Pricing
-          </MenuItem>
-          <MenuItem
-            fontWeight="medium"
-            color={signoutColor}
-            onClick={() => history.push(authRoutes.logoutUrl)}
-          >
-            Sign out
-          </MenuItem>
+          <ProfileMenuItems />
         </MenuList>
       </Menu>
       <TenantSwitcherModal
@@ -106,6 +105,32 @@ const ProfileDropdown = () => {
         onClose={onTenantSelected}
         user={user}
       />
+    </>
+  );
+};
+
+export const ProfileMenuItems = () => {
+  const history = useHistory();
+  const { routes: authRoutes } = useAuth();
+  const signoutColor = useColorModeValue("red.500", "red.300");
+  return (
+    <>
+      <MenuItem as={RouterLink} to="/access" fontWeight="medium">
+        App passwords
+      </MenuItem>
+      <MenuItem fontWeight="medium" onClick={() => AdminPortal.show()}>
+        Account settings
+      </MenuItem>
+      <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
+        Pricing
+      </MenuItem>
+      <MenuItem
+        fontWeight="medium"
+        color={signoutColor}
+        onClick={() => history.push(authRoutes.logoutUrl)}
+      >
+        Sign out
+      </MenuItem>
     </>
   );
 };

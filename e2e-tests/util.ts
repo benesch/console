@@ -104,7 +104,7 @@ export class TestContext {
 
     // Navigate to the home page && wait for that to load.
     await page.goto(CONSOLE_ADDR);
-    await page.waitForSelector('text="Dashboard"');
+    await page.waitForSelector('text="Welcome to Materialize!"');
 
     return context;
   }
