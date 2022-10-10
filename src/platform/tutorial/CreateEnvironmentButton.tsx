@@ -86,11 +86,11 @@ const CreateEnvironmentButton = (props: Props) => {
         setIsCreatingThisEnv(false);
         if (handleEnvCreate) handleEnvCreate(false);
         setHasCreatedEnv(true);
+        setCurrent({ region: props.region });
         toast({
           title: "Region enabled.",
           status: "success",
         });
-        setCurrent({ region: props.region });
       } else if (errorMessage) {
         setIsCreatingThisEnv(false);
         if (handleEnvCreate) handleEnvCreate(false);

@@ -1,8 +1,14 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
+import { useRecoilState } from "recoil";
 
 import { SupportedCloudRegion } from "../../api/backend";
-import useEnvironmentState from "../../api/useEnvironmentState";
+import useAvailableEnvironments from "../../api/useAvailableEnvironments";
+import {
+  EnvironmentStatus,
+  environmentStatusMap,
+  getRegionId,
+} from "../../recoil/environments";
 import CreateEnvironmentButton from "./CreateEnvironmentButton";
 
 interface EnvironmentTableProps {
@@ -11,7 +17,7 @@ interface EnvironmentTableProps {
 
 const EnvironmentList = (props: EnvironmentTableProps) => {
   const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
-
+  const [statusMap] = useRecoilState(environmentStatusMap);
   return (
     <VStack spacing={4} data-test-id="regions-list">
       {props.regions.map((r) => (
@@ -20,6 +26,7 @@ const EnvironmentList = (props: EnvironmentTableProps) => {
           region={r}
           setIsCreatingEnv={setIsCreatingEnv}
           isCreatingEnv={isCreatingEnv}
+          status={statusMap[getRegionId(r)]}
         />
       ))}
     </VStack>
@@ -28,20 +35,17 @@ const EnvironmentList = (props: EnvironmentTableProps) => {
 
 interface RegionEnvironmentRowProps {
   region: SupportedCloudRegion;
+  status: EnvironmentStatus;
   isCreatingEnv: boolean;
   setIsCreatingEnv: (flag: boolean) => void;
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
-  const { environment, refetch } = useEnvironmentState(
-    props.region.regionControllerUrl
-  );
-  const { region: r } = props;
+  const { region: r, status } = props;
 
   const handleEnvCreate = React.useCallback(
     async (isCreating: boolean) => {
       props.setIsCreatingEnv(isCreating);
-      await refetch();
     },
     [props.setIsCreatingEnv]
   );
@@ -57,7 +61,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
         {r.provider}/{r.region}
       </Box>
       <Box>
-        {!environment && (
+        {status === "Not enabled" && (
           <CreateEnvironmentButton
             {...props}
             handleEnvCreate={handleEnvCreate}

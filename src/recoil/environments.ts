@@ -5,6 +5,10 @@ import { Environment } from "../api/environment-controller";
 import { EnvironmentAssignment } from "../api/region-controller";
 import keys from "./keyConstants";
 
+// Currently the identifier for unique envs is their provider + their region
+export const getRegionId = (region: SupportedCloudRegion): string =>
+  `${region.provider}/${region.region}`;
+
 export type EnvironmentStatus =
   | "Loading"
   | "Starting"
@@ -42,10 +46,18 @@ export const hasCreatedEnvironment = atom<boolean>({
   default: false,
 });
 
+export const firstEnvLoad = atom<boolean>({
+  key: keys.ON_FIRST_LOAD,
+  default: true,
+});
+
 export type StatusMap = {
   [key: string]: EnvironmentStatus;
 };
 
+/*
+ * Map environment IDs (per the `getRegionId` helper) to their statuses
+ */
 export const environmentStatusMap = atom<StatusMap>({
   key: keys.ENVIRONMENT_STATUS_MAP,
   default: {},
