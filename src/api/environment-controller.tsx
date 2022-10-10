@@ -7,6 +7,7 @@ export interface Environment {
   environmentdPgwireAddress: string;
   environmentdHttpsAddress: string;
   resolvable?: boolean;
+  creationTimestamp?: string;
 }
 
 export type EnvironmentsListProps = Omit<
