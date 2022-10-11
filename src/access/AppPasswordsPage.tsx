@@ -31,7 +31,11 @@ import {
 } from "../components/cardComponents";
 import { CopyButton } from "../components/Copyable";
 import { SubmitButton, TextField } from "../components/formComponents";
-import { PageHeader, PageHeading } from "../layouts/BaseLayout";
+import {
+  PageBreadcrumbs,
+  PageHeader,
+  PageHeading,
+} from "../layouts/BaseLayout";
 import DeleteKeyModal from "./DeleteKeyModal";
 
 const AppPasswordsPage = () => {
@@ -73,6 +77,7 @@ const AppPasswordsPage = () => {
 
   return (
     <>
+      <PageBreadcrumbs />
       <PageHeader>
         <PageHeading>App passwords</PageHeading>
       </PageHeader>

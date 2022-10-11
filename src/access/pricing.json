@@ -1,0 +1,71 @@
+{
+  "regions": ["AWS/us-east-1", "AWS/eu-west-1"],
+  "pricingTerms": {
+    "rows": [
+      "Credit price",
+      "Storage per GB (monthly)",
+      "Network egress per GB (monthly)"
+    ],
+    "cols": [
+      {
+        "title": "On demand",
+        "values": {
+          "AWS/us-east-1": ["$1.50", "$0.03", "$0.12"],
+          "AWS/eu-west-1": ["$1.70", "$0.03", "$0.12"]
+        }
+      }
+    ]
+  },
+  "consumptionTables": [
+    {
+      "title": "Compute (credits per hour)",
+      "values": {
+        "AWS/us-east-1": [
+          { "title": "xs", "value": "1" },
+          { "title": "s", "value": "2" },
+          { "title": "m", "value": "4" },
+          { "title": "l", "value": "8" },
+          { "title": "xl", "value": "16" },
+          { "title": "2xl", "value": "32" },
+          { "title": "3xl", "value": "64" },
+          { "title": "4xl", "value": "128" },
+          { "title": "5xl", "value": "256" },
+          { "title": "6xl", "value": "512" }
+        ],
+        "AWS/eu-west-1": [
+          { "title": "xs", "value": "1" },
+          { "title": "s", "value": "2" },
+          { "title": "m", "value": "4" },
+          { "title": "l", "value": "8" },
+          { "title": "xl", "value": "16" },
+          { "title": "2xl", "value": "32" },
+          { "title": "3xl", "value": "64" },
+          { "title": "4xl", "value": "128" },
+          { "title": "5xl", "value": "256" },
+          { "title": "6xl", "value": "512" }
+        ]
+      }
+    },
+    {
+      "title": "Source/sink (credits per hour)",
+      "values": {
+        "AWS/us-east-1": [
+          { "title": "3xs", "value": "0.0533" },
+          { "title": "2xs", "value": "0.1067" },
+          { "title": "xs", "value": "0.2133" },
+          { "title": "s", "value": "0.4267" },
+          { "title": "m", "value": "0.8533" },
+          { "title": "l", "value": "1.7067" }
+        ],
+        "AWS/eu-west-1": [
+          { "title": "3xs", "value": "0.0523" },
+          { "title": "2xs", "value": "0.1046" },
+          { "title": "xs", "value": "0.2092" },
+          { "title": "s", "value": "0.4183" },
+          { "title": "m", "value": "0.8366" },
+          { "title": "l", "value": "1.6732" }
+        ]
+      }
+    }
+  ]
+}

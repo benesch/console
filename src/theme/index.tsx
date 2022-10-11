@@ -14,7 +14,6 @@ import { defaultStandaloneParam, extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
-import { Theme } from "react-select";
 
 import logo from "../../img/wordmark.svg";
 import SignupFooter from "../layouts/SignupFooter";

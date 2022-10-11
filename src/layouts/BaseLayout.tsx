@@ -18,6 +18,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  StackProps,
   Text,
   useColorModeValue,
   VStack,
@@ -339,13 +340,13 @@ const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
   );
 };
 
-export interface PageHeaderProps {
-  children?: React.ReactNode;
-}
-
 /** A container for the header block at the top of a page. */
-export const PageHeader = (props: PageHeaderProps) => {
-  return <HStack mb="5">{props.children}</HStack>;
+export const PageHeader = ({ children, ...props }: StackProps) => {
+  return (
+    <HStack mb="5" {...props}>
+      {children}
+    </HStack>
+  );
 };
 
 export interface PageBreadcrumbsProps {
