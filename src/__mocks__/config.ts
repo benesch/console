@@ -14,6 +14,7 @@ export const globalConfigStub: GlobalConfig = {
   releaseNotesRootURL: null,
   lastReleaseNoteId: null,
   isDevelopment: false,
+  environmentdScheme: "auto",
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {

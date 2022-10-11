@@ -1,6 +1,7 @@
 /* Globals injected by Webpack's DefinePlugin.*/
 
 const config = {
+  environmentdScheme: __ENVIRONMENTD_SCHEME__,
   fronteggUrl: __FRONTEGG_URL__,
   segmentApiKey: __SEGMENT_API_KEY__,
   sentryDsn: __SENTRY_DSN__,

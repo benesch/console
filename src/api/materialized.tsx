@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
+import config from "../config";
 import { currentEnvironment } from "../recoil/environments";
 import { FetchAuthedType, useAuth } from "./auth";
 import { Environment } from "./environment-controller";
@@ -92,7 +93,11 @@ export const executeSql = async (
   }
 
   try {
-    const response = await fetcher(`//${address}/api/sql`, {
+    const scheme =
+      config.environmentdScheme === "auto"
+        ? ""
+        : `${config.environmentdScheme}:`;
+    const response = await fetcher(`${scheme}//${address}/api/sql`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
