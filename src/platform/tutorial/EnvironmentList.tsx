@@ -63,7 +63,8 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       <Box>
         {status === "Not enabled" && (
           <CreateEnvironmentButton
-            {...props}
+            region={props.region}
+            isCreatingEnv={props.isCreatingEnv}
             handleEnvCreate={handleEnvCreate}
           />
         )}
