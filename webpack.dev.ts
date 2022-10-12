@@ -43,7 +43,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   ),
 };
 
-const backendHostname = process.env.BACKEND_HOST || "localhost:8000";
+const backendHostname = process.env.BACKEND_HOST || "[::1]:8000";
 const backendHostUrl = backendHostname.startsWith("http")
   ? backendHostname
   : `http://${backendHostname}`;
