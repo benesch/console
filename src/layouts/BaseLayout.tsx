@@ -107,7 +107,7 @@ const NavBar = () => {
       >
         <HStack
           as={RouterLink}
-          to="/platform"
+          to="/"
           mr={2}
           order={2}
           flex={1}
@@ -159,8 +159,8 @@ type NavItemType = {
 };
 
 const navItems: NavItemType[] = [
-  { label: "Dashboard", href: "/platform" },
-  // { label: "Editor", href: "/platform/editor" },
+  { label: "Dashboard", href: "/" },
+  // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
     href: "//materialize.com/docs/get-started/",

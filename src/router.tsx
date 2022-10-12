@@ -50,8 +50,11 @@ const Router = () => {
         <Route path="/editor">
           <Editor />
         </Route>
-        <Route path="/">
+        <Route path="/" exact>
           <RedirectToHome />
+        </Route>
+        <Route>
+          <Redirect to="/" />
         </Route>
       </ProtectedSwitch>
       <AnalyticsOnEveryPage config={config} />
