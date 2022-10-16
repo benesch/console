@@ -10,7 +10,7 @@
     "@chakra-ui/toast": "^1.5.7",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.8.1",
-    "@fontsource/inter": "^4.5.7",
+    "@fontsource/inter": "^4.5.14",
     "@frontegg/react": "^5.0.7",
     "@segment/analytics-next": "^1.43.0",
     "@melloware/csp-webpack-plugin": "^6.0.4",
