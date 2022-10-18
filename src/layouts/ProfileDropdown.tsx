@@ -21,7 +21,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { getCurrentTenant, useAuth } from "../api/auth";
 import TenantSwitcherModal from "../components/TenantSwitcherModal";
 import { assert } from "../util";
-import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "./BaseLayout";
+import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "./NavBar";
 
 export const AVATAR_WIDTH = 8;
 

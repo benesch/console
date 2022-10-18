@@ -6,8 +6,12 @@ import { EnvironmentAssignment } from "../api/region-controller";
 import keys from "./keyConstants";
 
 // Currently the identifier for unique envs is their provider + their region
-export const getRegionId = (region: SupportedCloudRegion): string =>
-  `${region.provider}/${region.region}`;
+export const getRegionId = (region?: SupportedCloudRegion): string => {
+  if (region) {
+    return `${region.provider}/${region.region}`;
+  }
+  return "";
+};
 
 export type EnvironmentStatus =
   | "Loading"

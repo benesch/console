@@ -47,13 +47,7 @@ export const chakraTheme = extendTheme({
   styles: {
     global: (props: StyleFunctionProps) => ({
       body: {
-        bg: mode(
-          "#f9f9f9",
-          `
-        ${gradients.primary.gradient},
-        ${gradients.primary.fallback}
-      `
-        )(props),
+        bg: mode(semanticColors.bg.light, semanticColors.bg.dark)(props),
       },
     }),
   },

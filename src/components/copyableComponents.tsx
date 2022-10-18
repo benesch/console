@@ -208,15 +208,15 @@ export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
     preProps.whiteSpace = "pre-wrap";
   }
 
-  let children: React.ReactNode = contents;
+  let codeblockInnards: React.ReactNode = props.children || contents;
   if (lineNumbers) {
-    children = contents.split("\n").map((line, i) => (
+    codeblockInnards = contents.split("\n").map((line, i) => (
       <Line key={`line-${i}`} index={i}>
         {line}
         {"\n"}
       </Line>
     ));
-    preProps.ml = 8;
+    preProps.ml = 6;
     preProps.borderLeft = "1px solid";
     preProps.borderLeftColor = borderColor;
   }
@@ -230,6 +230,7 @@ export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
       borderColor={borderColor}
       borderRadius="md"
       w="full"
+      textAlign="left"
       {...props}
     >
       <Flex
@@ -241,7 +242,14 @@ export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
         w="full"
         alignItems="center"
       >
-        <Heading size="xs" fontWeight="400" flex={1} px={2} py={1}>
+        <Heading
+          size="xs"
+          fontWeight="400"
+          flex={1}
+          px={2}
+          py={1}
+          textAlign="left"
+        >
           {title}
         </Heading>
         <CopyButton
@@ -259,7 +267,7 @@ export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
         />
       </Flex>
       <chakra.pre
-        fontSize="sm"
+        fontSize={props.fontSize || "sm"}
         py={2}
         pl={4}
         pr={8}
@@ -267,7 +275,7 @@ export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
         sx={{ wordWrap: "normal" }}
         {...preProps}
       >
-        {children}
+        {codeblockInnards}
       </chakra.pre>
     </Box>
   );
@@ -285,6 +293,7 @@ const Line = (props: LineProps) => {
   );
   return (
     <chakra.span
+      fontSize="xs"
       _before={{
         content: "counter(line)",
         color: grayText,

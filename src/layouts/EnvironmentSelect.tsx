@@ -21,6 +21,7 @@ import {
   currentEnvironment,
   environmentList,
   environmentStatusMap,
+  getRegionId,
   RegionEnvironment,
   singleEnvironmentStatus,
 } from "../recoil/environments";
@@ -107,8 +108,8 @@ type EnvOptionType = {
 
 function makeEnvOption({ region }: RegionEnvironment): EnvOptionType {
   return {
-    label: `${region.provider}/${region.region}`,
-    value: `${region.provider}/${region.region}`,
+    label: getRegionId(region),
+    value: getRegionId(region),
   };
 }
 
