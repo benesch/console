@@ -1,7 +1,7 @@
 import { Box, Text, useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import { CopyableText } from "../../components/Copyable";
+import { CopyableText } from "../../components/copyableComponents";
 import { semanticColors } from "../../theme/colors";
 
 interface Props {
@@ -35,7 +35,6 @@ const ConnectStepBoxDetail = (props: Props): JSX.Element => {
         <CopyableText
           fontSize={{ base: "xs", md: "sm" }}
           overflowWrap="break-word"
-          overflow="hidden"
           width="100%"
         >
           {content}

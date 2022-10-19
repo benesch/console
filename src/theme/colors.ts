@@ -4,9 +4,9 @@ const colors = {
   black: "#111",
   white: "#FFF",
   offWhite: "#f9f9f9",
-  // true grayscale
+  // true grayscale...more or less
   bwGray: {
-    50: "#fef0f9",
+    50: "#f7f3f5",
     100: "#ded7d9",
     200: "#c2bebf",
     300: "#a7a5a6",

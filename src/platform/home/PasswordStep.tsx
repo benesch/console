@@ -13,7 +13,7 @@ import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { CopyButton } from "../../components/Copyable";
+import { CopyButton } from "../../components/copyableComponents";
 import { semanticColors } from "../../theme/colors";
 
 const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
