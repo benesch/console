@@ -41,6 +41,10 @@ const StatusPageWidget = (props: StatusPageWidgetProps) => {
         setVisible(false);
         break;
 
+      case undefined:
+        // no-op - sometimes this is sent on initial load
+        break;
+
       default:
         throw new Error(
           `unexpected action from statuspage iframe: ${event.data.action}`
