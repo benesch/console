@@ -68,7 +68,7 @@ const StatusPageWidget = (props: StatusPageWidgetProps) => {
       transition={mobile ? "bottom 1s ease" : "left 1s ease"}
       height={mobile ? "20vh" : "115px"}
       width={mobile ? "100vw" : "320px"}
-      left={mobile ? "0px" : visible ? "60px" : "-9999px"}
+      right={mobile ? "0px" : visible ? "60px" : "-9999px"}
       bottom={mobile ? (visible ? "0" : "-9999px") : "60px"}
     />
   );
