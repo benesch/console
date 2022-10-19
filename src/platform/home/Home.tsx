@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 
 import { useCloudProvidersList } from "../../api/backend";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { PageBreadcrumbs } from "../../layouts/BaseLayout";
+import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
   currentEnvironment,
   environmentStatusMap,
@@ -89,7 +89,9 @@ const Home = () => {
 
   return (
     <>
-      <PageBreadcrumbs />
+      <PageHeader>
+        <PageBreadcrumbs />
+      </PageHeader>
       <VStack spacing={6} mb={6}>
         {content}
       </VStack>

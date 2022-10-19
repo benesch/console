@@ -77,8 +77,8 @@ const AppPasswordsPage = () => {
 
   return (
     <>
-      <PageBreadcrumbs />
       <PageHeader>
+        <PageBreadcrumbs />
         <PageHeading>App passwords</PageHeading>
       </PageHeader>
       {loadingInProgress ? (

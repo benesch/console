@@ -48,9 +48,9 @@ for (const region of PLATFORM_REGIONS) {
     const appPasswords = await context.listAllKeys();
     console.log("app passwords now", appPasswords);
 
-    await page.click('a:has-text("Dashboard")');
+    await page.click('data-test-id=nav-lg >> a:has-text("Connect")');
 
-    // Activate the region in the onboarding table we have no regions
+    // Activate the region in the onboarding table if we have no regions
     // active, otherwise pick one in the selector and use it.
     const regionState = await Promise.race([
       (async () => {

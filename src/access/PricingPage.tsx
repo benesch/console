@@ -67,8 +67,8 @@ const PricingPage = () => {
 
   return (
     <>
-      <PageBreadcrumbs />
       <PageHeader>
+        <PageBreadcrumbs />
         <PageHeading>Pricing</PageHeading>
       </PageHeader>
       <HStack mb={5}>
