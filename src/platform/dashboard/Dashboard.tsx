@@ -14,7 +14,6 @@ import {
   PageHeading,
 } from "../../layouts/BaseLayout";
 import { currentEnvironment } from "../../recoil/environments";
-import MetricsCard from "./MetricsCard";
 
 const Dashboard = () => {
   const [current, _] = useRecoilState(currentEnvironment);
@@ -40,9 +39,6 @@ const Dashboard = () => {
           <Spacer />
         </HStack>
       </PageHeader>
-      <VStack pb={6}>
-        <MetricsCard />
-      </VStack>
     </>
   );
 };

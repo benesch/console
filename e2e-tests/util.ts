@@ -99,7 +99,6 @@ export class TestContext {
 
     await ensureLoggedIn(page);
     // Provide a clean slate for the test.
-    await context.deleteAllDeployments();
     await context.deleteAllEnvironmentAssignments();
 
     // Navigate to the home page && wait for that to load.
@@ -225,23 +224,6 @@ export class TestContext {
     } else {
       // we already consume the body as text, so we need to parse manually
       return JSON.parse(responsePayload);
-    }
-  }
-
-  /** Delete any existing deployments. */
-  async deleteAllDeployments() {
-    const deployments = await this.apiRequest("/deployments");
-    for (const d of deployments) {
-      console.log(`Deleting deployment ${d.id}`);
-      try {
-        await this.apiRequest(`/deployments/${d.id}`, { method: "DELETE" });
-      } catch (e: unknown) {
-        // if the deployment does not exist, it's okay to ignore the error.
-        const deploymentDoesNotExist = e.message.includes("API Error 404");
-        if (!deploymentDoesNotExist) {
-          throw e;
-        }
-      }
     }
   }
 
