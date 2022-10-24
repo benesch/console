@@ -346,7 +346,7 @@ const HelpDropdown = () => {
         <HelpDropdownLink href="https://materialize.com/docs/cloud/">
           Documentation
         </HelpDropdownLink>
-        <HelpDropdownLink href="https://materialize.com/s/chat/">
+        <HelpDropdownLink href="https://materialize.com/s/chat">
           Join us on Slack
         </HelpDropdownLink>
         <HelpDropdownLink href={SUPPORT_HREF}>Email us</HelpDropdownLink>
