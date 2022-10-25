@@ -20,8 +20,6 @@ import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import config from "./config";
-import DeploymentDetailPage from "./deployments/detail/DetailPage";
-import DeploymentListPage from "./deployments/ListPage";
 import { BaseLayout } from "./layouts/BaseLayout";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
@@ -32,12 +30,6 @@ const Router = () => {
   return (
     <>
       <ProtectedSwitch>
-        <Route path="/deployments/:id">
-          <DeploymentDetailPage />
-        </Route>
-        <Route path="/deployments" exact>
-          <DeploymentListPage />
-        </Route>
         <Route path="/access/cli">
           <CLI />
         </Route>
