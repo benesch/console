@@ -5,6 +5,8 @@ import { merge } from "webpack-merge";
 import getCspPolicy from "./csp";
 import { assert } from "./src/util";
 import base, { IDefinePluginOptions } from "./webpack.config";
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
 const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
@@ -61,6 +63,7 @@ cspPolicy["connect-src"].push(
 module.exports = merge(base, {
   mode: "production",
   plugins: [
+    new BundleAnalyzerPlugin(),
     new DefinePlugin(DefinePluginOptions),
     new CspWebpackPlugin(
       {
