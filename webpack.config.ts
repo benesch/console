@@ -16,6 +16,7 @@ if (process.env.SOURCE_MAPS) {
       project: "cloud-frontend",
       release: process.env.SENTRY_RELEASE,
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      __SENTRY_DEBUG__: false,
     })
   );
 
