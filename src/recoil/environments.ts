@@ -13,6 +13,7 @@ export type EnvironmentStatus =
   | "Loading"
   | "Starting"
   | "Enabled"
+  | "Crashed"
   | "Not enabled";
 
 export type RegionEnvironment = {
