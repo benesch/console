@@ -106,6 +106,13 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
                 hasPingedSet.current.add(idString);
               }
             });
+        } else if (env && env.env && !env.env.resolvable) {
+          setStatusMap((currentStatusMap) => {
+            return {
+              ...currentStatusMap,
+              [idString]: "Starting",
+            };
+          });
         } else {
           newStatus = getStatusFromSQLResponse(
             data,
@@ -286,7 +293,8 @@ const getStatusFromSQLResponse = (
   env?: Environment | null,
   hasLoadedOnce?: boolean
 ): EnvironmentStatus => {
-  const negativeHealth = !data || data.rows.length === 0;
+  const negativeHealth =
+    (env && !env.resolvable) || !data || data.rows.length === 0;
 
   if (env) {
     if (negativeHealth) {
