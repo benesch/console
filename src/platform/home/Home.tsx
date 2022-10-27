@@ -17,6 +17,7 @@ import EnvironmentList from "../tutorial/EnvironmentList";
 import ConnectSteps from "./ConnectSteps";
 import GetStartedDocs from "./GetStartedDocs";
 import PasswordStep from "./PasswordStep";
+import RegionCrashed from "./RegionCrashed";
 import StepsWhileLoading from "./StepsWhileLoading";
 
 const Home = () => {
@@ -69,6 +70,9 @@ const Home = () => {
           break;
         case "Starting":
           content = <StepsWhileLoading />;
+          break;
+        case "Crashed":
+          content = <RegionCrashed />;
           break;
         default:
           break;

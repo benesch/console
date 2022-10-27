@@ -1,4 +1,5 @@
 import { useInterval } from "@chakra-ui/react";
+import { add } from "date-fns";
 import React from "react";
 import { useRecoilState } from "recoil";
 import { GetDataError } from "restful-react";
@@ -31,6 +32,9 @@ type EnvironmentGetterResults = {
   };
 };
 
+// Threshold for considering an environment to be stuck / crashed
+const maxBootTime = { minutes: 5 };
+
 /*
  * Get all activateable environments across providers.
  * This first contacts all providers' regionControllerUrl to get their environment assignor(s).
@@ -57,75 +61,59 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
     if (environments) {
       environments.map(async (env) => {
         let newStatus: EnvironmentStatus = "Not enabled";
-        const data: Results | null = null;
         const idString = getRegionId(env.region);
         if (env.env?.resolvable && env.env?.environmentdHttpsAddress) {
           if (statusMap[idString] === "Not enabled") {
             // go from not enabled to loading
             newStatus = getStatusFromSQLResponse(
-              data,
+              null,
               env.env,
               hasPingedSet.current.has(idString)
             );
-            setStatusMap((currentStatusMap) => {
-              return {
-                ...currentStatusMap,
-                [idString]: newStatus,
-              };
-            });
           }
-          executeSql(env.env, "SELECT 1", fetchAuthed)
-            .then(({ results }) => {
-              newStatus = getStatusFromSQLResponse(
-                results,
-                env?.env,
-                hasPingedSet.current.has(idString)
-              );
-              setStatusMap((currentStatusMap) => {
-                return {
-                  ...currentStatusMap,
-                  [idString]: getStatusFromSQLResponse(
-                    results,
-                    env?.env,
-                    hasPingedSet.current.has(idString)
-                  ),
-                };
-              });
-            })
-            .catch(() => {
-              newStatus = getStatusFromSQLResponse(null, env?.env, true);
-              setStatusMap((currentStatusMap) => {
-                return {
-                  ...currentStatusMap,
-                  [idString]: newStatus,
-                };
-              });
-            })
-            .finally(() => {
-              if (!hasPingedSet.current.has(idString)) {
-                hasPingedSet.current.add(idString);
-              }
-            });
+          try {
+            const { results } = await executeSql(
+              env.env,
+              "SELECT 1",
+              fetchAuthed
+            );
+            newStatus = getStatusFromSQLResponse(
+              results,
+              env?.env,
+              hasPingedSet.current.has(idString)
+            );
+          } catch {
+            newStatus = getStatusFromSQLResponse(null, env?.env, true);
+          }
+          if (!hasPingedSet.current.has(idString)) {
+            hasPingedSet.current.add(idString);
+          }
         } else if (env && env.env && !env.env.resolvable) {
-          setStatusMap((currentStatusMap) => {
-            return {
-              ...currentStatusMap,
-              [idString]: "Starting",
-            };
-          });
+          if (env.env.creationTimestamp) {
+            const cutoff = add(
+              new Date(env.env.creationTimestamp),
+              maxBootTime
+            );
+
+            if (new Date() > cutoff) {
+              newStatus = "Crashed";
+            } else {
+              newStatus = "Starting";
+            }
+          }
         } else {
           newStatus = getStatusFromSQLResponse(
-            data,
+            null,
             env?.env,
             hasPingedSet.current.has(idString)
           );
-          setStatusMap((currentStatusMap) => {
-            return {
-              ...currentStatusMap,
-              [idString]: newStatus,
-            };
-          });
         }
+        setStatusMap((currentStatusMap) => {
+          return {
+            ...currentStatusMap,
+            [idString]: newStatus,
+          };
+        });
       });
     }
   }, [environments, hasPingedSet, fetchAuthed]);
