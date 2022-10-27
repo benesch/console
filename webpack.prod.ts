@@ -1,12 +1,11 @@
 import CspWebpackPlugin from "@melloware/csp-webpack-plugin";
 import { DefinePlugin } from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
 
 import getCspPolicy from "./csp";
 import { assert } from "./src/util";
 import base, { IDefinePluginOptions } from "./webpack.config";
-const BundleAnalyzerPlugin =
-  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
 const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
