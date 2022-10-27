@@ -343,7 +343,7 @@ const HelpDropdown = () => {
         </HStack>
       </MenuButton>
       <MenuList>
-        <HelpDropdownLink href="https://materialize.com/docs/cloud/">
+        <HelpDropdownLink href="https://materialize.com/docs/">
           Documentation
         </HelpDropdownLink>
         <HelpDropdownLink href="https://materialize.com/s/chat">
