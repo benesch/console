@@ -11,7 +11,7 @@ import { useAuth } from "@frontegg/react";
 import React, { ChangeEventHandler } from "react";
 import { useRecoilState } from "recoil";
 
-import CodeBlock from "../../components/CodeBlock";
+import { CopyableBox } from "../../components/copyableComponents";
 import { currentEnvironment } from "../../recoil/environments";
 import { semanticColors } from "../../theme/colors";
 import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
@@ -41,15 +41,14 @@ const ConnectSteps = (): JSX.Element => {
 
   // switch is pretty overkill atm, but someday there'll be more
   // pre-baked connection options
+  const psqlCopyString = `psql "postgres://${encodeURIComponent(
+    user.email
+  )}@${environmentdAddress}/materialize"`;
   let instructions;
   switch (connectionOption) {
     case "psql":
       instructions = (
-        <CodeBlock
-          contents={`psql "postgres://${encodeURIComponent(
-            user.email
-          )}@${environmentdAddress}/materialize"`}
-        />
+        <CopyableBox contents={psqlCopyString}>{psqlCopyString}</CopyableBox>
       );
       break;
     case "other":
@@ -86,7 +85,7 @@ const ConnectSteps = (): JSX.Element => {
           <option value="other">external tool</option>
         </Select>
       </HStack>
-      <Box pl={4} pb={4}>
+      <Box pl={4} pb={4} w="100%">
         {instructions}
       </Box>
     </VStack>

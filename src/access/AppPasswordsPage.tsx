@@ -29,7 +29,7 @@ import {
   CardFooter,
   CardHeader,
 } from "../components/cardComponents";
-import { CopyButton } from "../components/Copyable";
+import { CopyButton } from "../components/copyableComponents";
 import { SubmitButton, TextField } from "../components/formComponents";
 import {
   PageBreadcrumbs,
