@@ -9,6 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
+    "sourceMap": true,
     "target": "es6",
     "plugins": [
       {

@@ -4,7 +4,6 @@ import path from "path";
 import { Configuration, DefinePlugin } from "webpack";
 
 const additionalPlugins = [];
-let additionalTSOptions: { [index: string]: any } = {};
 
 if (process.env.SOURCE_MAPS) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -19,10 +18,6 @@ if (process.env.SOURCE_MAPS) {
       __SENTRY_DEBUG__: false,
     })
   );
-
-  // Ensure the Typescript compiler knows to generate source maps
-  additionalTSOptions = require("./tsconfig.json");
-  additionalTSOptions.compilerOptions.sourceMap = true;
 }
 
 const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
@@ -65,7 +60,7 @@ const config: Configuration = {
             sourceMap:
               process.env.NODE_ENV !== "production" || process.env.SOURCE_MAPS,
           },
-          ...additionalTSOptions,
+          configFile: "../tsconfig.json",
         },
       },
       {
