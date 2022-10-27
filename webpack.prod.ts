@@ -60,25 +60,29 @@ cspPolicy["connect-src"].push(
   `https://*.eu-west-1.aws.${provisionHostname}`
 );
 
+const plugins = [
+  new DefinePlugin(DefinePluginOptions),
+  new CspWebpackPlugin(
+    {
+      ...cspPolicy,
+      "upgrade-insecure-requests": "",
+    },
+    {
+      nonceEnabled: {
+        "script-src": false,
+        "style-src": false,
+      },
+      primeReactEnabled: false,
+    }
+  ),
+];
+if (process.env.BUNDLE_ANALYZE) {
+  plugins.push(new BundleAnalyzerPlugin());
+}
+
 module.exports = merge(base, {
   mode: "production",
-  plugins: [
-    new BundleAnalyzerPlugin(),
-    new DefinePlugin(DefinePluginOptions),
-    new CspWebpackPlugin(
-      {
-        ...cspPolicy,
-        "upgrade-insecure-requests": "",
-      },
-      {
-        nonceEnabled: {
-          "script-src": false,
-          "style-src": false,
-        },
-        primeReactEnabled: false,
-      }
-    ),
-  ],
+  plugins,
   output: {
     crossOriginLoading: "anonymous",
     publicPath: assetPath,
