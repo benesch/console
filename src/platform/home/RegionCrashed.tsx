@@ -9,7 +9,7 @@ const RegionCrashed = () => {
       <VStack spacing={2} alignItems="center">
         <Alert status="error" rounded="md" p={4} marginTop={2}>
           <AlertIcon />
-          We&apos;re having trouble connecting to Materialize
+          We&apos;re having trouble connecting to your Materialize region
         </Alert>
         <Text>Double check that your internet connection is healthy.</Text>
         <Text>
