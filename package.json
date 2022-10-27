@@ -180,6 +180,7 @@
   "browserslist": {
     "production": [
       ">0.2%",
+      "not ie 11",
       "not dead",
       "not op_mini all"
     ],
