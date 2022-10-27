@@ -2,6 +2,23 @@
   "name": "cloud-frontend",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "proxy": "cd frontend && ENVIRONMENTD_SCHEME=${ENVIRONMENTD_SCHEME:-https} FRONTEGG_URL=${FRONTEGG_URL:-https://admin.staging.cloud.materialize.com} BACKEND_HOST=${BACKEND_HOST:-https://legacy.staging.cloud.materialize.com} webpack serve --config=webpack.dev.ts",
+    "start": "cd frontend && webpack serve --config=webpack.dev.ts",
+    "build": "cd frontend && NODE_ENV=production webpack --config=webpack.prod.ts",
+    "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
+    "test:unit": "cd frontend && jest",
+    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
+    "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
+    "eslint:fix": "eslint --ignore-path .gitignore --fix .",
+    "playwright": "playwright",
+    "pyright": "pyright",
+    "gavi": "gavi",
+    "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
+    "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
+    "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
+    "concurrently": "concurrently"
+  },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.17",
     "@chakra-ui/modal": "^1.10.10",
@@ -12,8 +29,8 @@
     "@emotion/styled": "^11.8.1",
     "@fontsource/inter": "^4.5.14",
     "@frontegg/react": "^5.0.7",
-    "@segment/analytics-next": "^1.43.0",
     "@melloware/csp-webpack-plugin": "^6.0.4",
+    "@segment/analytics-next": "^1.43.0",
     "@sentry/react": "^7.14.2",
     "@sentry/tracing": "^7.14.1",
     "@sentry/webpack-plugin": "^1.18.8",
@@ -65,13 +82,14 @@
     "@types/react": "^17.0.42",
     "@types/react-dom": "^17.0.11",
     "@types/react-router-dom": "^5.3.3",
+    "@types/webpack-bundle-analyzer": "^4.6.0",
     "@types/webpack-dev-server": "^4.7.2",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.16.0",
     "cacheable-lookup": "6.0.4",
     "concurrently": "7.0.0",
-    "eslint": "^8.23.0",
     "content-security-policy-builder": "^2.1.1",
+    "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -90,23 +108,8 @@
     "react-refresh": "^0.11.0",
     "ts-jest": "^27.1.0",
     "typescript-eslint-language-service": "^5.0.0",
+    "webpack-bundle-analyzer": "^4.7.0",
     "webpack-dev-server": "^4.8.1"
-  },
-  "scripts": {
-    "proxy": "cd frontend && ENVIRONMENTD_SCHEME=${ENVIRONMENTD_SCHEME:-https} FRONTEGG_URL=${FRONTEGG_URL:-https://admin.staging.cloud.materialize.com} BACKEND_HOST=${BACKEND_HOST:-https://legacy.staging.cloud.materialize.com} webpack serve --config=webpack.dev.ts",
-    "start": "cd frontend && webpack serve --config=webpack.dev.ts",
-    "build": "cd frontend && NODE_ENV=production webpack --config=webpack.prod.ts",
-    "test:unit": "cd frontend && jest",
-    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
-    "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
-    "eslint:fix": "eslint --ignore-path .gitignore --fix .",
-    "playwright": "playwright",
-    "pyright": "pyright",
-    "gavi": "gavi",
-    "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
-    "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
-    "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
-    "concurrently": "concurrently"
   },
   "eslintConfig": {
     "env": {
@@ -178,6 +181,7 @@
   "browserslist": {
     "production": [
       ">0.2%",
+      "not ie 11",
       "not dead",
       "not op_mini all"
     ],

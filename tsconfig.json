@@ -4,16 +4,22 @@
     "esModuleInterop": true,
     "jsx": "react",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
+    "sourceMap": true,
     "target": "es6",
     "plugins": [
       {
         "name": "typescript-eslint-language-service"
       }
     ]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

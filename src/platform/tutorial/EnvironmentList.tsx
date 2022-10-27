@@ -3,7 +3,6 @@ import React from "react";
 import { useRecoilState } from "recoil";
 
 import { SupportedCloudRegion } from "../../api/backend";
-import useAvailableEnvironments from "../../api/useAvailableEnvironments";
 import {
   EnvironmentStatus,
   environmentStatusMap,
