@@ -128,6 +128,6 @@ module.exports = merge(base, {
     }),
   ],
   output: {
-    publicPath: "auto",
+    publicPath: "/",
   },
 });
