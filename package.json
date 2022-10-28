@@ -130,6 +130,9 @@
       "@typescript-eslint",
       "react"
     ],
+    "ignorePatterns": [
+      "frontend/src/api/schemas"
+    ],
     "rules": {
       "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
