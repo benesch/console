@@ -13,5 +13,5 @@ declare global {
   const __SENTRY_RELEASE__: string | null;
   const __GOOGLE_ANALYTICS_ID__: string | null;
   const __STATUSPAGE_ID__: string;
-  const __ENVIRONMENTD_SCHEME__: "http" | "https" | "auto" | null;
+  const __ENVIRONMENTD_SCHEME__: "http" | "https";
 }

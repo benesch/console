@@ -93,17 +93,16 @@ export const executeSql = async (
   }
 
   try {
-    const scheme =
-      config.environmentdScheme === "auto"
-        ? ""
-        : `${config.environmentdScheme}:`;
-    const response = await fetcher(`${scheme}//${address}/api/sql`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query }),
-    });
+    const response = await fetcher(
+      `${config.environmentdScheme}://${address}/api/sql`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      }
+    );
 
     const responseText = await response.text();
 

@@ -36,7 +36,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __STATUSPAGE_ID__: JSON.stringify("qf52z1jnw4q8"),
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(null),
   __ENVIRONMENTD_SCHEME__: JSON.stringify(
-    process.env.ENVIRONMENTD_SCHEME || "auto"
+    process.env.ENVIRONMENTD_SCHEME || "http"
   ),
 };
 

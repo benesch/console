@@ -11,7 +11,7 @@ export const globalConfigStub: GlobalConfig = {
   sentryRelease: "sentry-release",
   statuspageId: "statuspage-dummy-id",
   googleAnalyticsId: "google-analytics-id",
-  environmentdScheme: "auto",
+  environmentdScheme: "http",
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {
