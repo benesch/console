@@ -89,7 +89,6 @@
     "@typescript-eslint/parser": "^5.16.0",
     "cacheable-lookup": "6.0.4",
     "concurrently": "7.0.0",
-    "content-security-policy-builder": "^2.1.1",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.26.0",
