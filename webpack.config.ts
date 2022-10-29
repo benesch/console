@@ -37,9 +37,6 @@ export interface IDefinePluginOptions
   __SENTRY_RELEASE__: string;
   __STATUSPAGE_ID__: string;
   __GOOGLE_ANALYTICS_ID__: string;
-  __RELEASE_NOTES_ROOT_URL__: string;
-  __LAST_RELEASE_NOTE_ID__: string;
-  __IS_DEVELOPMENT__: string;
 }
 
 const config: Configuration = {

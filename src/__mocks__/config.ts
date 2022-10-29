@@ -11,9 +11,6 @@ export const globalConfigStub: GlobalConfig = {
   sentryRelease: "sentry-release",
   statuspageId: "statuspage-dummy-id",
   googleAnalyticsId: "google-analytics-id",
-  releaseNotesRootURL: null,
-  lastReleaseNoteId: null,
-  isDevelopment: false,
   environmentdScheme: "auto",
 };
 

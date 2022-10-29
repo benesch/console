@@ -20,9 +20,6 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __SENTRY_RELEASE__: JSON.stringify(process.env.SENTRY_RELEASE || null),
   __STATUSPAGE_ID__: JSON.stringify("qf52z1jnw4q8"),
   __GOOGLE_ANALYTICS_ID__: JSON.stringify("UA-138552650-1"),
-  __RELEASE_NOTES_ROOT_URL__: JSON.stringify("https://materialize.com/blog"),
-  __LAST_RELEASE_NOTE_ID__: JSON.stringify(null),
-  __IS_DEVELOPMENT__: JSON.stringify(false),
   __ENVIRONMENTD_SCHEME__: JSON.stringify("auto"),
 };
 

@@ -28,7 +28,6 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import logo from "../../img/logo-reverse.svg";
 import { useAuth } from "../api/auth";
-import WhatsNew from "../components/releaseNotes/WhatsNew";
 import { SUPPORT_HREF } from "../components/SupportLink";
 import EnvironmentSelectField from "./EnvironmentSelect";
 import ProfileDropdown, {
@@ -85,11 +84,6 @@ const NavBar = () => {
             height={{ base: 6, md: 9 }}
             aria-label="Logo"
           ></chakra.img>
-          <WhatsNew
-            position="absolute"
-            top={{ base: -5, md: -4 }}
-            right={{ base: -3, md: -4 }}
-          />
         </VStack>
         <Text fontWeight="700" fontSize="md">
           Materialize
