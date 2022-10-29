@@ -3,6 +3,9 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import { Configuration, DefinePlugin } from "webpack";
 
+export const statuspageId = "qf52z1jnw4q8";
+export const googleAnalyticsId = "UA-138552650-1";
+
 const additionalPlugins = [];
 
 if (process.env.SOURCE_MAPS) {
@@ -25,18 +28,15 @@ const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
   template: "public/index.html",
 };
 
-// Webpack doesn't export this type, so extract it from the function
-type RuntimeValue = ReturnType<typeof DefinePlugin.runtimeValue>;
-
-export interface IDefinePluginOptions
-  extends Record<string, string | RuntimeValue> {
-  __FRONTEGG_URL__: string | RuntimeValue;
+export interface IDefinePluginOptions extends Record<string, string> {
+  __FRONTEGG_URL__: string;
   __SEGMENT_API_KEY__: string;
   __SENTRY_DSN__: string;
   __SENTRY_ENVIRONMENT__: string;
   __SENTRY_RELEASE__: string;
   __STATUSPAGE_ID__: string;
   __GOOGLE_ANALYTICS_ID__: string;
+  __ENVIRONMENTD_SCHEME__: string;
 }
 
 const config: Configuration = {

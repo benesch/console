@@ -2,43 +2,30 @@ import "webpack-dev-server";
 
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
-import fs from "fs";
-import path from "path";
 import { DefinePlugin } from "webpack";
 import { merge } from "webpack-merge";
 
-import base, { IDefinePluginOptions } from "./webpack.config";
+import localOutputs from "../config/settings/local.outputs.json";
+import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
-function loadFronteggUrl(): string {
-  if (process.env.FRONTEGG_URL) {
-    return JSON.stringify(process.env.FRONTEGG_URL);
-  }
-  const buffer = fs.readFileSync("../config/settings/local.outputs.json");
-  const outputData = JSON.parse(buffer.toString());
-  return JSON.stringify(outputData["frontegg_url"]);
-}
+const fronteggUrl = process.env.FRONTEGG_URL || localOutputs.frontegg_url;
 
-const DefinePluginOptions: IDefinePluginOptions = {
-  __FRONTEGG_URL__: DefinePlugin.runtimeValue(loadFronteggUrl, [
-    path.resolve("../config/settings/local.outputs.json"),
-  ]),
+const backendUrl = process.env.BACKEND_URL || "http://[::1]:8000";
+
+const definePluginOptions: IDefinePluginOptions = {
+  __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
   __SEGMENT_API_KEY__: JSON.stringify("dGeQYRjmGVsqDI0KIARrAhTvk1BdJJhk"),
   __SENTRY_DSN__: JSON.stringify(process.env.SENTRY_DSN || null),
   __SENTRY_ENVIRONMENT__: JSON.stringify(
     process.env.SENTRY_ENVIRONMENT || null
   ),
   __SENTRY_RELEASE__: JSON.stringify(process.env.SENTRY_RELEASE || null),
-  __STATUSPAGE_ID__: JSON.stringify("qf52z1jnw4q8"),
+  __STATUSPAGE_ID__: JSON.stringify(statuspageId),
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(null),
   __ENVIRONMENTD_SCHEME__: JSON.stringify(
     process.env.ENVIRONMENTD_SCHEME || "http"
   ),
 };
-
-const backendHostname = process.env.BACKEND_HOST || "[::1]:8000";
-const backendHostUrl = backendHostname.startsWith("http")
-  ? backendHostname
-  : `http://${backendHostname}`;
 
 module.exports = merge(base, {
   mode: "development",
@@ -51,17 +38,17 @@ module.exports = merge(base, {
     proxy: {
       "/api": {
         changeOrigin: true,
-        target: backendHostUrl,
+        target: backendUrl,
       },
-      "/admin": backendHostUrl,
-      "/static": backendHostUrl,
+      "/admin": backendUrl,
+      "/static": backendUrl,
     },
   },
   devtool: "inline-cheap-module-source-map",
   // https://github.com/webpack/webpack-dev-server/issues/2758#issuecomment-751445974
   target: "web",
   plugins: [
-    new DefinePlugin(DefinePluginOptions),
+    new DefinePlugin(definePluginOptions),
     new ForkTsCheckerWebpackPlugin(),
     new ReactRefreshWebpackPlugin({
       overlay: { sockPort: 3000 },
