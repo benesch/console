@@ -40,6 +40,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(googleAnalyticsId),
   __ENVIRONMENTD_SCHEME__: JSON.stringify("https"),
+  __CLOUD_REGIONS__: requireEnv("CLOUD_REGIONS"),
 };
 
 const scriptSrc = [

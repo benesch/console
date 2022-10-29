@@ -2,7 +2,6 @@ import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import { useCloudProvidersList } from "../../api/backend";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
@@ -20,7 +19,6 @@ import RegionCrashed from "./RegionCrashed";
 import StepsWhileLoading from "./StepsWhileLoading";
 
 const Home = () => {
-  const { data: regions } = useCloudProvidersList({});
   const [current, _] = useRecoilState(currentEnvironment);
   const [statusMap] = useRecoilState(environmentStatusMap);
   const idString = current ? getRegionId(current?.region) : "";
@@ -33,7 +31,7 @@ const Home = () => {
     </HStack>
   );
 
-  if (regions && !isLoadingFirstData) {
+  if (!isLoadingFirstData) {
     if (current) {
       switch (environmentStatus) {
         case "Enabled":
@@ -85,7 +83,7 @@ const Home = () => {
             </Text>
             <Text>To get started, please enable your first region:</Text>
           </VStack>
-          <EnvironmentList regions={regions} />
+          <EnvironmentList />
         </Box>
       );
     }

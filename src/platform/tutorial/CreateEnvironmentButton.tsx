@@ -10,16 +10,16 @@ import React from "react";
 import { useRecoilState } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
-import { SupportedCloudRegion } from "../../api/backend";
 import { EnvironmentAssignment } from "../../api/region-controller";
 import { fetchEnvironments } from "../../api/useAvailableEnvironments";
 import {
   currentEnvironment,
   hasCreatedEnvironment,
 } from "../../recoil/environments";
+import { CloudRegion } from "../../types";
 
 interface Props extends ButtonProps {
-  region: SupportedCloudRegion;
+  region: CloudRegion;
   isCreatingEnv?: boolean;
   handleEnvCreate?: (flag: boolean) => void;
 }

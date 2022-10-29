@@ -8,9 +8,45 @@ import { merge } from "webpack-merge";
 import localOutputs from "../config/settings/local.outputs.json";
 import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
-const fronteggUrl = process.env.FRONTEGG_URL || localOutputs.frontegg_url;
+let fronteggUrl;
+let backendUrl;
+let environmentdScheme;
+let cloudRegions;
 
-const backendUrl = process.env.BACKEND_URL || "http://[::1]:8000";
+if (process.env.PROXY_STACK) {
+  let stack = process.env.PROXY_STACK;
+  if (stack !== "staging") {
+    stack += ".staging";
+  }
+  fronteggUrl = `https://admin.${stack}.cloud.materialize.com`;
+  backendUrl = `https://legacy.${stack}.cloud.materialize.com`;
+  environmentdScheme = "https";
+  cloudRegions = [
+    // TODO: pull the regions that are active for a stack from
+    // Pulumi.$stack.yaml, rather than hardcoding them here.
+    {
+      provider: "aws",
+      region: "us-east-1",
+      regionControllerUrl: `https://rc.us-east-1.aws.${stack}.cloud.materialize.com`,
+    },
+    {
+      provider: "aws",
+      region: "eu-west-1",
+      regionControllerUrl: `https://rc.eu-west-1.aws.${stack}.cloud.materialize.com`,
+    },
+  ];
+} else {
+  fronteggUrl = localOutputs.frontegg_url;
+  backendUrl = "http://[::1]:8000";
+  environmentdScheme = "http";
+  cloudRegions = [
+    {
+      provider: "local",
+      region: "kind",
+      regionControllerUrl: "http://localhost:8002",
+    },
+  ];
+}
 
 const definePluginOptions: IDefinePluginOptions = {
   __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
@@ -22,9 +58,8 @@ const definePluginOptions: IDefinePluginOptions = {
   __SENTRY_RELEASE__: JSON.stringify(process.env.SENTRY_RELEASE || null),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(null),
-  __ENVIRONMENTD_SCHEME__: JSON.stringify(
-    process.env.ENVIRONMENTD_SCHEME || "http"
-  ),
+  __ENVIRONMENTD_SCHEME__: JSON.stringify(environmentdScheme),
+  __CLOUD_REGIONS__: JSON.stringify(cloudRegions),
 };
 
 module.exports = merge(base, {

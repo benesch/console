@@ -2,9 +2,15 @@ import { APIRequestContext, Page } from "@playwright/test";
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:3000";
 
+export const CONSOLE_URL = new URL(CONSOLE_ADDR);
+
 export const IS_KIND =
   CONSOLE_ADDR === "http://localhost:3000" ||
   CONSOLE_ADDR === "http://frontend:3000";
+
+export const PLATFORM_REGIONS = IS_KIND
+  ? ["local/kind"]
+  : ["AWS/us-east-1", "AWS/eu-west-1"];
 
 export const PULUMI_STACK = (() => {
   const url = new URL(CONSOLE_ADDR);
@@ -51,8 +57,16 @@ const adminPortalHost = () => {
   if (IS_KIND) {
     return "admin.staging.cloud.materialize.com";
   } else {
-    const console_url = new URL(CONSOLE_ADDR);
-    return `admin.${console_url.host}`;
+    return `admin.${CONSOLE_URL.host}`;
+  }
+};
+
+const getRegionControllerUrl = (region: string) => {
+  if (IS_KIND) {
+    return "http://localhost:8002";
+  } else {
+    const [provider, cloudRegion] = region.toLowerCase().split("/");
+    return `https://rc.${cloudRegion}.${provider}.${CONSOLE_URL.host}`;
   }
 };
 
@@ -180,9 +194,8 @@ export class TestContext {
   /**
    * Make an authenticated API request.
    */
-  async apiRequest(url: string, request?: any, baseUrl?: string) {
+  async apiRequest(url: string, request?: any) {
     await this.ensureAuthenticated();
-    url = `${baseUrl || CONSOLE_ADDR}/api${url}`;
     request = {
       ...request,
       headers: {
@@ -219,17 +232,15 @@ export class TestContext {
 
   /** Delete any existing EnvironmentAssignments. */
   async deleteAllEnvironmentAssignments() {
-    const providers = await this.apiRequest("/cloud-providers");
-
-    for (const { regionControllerUrl } of providers) {
+    for (const region of PLATFORM_REGIONS) {
+      const regionControllerUrl = getRegionControllerUrl(region);
       console.log(
         `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
       );
       try {
         await this.apiRequest(
-          `/environmentassignment`,
-          { method: "DELETE", timeout: 5 * 60000 },
-          regionControllerUrl
+          `${regionControllerUrl}/api/environmentassignment`,
+          { method: "DELETE", timeout: 5 * 60000 }
         );
       } catch (e: unknown) {
         console.error(e);

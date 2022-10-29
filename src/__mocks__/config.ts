@@ -12,6 +12,7 @@ export const globalConfigStub: GlobalConfig = {
   statuspageId: "statuspage-dummy-id",
   googleAnalyticsId: "google-analytics-id",
   environmentdScheme: "http",
+  cloudRegions: [],
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {

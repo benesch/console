@@ -4,6 +4,7 @@ import React from "react";
 import { useRecoilState } from "recoil";
 import { GetDataError } from "restful-react";
 
+import config from "../config";
 import {
   activeEnvironmentList,
   ActiveRegionEnvironment,
@@ -15,21 +16,14 @@ import {
   getRegionId,
   RegionEnvironment,
 } from "../recoil/environments";
+import { CloudRegion } from "../types";
 import { FetchAuthedType, useAuth } from "./auth";
-import { SupportedCloudRegion, useCloudProvidersList } from "./backend";
 import { Environment } from "./environment-controller";
 import { executeSql, Results } from "./materialized";
 import { EnvironmentAssignment } from "./region-controller";
 
 type EnvironmentGetterResults = {
   refetch: () => void;
-  error: {
-    message: string;
-    data: {
-      providerError: GetDataError<unknown> | null;
-      regionEnvErrors: string | null;
-    };
-  };
 };
 
 // Threshold for considering an environment to be stuck / crashed
@@ -47,11 +41,6 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
   const [_, setActiveEnvironments] = useRecoilState(activeEnvironmentList);
   const [statusMap, setStatusMap] = useRecoilState(environmentStatusMap);
   const hasPingedSet = React.useRef<Set<string>>(new Set());
-  const {
-    data: regions,
-    error,
-    refetch: refetchProviders,
-  } = useCloudProvidersList({});
   const [hasLoaded, setHasLoaded] = useRecoilState(firstEnvLoad);
 
   const envErrorMessages = [];
@@ -119,7 +108,7 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
   }, [environments, hasPingedSet, fetchAuthed]);
 
   const fetchRegionEnvironments = React.useCallback(
-    async (region: SupportedCloudRegion): Promise<RegionEnvironment[]> => {
+    async (region: CloudRegion): Promise<RegionEnvironment[]> => {
       const { assignments, errorMessage } = await fetchEnvironmentAssignments(
         region,
         fetchAuthed
@@ -150,9 +139,9 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
   );
 
   const fetchAllEnvironments = React.useCallback(async () => {
-    if (!regions) return;
-
-    const envs = await (await Promise.all(regions.map(fetchRegionEnvironments)))
+    const envs = await (
+      await Promise.all(config.cloudRegions.map(fetchRegionEnvironments))
+    )
       .flat()
       .sort((a, b) => {
         // sort first by provider, then by region
@@ -186,43 +175,29 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
     setEnvironments(envs);
     setActiveEnvironments(activeEnvs);
     hasLoaded && setHasLoaded(false);
-  }, [regions, current, setCurrent, fetchRegionEnvironments]);
+  }, [current, setCurrent, fetchRegionEnvironments]);
 
   React.useEffect(() => {
     fetchAllEnvironments();
-  }, [regions]);
+  }, []);
 
   React.useEffect(() => {
     fetchEnvStatuses();
   }, [environments]);
 
-  if (error || regionEnvErrorMessage) {
-    console.warn(
-      `${
-        error && error?.message ? `${error.message}, ` : ""
-      }${regionEnvErrorMessage}`
-    );
+  if (regionEnvErrorMessage) {
+    console.warn(regionEnvErrorMessage);
   }
 
   const refetch = React.useCallback(async () => {
-    await refetchProviders();
     fetchAllEnvironments();
-  }, [refetchProviders, fetchAllEnvironments, fetchEnvStatuses]);
+  }, [fetchAllEnvironments, fetchEnvStatuses]);
 
   useInterval(refetch, 5000);
   useInterval(fetchEnvStatuses, 5000);
 
   return {
     refetch,
-    error: {
-      message: `${
-        error && error?.message ? `${error.message}, ` : ""
-      }${regionEnvErrorMessage}`,
-      data: {
-        providerError: error,
-        regionEnvErrors: regionEnvErrorMessage,
-      },
-    },
   };
 };
 
@@ -252,7 +227,7 @@ export const fetchEnvironments = async (
 };
 
 export const fetchEnvironmentAssignments = async (
-  region: SupportedCloudRegion,
+  region: CloudRegion,
   fetcher: FetchAuthedType
 ): Promise<{ assignments: EnvironmentAssignment[]; errorMessage: string }> => {
   let assignments: EnvironmentAssignment[] = [];

@@ -2,24 +2,21 @@ import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
 
-import { SupportedCloudRegion } from "../../api/backend";
+import config from "../../config";
 import {
   EnvironmentStatus,
   environmentStatusMap,
   getRegionId,
 } from "../../recoil/environments";
+import { CloudRegion } from "../../types";
 import CreateEnvironmentButton from "./CreateEnvironmentButton";
 
-interface EnvironmentTableProps {
-  regions: SupportedCloudRegion[];
-}
-
-const EnvironmentList = (props: EnvironmentTableProps) => {
+const EnvironmentList = () => {
   const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
   const [statusMap] = useRecoilState(environmentStatusMap);
   return (
     <VStack spacing={4} data-test-id="regions-list">
-      {props.regions.map((r) => (
+      {config.cloudRegions.map((r) => (
         <RegionEnvironmentRow
           key={r.regionControllerUrl}
           region={r}
@@ -33,7 +30,7 @@ const EnvironmentList = (props: EnvironmentTableProps) => {
 };
 
 interface RegionEnvironmentRowProps {
-  region: SupportedCloudRegion;
+  region: CloudRegion;
   status: EnvironmentStatus;
   isCreatingEnv: boolean;
   setIsCreatingEnv: (flag: boolean) => void;

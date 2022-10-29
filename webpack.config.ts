@@ -1,7 +1,7 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
-import { Configuration, DefinePlugin } from "webpack";
+import { Configuration } from "webpack";
 
 export const statuspageId = "qf52z1jnw4q8";
 export const googleAnalyticsId = "UA-138552650-1";
@@ -37,6 +37,7 @@ export interface IDefinePluginOptions extends Record<string, string> {
   __STATUSPAGE_ID__: string;
   __GOOGLE_ANALYTICS_ID__: string;
   __ENVIRONMENTD_SCHEME__: string;
+  __CLOUD_REGIONS__: string;
 }
 
 const config: Configuration = {

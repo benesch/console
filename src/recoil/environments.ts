@@ -1,12 +1,12 @@
 import { atom, selectorFamily } from "recoil";
 
-import { SupportedCloudRegion } from "../api/backend";
 import { Environment } from "../api/environment-controller";
 import { EnvironmentAssignment } from "../api/region-controller";
+import { CloudRegion } from "../types";
 import keys from "./keyConstants";
 
 // Currently the identifier for unique envs is their provider + their region
-export const getRegionId = (region?: SupportedCloudRegion): string => {
+export const getRegionId = (region?: CloudRegion): string => {
   if (region) {
     return `${region.provider}/${region.region}`;
   }
@@ -21,7 +21,7 @@ export type EnvironmentStatus =
   | "Not enabled";
 
 export type RegionEnvironment = {
-  region: SupportedCloudRegion;
+  region: CloudRegion;
   assignment?: EnvironmentAssignment;
   env?: Environment;
 };

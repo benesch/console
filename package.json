@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "proxy": "cd frontend && ENVIRONMENTD_SCHEME=${ENVIRONMENTD_SCHEME:-https} FRONTEGG_URL=${FRONTEGG_URL:-https://admin.staging.cloud.materialize.com} BACKEND_URL=${BACKEND_URL:-https://legacy.staging.cloud.materialize.com} webpack serve --config=webpack.dev.ts",
+    "proxy": "cd frontend && PROXY_STACK=${PROXY_STACK:-staging} webpack serve --config=webpack.dev.ts",
     "start": "cd frontend && webpack serve --config=webpack.dev.ts",
     "build": "cd frontend && NODE_ENV=production webpack --config=webpack.prod.ts",
     "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
@@ -15,7 +15,7 @@
     "pyright": "pyright",
     "gavi": "gavi",
     "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
-    "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
+    "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com CLOUD_REGIONS=[] GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
     "concurrently": "concurrently"
   },

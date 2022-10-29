@@ -17,4 +17,5 @@ window.__RELEASE_NOTES_ROOT_URL__ = null;
 window.__LAST_RELEASE_NOTE_ID__ = null;
 window.__IS_DEVELOPMENT__ = false;
 window.__ENVIRONMENTD_SCHEME__ = "http";
+window.__CLOUD_REGIONS__ = [];
 /* eslint-enable */

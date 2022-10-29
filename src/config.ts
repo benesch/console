@@ -9,6 +9,7 @@ const config = {
   sentryRelease: __SENTRY_RELEASE__,
   statuspageId: __STATUSPAGE_ID__,
   googleAnalyticsId: __GOOGLE_ANALYTICS_ID__,
+  cloudRegions: __CLOUD_REGIONS__,
 };
 
 export type GlobalConfig = typeof config;

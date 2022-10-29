@@ -3,7 +3,14 @@ import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
 
-import { CONSOLE_ADDR, EMAIL, IS_KIND, STATE_NAME, TestContext } from "./util";
+import {
+  CONSOLE_ADDR,
+  EMAIL,
+  IS_KIND,
+  PLATFORM_REGIONS,
+  STATE_NAME,
+  TestContext,
+} from "./util";
 
 /**
  * Setup state storage
@@ -12,10 +19,6 @@ test.afterEach(async ({ page }) => {
   // Update the refresh token for future tests.
   await page.context().storageState({ path: STATE_NAME });
 });
-
-const PLATFORM_REGIONS = IS_KIND
-  ? ["local/kind"]
-  : ["AWS/us-east-1", "AWS/eu-west-1"];
 
 enum DashboardState {
   NoRegions,
