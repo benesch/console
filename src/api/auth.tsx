@@ -13,7 +13,6 @@ import {
 } from "restful-react";
 
 import { versionHeaders } from "../version/api";
-import { Organization } from "./backend";
 
 export type FetchAuthedType = (
   input: RequestInfo,
@@ -29,8 +28,6 @@ export type FetchAuthedType = (
 export interface IAuthContext extends AuthState {
   /** The authenticated user. */
   user: User;
-  /** The authenticated organization. */
-  organization: Organization;
   /**
    * Make an authenticated HTTP request.
    *
@@ -42,18 +39,13 @@ export interface IAuthContext extends AuthState {
 
 export interface AuthProviderProps {
   user: User;
-  organization: Organization;
   children: React.ReactNode;
 }
 
 /**
  * A React provider that manages authentication state.
  */
-export const AuthProvider = ({
-  user,
-  organization,
-  children,
-}: AuthProviderProps) => {
+export const AuthProvider = ({ user, children }: AuthProviderProps) => {
   const authState = useFronteggAuth((state) => state);
   const fetchAuthed = async (input: RequestInfo, init?: RequestInit) =>
     fetch(input, {
@@ -65,9 +57,7 @@ export const AuthProvider = ({
     });
 
   return (
-    <AuthContext.Provider
-      value={{ ...authState, user, organization, fetchAuthed }}
-    >
+    <AuthContext.Provider value={{ ...authState, user, fetchAuthed }}>
       {children}
     </AuthContext.Provider>
   );

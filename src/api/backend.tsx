@@ -3,15 +3,6 @@
 import React from "react";
 import { Get, GetProps, useGet, UseGetProps } from "restful-react";
 export const SPEC_VERSION = "0.1.0";
-export interface Organization {
-  id: string;
-  deploymentLimit: number;
-  /**
-   * When this organization's trial period expires. If empty, the organization is on an enterprise plan.
-   */
-  trialExpiresAt: string | null;
-}
-
 export type ProviderEnum = "AWS" | "local";
 
 export interface SupportedCloudRegion {
@@ -79,51 +70,6 @@ export type UseHealthRetrieveProps = Omit<
  */
 export const useHealthRetrieve = (props: UseHealthRetrieveProps) =>
   useGet<void, unknown, void, void>(`/api/health`, props);
-
-export interface OrganizationsRetrievePathParams {
-  /**
-   * A UUID string identifying this organization.
-   */
-  id: string;
-}
-
-export type OrganizationsRetrieveProps = Omit<
-  GetProps<Organization, unknown, void, OrganizationsRetrievePathParams>,
-  "path"
-> &
-  OrganizationsRetrievePathParams;
-
-/**
- * Fetch details about a single organization.
- */
-export const OrganizationsRetrieve = ({
-  id,
-  ...props
-}: OrganizationsRetrieveProps) => (
-  <Get<Organization, unknown, void, OrganizationsRetrievePathParams>
-    path={`/api/organizations/${id}`}
-    {...props}
-  />
-);
-
-export type UseOrganizationsRetrieveProps = Omit<
-  UseGetProps<Organization, unknown, void, OrganizationsRetrievePathParams>,
-  "path"
-> &
-  OrganizationsRetrievePathParams;
-
-/**
- * Fetch details about a single organization.
- */
-export const useOrganizationsRetrieve = ({
-  id,
-  ...props
-}: UseOrganizationsRetrieveProps) =>
-  useGet<Organization, unknown, void, OrganizationsRetrievePathParams>(
-    (paramsInPath: OrganizationsRetrievePathParams) =>
-      `/api/organizations/${paramsInPath.id}`,
-    { pathParams: { id }, ...props }
-  );
 
 export interface RegionsListPathParams {
   providerName: string;

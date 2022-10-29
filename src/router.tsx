@@ -18,7 +18,6 @@ import CLI from "./access/cli";
 import PricingPage from "./access/PricingPage";
 import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
-import { useOrganizationsRetrieve } from "./api/backend";
 import config from "./config";
 import { BaseLayout } from "./layouts/BaseLayout";
 import ClustersListPage from "./platform/clusters/ClustersList";
@@ -80,22 +79,10 @@ const ProtectedSwitch = (props: SwitchProps) => {
   // Consume Frontegg authentication state.
   const {
     isAuthenticated,
-    isLoading: isFronteggLoading,
+    isLoading,
     routes: authRoutes,
     user,
   } = useFronteggAuth((state) => state);
-
-  // Load Materialize Cloud's metadata about the authenticated organization.
-  const { data: organization, loading: isOrganizationLoading } =
-    useOrganizationsRetrieve({
-      // Only fetch the organization metadata if we have a valid access token...
-      lazy: !isAuthenticated,
-      // ...but we still need to invent a non-null organization ID if we
-      // haven't authenticated yet to keep TypeScript happy.
-      id: user?.tenantId || "",
-    });
-
-  const isLoading = isFronteggLoading || isOrganizationLoading;
 
   // Wait for authentication state to load before determining what to do.
   if (isLoading) {
@@ -120,14 +107,13 @@ const ProtectedSwitch = (props: SwitchProps) => {
   }
 
   // If we're here, `isLoading` is `false` and `isAuthenticated` is true, which
-  // guarantees that `user` and `organization` are non-null. TypeScript can't
-  // infer this, so help it along.
-  assert(organization);
+  // guarantees that `user` is non-null. TypeScript can't infer this, so help it
+  // along.
   assert(user);
 
   // Render the switch.
   return (
-    <AuthProvider organization={organization} user={user}>
+    <AuthProvider user={user}>
       <BaseLayout overflowY={layoutOverflow}>
         <Switch {...props} />
       </BaseLayout>

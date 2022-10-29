@@ -40,7 +40,6 @@ export const NAV_HOVER_STYLES = { bg: "whiteAlpha.200" };
 export const NAV_LOGO_HEIGHT = "72px";
 
 const NavBar = () => {
-  const { organization } = useAuth();
   const borderWidth = useColorModeValue("0", "1px");
   const borderColor = useColorModeValue("transparent", "gray.700");
 
@@ -69,10 +68,7 @@ const NavBar = () => {
         minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
         order={1}
       >
-        <NavMenuCompact
-          display={{ base: "block", lg: "none" }}
-          trialExpiresAt={organization.trialExpiresAt}
-        />
+        <NavMenuCompact display={{ base: "block", lg: "none" }} />
         <VStack
           position="relative"
           flex="0 0 24px"
@@ -111,14 +107,6 @@ const NavBar = () => {
         align={{ base: "center", lg: "stretch" }}
         fontSize="sm"
       >
-        {organization.trialExpiresAt && (
-          <TrialBubble
-            display={{ base: "none", lg: "flex" }}
-            trialExpiresAt={organization.trialExpiresAt}
-            mx={NAV_HORIZONTAL_SPACING}
-            my={{ base: 0, lg: 2 }}
-          />
-        )}
         <HelpDropdown />
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
@@ -173,11 +161,9 @@ const NavMenu = (props: BoxProps) => {
   );
 };
 
-type NavMenuCompactProps = MenuButtonProps & {
-  trialExpiresAt: string | null;
-};
+type NavMenuCompactProps = MenuButtonProps;
 
-const NavMenuCompact = ({ trialExpiresAt, ...props }: NavMenuCompactProps) => {
+const NavMenuCompact = (props: NavMenuCompactProps) => {
   const { user } = useAuth();
   const navItems = React.useMemo(
     () => getNavItems(user.email.endsWith("@materialize.com")),
@@ -207,11 +193,6 @@ const NavMenuCompact = ({ trialExpiresAt, ...props }: NavMenuCompactProps) => {
           </MenuItem>
         ))}
         <ProfileMenuItems />
-        {trialExpiresAt && (
-          <Box p={2} display={{ base: "flex", lg: "none" }}>
-            <TrialBubble trialExpiresAt={trialExpiresAt} flex={1} />
-          </Box>
-        )}
       </MenuList>
     </Menu>
   );
@@ -308,71 +289,6 @@ const HelpDropdown = () => {
         <HelpDropdownLink href={SUPPORT_HREF}>Email us</HelpDropdownLink>
       </MenuList>
     </Menu>
-  );
-};
-
-type TrialBubble = BoxProps & {
-  trialExpiresAt: string;
-};
-
-const TrialBubble = ({ trialExpiresAt, ...props }: TrialBubble) => {
-  // This color logic is a mess because if it's size lg, it's always dark
-  // (menu bg varies by colormode, but the regular nav always has a dark bg)
-  const textColor = useColorModeValue("default", "white");
-  const bgColor = useColorModeValue("gray.100", "gray.800");
-  const linkColor = useColorModeValue("blue.600", "blue.200");
-  const trialExpireTime = Date.parse(trialExpiresAt);
-  const now = Date.now();
-  const expired = trialExpireTime < now;
-  const daysRemaining = differenceInDays(trialExpireTime, now) + 1;
-  let daysRemainingText;
-  if (expired) {
-    daysRemainingText = "Expired";
-  } else if (daysRemaining === 1) {
-    daysRemainingText = "1 day left";
-  } else {
-    daysRemainingText = `${daysRemaining} days left`;
-  }
-  return (
-    <Flex
-      bg={expired ? "red.500" : { base: bgColor, lg: "gray.800" }}
-      borderRadius="md"
-      px={2}
-      py={1}
-      fontSize="sm"
-      minWidth={180}
-      justify="center"
-      alignItems="center"
-      {...props}
-    >
-      <VStack
-        spacing="-1"
-        flex={1}
-        color={expired ? "white" : { base: textColor, lg: "white" }}
-      >
-        <Text>Free trial</Text>
-        <Text
-          fontWeight="600"
-          color={
-            expired
-              ? "white"
-              : textColor !== "white"
-              ? { base: "black", lg: "white" }
-              : "default"
-          }
-        >
-          {daysRemainingText}
-        </Text>
-      </VStack>
-      <Link
-        color={expired ? "white" : { base: linkColor, lg: "blue.200" }}
-        href={SUPPORT_HREF}
-        textAlign="center"
-        flex={1}
-      >
-        Upgrade
-      </Link>
-    </Flex>
   );
 };
 

@@ -18,12 +18,6 @@ export const dummyValidUser: User = {
   tenantId: "tenant-id",
 };
 
-export const dummyValidOrganization = {
-  id: "org",
-  deploymentLimit: 100,
-  trialExpiresAt: null,
-};
-
 /** we mock the authentication modules that depends on features not available in our jest setup */
 export const mockUseAuth = () => {
   jest.mock("uuid", () => ({ v4: jest.fn(() => "pseudo-random") }));
@@ -38,7 +32,6 @@ export const mockUseAuth = () => {
       RestfulProvider: jest.fn(({ children }) => <>{children}</>),
       useAuth: jest.fn(() => ({
         user: dummyValidUser,
-        organization: dummyValidOrganization,
       })),
     };
   });
