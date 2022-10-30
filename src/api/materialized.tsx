@@ -99,7 +99,14 @@ export const executeSql = async (
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          // Run all queries on the `mz_introspection` cluster, as it's
+          // guaranteed to exist. (The `default` cluster may have been dropped
+          // by the user.)
+          //
+          // TODO: allow the caller of `executeSql` to configure the cluster.
+          query: `SET cluster = mz_introspection; ${query}`,
+        }),
         ...requestOpts,
       }
     );
@@ -110,10 +117,11 @@ export const executeSql = async (
       result.errorMessage = responseText || defaultError;
     } else {
       const parsedResponse = JSON.parse(responseText);
-      const { results: responseResults } = parsedResponse;
-      const [firstResult] = responseResults;
+      const {
+        results: [_, result],
+      } = parsedResponse;
       // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-      const { error: resultsError, rows, col_names } = firstResult || {};
+      const { error: resultsError, rows, col_names } = result || {};
 
       if (resultsError) {
         result.errorMessage = resultsError;
