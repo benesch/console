@@ -9,10 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React, { ChangeEventHandler } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { CopyableBox } from "../../components/copyableComponents";
-import { currentEnvironment } from "../../recoil/environments";
+import { currentEnvironmentState } from "../../recoil/environments";
 import { semanticColors } from "../../theme/colors";
 import ConnectStepBoxDetail from "./ConnectStepBoxDetail";
 
@@ -20,7 +20,7 @@ type ConnectionOption = "psql" | "other";
 
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();
-  const [current, _] = useRecoilState(currentEnvironment);
+  const currentEnvironment = useRecoilValue(currentEnvironmentState);
   const [connectionOption, setConnectionOption] =
     React.useState<ConnectionOption>("psql");
   const borderColor = useColorModeValue(
@@ -28,16 +28,16 @@ const ConnectSteps = (): JSX.Element => {
     semanticColors.divider.dark
   );
 
-  const environmentdAddress = current?.env?.environmentdPgwireAddress;
-
   const selectHandler: ChangeEventHandler<HTMLSelectElement> =
     React.useCallback((e) => {
       setConnectionOption(e.target.value as ConnectionOption);
     }, []);
 
-  if (!user) {
+  if (currentEnvironment.state !== "enabled" || !user) {
     return <Spinner />;
   }
+
+  const environmentdAddress = currentEnvironment.environmentdPgwireAddress;
 
   // switch is pretty overkill atm, but someday there'll be more
   // pre-baked connection options
@@ -65,7 +65,7 @@ const ConnectSteps = (): JSX.Element => {
       throw new Error(`Unhandled connection option: ${connectionOption}`);
   }
 
-  return environmentdAddress ? (
+  return (
     <VStack
       alignItems="flex-start"
       flex="1"
@@ -89,8 +89,6 @@ const ConnectSteps = (): JSX.Element => {
         {instructions}
       </Box>
     </VStack>
-  ) : (
-    <Spinner />
   );
 };
 

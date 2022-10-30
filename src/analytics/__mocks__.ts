@@ -6,5 +6,5 @@ export const globalConfigNoAnalyticsSetup: GlobalConfig = {
   ...globalConfigStub,
   segmentApiKey: null,
   googleAnalyticsId: null,
-  cloudRegions: [],
+  cloudRegions: new Map(),
 };

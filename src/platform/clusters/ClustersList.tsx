@@ -28,11 +28,7 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "../../layouts/listPageComponents";
-import {
-  currentEnvironment,
-  getRegionId,
-  singleEnvironmentStatus,
-} from "../../recoil/environments";
+import { currentEnvironmentState } from "../../recoil/environments";
 import ClustersIcon from "../../svg/Clusters";
 import { semanticColors } from "../../theme/colors";
 
@@ -58,10 +54,8 @@ const clustersSuggestions: SQLSuggestion[] = [
 ];
 
 const ClustersListPage = () => {
-  const [current] = useRecoilState(currentEnvironment);
-  const envStatus = useRecoilValue(
-    singleEnvironmentStatus(getRegionId(current?.region))
-  );
+  console.log("rerender clusters");
+  const currentEnvironment = useRecoilValue(currentEnvironmentState);
   const { clusters, refetch } = useClusters();
   useInterval(refetch, 5000);
   const grayText = useColorModeValue(
@@ -69,7 +63,7 @@ const ClustersListPage = () => {
     semanticColors.grayText.dark
   );
 
-  const isDisabled = envStatus !== "Enabled";
+  const isDisabled = currentEnvironment.state !== "enabled";
   const isLoading = clusters === null;
   const isEmpty = !isLoading && clusters.length === 0;
 

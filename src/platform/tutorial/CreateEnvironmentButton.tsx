@@ -7,19 +7,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { EnvironmentAssignment } from "../../api/region-controller";
 import { fetchEnvironments } from "../../api/useAvailableEnvironments";
-import {
-  currentEnvironment,
-  hasCreatedEnvironment,
-} from "../../recoil/environments";
+import config from "../../config";
+import { currentEnvironmentIdState } from "../../recoil/environments";
 import { CloudRegion } from "../../types";
 
 interface Props extends ButtonProps {
-  region: CloudRegion;
+  regionId: string;
   isCreatingEnv?: boolean;
   handleEnvCreate?: (flag: boolean) => void;
 }
@@ -35,22 +33,21 @@ const CreateEnvironmentButton = (props: Props) => {
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
 
   const [isCreatingThisEnv, setIsCreatingThisEnv] = React.useState(false);
-  // tutorial flag that the user has ever made an env: TODO this is not currently used
-  const [_, setHasCreatedEnv] = useRecoilState(hasCreatedEnvironment);
-  const [_current, setCurrent] = useRecoilState(currentEnvironment);
+  const setCurrentEnvironmentId = useSetRecoilState(currentEnvironmentIdState);
   const [newAssignment, setNewAssignment] =
     React.useState<EnvironmentAssignment | null>(null);
 
   const toast = useToast();
 
-  const { region: r, isCreatingEnv, handleEnvCreate, ...buttonProps } = props;
+  const { regionId, isCreatingEnv, handleEnvCreate, ...buttonProps } = props;
+  const region = config.cloudRegions.get(regionId)!;
 
   const handleCreate = React.useCallback(async () => {
     try {
       setIsCreatingThisEnv(true);
       if (handleEnvCreate) handleEnvCreate(true);
       const response = await fetchAuthed(
-        `${r.regionControllerUrl}/api/environmentassignment`,
+        `${region.regionControllerUrl}/api/environmentassignment`,
         {
           body: JSON.stringify({}),
           headers: {
@@ -69,7 +66,7 @@ const CreateEnvironmentButton = (props: Props) => {
         status: "error",
       });
     }
-  }, [r.regionControllerUrl]);
+  }, [region.regionControllerUrl]);
 
   const checkForEnv = React.useCallback(async () => {
     if (newAssignment) {
@@ -85,8 +82,7 @@ const CreateEnvironmentButton = (props: Props) => {
       if (environments.length > 0) {
         setIsCreatingThisEnv(false);
         if (handleEnvCreate) handleEnvCreate(false);
-        setHasCreatedEnv(true);
-        setCurrent({ region: props.region });
+        setCurrentEnvironmentId(regionId);
         toast({
           title: "Region enabled.",
           status: "success",
@@ -118,7 +114,7 @@ const CreateEnvironmentButton = (props: Props) => {
       disabled={!canWriteEnvironments || isCreatingThisEnv || isCreatingEnv}
       title={
         canWriteEnvironments
-          ? `Enable ${r.provider}/${r.region}`
+          ? `Enable ${regionId}`
           : "Only admins can enable new regions."
       }
       {...buttonProps}

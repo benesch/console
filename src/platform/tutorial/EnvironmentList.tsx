@@ -1,28 +1,19 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilState } from "recoil";
 
 import config from "../../config";
-import {
-  EnvironmentStatus,
-  environmentStatusMap,
-  getRegionId,
-} from "../../recoil/environments";
-import { CloudRegion } from "../../types";
 import CreateEnvironmentButton from "./CreateEnvironmentButton";
 
 const EnvironmentList = () => {
   const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
-  const [statusMap] = useRecoilState(environmentStatusMap);
   return (
     <VStack spacing={4} data-test-id="regions-list">
-      {config.cloudRegions.map((r) => (
+      {Array.from(config.cloudRegions.keys()).map((r) => (
         <RegionEnvironmentRow
-          key={r.regionControllerUrl}
-          region={r}
+          key={r}
+          regionId={r}
           setIsCreatingEnv={setIsCreatingEnv}
           isCreatingEnv={isCreatingEnv}
-          status={statusMap[getRegionId(r)]}
         />
       ))}
     </VStack>
@@ -30,14 +21,13 @@ const EnvironmentList = () => {
 };
 
 interface RegionEnvironmentRowProps {
-  region: CloudRegion;
-  status: EnvironmentStatus;
+  regionId: string;
   isCreatingEnv: boolean;
   setIsCreatingEnv: (flag: boolean) => void;
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
-  const { region: r, status } = props;
+  const { regionId } = props;
 
   const handleEnvCreate = React.useCallback(
     async (isCreating: boolean) => {
@@ -53,17 +43,13 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       minHeight="32px"
       className="regions-list-item"
     >
+      <Box>{regionId}</Box>
       <Box>
-        {r.provider}/{r.region}
-      </Box>
-      <Box>
-        {status === "Not enabled" && (
-          <CreateEnvironmentButton
-            region={props.region}
-            isCreatingEnv={props.isCreatingEnv}
-            handleEnvCreate={handleEnvCreate}
-          />
-        )}
+        <CreateEnvironmentButton
+          regionId={props.regionId}
+          isCreatingEnv={props.isCreatingEnv}
+          handleEnvCreate={handleEnvCreate}
+        />
       </Box>
     </HStack>
   );

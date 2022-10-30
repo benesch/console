@@ -17,53 +17,27 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
 import {
-  activeEnvironmentList,
-  currentEnvironment,
-  environmentList,
-  environmentStatusMap,
-  getRegionId,
-  RegionEnvironment,
-  singleEnvironmentStatus,
+  currentEnvironmentIdState,
+  LoadedEnvironment,
+  loadedEnvironmentsState,
 } from "../recoil/environments";
 import { reactSelectTheme } from "../theme";
 import colors from "../theme/colors";
 
 const EnvironmentSelectField = () => {
-  const [current, setCurrent] = useRecoilState(currentEnvironment);
+  const environments = useRecoilValue(loadedEnvironmentsState);
+  const [currentEnvironmentId, setCurrentEnvironmentId] = useRecoilState(
+    currentEnvironmentIdState
+  );
   const colorModeContext = useColorMode();
-  const [environments] = useRecoilState(environmentList);
-  const [activeEnvironments] = useRecoilState(activeEnvironmentList);
-  const [statusMap] = useRecoilState(environmentStatusMap);
   const { user } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
 
-  const options: EnvOptionType[] = React.useMemo(() => {
-    if (environments) {
-      return environments.map(makeEnvOption);
-    }
-    return [];
-  }, [environments, statusMap]);
-
-  const currentOption = React.useMemo(() => {
-    return current ? makeEnvOption(current) : undefined;
-  }, [current]);
-
   const selectHandler = React.useCallback(
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
-      /* This should never actually be an array, but typescript doesn't notice the isMulti=false prop >.< */
-      if (!Array.isArray(option)) {
-        setCurrent(
-          option
-            ? environments?.find(
-                (env) =>
-                  (option as EnvOptionType).value ===
-                  `${env.region.provider}/${env.region.region}`
-              ) || null
-            : null
-        );
-      }
+      setCurrentEnvironmentId((option as EnvOptionType).id);
     },
-    [environments, current, setCurrent]
+    [environments, setCurrentEnvironmentId]
   );
 
   const colorStyles = React.useMemo(
@@ -71,16 +45,23 @@ const EnvironmentSelectField = () => {
     [colorModeContext]
   );
 
-  if (!environments || environments.length < 1) {
+  if (!environments) {
     return <Spinner />;
   }
 
   if (
-    (activeEnvironments && activeEnvironments.length < 1 && !current) ||
+    Array.from(environments.values()).every((e) => e.state === "disabled") ||
     !canReadEnvironments
   ) {
     return null;
   }
+
+  const options = Array.from(environments, ([id, environment]) => ({
+    id,
+    environment,
+  }));
+
+  const currentOption = options.find((o) => o.id === currentEnvironmentId)!;
 
   return (
     <ReactSelect
@@ -102,42 +83,42 @@ const EnvironmentSelectField = () => {
 };
 
 type EnvOptionType = {
-  label: string;
-  value: string;
+  id: string;
+  environment: LoadedEnvironment;
 };
-
-function makeEnvOption({ region }: RegionEnvironment): EnvOptionType {
-  return {
-    label: getRegionId(region),
-    value: getRegionId(region),
-  };
-}
 
 type DotProps = {
-  id: string;
+  environment: LoadedEnvironment;
 };
 
-const Dot = ({ id }: DotProps) => {
-  const status = useRecoilValue(singleEnvironmentStatus(id));
-  let color = "gray.300";
-  switch (status) {
-    case "Loading":
-    case "Starting": {
-      color = "yellow.400";
+const Dot = ({ environment }: DotProps) => {
+  let color;
+  switch (environment.state) {
+    case "enabled": {
+      switch (environment.health) {
+        case "pending":
+          // TODO: this should be a spinner. For now we just go with yellow.
+          color = "yellow.400";
+          break;
+        case "booting":
+          color = "yellow.400";
+          break;
+        case "healthy":
+          color = "green.500";
+          break;
+        case "crashed":
+          color = "red.400";
+          break;
+      }
       break;
     }
-    case "Enabled": {
-      color = "green.500";
-      break;
-    }
-    default: {
+    case "disabled": {
       color = "gray.300";
       break;
     }
   }
   return (
     <Box
-      id={`status-dot-${id}`}
       height="10px"
       width="10px"
       mr={2}
@@ -153,8 +134,8 @@ const SingleValue: React.FunctionComponent<SingleValueProps<EnvOptionType>> = ({
 }) => {
   return (
     <HStack {...innerProps} spacing={0} color="white">
-      <Dot id={data.value} />
-      <Box>{data.label}</Box>
+      <Dot environment={data.environment} />
+      <Box>{data.id}</Box>
     </HStack>
   );
 };
@@ -190,8 +171,8 @@ const EnvOption: React.FunctionComponent<OptionProps<EnvOptionType>> = ({
       py={2}
       spacing={0}
     >
-      <Dot id={data.value} />
-      <Box>{data.label}</Box>
+      <Dot environment={data.environment} />
+      <Box>{data.id}</Box>
     </HStack>
   );
 };

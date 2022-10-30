@@ -13,6 +13,14 @@ export interface CloudRegion {
   regionControllerUrl: string;
 }
 
+/** Constructs a short, unique, human-readable identifier for a cloud region.
+ *
+ * Because cloud regions and environments are 1:1, this function is also usable
+ * for constructing the ID for an environment.
+ */
+export const getRegionId = (region: CloudRegion): string =>
+  `${region.provider}/${region.region}`;
+
 declare global {
   const __FRONTEGG_URL__: string;
   const __SEGMENT_API_KEY__: string | null;

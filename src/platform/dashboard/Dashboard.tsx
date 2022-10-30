@@ -6,17 +6,17 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import {
   PageBreadcrumbs,
   PageHeader,
   PageHeading,
 } from "../../layouts/BaseLayout";
-import { currentEnvironment } from "../../recoil/environments";
+import { currentEnvironmentIdState } from "../../recoil/environments";
 
 const Dashboard = () => {
-  const [current, _] = useRecoilState(currentEnvironment);
+  const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);
   const grayText = useColorModeValue("gray.600", "gray.200");
   return (
     <>
@@ -31,9 +31,7 @@ const Dashboard = () => {
           <VStack alignItems="flex-start">
             <PageHeading>Dashboard</PageHeading>
             <Text fontSize="md" textColor={grayText}>
-              {current
-                ? `${current?.region.provider}/${current?.region.region}`
-                : "No region active"}
+              {currentEnvironmentId}
             </Text>
           </VStack>
           <Spacer />

@@ -3,13 +3,17 @@
  * materialized SQL API.
  */
 
-import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import React from "react";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 
 import config from "../config";
-import { currentEnvironment } from "../recoil/environments";
+import {
+  currentEnvironmentState,
+  EnabledEnvironment,
+} from "../recoil/environments";
+import { assert } from "../util";
 import { FetchAuthedType, useAuth } from "./auth";
-import { Environment } from "./environment-controller";
 
 export interface Results {
   columns: Array<string>;
@@ -17,25 +21,21 @@ export interface Results {
 }
 
 /**
- * useSql hook state implementation
- * @param sql
- * @param environment
- * @returns
+ * A React hook that runs a SQL query against the current environment.
+ * @params {string} sql to execute in the environment coord or current global coord.
+ * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
  */
-function useSqlInternal(
-  sql: string | undefined,
-  environment: Environment | undefined | null
-) {
+export function useSql(sql: string | undefined) {
   const { fetchAuthed } = useAuth();
+  const environment = useRecoilValue(currentEnvironmentState);
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
   async function runSql() {
-    if (!environment || !sql) {
+    if (environment.state !== "enabled" || !sql) {
       setResults(null);
-      setLoading(false);
       return;
     }
 
@@ -62,11 +62,8 @@ function useSqlInternal(
   }
 
   useEffect(() => {
-    setResults(null);
-    setLoading(false);
-    setError(null);
     runSql();
-  }, [environment?.resolvable, environment?.environmentdHttpsAddress, sql]);
+  }, [environment, sql]);
 
   return { data: results, error, loading, refetch: runSql };
 }
@@ -77,12 +74,14 @@ interface ExecuteSqlOutput {
 }
 
 export const executeSql = async (
-  environment: Environment | undefined | null,
+  environment: EnabledEnvironment,
   query: string,
-  fetcher: FetchAuthedType
+  fetcher: FetchAuthedType,
+  requestOpts?: RequestInit
 ): Promise<ExecuteSqlOutput> => {
-  const address =
-    environment?.resolvable && environment.environmentdHttpsAddress;
+  assert(environment.resolvable);
+
+  const address = environment.environmentdHttpsAddress;
   const defaultError = "Error running query.";
   const result: ExecuteSqlOutput = {
     results: null,
@@ -101,6 +100,7 @@ export const executeSql = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),
+        ...requestOpts,
       }
     );
 
@@ -132,39 +132,16 @@ export const executeSql = async (
   return result;
 };
 
-/**
- * useSql hook for a particular environment coordinator address.
- * @param sql
- * @param environment
- * @returns
- */
-export function useSqlOnCoordinator(
-  sql: string | undefined,
-  environment: Environment | null | undefined
-) {
-  return useSqlInternal(sql, environment);
-}
-
-/**
- * A React hook that runs a SQL query against the current environment.
- * @params {string} sql to execute in the environment coord or current global coord.
- * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
- */
-export function useSql(sql: string | undefined) {
-  const [current, _] = useRecoilState(currentEnvironment);
-  return useSqlInternal(sql, current?.env);
+export interface Cluster {
+  id: string;
+  name: string;
+  replicas?: Replica[];
 }
 
 export interface Replica {
   replica: string;
   size?: string;
   cluster: string;
-}
-
-export interface Cluster {
-  id: string;
-  name: string;
-  replicas?: Replica[];
 }
 
 /**

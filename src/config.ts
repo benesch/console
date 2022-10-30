@@ -1,5 +1,7 @@
 /* Globals injected by Webpack's DefinePlugin.*/
 
+import { getRegionId } from "./types";
+
 const config = {
   environmentdScheme: __ENVIRONMENTD_SCHEME__,
   fronteggUrl: __FRONTEGG_URL__,
@@ -9,7 +11,7 @@ const config = {
   sentryRelease: __SENTRY_RELEASE__,
   statuspageId: __STATUSPAGE_ID__,
   googleAnalyticsId: __GOOGLE_ANALYTICS_ID__,
-  cloudRegions: __CLOUD_REGIONS__,
+  cloudRegions: new Map(__CLOUD_REGIONS__.map((r) => [getRegionId(r), r])),
 };
 
 export type GlobalConfig = typeof config;

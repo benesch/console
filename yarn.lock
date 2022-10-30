@@ -2844,6 +2844,11 @@
   resolved "https://registry.yarnpkg.com/@types/d3-timer/-/d3-timer-3.0.0.tgz#e2505f1c21ec08bda8915238e397fb71d2fc54ce"
   integrity sha512-HNB/9GHqu7Fo8AQiugyJbv6ZxYz58wef0esl4Mv828w1ZKpAshw/uFWVDUcIB9KKFeFKoxS3cHY07FFgtTRZ1g==
 
+"@types/deep-eql@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/deep-eql/-/deep-eql-4.0.0.tgz#168e28540d077f443090fce6926ff3b5bbaec757"
+  integrity sha512-UkfTYLA64vGUyR4ez8ybIC01wtilS/ydOqKL1fSHOvnX1sVm1sI5btr7Q+bqpdaPGD+QNhOgBXq1HGjO+99e1A==
+
 "@types/downloadjs@1.4.3":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@types/downloadjs/-/downloadjs-1.4.3.tgz#01c0414a9756afa2bd438b1e2ec6c50de7df316d"
@@ -4770,6 +4775,13 @@ dedent@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/dedent/-/dedent-0.7.0.tgz#2495ddbaf6eb874abb0e1be9df22d2e5a544326c"
   integrity sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=
+
+deep-eql@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/deep-eql/-/deep-eql-4.1.1.tgz#b1154ea8c95012d9f23f37f4eecfd2ee8e5b9323"
+  integrity sha512-rc6HkZswtl+KMi/IODZ8k7C/P37clC2Rf1HYI11GqdbgvggIyHjsU5MdjlTlaP6eu24c0sR3mcW2SqsVZ1sXUw==
+  dependencies:
+    type-detect "^4.0.0"
 
 deep-extend@^0.6.0:
   version "0.6.0"
@@ -10389,7 +10401,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-detect@4.0.8:
+type-detect@4.0.8, type-detect@^4.0.0:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==

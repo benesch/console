@@ -1,25 +1,19 @@
 import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
+import deepEql from "deep-eql";
 import React from "react";
-import { useRecoilState } from "recoil";
-import { GetDataError } from "restful-react";
+import { SetterOrUpdater, useRecoilCallback, useSetRecoilState } from "recoil";
 
 import config from "../config";
 import {
-  activeEnvironmentList,
-  ActiveRegionEnvironment,
-  currentEnvironment,
-  environmentList,
-  EnvironmentStatus,
-  environmentStatusMap,
-  firstEnvLoad,
-  getRegionId,
-  RegionEnvironment,
+  EnabledEnvironment,
+  Environment,
+  environmentState,
 } from "../recoil/environments";
-import { CloudRegion } from "../types";
+import { CloudRegion, getRegionId } from "../types";
 import { FetchAuthedType, useAuth } from "./auth";
-import { Environment } from "./environment-controller";
-import { executeSql, Results } from "./materialized";
+import { Environment as ApiEnvironment } from "./environment-controller";
+import { executeSql } from "./materialized";
 import { EnvironmentAssignment } from "./region-controller";
 
 type EnvironmentGetterResults = {
@@ -30,171 +24,124 @@ type EnvironmentGetterResults = {
 const maxBootTime = { minutes: 5 };
 
 /*
- * Get all activateable environments across providers.
- * This first contacts all providers' regionControllerUrl to get their environment assignor(s).
- * Then it contacts those assignors via their environmentControllerUrl to get the actual environments.
+ * Start heartbeating environment existence and health into recoil state.
+ *
+ * This periodically contacts all region controllers to get their environment
+ * assignments, then it contacts the environment controllers to get the
+ * environments, and then it contacts the environments themselves to check their
+ * health.
+ *
+ * TODO: figure out how to use Recoil native features for this, instead of this
+ * single-use hook.
  */
 const useAvailableEnvironments = (): EnvironmentGetterResults => {
   const { fetchAuthed } = useAuth();
-  const [current, setCurrent] = useRecoilState(currentEnvironment);
-  const [environments, setEnvironments] = useRecoilState(environmentList);
-  const [_, setActiveEnvironments] = useRecoilState(activeEnvironmentList);
-  const [statusMap, setStatusMap] = useRecoilState(environmentStatusMap);
-  const hasPingedSet = React.useRef<Set<string>>(new Set());
-  const [hasLoaded, setHasLoaded] = useRecoilState(firstEnvLoad);
 
-  const envErrorMessages = [];
-  let regionEnvErrorMessage = "";
-
-  const fetchEnvStatuses = React.useCallback(() => {
-    if (environments) {
-      environments.map(async (env) => {
-        let newStatus: EnvironmentStatus = "Not enabled";
-        const idString = getRegionId(env.region);
-        if (env.env?.resolvable && env.env?.environmentdHttpsAddress) {
-          if (statusMap[idString] === "Not enabled") {
-            // go from not enabled to loading
-            newStatus = getStatusFromSQLResponse(
-              null,
-              env.env,
-              hasPingedSet.current.has(idString)
-            );
-          }
-          try {
-            const { results } = await executeSql(
-              env.env,
-              "SELECT 1",
-              fetchAuthed
-            );
-            newStatus = getStatusFromSQLResponse(
-              results,
-              env?.env,
-              hasPingedSet.current.has(idString)
-            );
-          } catch {
-            newStatus = getStatusFromSQLResponse(null, env?.env, true);
-          }
-          if (!hasPingedSet.current.has(idString)) {
-            hasPingedSet.current.add(idString);
-          }
-        } else if (env && env.env && !env.env.resolvable) {
-          if (env.env.creationTimestamp) {
-            const cutoff = add(
-              new Date(env.env.creationTimestamp),
-              maxBootTime
-            );
-
-            if (new Date() > cutoff) {
-              newStatus = "Crashed";
-            } else {
-              newStatus = "Starting";
-            }
-          }
-        } else {
-          newStatus = getStatusFromSQLResponse(
-            null,
-            env?.env,
-            hasPingedSet.current.has(idString)
-          );
-        }
-        setStatusMap((currentStatusMap) => {
-          return {
-            ...currentStatusMap,
-            [idString]: newStatus,
-          };
+  const updateEnvironment = useRecoilCallback(
+    ({ set }) =>
+      (id: string, update: (env: Environment) => Environment) => {
+        set(environmentState(id), (oldEnvironment) => {
+          const newEnvironment = update(oldEnvironment);
+          // Suppress updates when environment hasn't changed, to prevent
+          // re-renders.
+          return deepEql(oldEnvironment, newEnvironment)
+            ? oldEnvironment
+            : newEnvironment;
         });
-      });
-    }
-  }, [environments, hasPingedSet, fetchAuthed]);
-
-  const fetchRegionEnvironments = React.useCallback(
-    async (region: CloudRegion): Promise<RegionEnvironment[]> => {
-      const { assignments, errorMessage } = await fetchEnvironmentAssignments(
-        region,
-        fetchAuthed
-      );
-      regionEnvErrorMessage = errorMessage;
-      if (assignments.length > 0) {
-        const activeEnvs = await Promise.all(
-          // now we turn those assignments into envs...
-          assignments.map(async (assignment) => {
-            const { environments: envs, errorMessage } =
-              await fetchEnvironments(assignment, fetchAuthed);
-            errorMessage && envErrorMessages.push(errorMessage);
-            // ...and frob the data into fully-fledged RegionEnvironments!
-            return envs.map((env) => {
-              return {
-                env,
-                assignment,
-                region,
-              };
-            });
-          })
-        );
-        return activeEnvs.flat();
       }
-      return [{ region }];
-    },
-    [fetchAuthed, fetchEnvironments]
   );
 
-  const fetchAllEnvironments = React.useCallback(async () => {
-    const envs = await (
-      await Promise.all(config.cloudRegions.map(fetchRegionEnvironments))
-    )
-      .flat()
-      .sort((a, b) => {
-        // sort first by provider, then by region
-        const providerComparison = a.region.provider
-          .toLowerCase()
-          .localeCompare(b.region.provider.toLowerCase());
-        if (providerComparison === 0) {
-          return a.region.region
-            .toLowerCase()
-            .localeCompare(b.region.region.toLowerCase());
-        } else {
-          return providerComparison;
-        }
-      });
-    const activeEnvs = envs.filter(
-      (env) => !!env.env && !!env.assignment
-    ) as ActiveRegionEnvironment[];
-    if (current) {
-      // update the current atom with the contents of the env
-      const updatedCurrent = envs.find((env) => {
-        return (
-          env.region.provider === current.region.provider &&
-          env.region.region === current.region.region
-        );
-      });
-      setCurrent(updatedCurrent || null);
-    } else if (activeEnvs.length > 0) {
-      // set the current env to the first active env, if there is one
-      setCurrent(activeEnvs[0]);
+  const setEnvironment = (id: string, environment: Environment) => {
+    updateEnvironment(id, () => environment);
+  };
+
+  const fetchRegionEnvironments = async (region: CloudRegion) => {
+    // Fetch the environment assignment for the region, if it exists.
+    const { assignments } = await fetchEnvironmentAssignments(
+      region,
+      fetchAuthed
+    );
+    if (assignments.length === 0) {
+      setEnvironment(getRegionId(region), { state: "disabled" });
+      return;
+    } else if (assignments.length > 1) {
+      console.error(
+        `region ${getRegionId(region)} unexpectedly had ${
+          assignments.length
+        } environment assignments`
+      );
+      return;
     }
-    setEnvironments(envs);
-    setActiveEnvironments(activeEnvs);
-    hasLoaded && setHasLoaded(false);
-  }, [current, setCurrent, fetchRegionEnvironments]);
+    const assignment = assignments[0];
+
+    // Fetch the environment for the assignment, if it exists.
+    const { environments } = await fetchEnvironments(assignment, fetchAuthed);
+    if (environments.length === 0) {
+      return;
+    } else if (environments.length > 1) {
+      console.error(
+        `environment assignment for ${assignment.cluster} unexpectedly had ${environments.length} environments`
+      );
+      return;
+    }
+
+    // Update the state with the new environment object...
+    const environment: EnabledEnvironment = {
+      state: "enabled",
+      health: "pending",
+      ...environments[0],
+    };
+    updateEnvironment(getRegionId(region), (oldEnvironment) => {
+      if (oldEnvironment.state === "enabled") {
+        // ...but don't overwrite the last health, if it exists.
+        environment.health = oldEnvironment.health;
+      }
+      return { ...environment };
+    });
+
+    // Determine if the environment is healthy by issuing a basic SQL query.
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      10000 /* 10 seconds */
+    );
+    try {
+      if (!environment.resolvable) {
+        throw new Error(`environment unresolvable`);
+      }
+      const { errorMessage } = await executeSql(
+        environment,
+        "SELECT 1",
+        fetchAuthed,
+        { signal: controller.signal }
+      );
+      if (errorMessage !== null) {
+        throw new Error(`environment unhealthy: ${errorMessage}`);
+      }
+      environment.health = "healthy";
+    } catch (e) {
+      const cutoff = add(new Date(environment.creationTimestamp), maxBootTime);
+      if (new Date() > cutoff) {
+        environment.health = "crashed";
+      } else {
+        environment.health = "booting";
+      }
+    }
+    clearTimeout(timeout);
+    setEnvironment(getRegionId(region), environment);
+  };
+
+  const refetch = async () => {
+    for (const region of config.cloudRegions.values()) {
+      fetchRegionEnvironments(region);
+    }
+  };
 
   React.useEffect(() => {
-    fetchAllEnvironments();
+    refetch();
   }, []);
 
-  React.useEffect(() => {
-    fetchEnvStatuses();
-  }, [environments]);
-
-  if (regionEnvErrorMessage) {
-    console.warn(regionEnvErrorMessage);
-  }
-
-  const refetch = React.useCallback(async () => {
-    fetchAllEnvironments();
-  }, [fetchAllEnvironments, fetchEnvStatuses]);
-
   useInterval(refetch, 5000);
-  useInterval(fetchEnvStatuses, 5000);
 
   return {
     refetch,
@@ -204,8 +151,8 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
 export const fetchEnvironments = async (
   assignment: EnvironmentAssignment,
   fetcher: FetchAuthedType
-): Promise<{ environments: Environment[]; errorMessage: string }> => {
-  let environments: Environment[] = [];
+): Promise<{ environments: ApiEnvironment[]; errorMessage: string }> => {
+  let environments: ApiEnvironment[] = [];
   let envsErrorMessage = "";
   try {
     const envsResponse = await fetcher(
@@ -233,7 +180,6 @@ export const fetchEnvironmentAssignments = async (
   let assignments: EnvironmentAssignment[] = [];
   let envAssignmentsErrorMessage = "";
   try {
-    // get all env assignments for this provider
     const assignmentResponse = await fetcher(
       `${region.regionControllerUrl}/api/environmentassignment`
     );
@@ -249,29 +195,6 @@ export const fetchEnvironmentAssignments = async (
     assignments,
     errorMessage: envAssignmentsErrorMessage,
   };
-};
-
-const getStatusFromSQLResponse = (
-  data?: Results | null,
-  env?: Environment | null,
-  hasLoadedOnce?: boolean
-): EnvironmentStatus => {
-  const negativeHealth =
-    (env && !env.resolvable) || !data || data.rows.length === 0;
-
-  if (env) {
-    if (negativeHealth) {
-      if (!hasLoadedOnce) {
-        return "Loading";
-      } else {
-        return "Starting";
-      }
-    } else {
-      return "Enabled";
-    }
-  }
-
-  return "Not enabled";
 };
 
 export default useAvailableEnvironments;

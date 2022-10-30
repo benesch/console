@@ -1,81 +1,76 @@
-import { atom, selectorFamily } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 
-import { Environment } from "../api/environment-controller";
-import { EnvironmentAssignment } from "../api/region-controller";
-import { CloudRegion } from "../types";
+import {
+  Environment as ApiEnvironment,
+  EnvironmentsList,
+} from "../api/environment-controller";
+import config from "../config";
 import keys from "./keyConstants";
 
-// Currently the identifier for unique envs is their provider + their region
-export const getRegionId = (region?: CloudRegion): string => {
-  if (region) {
-    return `${region.provider}/${region.region}`;
-  }
-  return "";
-};
+/** The health of an environment. */
+export type EnvironmentHealth = "pending" | "booting" | "healthy" | "crashed";
 
-export type EnvironmentStatus =
-  | "Loading"
-  | "Starting"
-  | "Enabled"
-  | "Crashed"
-  | "Not enabled";
+/** Represents an environment whose existence is loading. */
+export interface LoadingEnvironment {
+  state: "loading";
+}
 
-export type RegionEnvironment = {
-  region: CloudRegion;
-  assignment?: EnvironmentAssignment;
-  env?: Environment;
-};
+/** Represents an environment that is known to be disabled. */
+export interface DisabledEnvironment {
+  state: "disabled";
+}
 
-export type ActiveRegionEnvironment = RegionEnvironment & {
-  assignment: EnvironmentAssignment;
-  env: Environment;
-};
+/** Represents an environment that is known to exist. */
+export interface EnabledEnvironment extends ApiEnvironment {
+  state: "enabled";
+  health: EnvironmentHealth;
+}
 
-export const currentEnvironment = atom<RegionEnvironment | null>({
-  key: keys.CURRENT_ENVIRONMENT,
-  default: null,
-});
+export type Environment =
+  | LoadingEnvironment
+  | DisabledEnvironment
+  | EnabledEnvironment;
+export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
 
-export const environmentList = atom<RegionEnvironment[] | null>({
+/** The state for each environment. */
+export const environmentState = atomFamily<Environment, string>({
   key: keys.ENVIRONMENTS,
-  default: null,
+  // All environments are initially marked as loading.
+  default: (string) => ({ state: "loading" }),
 });
 
-export const activeEnvironmentList = atom<ActiveRegionEnvironment[] | null>({
-  key: keys.ACTIVE_ENVIRONMENTS,
-  default: null,
-});
-
-export const hasCreatedEnvironment = atom<boolean>({
-  key: keys.HAS_CREATED_ENVIRONMENT,
-  default: false,
-});
-
-export const firstEnvLoad = atom<boolean>({
-  key: keys.ON_FIRST_LOAD,
-  default: true,
-});
-
-export type StatusMap = {
-  [key: string]: EnvironmentStatus;
-};
-
-/*
- * Map environment IDs (per the `getRegionId` helper) to their statuses
+/** A map of all loaded environments, keyed by environment ID, or null if any
+ *  of the environments are still loading.
  */
-export const environmentStatusMap = atom<StatusMap>({
-  key: keys.ENVIRONMENT_STATUS_MAP,
-  default: {},
+export const loadedEnvironmentsState = selector<Map<
+  string,
+  LoadedEnvironment
+> | null>({
+  key: keys.LOADED_ENVIRONMENTS,
+  get: ({ get }) => {
+    const environments = new Map();
+    for (const regionId of config.cloudRegions.keys()) {
+      const environment = get(environmentState(regionId));
+      if (environment.state === "loading") {
+        return null;
+      }
+      environments.set(regionId, environment);
+    }
+    return environments;
+  },
 });
 
-export const singleEnvironmentStatus = selectorFamily<
-  EnvironmentStatus,
-  string
->({
-  key: keys.ENVIRONMENT_STATUS,
-  get:
-    (id: string) =>
-    ({ get }) => {
-      return get(environmentStatusMap)[id];
-    },
+/** The ID of the currently selected environment. */
+export const currentEnvironmentIdState = atom<string>({
+  key: keys.CURRENT_ENVIRONMENT_ID,
+  default: config.cloudRegions.keys().next().value,
+});
+
+/** The state for the currently selected environment. */
+export const currentEnvironmentState = selector<Environment>({
+  key: keys.CURRENT_ENVIRONMENT,
+  get: ({ get }) => {
+    const currentEnvironmentId = get(currentEnvironmentIdState);
+    return get(environmentState(currentEnvironmentId));
+  },
 });
