@@ -30,7 +30,7 @@
     "@fontsource/inter": "^4.5.14",
     "@frontegg/react": "^5.0.9",
     "@melloware/csp-webpack-plugin": "^6.0.4",
-    "@segment/analytics-next": "^1.43.0",
+    "@segment/analytics-next": "^1.45.0",
     "@sentry/react": "^7.14.2",
     "@sentry/tracing": "^7.14.1",
     "@sentry/webpack-plugin": "^1.18.8",
