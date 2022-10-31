@@ -98,16 +98,19 @@ const ProtectedSwitch = (props: SwitchProps) => {
     return null;
   }
 
+  if (location.pathname.startsWith("/account")) {
+    // Paths that start with /account are handled by Frontegg, but for reasons
+    // that are not fully understood, our router is rendered before Frontegg's.
+    // Return `null` so that we don't issue a redirect before Frontegg's router
+    // kicks in. This prevents redirect loops on sign in (#3413) and broken
+    // logouts (#4351).
+    return null;
+  }
+
   // If unauthenticated, redirect to login page, remembering what page the user
   // was trying to access.
   if (!isAuthenticated) {
-    // *Caution* if:
-    // redirectUrl = "%2platform"           /    Not Works (A malformed url)
-    // redirectUrl = "%2Faccount%2Flogin"   /    Not Works
-    // redirectUrl = "/account/login"       /    Not Works
-    const pathname =
-      location.pathname === "/account/login" ? "/" : location.pathname;
-    const redirectUrl = encodeURIComponent(pathname);
+    const redirectUrl = encodeURIComponent(location.pathname);
     const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
     return <Redirect to={loginUrl} />;
   }
