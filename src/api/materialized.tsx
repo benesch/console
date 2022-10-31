@@ -3,7 +3,7 @@
  * materialized SQL API.
  */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 import config from "../config";
@@ -156,31 +156,65 @@ export function useSql(sql: string | undefined) {
   return useSqlInternal(sql, current?.env);
 }
 
+export interface Replica {
+  replica: string;
+  size?: string;
+  cluster: string;
+}
+
 export interface Cluster {
   id: string;
   name: string;
+  replicas?: Replica[];
 }
 
 /**
  * Fetches all clusters in the current environment.
  */
 export function useClusters() {
-  const { data, refetch } = useSql(
+  const clusterResponse = useSql(
     "SELECT id, name FROM mz_clusters ORDER BY id"
   );
+  const replicaResponse = useSql("SELECT * FROM (SHOW CLUSTER REPLICAS)");
+
+  const replicasByCluster: { [clusterId: string]: Replica[] } = {};
+  if (replicaResponse.data) {
+    replicaResponse.data.rows.forEach((indexRow: string[]) => {
+      const clusterName = indexRow[0];
+      const replica: Replica = {
+        cluster: indexRow[0],
+        replica: indexRow[1],
+        size: indexRow[2],
+      };
+      if (replicasByCluster[clusterName]) {
+        replicasByCluster[clusterName] = [
+          ...replicasByCluster[clusterName],
+          replica,
+        ];
+      } else {
+        replicasByCluster[clusterName] = [replica];
+      }
+    });
+  }
 
   let clusters = null;
-  if (data) {
-    const { rows } = data;
+  if (clusterResponse.data) {
+    const { rows } = clusterResponse.data;
 
     clusters = rows.map(
       (row) =>
         ({
           id: row[0],
           name: row[1],
+          replicas: replicasByCluster[row[1]],
         } as Cluster)
     );
   }
+
+  const refetch = React.useCallback(() => {
+    clusterResponse.refetch();
+    replicaResponse.refetch();
+  }, [clusterResponse, replicaResponse]);
 
   return { clusters, refetch };
 }

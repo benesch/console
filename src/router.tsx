@@ -21,6 +21,7 @@ import { AuthProvider } from "./api/auth";
 import { useOrganizationsRetrieve } from "./api/backend";
 import config from "./config";
 import { BaseLayout } from "./layouts/BaseLayout";
+import ClustersListPage from "./platform/clusters/ClustersList";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
 import { assert } from "./util";
@@ -38,6 +39,9 @@ const Router = () => {
         </Route>
         <Route path="/pricing">
           <PricingPage />
+        </Route>
+        <Route path="/clusters">
+          <ClustersListPage />
         </Route>
         <Route path="/editor">
           <Editor />

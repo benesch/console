@@ -269,6 +269,13 @@ const gradients = {
 };
 
 const semanticColors = {
+  bg: {
+    light: "#f9f9f9",
+    dark: `
+    ${gradients.primary.gradient},
+    ${gradients.primary.fallback}
+  `,
+  },
   divider: {
     light: colors.gray[100],
     dark: colors.gray[800],

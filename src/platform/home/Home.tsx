@@ -4,7 +4,6 @@ import { useRecoilState } from "recoil";
 
 import { useCloudProvidersList } from "../../api/backend";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { CodeBlock } from "../../components/copyableComponents";
 import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
   currentEnvironment,
