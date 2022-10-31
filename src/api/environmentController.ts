@@ -12,15 +12,13 @@ export const environmentList = (
   const fetcher = Fetcher.for<paths>();
   fetcher.configure({
     baseUrl: environmentControllerUrl,
-  });
-
-  return fetcher.path("/api/environment").method("get").create()(
-    {},
-    {
+    init: {
       headers: {
         ...versionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
-    }
-  );
+    },
+  });
+
+  return fetcher.path("/api/environment").method("get").create()({});
 };

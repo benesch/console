@@ -19,16 +19,18 @@ export const environmentAssignmentList = (
   const fetcherForEnv = Fetcher.for<paths>();
   fetcherForEnv.configure({
     baseUrl: regionControllerUrl,
+    init: {
+      headers: {
+        ...versionHeaders(),
+        authorization: `Bearer ${accessToken}`,
+      },
+    },
   });
 
   return fetcherForEnv
     .path("/api/environmentassignment")
     .method("get")
-    .create()(args, {
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
+    .create()({});
 };
 
 export const createEnvironmentAssignment = (
@@ -50,9 +52,5 @@ export const createEnvironmentAssignment = (
   return fetcherForEnv
     .path("/api/environmentassignment")
     .method("post")
-    .create()(args, {
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
+    .create()(args);
 };
