@@ -1,5 +1,6 @@
 import { Fetcher } from "openapi-typescript-fetch";
 
+import { versionHeaders } from "../version/api";
 import { components, paths } from "./schemas/region-controller";
 
 export type EnvironmentAssignment =
