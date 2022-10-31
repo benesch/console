@@ -1,4 +1,4 @@
-import { Environment } from "../api/environment-controller";
+import { Environment } from "../api/environmentController";
 
 /**
  * Returns the default environment from a region environment

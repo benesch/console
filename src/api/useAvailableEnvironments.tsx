@@ -1,8 +1,10 @@
 import { useInterval } from "@chakra-ui/react";
+import { User } from "@frontegg/redux-store";
 import { add } from "date-fns";
 import deepEql from "deep-eql";
+import { ApiError } from "openapi-typescript-fetch";
 import React from "react";
-import { SetterOrUpdater, useRecoilCallback, useSetRecoilState } from "recoil";
+import { useRecoilCallback } from "recoil";
 
 import config from "../config";
 import {
@@ -11,10 +13,16 @@ import {
   environmentState,
 } from "../recoil/environments";
 import { CloudRegion, getRegionId } from "../types";
-import { FetchAuthedType, useAuth } from "./auth";
-import { Environment as ApiEnvironment } from "./environment-controller";
+import { useAuth } from "./auth";
+import {
+  Environment as ApiEnvironment,
+  environmentList,
+} from "./environmentController";
 import { executeSql } from "./materialized";
-import { EnvironmentAssignment } from "./region-controller";
+import {
+  EnvironmentAssignment,
+  environmentAssignmentList,
+} from "./regionController";
 
 type EnvironmentGetterResults = {
   refetch: () => void;
@@ -35,7 +43,7 @@ const maxBootTime = { minutes: 5 };
  * single-use hook.
  */
 const useAvailableEnvironments = (): EnvironmentGetterResults => {
-  const { fetchAuthed } = useAuth();
+  const { fetchAuthed, user } = useAuth();
 
   const updateEnvironment = useRecoilCallback(
     ({ set }) =>
@@ -57,10 +65,7 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
 
   const fetchRegionEnvironments = async (region: CloudRegion) => {
     // Fetch the environment assignment for the region, if it exists.
-    const { assignments } = await fetchEnvironmentAssignments(
-      region,
-      fetchAuthed
-    );
+    const { assignments } = await fetchEnvironmentAssignments(region, user);
     if (assignments.length === 0) {
       setEnvironment(getRegionId(region), { state: "disabled" });
       return;
@@ -75,7 +80,7 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
     const assignment = assignments[0];
 
     // Fetch the environment for the assignment, if it exists.
-    const { environments } = await fetchEnvironments(assignment, fetchAuthed);
+    const { environments } = await fetchEnvironments(assignment, user);
     if (environments.length === 0) {
       return;
     } else if (environments.length > 1) {
@@ -150,22 +155,23 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
 
 export const fetchEnvironments = async (
   assignment: EnvironmentAssignment,
-  fetcher: FetchAuthedType
+  user: User
 ): Promise<{ environments: ApiEnvironment[]; errorMessage: string }> => {
   let environments: ApiEnvironment[] = [];
   let envsErrorMessage = "";
   try {
-    const envsResponse = await fetcher(
-      `${assignment.environmentControllerUrl}/api/environment`
+    const response = await environmentList(
+      assignment.environmentControllerUrl,
+      user.accessToken
     );
-
-    if (envsResponse.status === 200) {
-      environments = JSON.parse(await envsResponse.text());
-    } else {
-      envsErrorMessage += `Fetch environment ${assignment.environmentControllerUrl} failed: ${envsResponse.status} ${envsResponse.statusText}. `;
-    }
+    environments = response.data;
   } catch (err) {
-    console.error("Error fetching environments: ", err);
+    if (err instanceof ApiError) {
+      envsErrorMessage += `Fetch environment ${assignment.environmentControllerUrl} failed: ${err.status} ${err.statusText}. `;
+    } else {
+      envsErrorMessage += `Fetch environment ${assignment.environmentControllerUrl} failed. `;
+      console.error("Error fetching environments: ", err);
+    }
   }
   return {
     environments,
@@ -175,21 +181,23 @@ export const fetchEnvironments = async (
 
 export const fetchEnvironmentAssignments = async (
   region: CloudRegion,
-  fetcher: FetchAuthedType
+  user: User
 ): Promise<{ assignments: EnvironmentAssignment[]; errorMessage: string }> => {
   let assignments: EnvironmentAssignment[] = [];
   let envAssignmentsErrorMessage = "";
   try {
-    const assignmentResponse = await fetcher(
-      `${region.regionControllerUrl}/api/environmentassignment`
+    const response = await environmentAssignmentList(
+      region.regionControllerUrl,
+      user.accessToken
     );
-    if (assignmentResponse.status === 200) {
-      assignments = JSON.parse(await assignmentResponse.text());
-    } else {
-      envAssignmentsErrorMessage += `Fetch region ${region.provider} environment assignments failed: ${assignmentResponse.status} ${assignmentResponse.statusText}. `;
-    }
+    assignments = response.data;
   } catch (err) {
-    console.error("Error fetching environments: ", err);
+    if (err instanceof ApiError) {
+      envAssignmentsErrorMessage += `Fetch region ${region.provider} environment assignments failed: ${err.status} ${err.statusText}. `;
+    } else {
+      envAssignmentsErrorMessage += `Fetch region ${region.provider} environment assignments failed. `;
+      console.error("Error fetching environments: ", err);
+    }
   }
   return {
     assignments,

@@ -17,8 +17,8 @@ export const useApiFetch = <T>({
       const result = await apiFn();
       setData(result);
     } catch (e) {
-      const error = e as ApiError;
-      setError(error);
+      const apiError = e as ApiError;
+      setError(apiError);
     }
     setLoading(false);
   }, []);
