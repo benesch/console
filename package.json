@@ -14,7 +14,7 @@
     "playwright": "playwright",
     "pyright": "pyright",
     "gavi": "gavi",
-    "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
+    "gen:api": "cd api && openapi-typescript '*.yml' --output ../frontend/src/api/schemas/",
     "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com CLOUD_REGIONS=[] GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
     "concurrently": "concurrently"
@@ -105,6 +105,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.5",
     "miragejs": "^0.1.45",
+    "openapi-typescript": "^5.4.1",
     "pg": "^8.7.1",
     "prettier": "^2.5.1",
     "pyright": "1.1.221",
