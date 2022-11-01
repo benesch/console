@@ -18,8 +18,11 @@ export interface CloudRegion {
  * Because cloud regions and environments are 1:1, this function is also usable
  * for constructing the ID for an environment.
  */
-export const getRegionId = (region: CloudRegion): string =>
-  `${region.provider}/${region.region}`;
+export const getRegionId = (region: CloudRegion): string => {
+  const providerName =
+    region.provider === "aws" ? region.provider.toUpperCase() : region.provider;
+  return `${providerName}/${region.region}`;
+};
 
 declare global {
   const __FRONTEGG_URL__: string;
