@@ -41,7 +41,7 @@ export function useSql(sql: string | undefined) {
 
     try {
       setLoading(true);
-      const { results, errorMessage } = await executeSql(
+      const { results: res, errorMessage } = await executeSql(
         environment,
         sql,
         fetchAuthed
@@ -50,7 +50,7 @@ export function useSql(sql: string | undefined) {
         setResults(null);
         setError(errorMessage);
       } else {
-        setResults(results);
+        setResults(res);
         setError(null);
       }
     } catch (err) {
@@ -118,10 +118,10 @@ export const executeSql = async (
     } else {
       const parsedResponse = JSON.parse(responseText);
       const {
-        results: [_, result],
+        results: [_, data],
       } = parsedResponse;
       // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-      const { error: resultsError, rows, col_names } = result || {};
+      const { error: resultsError, rows, col_names } = data || {};
 
       if (resultsError) {
         result.errorMessage = resultsError;
