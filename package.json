@@ -133,6 +133,14 @@
     "ignorePatterns": [
       "frontend/src/api/schemas"
     ],
+    "settings": {
+      "react": {
+        "version": "detect",
+        "formComponents": [
+          "Formik"
+        ]
+      }
+    },
     "rules": {
       "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
@@ -176,14 +184,6 @@
       "plugin:prettier/recommended",
       "plugin:react/recommended"
     ]
-  },
-  "settings": {
-    "react": {
-      "version": "detect",
-      "formComponents": [
-        "Formik"
-      ]
-    }
   },
   "browserslist": {
     "production": [
