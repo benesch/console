@@ -28,13 +28,16 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
         customLoader={setLoading}
         authOptions={{ keepSessionAlive: true }}
       >
-        <RestfulProvider>
-          <RecoilRoot>
-            <Router />
-          </RecoilRoot>
-        </RestfulProvider>
+        {loading ? (
+          <LoadingScreen />
+        ) : (
+          <RestfulProvider>
+            <RecoilRoot>
+              <Router />
+            </RecoilRoot>
+          </RestfulProvider>
+        )}
       </FronteggProvider>
-      {loading ? <LoadingScreen /> : null}
     </>
   );
 };
