@@ -8,8 +8,6 @@ import { AuthState, User } from "@frontegg/redux-store";
 import type { ITenantsResponse } from "@frontegg/rest-api";
 import React from "react";
 
-import { versionHeaders } from "../version/api";
-
 export type FetchAuthedType = (
   input: RequestInfo,
   init?: RequestInit

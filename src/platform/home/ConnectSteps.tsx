@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React, { ChangeEventHandler } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { CopyableBox } from "../../components/copyableComponents";
 import { currentEnvironmentState } from "../../recoil/environments";
