@@ -34,13 +34,13 @@ import { semanticColors } from "../../theme/colors";
 
 const createClusterSuggestion = {
   title: "Create an empty cluster",
-  string: "CREATE cluster <cluster_name> REPLICAS ();",
+  string: "CREATE CLUSTER <cluster_name> REPLICAS ();",
 };
 
 const clustersSuggestions: SQLSuggestion[] = [
   {
     title: "View your clusters",
-    string: "SHOW clusters;",
+    string: "SHOW CLUSTERS;",
   },
   createClusterSuggestion,
   {
@@ -49,7 +49,7 @@ const clustersSuggestions: SQLSuggestion[] = [
   },
   {
     title: "Drop a cluster",
-    string: "DROP cluster <cluster_name>;",
+    string: "DROP CLUSTER <cluster_name>;",
   },
 ];
 
