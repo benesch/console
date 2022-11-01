@@ -53,7 +53,7 @@ const TenantSwitcherModal = ({ isOpen, user, onClose }: Props) => {
               pointerEvents="none"
               _disabled={{ opacity: "1" }}
             >
-              {getCurrentTenant(user, tenantsState.tenants).name}
+              {getCurrentTenant(user, tenantsState.tenants)?.name}
             </Button>
             {tenantsState.tenants
               .filter((tenant) => tenant.tenantId !== user.tenantId)

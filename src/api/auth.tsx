@@ -124,10 +124,12 @@ export function hasEnvironmentWritePermission(user: User): boolean {
 export function getCurrentTenant(
   user: User,
   tenants: ITenantsResponse[]
-): ITenantsResponse {
+): ITenantsResponse | undefined {
   const tenant = tenants.find((t) => t.tenantId === user.tenantId);
-  if (!tenant) {
-    throw new Error(`Unknown tenant: ${user.tenantId}`);
-  }
+  // Frontegg reports that it's loaded before this data is available, so for now we have
+  // to handle undefined tenants down stream
+  // if (!tenant) {
+  //   throw new Error(`Unknown tenant: ${user.tenantId}`);
+  // }
   return tenant;
 }

@@ -92,7 +92,7 @@ const ProfileDropdown = (props: ButtonProps) => {
               gap="var(--ck-space-2)"
               _disabled={{ opacity: 1, cursor: "default" }}
             >
-              {getCurrentTenant(user, tenantsState.tenants).name}
+              {getCurrentTenant(user, tenantsState.tenants)?.name}
               {tenantSwitchingEnabled && <Tag>Change</Tag>}
             </MenuItem>
           </MenuGroup>
