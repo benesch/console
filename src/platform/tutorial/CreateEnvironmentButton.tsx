@@ -67,7 +67,7 @@ const CreateEnvironmentButton = (props: Props) => {
     if (newAssignment) {
       const { environments, errorMessage } = await fetchEnvironments(
         newAssignment,
-        user
+        user.accessToken
       );
       /*
        * Check for existence of envs before declaring success

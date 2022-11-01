@@ -1,5 +1,4 @@
 import { useInterval } from "@chakra-ui/react";
-import { User } from "@frontegg/redux-store";
 import { add } from "date-fns";
 import deepEql from "deep-eql";
 import { ApiError } from "openapi-typescript-fetch";
@@ -65,7 +64,10 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
 
   const fetchRegionEnvironments = async (region: CloudRegion) => {
     // Fetch the environment assignment for the region, if it exists.
-    const { assignments } = await fetchEnvironmentAssignments(region, user);
+    const { assignments } = await fetchEnvironmentAssignments(
+      region,
+      user.accessToken
+    );
     if (assignments.length === 0) {
       setEnvironment(getRegionId(region), { state: "disabled" });
       return;
@@ -80,7 +82,10 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
     const assignment = assignments[0];
 
     // Fetch the environment for the assignment, if it exists.
-    const { environments } = await fetchEnvironments(assignment, user);
+    const { environments } = await fetchEnvironments(
+      assignment,
+      user.accessToken
+    );
     if (environments.length === 0) {
       return;
     } else if (environments.length > 1) {
@@ -155,14 +160,14 @@ const useAvailableEnvironments = (): EnvironmentGetterResults => {
 
 export const fetchEnvironments = async (
   assignment: EnvironmentAssignment,
-  user: User
+  accessToken: string
 ): Promise<{ environments: ApiEnvironment[]; errorMessage: string }> => {
   let environments: ApiEnvironment[] = [];
   let envsErrorMessage = "";
   try {
     const response = await environmentList(
       assignment.environmentControllerUrl,
-      user.accessToken
+      accessToken
     );
     environments = response.data;
   } catch (err) {
@@ -181,14 +186,14 @@ export const fetchEnvironments = async (
 
 export const fetchEnvironmentAssignments = async (
   region: CloudRegion,
-  user: User
+  accessToken: string
 ): Promise<{ assignments: EnvironmentAssignment[]; errorMessage: string }> => {
   let assignments: EnvironmentAssignment[] = [];
   let envAssignmentsErrorMessage = "";
   try {
     const response = await environmentAssignmentList(
       region.regionControllerUrl,
-      user.accessToken
+      accessToken
     );
     assignments = response.data;
   } catch (err) {
