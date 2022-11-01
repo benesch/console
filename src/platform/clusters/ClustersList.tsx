@@ -45,11 +45,11 @@ const clustersSuggestions: SQLSuggestion[] = [
   createClusterSuggestion,
   {
     title: "Switch clusters",
-    string: 'SET CLUSTER = "cluster_name";',
+    string: "SET CLUSTER = <cluster_name>;",
   },
   {
     title: "Drop a cluster",
-    string: "DROP cluster cluster_name;",
+    string: "DROP cluster <cluster_name>;",
   },
 ];
 
