@@ -54,7 +54,6 @@ const clustersSuggestions: SQLSuggestion[] = [
 ];
 
 const ClustersListPage = () => {
-  console.log("rerender clusters");
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
   const { clusters, refetch } = useClusters();
   useInterval(refetch, 5000);
