@@ -3,7 +3,7 @@ import React from "react";
 import { useRecoilValue } from "recoil";
 
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
+import { PageHeader } from "../../layouts/BaseLayout";
 import {
   currentEnvironmentIdState,
   loadedEnvironmentsState,
@@ -92,9 +92,7 @@ const Home = () => {
 
   return (
     <>
-      <PageHeader>
-        <PageBreadcrumbs />
-      </PageHeader>
+      <PageHeader></PageHeader>
       <VStack spacing={6} mb={6}>
         {content}
       </VStack>

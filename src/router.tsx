@@ -20,7 +20,7 @@ import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import config from "./config";
 import { BaseLayout } from "./layouts/BaseLayout";
-import ClustersListPage from "./platform/clusters/ClustersList";
+import ClusterRoutes from "./platform/clusters/clusterRouter";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
 import { assert } from "./util";
@@ -40,7 +40,7 @@ const Router = () => {
           <PricingPage />
         </Route>
         <Route path="/clusters">
-          <ClustersListPage />
+          <ClusterRoutes />
         </Route>
         <Route path="/editor">
           <Editor />

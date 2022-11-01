@@ -16,6 +16,7 @@ import React from "react";
 
 import { CodeBlock, CopyableBox } from "../components/copyableComponents";
 import TextLink from "../components/TextLink";
+import Missing from "../svg/Missing";
 import Slash from "../svg/Slash";
 import colors, { semanticColors } from "../theme/colors";
 import { NAV_LOGO_HEIGHT } from "./NavBar";
@@ -33,6 +34,8 @@ export const ListFetchError = ({ message, ...props }: GenericListProps) => {
   );
 };
 
+type EmptyType = "Empty" | "Missing" | "Error";
+
 type EmptyListProps = {
   title: string;
   heading: string;
@@ -40,6 +43,8 @@ type EmptyListProps = {
   codeBlockTitle: string;
   codeBlockContents?: string;
   codeBlockChildren?: React.ReactNode;
+  docsUrl?: string;
+  type?: EmptyType;
 };
 
 export const EmptyList = ({
@@ -49,6 +54,8 @@ export const EmptyList = ({
   codeBlockTitle,
   codeBlockContents,
   codeBlockChildren,
+  docsUrl,
+  type,
 }: EmptyListProps) => {
   const iconColor = useColorModeValue("gray.200", "gray.300");
   const slashColor = useColorModeValue("gray.900", "white");
@@ -56,6 +63,15 @@ export const EmptyList = ({
     semanticColors.bg.light,
     colors.purple[900]
   );
+
+  let overlapIcon = <Slash fillColor={slashColor} bgColor={bgColor} />;
+  switch (type) {
+    case "Missing":
+      overlapIcon = <Missing fillColor={slashColor} bgColor={bgColor} />;
+      break;
+    default:
+      overlapIcon = <Slash fillColor={slashColor} bgColor={bgColor} />;
+  }
 
   return (
     <VStack
@@ -76,18 +92,18 @@ export const EmptyList = ({
       >
         <Box stroke={iconColor} h="40px" w="40px" position="relative">
           <Box
-            p="9px"
+            p="8px"
             position="absolute"
             top="2px"
             left="center"
             h="40px"
             w="40px"
           >
-            <Slash fillColor={slashColor} bgColor={bgColor} />
+            {overlapIcon}
           </Box>
           {icon}
         </Box>
-        <Heading fontSize="md">{`There are no available ${title}`}</Heading>
+        <Heading fontSize="md">{title}</Heading>
         <Heading fontSize="md" fontWeight={400}>
           {heading}
         </Heading>
@@ -109,7 +125,7 @@ export const EmptyList = ({
           </CodeBlock>
           <Text fontSize="xs" textAlign="left" width="full">
             Having trouble?{" "}
-            <TextLink href="//materialize.com/docs/sql/create-cluster/">
+            <TextLink href={docsUrl || "//materialize.com/docs/"}>
               View the documentation.
             </TextLink>
           </Text>

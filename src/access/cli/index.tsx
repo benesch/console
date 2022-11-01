@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router";
 
 import { useAuth } from "../../api/auth";
-import { PageBreadcrumbs } from "../../layouts/BaseLayout";
 
 const DEFAULT_CLI_URL = "http://localhost:8808";
 
@@ -70,36 +69,33 @@ const CLI = () => {
   };
 
   return (
-    <>
-      <PageBreadcrumbs />
-      <VStack
-        alignItems="flex-start"
-        width="100%"
-        height="100%"
-        alignContent="center"
-      >
-        <VStack textAlign="center" marginX="auto" marginTop="8%">
-          {createInProgress ? (
-            <Spinner data-testid="loading-spinner" size="xl" />
-          ) : (
-            <>
-              <Text fontSize="3xl">
-                <b>You are about to create a password for the CLI.</b>
-              </Text>
-              <Text fontSize="3xl">Do you wish to continue?</Text>
-              <HStack spacing={20} paddingTop={20}>
-                <Button colorScheme="purple" size="lg" onClick={onYesClick}>
-                  Yes
-                </Button>
-                <Button colorScheme="red" size="lg" onClick={onNoClick}>
-                  No
-                </Button>
-              </HStack>
-            </>
-          )}
-        </VStack>
+    <VStack
+      alignItems="flex-start"
+      width="100%"
+      height="100%"
+      alignContent="center"
+    >
+      <VStack textAlign="center" marginX="auto" marginTop="8%">
+        {createInProgress ? (
+          <Spinner data-testid="loading-spinner" size="xl" />
+        ) : (
+          <>
+            <Text fontSize="3xl">
+              <b>You are about to create a password for the CLI.</b>
+            </Text>
+            <Text fontSize="3xl">Do you wish to continue?</Text>
+            <HStack spacing={20} paddingTop={20}>
+              <Button colorScheme="purple" size="lg" onClick={onYesClick}>
+                Yes
+              </Button>
+              <Button colorScheme="red" size="lg" onClick={onNoClick}>
+                No
+              </Button>
+            </HStack>
+          </>
+        )}
       </VStack>
-    </>
+    </VStack>
   );
 };
 
