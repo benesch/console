@@ -125,7 +125,7 @@ export function getCurrentTenant(
   user: User,
   tenants: ITenantsResponse[]
 ): ITenantsResponse {
-  const tenant = tenants.find((tenant) => tenant.tenantId === user.tenantId);
+  const tenant = tenants.find((t) => t.tenantId === user.tenantId);
   if (!tenant) {
     throw new Error(`Unknown tenant: ${user.tenantId}`);
   }

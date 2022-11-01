@@ -90,8 +90,8 @@ const fronteggTheme: FronteggThemeOptions = {
   },
 };
 
-export const getFronteggTheme = (mode: "light" | "dark") => ({
-  mode,
+export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
+  mode: frontEggMode,
   ...fronteggTheme,
   /* TODO wait for full frontegg styleability before attempting dark mode there */
   .../*(mode === "light"

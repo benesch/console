@@ -102,9 +102,9 @@ const Pagination = ({
         width="20%"
         height={8}
       >
-        {[10, 50, 100, 500, 1000].map((pageSize) => (
-          <option key={pageSize} value={pageSize}>
-            Show {pageSize}
+        {[10, 50, 100, 500, 1000].map((size) => (
+          <option key={size} value={size}>
+            Show {size}
           </option>
         ))}
       </Select>

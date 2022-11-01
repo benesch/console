@@ -75,7 +75,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
   const flyoutBackground = get(theme, "colors.purple.800");
   const flyoutTextColor = get(theme, "colors.gray.200");
 
-  const colors = Object.values(theme.colors) as string[];
+  const themeColors = Object.values(theme.colors) as string[];
 
   const sansSerif = theme.fonts.body as string;
   const letterSpacing = "normal";
@@ -84,7 +84,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
     width: 450,
     height: 200,
     padding: { top: 15, bottom: 20, left: 25, right: 10 },
-    colorScale: colors,
+    colorScale: themeColors,
   };
   const baseLabelStyles = {
     fontFamily: sansSerif,
@@ -208,7 +208,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
     },
 
     legend: {
-      colorScale: colors,
+      colorScale: themeColors,
       gutter: 10,
       orientation: "vertical",
       titleOrientation: "top",
@@ -243,7 +243,7 @@ const useMZVictoryTheme = (): VictoryThemeDefinition => {
         },
         labels: { ...baseLabelStyles, padding: 20 },
       },
-      colorScale: colors,
+      colorScale: themeColors,
       width: 400,
       height: 400,
       padding: 50,

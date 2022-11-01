@@ -41,7 +41,7 @@ export function useSql(sql: string | undefined) {
 
     try {
       setLoading(true);
-      const { results, errorMessage } = await executeSql(
+      const { results: res, errorMessage } = await executeSql(
         environment,
         sql,
         fetchAuthed
@@ -50,7 +50,7 @@ export function useSql(sql: string | undefined) {
         setResults(null);
         setError(errorMessage);
       } else {
-        setResults(results);
+        setResults(res);
         setError(null);
       }
     } catch (err) {
