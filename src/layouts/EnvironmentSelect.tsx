@@ -65,6 +65,7 @@ const EnvironmentSelectField = () => {
 
   return (
     <ReactSelect
+      id="environment-select"
       aria-label="Environment"
       name="environment-select"
       components={{ Option: EnvOption, SingleValue }}
