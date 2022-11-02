@@ -17,10 +17,15 @@ import { useRecoilValue } from "recoil";
 
 import { Cluster } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
+import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
 import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
 import {
-  EmptyList,
+  EmptyListHeader,
+  EmptyListHeaderContents,
+  EmptyListWrapper,
+  IconBox,
+  SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
 } from "../../layouts/listPageComponents";
@@ -73,21 +78,32 @@ const ClustersListPage = ({ clusters }: Props) => {
         <Spinner data-testid="loading-spinner" />
       )}
       {isEmpty && !isDisabled && (
-        <EmptyList
-          title="No available clusters"
-          heading="Create a cluster and one or more replicas to enable dataflows."
-          icon={<ClustersIcon />}
-          codeBlockTitle="Create cluster"
-          codeBlockContents={`CREATE CLUSTER <cluster_name>
+        <EmptyListWrapper>
+          <EmptyListHeader>
+            <IconBox type="Empty">
+              <ClustersIcon />
+            </IconBox>
+            <EmptyListHeaderContents
+              title="No available clusters"
+              helpText="Create a cluster and one or more replicas to enable dataflows."
+            />
+          </EmptyListHeader>
+          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster/">
+            <CodeBlock
+              title="Create a cluster replica"
+              contents={`CREATE CLUSTER <cluster_name>
   REPLICAS (
     <replica_name> (SIZE = “xsmall”)
 );`}
-          codeBlockChildren={`CREATE CLUSTER <cluster_name>
+              lineNumbers
+            >
+              {`CREATE CLUSTER <cluster_name>
   REPLICAS (
     <replica_name> (SIZE = “xsmall”)
 );`}
-          docsUrl="//materialize.com/docs/sql/create-cluster/"
-        />
+            </CodeBlock>
+          </SampleCodeBoxWrapper>
+        </EmptyListWrapper>
       )}
       {!isLoading && !isEmpty && !isDisabled && (
         <HStack spacing={6} alignItems="flex-start">

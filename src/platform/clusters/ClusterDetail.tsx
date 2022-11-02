@@ -9,7 +9,6 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  useInterval,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -18,10 +17,15 @@ import { useRecoilValue } from "recoil";
 
 import { Cluster, Replica } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
+import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
 import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
-  EmptyList,
+  EmptyListHeader,
+  EmptyListHeaderContents,
+  EmptyListWrapper,
+  IconBox,
+  SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
 } from "../../layouts/listPageComponents";
@@ -84,21 +88,30 @@ const ClusterDetailPage = ({ cluster }: Props) => {
         <Spinner data-testid="loading-spinner" />
       )}
       {isEmpty && !isDisabled && (
-        <EmptyList
-          title="This cluster has no replicas"
-          heading="Without replicas, your cluster cannot compute dataflows."
-          icon={<ClustersIcon />}
-          codeBlockTitle="Create a cluster replica"
-          codeBlockContents={`CREATE CLUSTER REPLICA
+        <EmptyListWrapper>
+          <EmptyListHeader>
+            <IconBox type="Missing">
+              <ClustersIcon />
+            </IconBox>
+            <EmptyListHeaderContents
+              title="This cluster has no replicas"
+              helpText="Without replicas, your cluster cannot compute dataflows."
+            />
+          </EmptyListHeader>
+          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster-replica/">
+            <CodeBlock
+              title="Create a cluster replica"
+              contents={`CREATE CLUSTER REPLICA
   ${clusterName}.<replica_name>
   SIZE = “xsmall”;`}
-          codeBlockChildren={`CREATE CLUSTER <cluster_name>
-  REPLICAS (
-    <replica_name> (SIZE = “xsmall”)
-);`}
-          docsUrl="//materialize.com/docs/sql/create-cluster-replica/"
-          type="Missing"
-        />
+              lineNumbers
+            >
+              {`CREATE CLUSTER REPLICA
+  ${clusterName}.<replica_name>
+  SIZE = “xsmall”;`}
+            </CodeBlock>
+          </SampleCodeBoxWrapper>
+        </EmptyListWrapper>
       )}
       {!isLoading && !isEmpty && !isDisabled && (
         <HStack spacing={6} alignItems="flex-start">
