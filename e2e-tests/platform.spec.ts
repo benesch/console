@@ -26,6 +26,12 @@ enum DashboardState {
   ThisRegionActive,
 }
 
+async function reactSelectOption(page: Page, elementId: string, value: string) {
+  await page.click(`#${elementId}`);
+  await page.waitForSelector(`#${elementId} .custom-option`);
+  await page.click(`#${elementId} .custom-option :has-text("${value}")`);
+}
+
 for (const region of PLATFORM_REGIONS) {
   test(`use region ${region}`, async ({ page, request }) => {
     test.setTimeout(1000000); // spinning up a region can be slow.
@@ -63,7 +69,7 @@ for (const region of PLATFORM_REGIONS) {
         return DashboardState.NoRegions;
       })(),
       (async () => {
-        await page.selectOption('select[name="environment-select"]', region);
+        await reactSelectOption(page, "environment-select", region);
         return await Promise.race([
           (async () => {
             await page.waitForSelector('text="Connect to Materialize"');
