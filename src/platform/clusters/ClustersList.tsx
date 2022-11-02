@@ -33,8 +33,8 @@ import ClustersIcon from "../../svg/Clusters";
 import { semanticColors } from "../../theme/colors";
 
 const createClusterSuggestion = {
-  title: "Create an empty cluster",
-  string: "CREATE CLUSTER <cluster_name> REPLICAS ();",
+  title: "Create a cluster",
+  string: "CREATE CLUSTER <cluster_name> REPLICAS (<replica_name> (SIZE = '2xsmall'));",
 };
 
 const clustersSuggestions: SQLSuggestion[] = [
