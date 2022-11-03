@@ -3,11 +3,20 @@
  * Base layout and supporting components, like page headers.
  */
 
-import { Box, Container, Flex, Heading, StackProps } from "@chakra-ui/react";
+import {
+  Container,
+  Flex,
+  Heading,
+  HeadingProps,
+  HStack,
+  StackProps,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
 
 import useAvailableEnvironments from "../api/useAvailableEnvironments";
+import { semanticColors } from "../theme/colors";
 import NavBar, { NAV_LOGO_HEIGHT } from "./NavBar";
 import PageFooter from "./PageFooter";
 
@@ -26,8 +35,9 @@ export interface BaseLayoutProps {
  * ```
  * <BaseLayout>
  *   <PageHeader>
- *     <PageBreadcrumbs>Page / to / page</PageBreadcrumbs>
- *     <PageHeading>Page title here</PageHeading>
+ *     <PageBreadcrumbs crumbs={["page", "to", "page"]} />
+ *      { or }
+ *     <PageHeading>asdf</PageHeading>
  *   </PageHeader>
  * </BaseLayout>
  * ```
@@ -74,24 +84,7 @@ export const PageHeader = ({ children, ...props }: StackProps) => {
   );
 };
 
-export interface PageBreadcrumbsProps {
-  children?: React.ReactNode;
-}
-
-/**
- * A container for breadcrumbs.
- *
- * This component should generally be the first child of a `PageHeader`. You
- * should include this component even if the breadcrumbs are empty so that it
- * takes up the right amount of space.
- */
-export const PageBreadcrumbs = (props: PageHeadingProps) => {
-  // Render a space if no children so that we take up the right amount of space
-  // on pages that don't have breadcrumbs.
-  return <Box fontSize="sm">{props.children || <>&nbsp;</>}</Box>;
-};
-
-export interface PageHeadingProps {
+export interface PageHeadingProps extends HeadingProps {
   children?: React.ReactNode;
 }
 
@@ -100,10 +93,43 @@ export interface PageHeadingProps {
  *
  * This component should be used inside of a `PageHeader`.
  */
-export const PageHeading = (props: PageHeadingProps) => {
+export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
   return (
-    <Heading fontWeight="400" fontSize="2xl" mt={0} mb={4}>
-      {props.children}
+    <Heading fontWeight="500" fontSize="2xl" my={0} {...props}>
+      {children}
     </Heading>
+  );
+};
+
+export interface PageBreadcrumbsProps {
+  crumbs: string[];
+}
+
+/**
+ * A container for breadcrumbs.
+ * This goes inside a PageHeader for a header that is a series of paths.
+ */
+export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
+  const grayText = useColorModeValue(
+    semanticColors.grayText.light,
+    semanticColors.grayText.dark
+  );
+  // Render a space if no children so that we take up the right amount of space
+  // on pages that don't have breadcrumbs.
+  return (
+    <HStack>
+      {crumbs.map((crumb, i: number) => {
+        const isLast = i === crumbs.length - 1;
+        return (
+          <PageHeading
+            key={`crumb-${crumb}-${i}`}
+            color={isLast ? "default" : grayText}
+            fontWeight={isLast ? 500 : 400}
+          >
+            {`${crumb}${isLast ? "" : " / "}`}
+          </PageHeading>
+        );
+      })}
+    </HStack>
   );
 };

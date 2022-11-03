@@ -12,14 +12,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
-import { Cluster } from "../../api/materialized";
+import { Cluster, Replica } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
-import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
+import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -32,48 +32,57 @@ import {
 import { currentEnvironmentState } from "../../recoil/environments";
 import ClustersIcon from "../../svg/Clusters";
 import { semanticColors } from "../../theme/colors";
+import { ClusterDetailParams } from "./clusterRouter";
 
-const createClusterSuggestion = {
-  title: "Create a cluster",
-  string:
-    "CREATE CLUSTER <cluster_name> REPLICAS (<replica_name> (SIZE = '2xsmall'));",
+const createReplicaSuggestion = {
+  title: "Create a cluster replica",
+  string: 'CREATE CLUSTER REPLICA <name> SIZE="<size>";',
 };
 
-const clustersSuggestions: SQLSuggestion[] = [
+const getReplicasSuggestions = (name: string): SQLSuggestion[] => [
   {
-    title: "View your clusters",
-    string: "SHOW CLUSTERS;",
-  },
-  createClusterSuggestion,
-  {
-    title: "Switch clusters",
-    string: "SET CLUSTER = <cluster_name>;",
+    title: "View cluster replicas",
+    string: "SHOW clusters;",
   },
   {
-    title: "Drop a cluster",
-    string: "DROP CLUSTER <cluster_name>;",
+    title: "View replicas of a specific cluster",
+    string: `SHOW CLUSTER REPLICAS\n
+WHERE CLUSTER="${name};"`,
+  },
+  createReplicaSuggestion,
+  {
+    title: "Drop a cluster replica",
+    string: `DROP CLUSTER REPLICA ${name};`,
   },
 ];
 
 type Props = {
-  clusters: Cluster[] | null;
+  cluster?: Cluster;
 };
 
-const ClustersListPage = ({ clusters }: Props) => {
+const ClusterDetailPage = ({ cluster }: Props) => {
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const { clusterName } = useParams<ClusterDetailParams>();
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
   );
+  const replicas: Replica[] | null = React.useMemo(() => {
+    if (!cluster) {
+      return null;
+    } else {
+      return cluster.replicas || [];
+    }
+  }, [cluster]);
 
   const isDisabled = currentEnvironment.state !== "enabled";
-  const isLoading = clusters === null;
-  const isEmpty = !isLoading && clusters.length === 0;
+  const isLoading = !cluster;
+  const isEmpty = !isLoading && (!replicas || replicas.length === 0);
 
   return (
     <>
       <PageHeader>
-        <PageHeading>Clusters</PageHeading>
+        <PageBreadcrumbs crumbs={[clusterName, "Replicas"]} />
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
@@ -81,41 +90,39 @@ const ClustersListPage = ({ clusters }: Props) => {
       {isEmpty && !isDisabled && (
         <EmptyListWrapper>
           <EmptyListHeader>
-            <IconBox type="Empty">
+            <IconBox type="Missing">
               <ClustersIcon />
             </IconBox>
             <EmptyListHeaderContents
-              title="No available clusters"
-              helpText="Create a cluster and one or more replicas to enable dataflows."
+              title="This cluster has no replicas"
+              helpText="Without replicas, your cluster cannot compute dataflows."
             />
           </EmptyListHeader>
-          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster/">
+          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster-replica/">
             <CodeBlock
               title="Create a cluster replica"
-              contents={`CREATE CLUSTER <cluster_name>
-  REPLICAS (
-    <replica_name> (SIZE = “xsmall”)
-);`}
+              contents={`CREATE CLUSTER REPLICA
+  ${clusterName}.<replica_name>
+  SIZE = “xsmall”;`}
               lineNumbers
             >
-              {`CREATE CLUSTER <cluster_name>
-  REPLICAS (
-    <replica_name> (SIZE = “xsmall”)
-);`}
+              {`CREATE CLUSTER REPLICA
+  ${clusterName}.<replica_name>
+  SIZE = “xsmall”;`}
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       )}
       {!isLoading && !isEmpty && !isDisabled && (
         <HStack spacing={6} alignItems="flex-start">
-          <ClusterTable clusters={clusters} />
+          <ReplicaTable replicas={replicas as Replica[]} />
           <Card flex={0} minW="384px" maxW="384px">
-            <CardHeader>Interacting with clusters</CardHeader>
+            <CardHeader>Interacting with cluster replicas</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
                 <Text color={grayText}>
-                  Clusters are logical components that let you express resource
-                  isolation for all dataflow-powered objects.
+                  Cluster replicas are where Materialize creates and maintains
+                  dataflows.
                 </Text>
                 <Text color={grayText}>
                   Having trouble?{" "}
@@ -123,7 +130,7 @@ const ClustersListPage = ({ clusters }: Props) => {
                     View the documentation.
                   </TextLink>
                 </Text>
-                {clustersSuggestions.map((suggestion) => (
+                {getReplicasSuggestions(cluster.name).map((suggestion) => (
                   <SQLSuggestionBox
                     key={`suggestion-${suggestion.title}`}
                     {...suggestion}
@@ -138,35 +145,25 @@ const ClustersListPage = ({ clusters }: Props) => {
   );
 };
 
-interface ClusterTableProps {
-  clusters: Cluster[];
+interface ReplicaTableProps {
+  replicas: Replica[];
 }
 
-const ClusterTable = (props: ClusterTableProps) => {
-  const history = useHistory();
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
-
+const ReplicaTable = (props: ReplicaTableProps) => {
   return (
     <Card pt="2" px="0" pb="6">
       <Table data-testid="cluster-table" borderRadius="xl">
         <Thead>
           <Tr>
             <Th>Name</Th>
-            <Th># of Replicas</Th>
+            <Th>Size</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {props.clusters.map((c) => (
-            <Tr
-              key={c.id}
-              onClick={() => history.push(`/clusters/${c.name}`)}
-              cursor="pointer"
-              _hover={{
-                bg: hoverColor,
-              }}
-            >
-              <Td>{c.name}</Td>
-              <Td>{c.replicas ? c.replicas.length : <Spinner size="sm" />}</Td>
+          {props.replicas.map((r) => (
+            <Tr key={r.replica}>
+              <Td>{r.replica}</Td>
+              <Td>{r.size}</Td>
             </Tr>
           ))}
         </Tbody>
@@ -175,4 +172,4 @@ const ClusterTable = (props: ClusterTableProps) => {
   );
 };
 
-export default ClustersListPage;
+export default ClusterDetailPage;

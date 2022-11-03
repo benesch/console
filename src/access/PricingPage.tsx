@@ -17,11 +17,7 @@ import React, { ChangeEvent } from "react";
 
 import { Card, CardContent, CardHeader } from "../components/cardComponents";
 import TextLink from "../components/TextLink";
-import {
-  PageBreadcrumbs,
-  PageHeader,
-  PageHeading,
-} from "../layouts/BaseLayout";
+import { PageHeader, PageHeading } from "../layouts/BaseLayout";
 import { semanticColors } from "../theme/colors";
 import data from "./pricing.json";
 
@@ -68,7 +64,6 @@ const PricingPage = () => {
   return (
     <>
       <PageHeader>
-        <PageBreadcrumbs />
         <PageHeading>Pricing</PageHeading>
       </PageHeader>
       <HStack mb={5}>
