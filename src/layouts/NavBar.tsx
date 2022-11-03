@@ -57,8 +57,6 @@ const NavBar = () => {
       borderColor={borderColor}
     >
       <HStack
-        as={RouterLink}
-        to="/"
         mx={0}
         px={NAV_HORIZONTAL_SPACING}
         flex={0}
@@ -68,21 +66,32 @@ const NavBar = () => {
         order={1}
       >
         <NavMenuCompact display={{ base: "block", lg: "none" }} />
-        <VStack
-          position="relative"
-          flex="0 0 24px"
-          mr={{ base: 1, md: 2, lg: 0 }}
-          ml={0}
+        <HStack
+          as={RouterLink}
+          to="/"
+          mx={0}
+          flex={0}
+          width="full"
+          justifyContent="flex-start"
+          minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
+          order={1}
         >
-          <chakra.img
-            src={logo}
-            height={{ base: 6, md: 9 }}
-            aria-label="Logo"
-          ></chakra.img>
-        </VStack>
-        <Text fontWeight="700" fontSize="md">
-          Materialize
-        </Text>
+          <VStack
+            position="relative"
+            flex="0 0 24px"
+            mr={{ base: 1, md: 2, lg: 0 }}
+            ml={0}
+          >
+            <chakra.img
+              src={logo}
+              height={{ base: 6, md: 9 }}
+              aria-label="Logo"
+            ></chakra.img>
+          </VStack>
+          <Text fontWeight="700" fontSize="md">
+            Materialize
+          </Text>
+        </HStack>
       </HStack>
       <Flex
         flex={0}
