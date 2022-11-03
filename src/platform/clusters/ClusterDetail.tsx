@@ -42,7 +42,7 @@ const createReplicaSuggestion = {
 const getReplicasSuggestions = (name: string): SQLSuggestion[] => [
   {
     title: "View cluster replicas",
-    string: "SHOW clusters;",
+    string: "SHOW CLUSTERS;",
   },
   {
     title: "View replicas of a specific cluster",
