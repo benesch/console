@@ -131,7 +131,8 @@
       "react"
     ],
     "ignorePatterns": [
-      "frontend/src/api/schemas"
+      "frontend/src/api/schemas",
+      "vendor"
     ],
     "settings": {
       "react": {
