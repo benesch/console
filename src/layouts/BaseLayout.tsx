@@ -124,7 +124,7 @@ export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
           <PageHeading
             key={`crumb-${crumb}-${i}`}
             color={isLast ? "default" : grayText}
-            fontWeight={isLast ? 500 : 400}
+            fontWeight={500}
           >
             {`${crumb}${isLast ? "" : " / "}`}
           </PageHeading>
