@@ -1,4 +1,4 @@
-import { atom, atomFamily, selector, selectorFamily } from "recoil";
+import { atom, atomFamily, selector } from "recoil";
 
 import { Environment as ApiEnvironment } from "../api/environmentController";
 import config from "../config";
@@ -33,7 +33,7 @@ export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
 export const environmentState = atomFamily<Environment, string>({
   key: keys.ENVIRONMENTS,
   // All environments are initially marked as loading.
-  default: (string) => ({ state: "loading" }),
+  default: () => ({ state: "loading" }),
 });
 
 /** A map of all loaded environments, keyed by environment ID, or null if any

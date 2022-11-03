@@ -131,19 +131,30 @@
       "react"
     ],
     "ignorePatterns": [
-      "frontend/src/api/schemas"
+      "frontend/src/api/schemas",
+      "vendor"
     ],
+    "settings": {
+      "react": {
+        "version": "detect",
+        "formComponents": [
+          "Formik"
+        ]
+      }
+    },
     "rules": {
       "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
-      "@typescript-eslint/no-shadow": ["error"],
+      "@typescript-eslint/no-shadow": [
+        "error"
+      ],
       "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-unused-vars": [
-        "warn",
+        "error",
         {
           "args": "none",
           "argsIgnorePattern": "^_",
@@ -174,14 +185,6 @@
       "plugin:prettier/recommended",
       "plugin:react/recommended"
     ]
-  },
-  "settings": {
-    "react": {
-      "version": "detect",
-      "formComponents": [
-        "Formik"
-      ]
-    }
   },
   "browserslist": {
     "production": [
