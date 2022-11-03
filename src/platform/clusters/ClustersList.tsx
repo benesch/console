@@ -119,7 +119,10 @@ const ClustersListPage = ({ clusters }: Props) => {
                 </Text>
                 <Text color={grayText}>
                   Having trouble?{" "}
-                  <TextLink href="https://materialize.com/docs/overview/key-concepts/#clusters" target="_blank">
+                  <TextLink
+                    href="https://materialize.com/docs/overview/key-concepts/#clusters"
+                    target="_blank"
+                  >
                     View the documentation.
                   </TextLink>
                 </Text>
