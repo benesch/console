@@ -11,18 +11,17 @@ import {
   Flex,
   HStack,
   IconButton,
-  Link,
   Menu,
   MenuButton,
   MenuButtonProps,
   MenuItem,
   MenuList,
   Spacer,
+  Tag,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { differenceInDays } from "date-fns";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
@@ -117,13 +116,14 @@ const NavBar = () => {
 type NavItemType = {
   label: string;
   href: string;
+  isInternal?: boolean;
 };
 
 const getNavItems = (isInternal: boolean): NavItemType[] => {
   const gatedItems: NavItemType[] = isInternal
     ? [
-        { label: "Clusters", href: "/clusters" },
-        { label: "Editor", href: "/editor" },
+        { label: "Clusters", href: "/clusters", isInternal: true },
+        // { label: "Editor", href: "/editor" },
       ]
     : [];
   return [
@@ -189,7 +189,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
             key={`menu-item-${item.label}`}
             to={item.href}
           >
-            {item.label}
+            {`${item.label}${item.isInternal ? " (internal)" : ""}`}
           </MenuItem>
         ))}
         <ProfileMenuItems />
@@ -227,6 +227,11 @@ const NavItem = (props: NavItemType) => {
       borderBottom="3px solid transparent"
     >
       <Box fontWeight="semibold">{props.label}</Box>
+      {props.isInternal && (
+        <Tag size="sm" colorScheme="purple">
+          internal
+        </Tag>
+      )}
     </HStack>
   );
 
