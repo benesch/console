@@ -33,23 +33,24 @@ import ClustersIcon from "../../svg/Clusters";
 import { semanticColors } from "../../theme/colors";
 
 const createClusterSuggestion = {
-  title: "Create a new cluster",
-  string: "CREATE cluster;",
+  title: "Create a cluster",
+  string:
+    "CREATE CLUSTER <cluster_name> REPLICAS (<replica_name> (SIZE = '2xsmall'));",
 };
 
 const clustersSuggestions: SQLSuggestion[] = [
   {
     title: "View your clusters",
-    string: "SHOW clusters;",
+    string: "SHOW CLUSTERS;",
   },
   createClusterSuggestion,
   {
     title: "Switch clusters",
-    string: 'SET CLUSTER = "cluster_name";',
+    string: "SET CLUSTER = <cluster_name>;",
   },
   {
     title: "Drop a cluster",
-    string: "DROP cluster cluster_name;",
+    string: "DROP CLUSTER <cluster_name>;",
   },
 ];
 
