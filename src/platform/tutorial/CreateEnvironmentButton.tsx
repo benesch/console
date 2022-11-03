@@ -7,14 +7,14 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
-import { EnvironmentAssignment } from "../../api/region-controller";
+import { EnvironmentAssignment } from "../../api/regionController";
+import { createEnvironmentAssignment } from "../../api/regionController";
 import { fetchEnvironments } from "../../api/useAvailableEnvironments";
 import config from "../../config";
 import { currentEnvironmentIdState } from "../../recoil/environments";
-import { CloudRegion } from "../../types";
 
 interface Props extends ButtonProps {
   regionId: string;
@@ -29,7 +29,7 @@ interface Props extends ButtonProps {
  * Has some default button styling but you can override it with whatever.
  */
 const CreateEnvironmentButton = (props: Props) => {
-  const { user, fetchAuthed } = useAuth();
+  const { user } = useAuth();
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
 
   const [isCreatingThisEnv, setIsCreatingThisEnv] = React.useState(false);
@@ -46,17 +46,12 @@ const CreateEnvironmentButton = (props: Props) => {
     try {
       setIsCreatingThisEnv(true);
       if (handleEnvCreate) handleEnvCreate(true);
-      const response = await fetchAuthed(
-        `${region.regionControllerUrl}/api/environmentassignment`,
-        {
-          body: JSON.stringify({}),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        }
+      const response = await createEnvironmentAssignment(
+        region.regionControllerUrl,
+        {},
+        user.accessToken
       );
-      setNewAssignment(JSON.parse(await response.text()));
+      setNewAssignment(response.data);
     } catch (e: any) {
       console.log(e);
       setIsCreatingThisEnv(false);
@@ -72,7 +67,7 @@ const CreateEnvironmentButton = (props: Props) => {
     if (newAssignment) {
       const { environments, errorMessage } = await fetchEnvironments(
         newAssignment,
-        fetchAuthed
+        user.accessToken
       );
       /*
        * Check for existence of envs before declaring success

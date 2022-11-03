@@ -14,7 +14,7 @@
     "playwright": "playwright",
     "pyright": "pyright",
     "gavi": "gavi",
-    "gen:api": "restful-react import --config frontend/restful-react.config.js && eslint --fix frontend/src/api/*.tsx",
+    "gen:api": "cd api && openapi-typescript '*.yml' --output ../frontend/src/api/schemas/",
     "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com CLOUD_REGIONS=[] GIT_SHA=$SENTRY_RELEASE webpack --config=webpack.prod.ts",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
     "concurrently": "concurrently"
@@ -49,6 +49,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^5.6.0",
     "mini-css-extract-plugin": "^2.6.1",
+    "openapi-typescript-fetch": "^1.1.3",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",
     "react-dom": "^17.0.2",
@@ -58,7 +59,6 @@
     "react-select": "^5.4.0",
     "react-table": "^7.8.0",
     "recoil": "^0.7.2",
-    "restful-react": "^15.9.4",
     "semver": "^7.3.5",
     "stream": "^0.0.2",
     "ts-loader": "^9.2.6",
@@ -104,6 +104,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.5",
     "miragejs": "^0.1.45",
+    "openapi-typescript": "^5.4.1",
     "pg": "^8.7.1",
     "prettier": "^2.5.1",
     "pyright": "1.1.221",
@@ -129,12 +130,14 @@
       "@typescript-eslint",
       "react"
     ],
+    "ignorePatterns": [
+      "frontend/src/api/schemas"
+    ],
     "rules": {
       "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
       "@typescript-eslint/no-shadow": ["error"],
-      "import/prefer-default-export": "error",
       "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "off",

@@ -1,9 +1,6 @@
 import { atom, atomFamily, selector, selectorFamily } from "recoil";
 
-import {
-  Environment as ApiEnvironment,
-  EnvironmentsList,
-} from "../api/environment-controller";
+import { Environment as ApiEnvironment } from "../api/environmentController";
 import config from "../config";
 import keys from "./keyConstants";
 

@@ -3,7 +3,6 @@ import { FronteggProvider } from "@frontegg/react";
 import React from "react";
 import { RecoilRoot } from "recoil";
 
-import { RestfulProvider } from "./api/auth";
 import LoadingScreen from "./loading";
 import Router from "./router";
 import { fronteggAuthPageBackground, getFronteggTheme } from "./theme";
@@ -31,11 +30,9 @@ const FronteggWrappedContents = ({ baseUrl }: Props) => {
         {loading ? (
           <LoadingScreen />
         ) : (
-          <RestfulProvider>
-            <RecoilRoot>
-              <Router />
-            </RecoilRoot>
-          </RestfulProvider>
+          <RecoilRoot>
+            <Router />
+          </RecoilRoot>
         )}
       </FronteggProvider>
     </>

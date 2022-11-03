@@ -7,10 +7,6 @@ import { useAuth as useFronteggAuth } from "@frontegg/react";
 import { AuthState, User } from "@frontegg/redux-store";
 import type { ITenantsResponse } from "@frontegg/rest-api";
 import React from "react";
-import {
-  RestfulProvider as BaseRestfulProvider,
-  RestfulReactProviderProps as BaseRestfulProviderProps,
-} from "restful-react";
 
 import { versionHeaders } from "../version/api";
 
@@ -80,26 +76,6 @@ export function useAuth() {
   }
   return context;
 }
-
-interface RestfulProviderProps
-  extends Omit<BaseRestfulProviderProps, "base" | "requestOptions"> {
-  children: React.ReactNode;
-}
-
-/**
- * A wrapper for `BaseRestfulProvider` that wires up Frontegg authentication.
- */
-export const RestfulProvider = (props: RestfulProviderProps) => {
-  const { user } = useFronteggAuth((state) => state);
-
-  const headers = versionHeaders();
-
-  if (user) headers.authorization = `Bearer ${user.accessToken}`;
-
-  return (
-    <BaseRestfulProvider base="/" requestOptions={{ headers }} {...props} />
-  );
-};
 
 export function hasEnvironmentReadPermission(user: User): boolean {
   const isMaterializeEmployee = user.email.endsWith("@materialize.com");
