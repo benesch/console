@@ -47,7 +47,7 @@ const getReplicasSuggestions = (name: string): SQLSuggestion[] => [
   {
     title: "View replicas of a specific cluster",
     string: `SHOW CLUSTER REPLICAS\n
-WHERE CLUSTER="${name};"`,
+WHERE CLUSTER='${name}';`,
   },
   createReplicaSuggestion,
   {
@@ -126,7 +126,10 @@ const ClusterDetailPage = ({ cluster }: Props) => {
                 </Text>
                 <Text color={grayText}>
                   Having trouble?{" "}
-                  <TextLink href="https://materialize.com/docs/overview/key-concepts/#clusters">
+                  <TextLink
+                    href="https://materialize.com/docs/overview/key-concepts/#clusters"
+                    target="_blank"
+                  >
                     View the documentation.
                   </TextLink>
                 </Text>
