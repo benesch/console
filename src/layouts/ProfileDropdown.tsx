@@ -81,6 +81,10 @@ const ProfileDropdown = (props: ButtonProps) => {
           <MenuDivider />
           <MenuGroup title="Organization">
             <MenuItem
+              _active={{
+                // clicking flashes a background when disabled without this
+                background: "none",
+              }}
               isDisabled={!tenantSwitchingEnabled}
               onClick={() => setTenantSwitcherOpen(true)}
               title={
