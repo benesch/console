@@ -23,6 +23,7 @@ import { BaseLayout } from "./layouts/BaseLayout";
 import ClusterRoutes from "./platform/clusters/clusterRouter";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
+import SourcesListPage from "./platform/sources/SourcesList";
 import { assert } from "./util";
 
 /** The root router for the application. */
@@ -41,6 +42,9 @@ const Router = () => {
         </Route>
         <Route path="/clusters">
           <ClusterRoutes />
+        </Route>
+        <Route path="/sources">
+          <SourcesListPage />
         </Route>
         <Route path="/editor">
           <Editor />
