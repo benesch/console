@@ -58,7 +58,13 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
     >
       <NavBar />
       <Flex direction="column" flex={1} overflowY={overflowY} w="full" h="full">
-        <Container flex={1} as="main" maxW="7xl" px={{ base: 4, xl: 6 }} pb={4}>
+        <Container
+          flex={1}
+          as="main"
+          maxW="100%"
+          px={{ base: 10, xl: 10 }}
+          pb={4}
+        >
           <Flex flexDir="column" w="full" h="full">
             {children}
           </Flex>
