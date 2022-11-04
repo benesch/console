@@ -38,7 +38,7 @@ if (process.env.PROXY_STACK) {
   ];
 } else {
   fronteggUrl = localOutputs.frontegg_url;
-  backendUrl = "http://[::1]:8000";
+  backendUrl = process.env.BACKEND_URL || "http://[::1]:8000";
   environmentdScheme = "http";
   cloudRegions = [
     {
