@@ -6,12 +6,13 @@ import { DefinePlugin } from "webpack";
 import { merge } from "webpack-merge";
 
 import localOutputs from "../config/settings/local.outputs.json";
+import { CloudRegion } from "./src/types";
 import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
 let fronteggUrl;
 let backendUrl;
 let environmentdScheme;
-let cloudRegions;
+let cloudRegions: CloudRegion[];
 
 if (process.env.PROXY_STACK) {
   let stack = process.env.PROXY_STACK;
@@ -77,6 +78,18 @@ module.exports = merge(base, {
       },
       "/admin": backendUrl,
       "/static": backendUrl,
+      "/_metadata/cloud-regions.json": {
+        bypass: (req, res, _options) => {
+          // For some reason webpack dev server invokes this proxy for _all_ routes that aren't handled
+          //   by the above. Verify that we're actually receiving a request for the region before
+          //   manipulating the response.
+          if (req.url !== "/_metadata/cloud-regions.json") {
+            return null;
+          }
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(cloudRegions));
+        },
+      },
     },
   },
   devtool: "inline-cheap-module-source-map",
