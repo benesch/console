@@ -15,7 +15,7 @@ import { createEnvironmentAssignment } from "../../api/regionController";
 import config from "../../config";
 import {
   currentEnvironmentIdState,
-  environments,
+  environmentDetails,
   maybeEnvironment,
 } from "../../recoil/environments";
 
@@ -72,8 +72,8 @@ const CreateEnvironmentButton = (props: Props) => {
       () => {
         if (newAssignment) {
           refresh(
-            environments({
-              assignment: newAssignment,
+            environmentDetails({
+              environmentControllerUrl: newAssignment.environmentControllerUrl,
               accessToken: user.accessToken,
             })
           );
@@ -83,7 +83,7 @@ const CreateEnvironmentButton = (props: Props) => {
   );
   const newEnvironments = useRecoilValue(
     maybeEnvironment({
-      assignment: newAssignment,
+      environmentControllerUrl: newAssignment?.environmentControllerUrl,
       accessToken: user.accessToken,
     })
   );

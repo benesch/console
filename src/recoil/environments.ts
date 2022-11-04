@@ -1,5 +1,6 @@
+import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
-import { atom, selectorFamily } from "recoil";
+import { atom, atomFamily, selectorFamily, useRecoilState } from "recoil";
 
 import {
   Environment as ApiEnvironment,
@@ -39,19 +40,19 @@ export type Environment =
   | EnabledEnvironment;
 export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
 
-export const environments = selectorFamily({
-  key: "environments",
+export const environmentDetails = selectorFamily({
+  key: "environmentDetails",
   get:
     ({
-      assignment,
+      environmentControllerUrl,
       accessToken,
     }: {
-      assignment: EnvironmentAssignment;
+      environmentControllerUrl: string;
       accessToken: string;
     }) =>
-    async (_arg) => {
+    async () => {
       const response = await environmentList(
-        assignment.environmentControllerUrl,
+        environmentControllerUrl,
         accessToken
       );
       return response.data;
@@ -62,15 +63,17 @@ export const maybeEnvironment = selectorFamily({
   key: "maybeEnvironment",
   get:
     ({
-      assignment,
+      environmentControllerUrl,
       accessToken,
     }: {
-      assignment: EnvironmentAssignment | undefined;
+      environmentControllerUrl: string | undefined;
       accessToken: string;
     }) =>
     async ({ get }) => {
-      if (assignment) {
-        return get(environments({ assignment, accessToken }));
+      if (environmentControllerUrl) {
+        return get(
+          environmentDetails({ environmentControllerUrl, accessToken })
+        );
       } else {
         return undefined;
       }
@@ -143,39 +146,110 @@ export const environmentAssignmentState = selectorFamily({
   },
 });
 
-export const environmentsWithHealth = selectorFamily({
-  key: "environmentsWithHealth",
-  get:
-    (accessToken: string) =>
-    async ({ get }) => {
-      const result = new Map<string, LoadedEnvironment>();
-      const assignmentState = get(environmentAssignmentState(accessToken));
-      for (const [regionId, assignments] of assignmentState.entries()) {
-        if (assignments.length === 0) {
-          result.set(regionId, { state: "disabled" });
-        }
-        for (const assignment of assignments) {
-          const envs = get(environments({ assignment, accessToken }));
+export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
+  const result = new Map<string, LoadedEnvironment>();
+  const assignmentMap = new Map<string, EnvironmentAssignment[]>();
+  for (const region of config.cloudRegions.values()) {
+    const response = await environmentAssignmentList(
+      region.regionControllerUrl,
+      accessToken
+    );
+    assignmentMap.set(getRegionId(region), response.data);
+  }
+  for (const [regionId, assignments] of assignmentMap.entries()) {
+    if (assignments.length === 0) {
+      result.set(regionId, { state: "disabled" });
+    }
+    for (const { environmentControllerUrl } of assignments) {
+      const { data: envs } = await environmentList(
+        environmentControllerUrl,
+        accessToken
+      );
 
-          for (const env of envs) {
-            const enabledEnv: EnabledEnvironment = {
-              ...env,
-              state: "enabled",
-              health: "pending",
-            };
-            const health = get(
-              environmentHealth({ environment: enabledEnv, accessToken })
-            );
-            result.set(regionId, {
-              ...enabledEnv,
-              health,
-            });
-          }
-        }
+      for (const env of envs) {
+        const enabledEnv: EnabledEnvironment = {
+          ...env,
+          state: "enabled",
+          health: "pending",
+        };
+        const health = await fetchEnvironmentHealth(enabledEnv, accessToken);
+        result.set(regionId, {
+          ...enabledEnv,
+          health,
+        });
       }
-      return result;
-    },
+    }
+  }
+  return result;
+};
+
+export const environmentsWithHealth = atomFamily<
+  Map<string, LoadedEnvironment> | undefined,
+  string
+>({
+  key: "environmentsWithHealth",
+  default: () => undefined,
 });
+
+export const useEnvironmentsWithHealth = (
+  accessToken: string,
+  options: { intervalMs?: number } = {}
+) => {
+  const [value, setValue] = useRecoilState(environmentsWithHealth(accessToken));
+
+  if (options.intervalMs) {
+    useInterval(
+      async () => setValue(await fetchEnvironmentsWithHealth(accessToken)),
+      options.intervalMs
+    );
+  }
+  if (value) {
+    return value;
+  }
+
+  throw new Promise((resolve) => {
+    fetchEnvironmentsWithHealth(accessToken).then((result) => {
+      setValue(result);
+      resolve(result);
+    });
+  });
+};
+
+const fetchEnvironmentHealth = async (
+  environment: EnabledEnvironment,
+  accessToken: string
+) => {
+  // Determine if the environment is healthy by issuing a basic SQL query.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000 /* 10 seconds */);
+  let health: EnvironmentHealth = "pending";
+  try {
+    if (!environment.resolvable) {
+      throw new Error(`environment unresolvable`);
+    }
+    const { errorMessage } = await executeSqlWithAccessToken(
+      environment,
+      "SELECT 1",
+      accessToken,
+      { signal: controller.signal }
+    );
+    if (errorMessage !== null) {
+      throw new Error(`environment unhealthy: ${errorMessage}`);
+    }
+    health = "healthy";
+  } catch (e) {
+    // Threshold for considering an environment to be stuck / crashed
+    const maxBootTime = { minutes: 5 };
+    const cutoff = add(new Date(environment.creationTimestamp), maxBootTime);
+    if (new Date() > cutoff) {
+      health = "crashed";
+    } else {
+      health = "booting";
+    }
+  }
+  clearTimeout(timeout);
+  return health;
+};
 
 /** The ID of the currently selected environment. */
 export const currentEnvironmentIdState = atom<string>({
@@ -191,6 +265,7 @@ export const currentEnvironmentState = selectorFamily({
     ({ get }) => {
       const currentEnvironmentId = get(currentEnvironmentIdState);
       const envs = get(environmentsWithHealth(accessToken));
+      if (!envs) return undefined;
       return envs.get(currentEnvironmentId);
     },
 });

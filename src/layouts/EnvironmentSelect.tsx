@@ -4,7 +4,6 @@ import {
   HStack,
   Spinner,
   useColorMode,
-  useInterval,
 } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, {
@@ -14,17 +13,13 @@ import ReactSelect, {
   SingleValueProps,
   StylesConfig,
 } from "react-select";
-import {
-  useRecoilRefresher_UNSTABLE,
-  useRecoilState,
-  useRecoilValue,
-} from "recoil";
+import { useRecoilState } from "recoil";
 
 import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
 import {
   currentEnvironmentIdState,
-  environmentsWithHealth,
   LoadedEnvironment,
+  useEnvironmentsWithHealth,
 } from "../recoil/environments";
 import { reactSelectTheme } from "../theme";
 import colors from "../theme/colors";
@@ -33,18 +28,15 @@ const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
   const { user } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
-  const environments = useRecoilValue(environmentsWithHealth(user.accessToken));
+  const environments = useEnvironmentsWithHealth(user.accessToken, {
+    intervalMs: 5000,
+  });
   const [currentEnvironmentId, setCurrentEnvironmentId] = useRecoilState(
     currentEnvironmentIdState
   );
-  const refreshEnvironments = useRecoilRefresher_UNSTABLE(
-    environmentsWithHealth(user.accessToken)
-  );
-  useInterval(refreshEnvironments, 5000);
 
   const selectHandler = React.useCallback(
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
-      console.log("setCurrentEnvironmentId", option);
       setCurrentEnvironmentId((option as EnvOptionType).id);
     },
     [environments, setCurrentEnvironmentId]

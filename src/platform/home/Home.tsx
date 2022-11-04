@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { PageHeader } from "../../layouts/BaseLayout";
 import {
   currentEnvironmentIdState,
-  environmentsWithHealth,
+  useEnvironmentsWithHealth,
 } from "../../recoil/environments";
 import CreateEnvironmentButton from "../tutorial/CreateEnvironmentButton";
 import EnvironmentList from "../tutorial/EnvironmentList";
@@ -19,7 +19,7 @@ import StepsWhileLoading from "./StepsWhileLoading";
 
 const Home = () => {
   const { user } = useAuth();
-  const environments = useRecoilValue(environmentsWithHealth(user.accessToken));
+  const environments = useEnvironmentsWithHealth(user.accessToken);
   const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);
 
   let content = (
