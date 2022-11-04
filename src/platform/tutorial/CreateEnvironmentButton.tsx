@@ -7,14 +7,17 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
 import { EnvironmentAssignment } from "../../api/regionController";
 import { createEnvironmentAssignment } from "../../api/regionController";
-import { fetchEnvironments } from "../../api/useAvailableEnvironments";
 import config from "../../config";
-import { currentEnvironmentIdState } from "../../recoil/environments";
+import {
+  currentEnvironmentIdState,
+  environments,
+  maybeEnvironment,
+} from "../../recoil/environments";
 
 interface Props extends ButtonProps {
   regionId: string;
@@ -34,8 +37,9 @@ const CreateEnvironmentButton = (props: Props) => {
 
   const [isCreatingThisEnv, setIsCreatingThisEnv] = React.useState(false);
   const setCurrentEnvironmentId = useSetRecoilState(currentEnvironmentIdState);
-  const [newAssignment, setNewAssignment] =
-    React.useState<EnvironmentAssignment | null>(null);
+  const [newAssignment, setNewAssignment] = React.useState<
+    EnvironmentAssignment | undefined
+  >(undefined);
 
   const toast = useToast({ position: "top" });
 
@@ -63,39 +67,47 @@ const CreateEnvironmentButton = (props: Props) => {
     }
   }, [region.regionControllerUrl]);
 
-  const checkForEnv = React.useCallback(async () => {
-    if (newAssignment) {
-      const { environments, errorMessage } = await fetchEnvironments(
-        newAssignment,
-        user.accessToken
-      );
-      /*
-       * Check for existence of envs before declaring success
-       * TODO: check _status_ of env here rather than the current home page
-       * when we no longer have the "we're setting up your region" intervening state.
-       */
-      if (environments.length > 0) {
-        setIsCreatingThisEnv(false);
-        if (handleEnvCreate) handleEnvCreate(false);
-        setCurrentEnvironmentId(regionId);
-        toast({
-          title: "Region enabled.",
-          status: "success",
-        });
-      } else if (errorMessage) {
-        setIsCreatingThisEnv(false);
-        if (handleEnvCreate) handleEnvCreate(false);
-        toast({
-          title: "Failed to enable region.",
-          status: "error",
-        });
-      }
+  const refreshNewEnvironment = useRecoilCallback(
+    ({ refresh }) =>
+      () => {
+        if (newAssignment) {
+          refresh(
+            environments({
+              assignment: newAssignment,
+              accessToken: user.accessToken,
+            })
+          );
+        }
+      },
+    [newAssignment]
+  );
+  const newEnvironments = useRecoilValue(
+    maybeEnvironment({
+      assignment: newAssignment,
+      accessToken: user.accessToken,
+    })
+  );
+
+  React.useEffect(() => {
+    /*
+     * Check for existence of envs before declaring success
+     * TODO: check _status_ of env here rather than the current home page
+     * when we no longer have the "we're setting up your region" intervening state.
+     */
+    if (isCreatingThisEnv && newEnvironments && newEnvironments.length > 0) {
+      setIsCreatingThisEnv(false);
+      if (handleEnvCreate) handleEnvCreate(false);
+      setCurrentEnvironmentId(regionId);
+      toast({
+        title: "Region enabled.",
+        status: "success",
+      });
     }
-  }, [newAssignment]);
+  }, [isCreatingThisEnv, newEnvironments]);
 
   useInterval(() => {
     if (newAssignment && isCreatingThisEnv) {
-      checkForEnv();
+      refreshNewEnvironment();
     }
   }, 3000);
 

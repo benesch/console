@@ -26,25 +26,25 @@ export interface Results {
  * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
  */
 export function useSql(sql: string | undefined) {
-  const { fetchAuthed } = useAuth();
-  const environment = useRecoilValue(currentEnvironmentState);
+  const { user } = useAuth();
+  const environment = useRecoilValue(currentEnvironmentState(user.accessToken));
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
   async function runSql() {
-    if (environment.state !== "enabled" || !sql) {
+    if (environment?.state !== "enabled" || !sql) {
       setResults(null);
       return;
     }
 
     try {
       setLoading(true);
-      const { results: res, errorMessage } = await executeSql(
+      const { results: res, errorMessage } = await executeSqlWithAccessToken(
         environment,
         sql,
-        fetchAuthed
+        user.accessToken
       );
       if (errorMessage) {
         setResults(null);
@@ -72,6 +72,27 @@ interface ExecuteSqlOutput {
   results: Results | null;
   errorMessage: string | null;
 }
+
+export const executeSqlWithAccessToken = async (
+  environment: EnabledEnvironment,
+  query: string,
+  accessToken: string,
+  requestOpts?: RequestInit
+): Promise<ExecuteSqlOutput> => {
+  return executeSql(
+    environment,
+    query,
+    (input: RequestInfo, init?: RequestInit) =>
+      fetch(input, {
+        ...init,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+          ...init?.headers,
+        },
+      }),
+    requestOpts
+  );
+};
 
 export const executeSql = async (
   environment: EnabledEnvironment,

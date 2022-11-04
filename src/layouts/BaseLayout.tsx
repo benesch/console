@@ -4,18 +4,19 @@
  */
 
 import {
+  Center,
   Container,
   Flex,
   Heading,
   HeadingProps,
   HStack,
+  Spinner,
   StackProps,
   useColorModeValue,
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
 
-import useAvailableEnvironments from "../api/useAvailableEnvironments";
 import { semanticColors } from "../theme/colors";
 import NavBar, { NAV_LOGO_HEIGHT } from "./NavBar";
 import PageFooter from "./PageFooter";
@@ -43,11 +44,6 @@ export interface BaseLayoutProps {
  * ```
  */
 export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
-  // This populates all environment list and status data for the application,
-  // which other components can access via Recoil.
-  // Big TODO: wire up recoil somehow so we can do this via the recoil atom directly,
-  // rather than having a hook that is only invoked once.
-  const _data = useAvailableEnvironments();
   return (
     <Flex
       direction={{ base: "column", lg: "row" }}
@@ -66,7 +62,15 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           pb={4}
         >
           <Flex flexDir="column" w="full" h="full">
-            {children}
+            <React.Suspense
+              fallback={
+                <Center css={{ height: "100%" }}>
+                  <Spinner />
+                </Center>
+              }
+            >
+              {children}
+            </React.Suspense>
           </Flex>
         </Container>
         <PageFooter />

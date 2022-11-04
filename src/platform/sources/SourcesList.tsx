@@ -16,6 +16,7 @@ import {
 import React from "react";
 import { useRecoilValue } from "recoil";
 
+import { useAuth } from "../../api/auth";
 import { Source, useSources } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
@@ -53,7 +54,10 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 const SourcesListPage = () => {
-  const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const { user } = useAuth();
+  const currentEnvironment = useRecoilValue(
+    currentEnvironmentState(user.accessToken)
+  );
   const { sources, refetch } = useSources();
   useInterval(refetch, 5000);
   const grayText = useColorModeValue(
@@ -61,7 +65,7 @@ const SourcesListPage = () => {
     semanticColors.grayText.dark
   );
 
-  const isDisabled = currentEnvironment.state !== "enabled";
+  const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = sources === null;
   const isEmpty = !isLoading && sources.length === 0;
 

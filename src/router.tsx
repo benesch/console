@@ -102,9 +102,11 @@ const ProtectedRoutes = (props: RoutesProps) => {
   // Render the Routes.
   return (
     <AuthProvider user={user}>
-      <BaseLayout overflowY={layoutOverflow}>
-        <Routes {...props} />
-      </BaseLayout>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <BaseLayout overflowY={layoutOverflow}>
+          <Routes {...props} />
+        </BaseLayout>
+      </React.Suspense>
     </AuthProvider>
   );
 };

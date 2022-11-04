@@ -15,6 +15,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
+import { useAuth } from "../../api/auth";
 import { Cluster, Replica } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
@@ -61,7 +62,10 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
-  const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const { user } = useAuth();
+  const currentEnvironment = useRecoilValue(
+    currentEnvironmentState(user.accessToken)
+  );
   const { clusterName } = useParams<ClusterDetailParams>();
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
@@ -75,7 +79,8 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     }
   }, [cluster]);
 
-  const isDisabled = currentEnvironment.state !== "enabled";
+  const isDisabled =
+    !currentEnvironmentState || currentEnvironment?.state !== "enabled";
   const isLoading = !cluster;
   const isEmpty = !isLoading && (!replicas || replicas.length === 0);
 
