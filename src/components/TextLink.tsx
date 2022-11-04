@@ -3,19 +3,8 @@ import React from "react";
 
 const TextLink = (props: LinkProps) => {
   const linkColor = useColorModeValue("purple.600", "purple.200");
-  const hoverColor = useColorModeValue("purple.50", "purple.800");
-  return (
-    <Link
-      color={linkColor}
-      textDecoration="underline"
-      sx={{
-        ":hover": {
-          bg: hoverColor,
-        },
-      }}
-      {...props}
-    />
-  );
+
+  return <Link color={linkColor} textDecoration="underline" {...props} />;
 };
 
 export default TextLink;
