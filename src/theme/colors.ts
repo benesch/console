@@ -305,20 +305,16 @@ const semanticColors = {
 const shadows = {
   footer: "0 -2px 1px #0000000d",
   glowDark: `
-    0px 100px 117px rgb(80 26 251 / 16%),
-    0px 42px 49px rgb(80 26 251 / 12%),
-    0px 22px 26px rgb(80 26 251 / 10%),
-    0px 12px 15px rgb(80 26 251 / 8%),
-    0px 7px 8px rgb(80 26 251 / 6%),
-    0px 3px 3.25px rgb(80 26 251 / 4%),
-    0px -7px 8px rgb(80 26 251 / 6%),
-    0px -3px 3.25px rgb(80 26 251 / 4%)
+    0px 14px 16px hsla(254, 50%, 18%, 8%),
+    0px 7px 9px hsla(254, 50%, 18%, 8%),
+    0px 3px 4px hsla(254, 50%, 18%, 8%),
+    0px -3px 3.25px hsla(254, 50%, 18%, 16%)
   `,
   glowLight: `
-    0px 14px 16px rgb(80 26 251 / 8%),
-    0px 7px 9px rgb(80 26 251 / 6%),
-    0px 3px 4px rgb(80 26 251 / 4%),
-    0px -3px 3.25px rgb(80 26 251 / 4%)
+    0px 14px 16px hsla(254, 50%, 18%, 2%),
+    0px 7px 9px hsla(254, 50%, 18%, 4%),
+    0px 3px 4px hsla(254, 50%, 18%, 4%),
+    0px -3px 3.25px hsla(254, 50%, 18%, 4%)
   `,
   smallGlowDark: `
     0px 12px 15px rgb(80 26 251 / 8%),
