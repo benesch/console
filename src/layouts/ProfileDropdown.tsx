@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { AdminPortal, useAuthActions } from "@frontegg/react";
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 
 import { getCurrentTenant, useAuth } from "../api/auth";
@@ -114,7 +114,7 @@ const ProfileDropdown = (props: ButtonProps) => {
 };
 
 export const ProfileMenuItems = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { routes: authRoutes } = useAuth();
   const signoutColor = useColorModeValue("red.500", "red.300");
   return (
@@ -131,7 +131,7 @@ export const ProfileMenuItems = () => {
       <MenuItem
         fontWeight="medium"
         color={signoutColor}
-        onClick={() => history.push(authRoutes.logoutUrl)}
+        onClick={() => navigate(authRoutes.logoutUrl)}
       >
         Sign out
       </MenuItem>

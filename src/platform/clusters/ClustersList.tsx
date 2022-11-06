@@ -12,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import { Cluster } from "../../api/materialized";
@@ -143,7 +143,7 @@ interface ClusterTableProps {
 }
 
 const ClusterTable = (props: ClusterTableProps) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const hoverColor = useColorModeValue("gray.50", "gray.900");
 
   return (
@@ -159,7 +159,7 @@ const ClusterTable = (props: ClusterTableProps) => {
           {props.clusters.map((c) => (
             <Tr
               key={c.id}
-              onClick={() => history.push(`/clusters/${c.name}`)}
+              onClick={() => navigate(`/clusters/${c.name}`)}
               cursor="pointer"
               _hover={{
                 bg: hoverColor,
