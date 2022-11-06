@@ -77,10 +77,9 @@ const animationStyles = `@keyframes bigBar {
     animation-delay: 0.6s;
   }`;
 
-const LoadingSvg: React.FC<{ fillColor?: string; width?: number }> = ({
-  fillColor,
-  width = 128,
-}) => {
+const LoadingSvg: React.FC<
+  React.PropsWithChildren<{ fillColor?: string; width?: number }>
+> = ({ fillColor, width = 128 }) => {
   const fillColorFromMode = useColorModeValue(colors.purple[700], "white");
   return (
     <svg

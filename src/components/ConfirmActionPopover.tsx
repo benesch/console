@@ -15,10 +15,12 @@ import { Button, ButtonProps, Portal } from "@chakra-ui/react";
 import React from "react";
 
 const ConfirmActionPopover: React.FC<
-  {
-    confirmationText: string;
-    onConfirm: (onClose: () => void) => () => unknown;
-  } & ButtonProps
+  React.PropsWithChildren<
+    {
+      confirmationText: string;
+      onConfirm: (onClose: () => void) => () => unknown;
+    } & ButtonProps
+  >
 > = ({ children, confirmationText, onConfirm, disabled, ...props }) => {
   return (
     <Popover closeOnBlur={false}>

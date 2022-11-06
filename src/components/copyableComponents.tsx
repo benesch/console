@@ -42,9 +42,9 @@ export const useCopyableText = (text: string, delay?: number) => {
   };
 };
 
-export const CopyStateIcon: React.FC<{ copied: boolean } & IconProps> = ({
-  copied,
-}) => {
+export const CopyStateIcon: React.FC<
+  React.PropsWithChildren<{ copied: boolean } & IconProps>
+> = ({ copied }) => {
   if (copied)
     return (
       <CheckIcon
@@ -61,10 +61,9 @@ export const CopyStateIcon: React.FC<{ copied: boolean } & IconProps> = ({
   );
 };
 
-export const CopyButton: React.FC<{ contents: string } & BoxProps> = ({
-  contents,
-  ...props
-}) => {
+export const CopyButton: React.FC<
+  React.PropsWithChildren<{ contents: string } & BoxProps>
+> = ({ contents, ...props }) => {
   const { onCopy, copied } = useCopyableText(contents);
   const title = copied ? "Copied" : "Copy text";
   return (
@@ -101,11 +100,9 @@ export const CopyButton: React.FC<{ contents: string } & BoxProps> = ({
 };
 
 /** Copyable component with a bg box but no line breaks  */
-export const CopyableBox: React.FC<{ contents: string } & TextProps> = ({
-  contents,
-  p,
-  ...props
-}) => {
+export const CopyableBox: React.FC<
+  React.PropsWithChildren<{ contents: string } & TextProps>
+> = ({ contents, p, ...props }) => {
   const bgColor = useColorModeValue("bwGray.50", "gray.800");
   return (
     <HStack
@@ -127,7 +124,9 @@ export const CopyableBox: React.FC<{ contents: string } & TextProps> = ({
 
 /** A component that enable the children text to be copied */
 export const CopyableText: React.FC<
-  TextProps & { children: string | null; contents?: string }
+  React.PropsWithChildren<
+    TextProps & { children: string | null; contents?: string }
+  >
 > = ({ contents, ...props }) => {
   const { onCopy, copied } = useCopyableText(
     contents ? contents : props.children || ""
@@ -185,13 +184,9 @@ interface CodeBlockProps {
  * results in scroll bars. Setting `wrap` to `true` will cause long lines to
  * wrap instead.
  */
-export const CodeBlock: React.FC<CodeBlockProps & BoxProps> = ({
-  title,
-  wrap,
-  lineNumbers,
-  contents,
-  ...props
-}) => {
+export const CodeBlock: React.FC<
+  React.PropsWithChildren<CodeBlockProps & BoxProps>
+> = ({ title, wrap, lineNumbers, contents, ...props }) => {
   const bg = useColorModeValue(
     semanticColors.card.bg.light,
     semanticColors.card.bg.dark

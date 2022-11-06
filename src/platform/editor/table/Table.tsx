@@ -28,7 +28,7 @@ interface Props {
   loading?: boolean;
 }
 
-const Table: React.FC<Props> = ({
+const Table: React.FC<React.PropsWithChildren<Props>> = ({
   columns,
   rows: data,
   loading,
