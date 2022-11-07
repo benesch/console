@@ -1,8 +1,7 @@
 import { useAuth } from "@frontegg/react";
 import { render, waitFor } from "@testing-library/react";
-import { createMemoryHistory } from "history";
 import React from "react";
-import { MemoryRouter, Routes } from "react-router";
+import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 
 import { globalConfigStub } from "../__mocks__/config";
 import { GlobalConfig } from "../config";
@@ -27,8 +26,6 @@ export const makeShimAnalyticsClient = () => {
 const setupRenderTree = ({
   passAnalyticsClient = true,
 }: { passAnalyticsClient?: boolean } = {}) => {
-  const history = createMemoryHistory();
-
   const shimAnalyticsClients = [
     makeShimAnalyticsClient(),
     makeShimAnalyticsClient(),
@@ -36,18 +33,27 @@ const setupRenderTree = ({
 
   const params = passAnalyticsClient ? { clients: shimAnalyticsClients } : {};
 
-  const wrapper = render(
+  const Home = () => {
+    const navigate = useNavigate();
+    return (
+      <div>
+        home<button onClick={() => navigate("/somewhere")}>go somewhere</button>
+      </div>
+    );
+  };
+  const renderResult = render(
     <MemoryRouter>
       <Routes>
-        <AnalyticsOnEveryPage {...params} />
+        <Route path="/" element={<Home />} />
+        <Route path="somewhere" element={<div>somewhere</div>} />
       </Routes>
+      <AnalyticsOnEveryPage {...params} />
     </MemoryRouter>
   );
 
   return {
-    history,
     shimAnalyticsClients,
-    wrapper,
+    renderResult,
   };
 };
 
@@ -59,11 +65,12 @@ describe("analytics/AnalyticsOnEveryPage", () => {
   it("should emit an analytics `page` event when the router's location changes for every provided analytics client", async () => {
     const {
       shimAnalyticsClients: [client1, client2],
-      history,
+      renderResult,
     } = setupRenderTree();
     // initial page
 
-    history.push("/somewhere");
+    const button = await renderResult.findByRole("button");
+    button.click();
 
     // So we have a component without any kind of returned node,
     // so testing library is not helpful, as it cannot target a "visible element"
@@ -75,12 +82,14 @@ describe("analytics/AnalyticsOnEveryPage", () => {
   it("should do nothing if no analytics client are provided", async () => {
     const {
       shimAnalyticsClients: [client1, client2],
-      history,
+      renderResult,
     } = setupRenderTree({
       passAnalyticsClient: false,
     });
 
-    history.push("/somewhere");
+    const button = await renderResult.findByRole("button");
+    button.click();
+
     const client1SentEventAnotherTime = await waitFor(
       () => (client1.page as jest.Mock).mock.calls.length > 1
     );
