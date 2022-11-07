@@ -132,6 +132,7 @@ const getNavItems = (isInternal: boolean): NavItemType[] => {
   const gatedItems: NavItemType[] = isInternal
     ? [
         { label: "Clusters", href: "/clusters", isInternal: true },
+        { label: "Sources", href: "/sources", isInternal: true },
         // { label: "Editor", href: "/editor" },
       ]
     : [];

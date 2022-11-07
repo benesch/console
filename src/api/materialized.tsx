@@ -202,3 +202,36 @@ export function useClusters() {
 
   return { clusters, refetch };
 }
+
+export interface Source {
+  id: string;
+  name: string;
+  type: string;
+  size?: string;
+}
+
+/**
+ * Fetches all sources in the current environment
+ */
+export function useSources() {
+  const sourceResponse = useSql("SHOW SOURCES");
+  let sources = null;
+  if (sourceResponse.data) {
+    const { rows } = sourceResponse.data;
+    sources = rows.map(
+      (row) =>
+        ({
+          id: row[0],
+          name: row[0],
+          type: row[1],
+          size: row[2],
+        } as Source)
+    );
+  }
+
+  const refetch = React.useCallback(() => {
+    sourceResponse.refetch();
+  }, [sourceResponse]);
+
+  return { sources, refetch };
+}

@@ -1,4 +1,5 @@
 import {
+  Box,
   HStack,
   Spinner,
   Table,
@@ -9,13 +10,13 @@ import {
   Thead,
   Tr,
   useColorModeValue,
+  useInterval,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
-import { Cluster } from "../../api/materialized";
+import { Source, useSources } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
@@ -30,50 +31,44 @@ import {
   SQLSuggestionBox,
 } from "../../layouts/listPageComponents";
 import { currentEnvironmentState } from "../../recoil/environments";
-import ClustersIcon from "../../svg/Clusters";
+import SourcesIcon from "../../svg/Sources";
 import { semanticColors } from "../../theme/colors";
 
-const createClusterSuggestion = {
-  title: "Create a cluster",
-  string:
-    "CREATE CLUSTER <cluster_name> REPLICAS (<replica_name> (SIZE = '2xsmall'));",
-};
-
-const clustersSuggestions: SQLSuggestion[] = [
+const sourcesSuggestions: SQLSuggestion[] = [
   {
-    title: "View your clusters",
-    string: "SHOW CLUSTERS;",
-  },
-  createClusterSuggestion,
-  {
-    title: "Switch clusters",
-    string: "SET CLUSTER = <cluster_name>;",
+    title: "View sources",
+    string: "SHOW SOURCES;",
   },
   {
-    title: "Drop a cluster",
-    string: "DROP CLUSTER <cluster_name>;",
+    title: "Create a source",
+    string: `CREATE SOURCE <source_name>
+    FROM <source_connection>
+    FORMAT <format_type>
+    WITH (SIZE='3xsmall');`,
+  },
+  {
+    title: "Drop a source",
+    string: "DROP SOURCE <source_name>;",
   },
 ];
 
-type Props = {
-  clusters: Cluster[] | null;
-};
-
-const ClustersListPage = ({ clusters }: Props) => {
+const SourcesListPage = () => {
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const { sources, refetch } = useSources();
+  useInterval(refetch, 5000);
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
   );
 
   const isDisabled = currentEnvironment.state !== "enabled";
-  const isLoading = clusters === null;
-  const isEmpty = !isLoading && clusters.length === 0;
+  const isLoading = sources === null;
+  const isEmpty = !isLoading && sources.length === 0;
 
   return (
     <>
       <PageHeader>
-        <PageHeading>Clusters</PageHeading>
+        <PageHeading>Sources</PageHeading>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
@@ -82,48 +77,48 @@ const ClustersListPage = ({ clusters }: Props) => {
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Empty">
-              <ClustersIcon />
+              <Box mt="-1px">
+                <SourcesIcon />
+              </Box>
             </IconBox>
             <EmptyListHeaderContents
-              title="No available clusters"
-              helpText="Create a cluster and one or more replicas to enable dataflows."
+              title="No available sources"
+              helpText="Connect a source to begin streaming data to Materialize."
             />
           </EmptyListHeader>
-          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster/">
+          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-source/">
             <CodeBlock
-              title={createClusterSuggestion.title}
-              contents={createClusterSuggestion.string}
+              title="Create a source"
+              contents={`CREATE CONNECTION <connection_name>
+  TO <connection_type> (<options>);
+
+CREATE SOURCE <source_name>
+  FROM <source>
+  FORMAT <format>;
+  WITH (SIZE = '3xsmall');`}
               lineNumbers
-            >
-              {`CREATE CLUSTER <cluster_name>
-  REPLICAS (
-    <replica_name> (SIZE = “xsmall”)
-);`}
-            </CodeBlock>
+            />
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       )}
       {!isLoading && !isEmpty && !isDisabled && (
         <HStack spacing={6} alignItems="flex-start">
-          <ClusterTable clusters={clusters} />
+          <SourceTable sources={sources} />
           <Card flex={0} minW="384px" maxW="384px">
-            <CardHeader>Interacting with clusters</CardHeader>
+            <CardHeader>Interacting with sources</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
                 <Text color={grayText}>
-                  Clusters are logical components that let you express resource
-                  isolation for all dataflow-powered objects.
+                  A source describes an external system you want Materialize to
+                  read data from.
                 </Text>
                 <Text color={grayText}>
                   Having trouble?{" "}
-                  <TextLink
-                    href="https://materialize.com/docs/overview/key-concepts/#clusters"
-                    target="_blank"
-                  >
+                  <TextLink href="https://materialize.com/docs/overview/key-concepts/#sources">
                     View the documentation.
                   </TextLink>
                 </Text>
-                {clustersSuggestions.map((suggestion) => (
+                {sourcesSuggestions.map((suggestion) => (
                   <SQLSuggestionBox
                     key={`suggestion-${suggestion.title}`}
                     {...suggestion}
@@ -138,35 +133,27 @@ const ClustersListPage = ({ clusters }: Props) => {
   );
 };
 
-interface ClusterTableProps {
-  clusters: Cluster[];
+interface SourceTableProps {
+  sources: Source[];
 }
 
-const ClusterTable = (props: ClusterTableProps) => {
-  const history = useHistory();
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
-
+const SourceTable = (props: SourceTableProps) => {
   return (
     <Card pt="2" px="0" pb="6">
-      <Table data-testid="cluster-table" borderRadius="xl">
+      <Table data-testid="source-table" borderRadius="xl">
         <Thead>
           <Tr>
             <Th>Name</Th>
-            <Th># of Replicas</Th>
+            <Th>Type</Th>
+            <Th>Size</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {props.clusters.map((c) => (
-            <Tr
-              key={c.id}
-              onClick={() => history.push(`/clusters/${c.name}`)}
-              cursor="pointer"
-              _hover={{
-                bg: hoverColor,
-              }}
-            >
-              <Td>{c.name}</Td>
-              <Td>{c.replicas ? c.replicas.length : <Spinner size="sm" />}</Td>
+          {props.sources.map((s) => (
+            <Tr key={s.id}>
+              <Td>{s.name}</Td>
+              <Td>{s.type}</Td>
+              <Td>{s.size || "-"}</Td>
             </Tr>
           ))}
         </Tbody>
@@ -175,4 +162,4 @@ const ClusterTable = (props: ClusterTableProps) => {
   );
 };
 
-export default ClustersListPage;
+export default SourcesListPage;
