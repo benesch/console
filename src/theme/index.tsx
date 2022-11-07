@@ -10,7 +10,7 @@
  * Frontegg.
  */
 
-import { defaultStandaloneParam, extendTheme } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
@@ -58,14 +58,6 @@ export const chakraTheme = extendTheme({
     useSystemColorMode: true,
   },
 });
-
-/**
- * Extend toast default position
- * TODO:
- * It would be better to have a custom defaultParams/defaultUptions inside ./components folder
- * But neither Alert, Toast or useToast seems to apply for <Toast>
- */
-defaultStandaloneParam.defaultOptions.position = "top";
 
 // Extracted from Figma.
 export const fronteggAuthPageBackground = `

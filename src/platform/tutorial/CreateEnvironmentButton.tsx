@@ -37,7 +37,7 @@ const CreateEnvironmentButton = (props: Props) => {
   const [newAssignment, setNewAssignment] =
     React.useState<EnvironmentAssignment | null>(null);
 
-  const toast = useToast();
+  const toast = useToast({ position: "top" });
 
   const { regionId, isCreatingEnv, handleEnvCreate, ...buttonProps } = props;
   const region = config.cloudRegions.get(regionId)!;
