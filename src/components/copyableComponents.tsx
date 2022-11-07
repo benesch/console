@@ -298,7 +298,7 @@ const Line = (props: LineProps) => {
         textAlign: "right",
         userSelect: "none",
       }}
-      sx={{ "counter-increment": "line", wordWrap: "normal" }}
+      sx={{ counterIncrement: "line", wordWrap: "normal" }}
     >
       {props.children}
     </chakra.span>
