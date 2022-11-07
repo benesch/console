@@ -91,12 +91,14 @@ export const CardHeader = (props: CardTitleProps) => {
 
 export const CardTabs = Tabs;
 
-export const CardTab: React.FC<TabProps> = (props) => {
+export const CardTab: React.FC<React.PropsWithChildren<TabProps>> = (props) => {
   return <Tab py={4} {...props} />;
 };
 
 /** a drop in replacement to the TabList component that can be used in a card header container */
-export const CardTabsHeaders: React.FC<TabListProps> = (props) => {
+export const CardTabsHeaders: React.FC<
+  React.PropsWithChildren<TabListProps>
+> = (props) => {
   return (
     <TabList
       as={Flex}

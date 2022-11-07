@@ -9,7 +9,7 @@ import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
 import StatusPageWidget from "./components/StatusPageWidget";
@@ -27,10 +27,12 @@ if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
   });
 }
 
-const root = document.createElement("div");
-document.body.appendChild(root);
+const rootEl = document.createElement("div");
+document.body.appendChild(rootEl);
 
-ReactDOM.render(
+const root = createRoot(rootEl);
+
+root.render(
   <>
     <ColorModeScript
       initialColorMode={theme.chakraTheme.config.initialColorMode}
@@ -41,6 +43,5 @@ ReactDOM.render(
       </ChakraProvider>
     </BrowserRouter>
     <StatusPageWidget id={config.statuspageId} />
-  </>,
-  root
+  </>
 );

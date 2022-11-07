@@ -19,7 +19,7 @@ import Org from "./Org";
 export const getCurrentYear = () => new Date().getFullYear();
 
 /** A footer component */
-const PageFooter: React.FC = () => {
+const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
   const footerBg = useColorModeValue("white", "purple.900");
   const color = useColorModeValue("gray.500", "gray.200");
   const borderWidth = useColorModeValue("0", "1px");

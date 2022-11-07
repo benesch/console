@@ -54,7 +54,7 @@ const GridLayout = (): JSX.Element => {
   /**
    * Hooks
    */
-  const toast = useToast();
+  const toast = useToast({ position: "top" });
 
   /**
    * Effects

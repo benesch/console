@@ -11,10 +11,12 @@ import { AnalyticsClient } from "./types";
  * for all provided analytics clients.
  * @returns A react component.
  */
-const AnalyticsOnEveryPage: React.FC<{
-  config?: GlobalConfig;
-  clients?: AnalyticsClient[];
-}> = ({ config, clients }) => {
+const AnalyticsOnEveryPage: React.FC<
+  React.PropsWithChildren<{
+    config?: GlobalConfig;
+    clients?: AnalyticsClient[];
+  }>
+> = ({ config, clients }) => {
   const auth = useAuth((state) => state);
   const allClients = useAnalyticsClients({ config, clients });
   const location = useLocation();

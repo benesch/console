@@ -129,10 +129,9 @@ const Dot = ({ environment }: DotProps) => {
   );
 };
 
-const SingleValue: React.FunctionComponent<SingleValueProps<EnvOptionType>> = ({
-  innerProps,
-  data,
-}) => {
+const SingleValue: React.FunctionComponent<
+  React.PropsWithChildren<SingleValueProps<EnvOptionType>>
+> = ({ innerProps, data }) => {
   return (
     <HStack {...innerProps} spacing={0} color="white">
       <Dot environment={data.environment} />
@@ -141,12 +140,9 @@ const SingleValue: React.FunctionComponent<SingleValueProps<EnvOptionType>> = ({
   );
 };
 
-const EnvOption: React.FunctionComponent<OptionProps<EnvOptionType>> = ({
-  innerProps,
-  innerRef,
-  data,
-  ...props
-}) => {
+const EnvOption: React.FunctionComponent<
+  React.PropsWithChildren<OptionProps<EnvOptionType>>
+> = ({ innerProps, innerRef, data, ...props }) => {
   const { colorMode } = useColorMode();
   const isDarkMode = colorMode === "dark";
   const textColor = isDarkMode ? "white" : "black";

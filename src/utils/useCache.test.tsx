@@ -5,7 +5,9 @@ import useCache from "./useCache";
 
 /** a test component that displays the actual cache value */
 // we cannot use `@testing-library/react-hooks` as we cannot rerender a hook with new inputs
-const TestComponent: React.FC<{ value?: string }> = ({ value }) => {
+const TestComponent: React.FC<React.PropsWithChildren<{ value?: string }>> = ({
+  value,
+}) => {
   const cache = useCache(value);
   return <>{cache}</>;
 };

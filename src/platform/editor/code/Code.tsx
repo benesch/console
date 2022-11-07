@@ -30,7 +30,7 @@ const Code = ({ handleQuery, loading }: Props): JSX.Element => {
     handleQuery(query);
   }, [handleQuery, query]);
 
-  const onBeforeChange = useCallback((editor, data, value) => {
+  const onBeforeChange = useCallback((editor: any, data: any, value: any) => {
     setQuery(value);
   }, []);
 
