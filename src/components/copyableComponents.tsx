@@ -301,7 +301,7 @@ const Line = (props: LineProps) => {
         left: "0",
         px: 2,
         textAlign: "right",
-        "user-select": "none",
+        userSelect: "none",
       }}
       sx={{ "counter-increment": "line", wordWrap: "normal" }}
     >
