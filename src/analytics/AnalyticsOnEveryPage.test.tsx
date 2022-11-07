@@ -2,7 +2,7 @@ import { useAuth } from "@frontegg/react";
 import { render, waitFor } from "@testing-library/react";
 import { createMemoryHistory } from "history";
 import React from "react";
-import { Router } from "react-router";
+import { MemoryRouter, Routes } from "react-router";
 
 import { globalConfigStub } from "../__mocks__/config";
 import { GlobalConfig } from "../config";
@@ -37,9 +37,11 @@ const setupRenderTree = ({
   const params = passAnalyticsClient ? { clients: shimAnalyticsClients } : {};
 
   const wrapper = render(
-    <Router history={history}>
-      <AnalyticsOnEveryPage {...params} />
-    </Router>
+    <MemoryRouter>
+      <Routes>
+        <AnalyticsOnEveryPage {...params} />
+      </Routes>
+    </MemoryRouter>
   );
 
   return {

@@ -6,10 +6,10 @@
 import { useAuth as useFronteggAuth } from "@frontegg/react";
 import React from "react";
 import {
-  Redirect,
+  Navigate,
   Route,
-  Switch,
-  SwitchProps,
+  Routes,
+  RoutesProps,
   useLocation,
 } from "react-router-dom";
 
@@ -30,32 +30,16 @@ import { assert } from "./util";
 const Router = () => {
   return (
     <>
-      <ProtectedSwitch>
-        <Route path="/access/cli">
-          <CLI />
-        </Route>
-        <Route path="/access">
-          <AppPasswordsPage />
-        </Route>
-        <Route path="/pricing">
-          <PricingPage />
-        </Route>
-        <Route path="/clusters">
-          <ClusterRoutes />
-        </Route>
-        <Route path="/sources">
-          <SourcesListPage />
-        </Route>
-        <Route path="/editor">
-          <Editor />
-        </Route>
-        <Route path="/" exact>
-          <RedirectToHome />
-        </Route>
-        <Route>
-          <Redirect to="/" />
-        </Route>
-      </ProtectedSwitch>
+      <ProtectedRoutes>
+        <Route path="/access/cli" element={<CLI />} />
+        <Route path="/access" element={<AppPasswordsPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/clusters/*" element={<ClusterRoutes />} />
+        <Route path="/sources" element={<SourcesListPage />} />
+        <Route path="/editor" element={<Editor />} />
+        <Route path="*" element={<RedirectToHome />} />
+        <Route element={<Navigate to="/" replace />} />
+      </ProtectedRoutes>
       <AnalyticsOnEveryPage config={config} />
     </>
   );
@@ -77,7 +61,7 @@ const RedirectToHome = () => {
   }
 };
 
-const ProtectedSwitch = (props: SwitchProps) => {
+const ProtectedRoutes = (props: RoutesProps) => {
   const location = useLocation();
   const layoutOverflow = location.pathname === "/editor" ? "hidden" : "auto";
   // Consume Frontegg authentication state.
@@ -107,7 +91,7 @@ const ProtectedSwitch = (props: SwitchProps) => {
   if (!isAuthenticated) {
     const redirectUrl = encodeURIComponent(location.pathname);
     const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
-    return <Redirect to={loginUrl} />;
+    return <Navigate to={loginUrl} replace />;
   }
 
   // If we're here, `isLoading` is `false` and `isAuthenticated` is true, which
@@ -115,11 +99,11 @@ const ProtectedSwitch = (props: SwitchProps) => {
   // along.
   assert(user);
 
-  // Render the switch.
+  // Render the Routes.
   return (
     <AuthProvider user={user}>
       <BaseLayout overflowY={layoutOverflow}>
-        <Switch {...props} />
+        <Routes {...props} />
       </BaseLayout>
     </AuthProvider>
   );
