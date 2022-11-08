@@ -4,6 +4,7 @@ import {
   transparentize,
 } from "@chakra-ui/theme-tools";
 
+import { CARD_PADDING } from "../components/cardComponents";
 import { gradients, semanticColors, shadows } from "./colors";
 
 export const Alert = {
@@ -105,10 +106,18 @@ export const Tabs = {
         tab: {
           borderBottomWidth: "3px",
           marginBottom: "0",
+          px: 3,
+          py: 2,
         },
         tablist: {
           borderBottomWidth: "1px",
           borderColor: mode(`${c}.100`, `${c}.600`)(props) as string,
+          px: CARD_PADDING,
+          justifyContent: "flex-start",
+        },
+        tabpanel: {
+          px: 0,
+          py: 0,
         },
       };
     },

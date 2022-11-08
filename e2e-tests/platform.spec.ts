@@ -159,18 +159,16 @@ async function connectRegionPostgres(
   page: Page,
   password: string
 ): Promise<Client> {
-  await page.selectOption("[aria-label='Connection option']", {
-    label: "external tool",
-  });
-  const hostAddress = await page
-    .locator("data-test-id=cs_Host >> button >> p")
-    .innerText();
-  const port = await page
-    .locator("data-test-id=cs_Port >> button >> p")
-    .innerText();
-  const database = await page
-    .locator("data-test-id=cs_Database >> button >> p")
-    .innerText();
+  await page.click(
+    `[data-test-id=connection-options] button:text("External tools")`
+  );
+  const connectionInfo = await page.locator("pre").innerText();
+  const lines = connectionInfo.split("\n").filter((line) => !!line);
+  const hostAddress = lines.find((line) => line.startsWith("HOST="))?.slice(5);
+  const port = lines.find((line) => line.startsWith("PORT="))?.slice(5);
+  const database = lines.find((line) => line.startsWith("DATABASE="))?.slice(9);
+
+  assert(hostAddress && port && database);
 
   if (hostAddress) {
     const url = new URL(

@@ -1,10 +1,8 @@
-import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "../../api/auth";
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { PageHeader } from "../../layouts/BaseLayout";
 import {
   currentEnvironmentIdState,
   useEnvironmentsWithHealth,
@@ -61,16 +59,23 @@ const Home = () => {
             break;
           case "healthy":
             content = (
-              <Card>
-                <CardHeader>Connect to Materialize</CardHeader>
-                <CardContent>
-                  <VStack spacing={4} alignItems="stretch">
-                    <PasswordStep />
-                    <ConnectSteps />
-                    <GetStartedDocs />
-                  </VStack>
-                </CardContent>
-              </Card>
+              <VStack
+                alignItems="center"
+                justifyContent="center"
+                flex={1}
+                spacing={6}
+                h="full"
+                maxWidth="2xl"
+              >
+                <Heading fontSize="2xl" fontWeight="500" textAlign="center">
+                  Connect to Materialize
+                </Heading>
+                <VStack spacing={6} alignItems="stretch" fontSize="sm" w="2xl">
+                  <ConnectSteps />
+                  <PasswordStep />
+                  <GetStartedDocs />
+                </VStack>
+              </VStack>
             );
             break;
           case "crashed":
@@ -100,9 +105,15 @@ const Home = () => {
   }
 
   return (
-    <>
-      <PageHeader></PageHeader>
-      <VStack spacing={6} mb={6}>
+    <VStack flex={1} h="full" w="full">
+      <VStack
+        spacing={6}
+        mb={6}
+        h="full"
+        w="full"
+        alignItems="center"
+        justifyContent="center"
+      >
         <React.Suspense
           fallback={
             <HStack justifyContent="flex-start" width="100%">
@@ -113,7 +124,7 @@ const Home = () => {
           {content}
         </React.Suspense>
       </VStack>
-    </>
+    </VStack>
   );
 };
 

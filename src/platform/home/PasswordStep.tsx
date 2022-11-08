@@ -13,14 +13,16 @@ import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { CopyButton } from "../../components/copyableComponents";
+import { CopyableBox } from "../../components/copyableComponents";
 import { semanticColors } from "../../theme/colors";
 
 const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
 
 const PasswordStep = (props: BoxProps) => {
-  const appPasswordBg = useColorModeValue("purple.100", "whiteAlpha.100");
-  const apPasswordBorder = useColorModeValue("purple.300", "whiteAlpha.300");
+  const bg = useColorModeValue(
+    semanticColors.card.bg.light,
+    semanticColors.card.bg.dark
+  );
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
@@ -86,34 +88,10 @@ const PasswordStep = (props: BoxProps) => {
   if (tokensState.successDialog.secret) {
     boxContents = (
       <>
-        <HStack alignItems="center">
+        <VStack alignItems="stretch">
           <Text as="span">New app password:</Text>
-          <HStack
-            role="group"
-            bg={appPasswordBg}
-            borderWidth="1px"
-            borderColor={apPasswordBorder}
-            borderRadius={4}
-            px={2}
-            py={1}
-          >
-            <Text
-              as="span"
-              fontWeight="bold"
-              aria-label="clientId"
-              wordBreak="break-all"
-            >
-              {newPassword}
-            </Text>
-            <CopyButton
-              contents={newPassword || ""}
-              top={0}
-              right={0}
-              position="relative"
-              flex="0 0 auto"
-            />
-          </HStack>
-        </HStack>
+          <CopyableBox contents={newPassword}>{newPassword}</CopyableBox>
+        </VStack>
         <Text pt={3} fontSize="sm">
           Copy this app password somewhere safe. App passwords{" "}
           <Text fontWeight="bold" as="span">
@@ -130,6 +108,7 @@ const PasswordStep = (props: BoxProps) => {
       alignItems="stretch"
       spacing={2}
       border="1px"
+      bg={bg}
       borderColor={borderColor}
       borderRadius="xl"
       {...props}

@@ -1,28 +1,13 @@
-import { Box, HStack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 
 import TextLink from "../../components/TextLink";
-import { semanticColors } from "../../theme/colors";
 
 const GetStartedDocs = () => {
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const bg = useColorModeValue("blackAlpha.50", "whiteAlpha.100");
   return (
-    <VStack
-      alignItems="stretch"
-      spacing={2}
-      border="1px"
-      borderColor={borderColor}
-      borderRadius="xl"
-    >
-      <HStack p={4} py={2} borderBottom="1px" borderColor={borderColor}>
-        <Text flex={1} fontWeight="500" fontSize="md">
-          Get started guide
-        </Text>
-      </HStack>
-      <Box p={4} pt={2}>
+    <VStack spacing={2} alignItems="stretch">
+      <Box p={4} borderRadius="lg" bg={bg}>
         <TextLink
           href="https://materialize.com/docs/get-started/"
           target="_blank"
@@ -30,6 +15,16 @@ const GetStartedDocs = () => {
           Connect a streaming source
         </TextLink>{" "}
         and create your first materialized view in seconds.
+      </Box>
+      <Box p={4}>
+        Need more help?{" "}
+        <TextLink href="https://materialize.com/s/chat">
+          Check out our community slack
+        </TextLink>{" "}
+        or{" "}
+        <TextLink href="mailto:support@materialize.com">
+          email support.
+        </TextLink>
       </Box>
     </VStack>
   );

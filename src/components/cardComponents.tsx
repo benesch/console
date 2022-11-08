@@ -16,6 +16,8 @@ import React from "react";
 
 import { semanticColors } from "../theme/colors";
 
+export const CARD_PADDING = 4;
+
 /**
  * A "card" UI element with a header, body, and footer.
  *
@@ -71,7 +73,7 @@ export interface CardTitleProps extends HeadingProps {
 
 /* A title for a `Card`. Used standalone in `CardTabsHeaders.` */
 export const CardTitle = (props: CardTitleProps) => {
-  return <Heading fontSize="lg" fontWeight="600" p="4" {...props} />;
+  return <Heading fontSize="lg" fontWeight="600" p={CARD_PADDING} {...props} />;
 };
 
 /** A header for a `Card`. */
@@ -92,7 +94,7 @@ export const CardHeader = (props: CardTitleProps) => {
 export const CardTabs = Tabs;
 
 export const CardTab: React.FC<React.PropsWithChildren<TabProps>> = (props) => {
-  return <Tab py={4} {...props} />;
+  return <Tab {...props} />;
 };
 
 /** a drop in replacement to the TabList component that can be used in a card header container */
@@ -100,21 +102,14 @@ export const CardTabsHeaders: React.FC<
   React.PropsWithChildren<TabListProps>
 > = (props) => {
   return (
-    <TabList
-      as={Flex}
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      pr="2"
-      {...props}
-    ></TabList>
+    <TabList as={Flex} display="flex" alignItems="center" {...props}></TabList>
   );
 };
 
 /** The container of the body content for a `Card`. */
 export const CardContent = ({ children, ...props }: BoxProps) => {
   return (
-    <Box p="4" {...props}>
+    <Box p={CARD_PADDING} {...props}>
       {children}
     </Box>
   );
@@ -131,7 +126,12 @@ export const CardFooter = (props: CardFooterProps) => {
     semanticColors.divider.dark
   );
   return (
-    <HStack display="flex" borderTop="1px" borderTopColor={borderColor} p="4">
+    <HStack
+      display="flex"
+      borderTop="1px"
+      borderTopColor={borderColor}
+      p={CARD_PADDING}
+    >
       {props.children}
     </HStack>
   );

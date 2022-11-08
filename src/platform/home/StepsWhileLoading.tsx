@@ -3,11 +3,11 @@ import {
   AlertIcon,
   Box,
   Flex,
-  HStack,
   LinkBox,
   LinkOverlay,
   Text,
   useColorModeValue,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -35,13 +35,13 @@ const StepsWhileLoading = () => {
 
   return (
     <Flex flexDirection="column" alignItems="flex-start">
-      <Alert status="info" rounded="md" width="fit-content" p={4} marginTop={2}>
+      <Alert status="info" rounded="md" width="fit-content" p={4}>
         <AlertIcon />
         New regions can take a few minutes to set up. In the meantime, here are
         some next steps!
       </Alert>
       <Box py={8} margin="auto" width="100%">
-        <HStack flexFlow="row" spacing={8}>
+        <VStack spacing={8}>
           <Card>
             <LinkBox as="article" {...interimStepStyles}>
               <LinkOverlay
@@ -85,7 +85,7 @@ const StepsWhileLoading = () => {
               </LinkOverlay>
             </LinkBox>
           </Card>
-        </HStack>
+        </VStack>
       </Box>
 
       <Flex textAlign="center" alignItems="center" margin="auto">
