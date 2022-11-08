@@ -54,7 +54,7 @@ export const chakraTheme = extendTheme({
   gradients,
   config: {
     cssVarPrefix: "ck",
-    initialColorMode: "dark",
+    initialColorMode: "system",
     useSystemColorMode: true,
   },
 });
