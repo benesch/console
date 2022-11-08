@@ -11,10 +11,12 @@ import { Integrations } from "@sentry/tracing";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
 import StatusPageWidget from "./components/StatusPageWidget";
 import config from "./config";
-import FronteggWrappedContents from "./fronteggWrappedContents";
+import FronteggProviderWrapper from "./FronteggProviderWrapper";
+import Router from "./router";
 import * as theme from "./theme";
 
 // Configure Sentry error reporting.
@@ -39,7 +41,11 @@ root.render(
     />
     <BrowserRouter>
       <ChakraProvider theme={theme.chakraTheme}>
-        <FronteggWrappedContents baseUrl={config.fronteggUrl} />
+        <FronteggProviderWrapper baseUrl={config.fronteggUrl}>
+          <RecoilRoot>
+            <Router />
+          </RecoilRoot>
+        </FronteggProviderWrapper>
       </ChakraProvider>
     </BrowserRouter>
     <StatusPageWidget id={config.statuspageId} />
