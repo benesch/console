@@ -49,6 +49,10 @@ export const chakraTheme = extendTheme({
       body: {
         bg: mode(semanticColors.bg.light, semanticColors.bg.dark)(props),
       },
+      iframe: {
+        // Prevents background color issue with statuspage.io iframes
+        colorScheme: "light",
+      },
     }),
   },
   gradients,
