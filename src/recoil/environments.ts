@@ -59,8 +59,8 @@ export const environmentDetails = selectorFamily({
     },
 });
 
-export const maybeEnvironment = selectorFamily({
-  key: "maybeEnvironment",
+export const maybeEnvironmentsForRegion = selectorFamily({
+  key: "maybeEnvironmentsForRegion",
   get:
     ({
       environmentControllerUrl,
@@ -131,21 +131,6 @@ export const environmentHealth = selectorFamily({
     },
 });
 
-export const environmentAssignmentState = selectorFamily({
-  key: "environmentAssignmentState",
-  get: (accessToken: string) => async (_arg) => {
-    const result = new Map<string, EnvironmentAssignment[]>();
-    for (const region of config.cloudRegions.values()) {
-      const response = await environmentAssignmentList(
-        region.regionControllerUrl,
-        accessToken
-      );
-      result.set(getRegionId(region), response.data);
-    }
-    return result;
-  },
-});
-
 export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
   const result = new Map<string, LoadedEnvironment>();
   const assignmentMap = new Map<string, EnvironmentAssignment[]>();
@@ -198,10 +183,9 @@ export const useEnvironmentsWithHealth = (
   const [value, setValue] = useRecoilState(environmentsWithHealth(accessToken));
 
   if (options.intervalMs) {
-    useInterval(
-      async () => setValue(await fetchEnvironmentsWithHealth(accessToken)),
-      options.intervalMs
-    );
+    useInterval(async () => {
+      setValue(await fetchEnvironmentsWithHealth(accessToken));
+    }, options.intervalMs);
   }
   if (value) {
     return value;

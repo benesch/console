@@ -3,17 +3,21 @@ import React from "react";
 
 import config from "../../config";
 import CreateEnvironmentButton from "./CreateEnvironmentButton";
+import { CreateRegion } from "./useCreateEnvironment";
 
-const EnvironmentList = () => {
-  const [isCreatingEnv, setIsCreatingEnv] = React.useState(false);
+interface Props {
+  createRegion: CreateRegion;
+  creatingRegionId?: string;
+}
+const EnvironmentList = ({ creatingRegionId, createRegion }: Props) => {
   return (
     <VStack spacing={4} data-test-id="regions-list">
       {Array.from(config.cloudRegions.keys()).map((r) => (
         <RegionEnvironmentRow
           key={r}
           regionId={r}
-          setIsCreatingEnv={setIsCreatingEnv}
-          isCreatingEnv={isCreatingEnv}
+          createRegion={createRegion}
+          creatingRegionId={creatingRegionId}
         />
       ))}
     </VStack>
@@ -22,20 +26,11 @@ const EnvironmentList = () => {
 
 interface RegionEnvironmentRowProps {
   regionId: string;
-  isCreatingEnv: boolean;
-  setIsCreatingEnv: (flag: boolean) => void;
+  createRegion: CreateRegion;
+  creatingRegionId?: string;
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
-  const { regionId } = props;
-
-  const handleEnvCreate = React.useCallback(
-    async (isCreating: boolean) => {
-      props.setIsCreatingEnv(isCreating);
-    },
-    [props.setIsCreatingEnv]
-  );
-
   return (
     <HStack
       justifyContent="space-between"
@@ -43,12 +38,12 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
       minHeight="32px"
       className="regions-list-item"
     >
-      <Box>{regionId}</Box>
+      <Box>{props.regionId}</Box>
       <Box>
         <CreateEnvironmentButton
           regionId={props.regionId}
-          isCreatingEnv={props.isCreatingEnv}
-          handleEnvCreate={handleEnvCreate}
+          createRegion={props.createRegion}
+          creatingRegionId={props.creatingRegionId}
         />
       </Box>
     </HStack>

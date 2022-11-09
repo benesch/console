@@ -1,6 +1,6 @@
 import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "../../api/auth";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
@@ -11,6 +11,7 @@ import {
 } from "../../recoil/environments";
 import CreateEnvironmentButton from "../tutorial/CreateEnvironmentButton";
 import EnvironmentList from "../tutorial/EnvironmentList";
+import useCreateEnvironment from "../tutorial/useCreateEnvironment";
 import ConnectSteps from "./ConnectSteps";
 import GetStartedDocs from "./GetStartedDocs";
 import PasswordStep from "./PasswordStep";
@@ -20,7 +21,12 @@ import StepsWhileLoading from "./StepsWhileLoading";
 const Home = () => {
   const { user } = useAuth();
   const environments = useEnvironmentsWithHealth(user.accessToken);
-  const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);
+  const { creatingRegionId, createRegion } = useCreateEnvironment(
+    user.accessToken
+  );
+  const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentIdState
+  );
 
   let content = (
     <HStack justifyContent="flex-start" width="100%">
@@ -37,7 +43,10 @@ const Home = () => {
           </Text>
           <Text>To get started, please enable your first region:</Text>
         </VStack>
-        <EnvironmentList />
+        <EnvironmentList
+          createRegion={createRegion}
+          creatingRegionId={creatingRegionId}
+        />
       </Box>
     );
   } else {
@@ -78,6 +87,8 @@ const Home = () => {
               </Text>
               <CreateEnvironmentButton
                 regionId={currentEnvironmentId}
+                createRegion={createRegion}
+                creatingRegionId={creatingRegionId}
                 size="lg"
                 variant="gradient-1"
               />
