@@ -5,7 +5,7 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import config from "../config";
 import {
@@ -27,7 +27,9 @@ export interface Results {
  */
 export function useSql(sql: string | undefined) {
   const { user } = useAuth();
-  const environment = useRecoilValue(currentEnvironmentState(user.accessToken));
+  const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState(user.accessToken)
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);

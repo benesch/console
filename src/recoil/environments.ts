@@ -1,6 +1,11 @@
 import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
-import { atom, atomFamily, selectorFamily, useRecoilState } from "recoil";
+import {
+  atom,
+  atomFamily,
+  selectorFamily,
+  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+} from "recoil";
 
 import {
   Environment as ApiEnvironment,
@@ -197,7 +202,9 @@ export const useEnvironmentsWithHealth = (
   accessToken: string,
   options: { intervalMs?: number } = {}
 ) => {
-  const [value, setValue] = useRecoilState(environmentsWithHealth(accessToken));
+  const [value, setValue] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
+    environmentsWithHealth(accessToken)
+  );
 
   if (options.intervalMs) {
     useInterval(async () => {

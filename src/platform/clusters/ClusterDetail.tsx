@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "../../api/auth";
 import { Cluster, Replica } from "../../api/materialized";
@@ -63,7 +63,7 @@ type Props = {
 
 const ClusterDetailPage = ({ cluster }: Props) => {
   const { user } = useAuth();
-  const currentEnvironment = useRecoilValue(
+  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState(user.accessToken)
   );
   const { clusterName } = useParams<ClusterDetailParams>();

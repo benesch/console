@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "../../api/auth";
 import { Source, useSources } from "../../api/materialized";
@@ -55,7 +55,7 @@ const sourcesSuggestions: SQLSuggestion[] = [
 
 const SourcesListPage = () => {
   const { user } = useAuth();
-  const currentEnvironment = useRecoilValue(
+  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState(user.accessToken)
   );
   const { sources, refetch } = useSources();
