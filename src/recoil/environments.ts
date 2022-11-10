@@ -2,6 +2,7 @@ import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
 import {
   atom,
+  selector,
   selectorFamily,
   useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
 } from "recoil";
@@ -187,14 +188,12 @@ export const currentEnvironmentIdState = atom<string>({
 });
 
 /** The state for the currently selected environment. */
-export const currentEnvironmentState = selectorFamily({
+export const currentEnvironmentState = selector<LoadedEnvironment | undefined>({
   key: keys.CURRENT_ENVIRONMENT,
-  get:
-    (accessToken: string) =>
-    ({ get }) => {
-      const currentEnvironmentId = get(currentEnvironmentIdState);
-      const envs = get(environmentsWithHealth);
-      if (!envs) return undefined;
-      return envs.get(currentEnvironmentId);
-    },
+  get: ({ get }) => {
+    const currentEnvironmentId = get(currentEnvironmentIdState);
+    const envs = get(environmentsWithHealth);
+    if (!envs) return undefined;
+    return envs.get(currentEnvironmentId);
+  },
 });

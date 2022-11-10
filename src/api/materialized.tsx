@@ -28,7 +28,7 @@ export interface Results {
 export function useSql(sql: string | undefined) {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState(user.accessToken)
+    currentEnvironmentState
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);

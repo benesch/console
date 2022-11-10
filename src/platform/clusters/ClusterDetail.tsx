@@ -15,7 +15,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { useAuth } from "../../api/auth";
 import { Cluster, Replica } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
@@ -62,9 +61,8 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
-  const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState(user.accessToken)
+    currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
   const grayText = useColorModeValue(

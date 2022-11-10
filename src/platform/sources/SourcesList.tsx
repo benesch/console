@@ -16,7 +16,6 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { useAuth } from "../../api/auth";
 import { Source, useSources } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
@@ -54,9 +53,8 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 const SourcesListPage = () => {
-  const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState(user.accessToken)
+    currentEnvironmentState
   );
   const { sources, refetch } = useSources();
   useInterval(refetch, 5000);

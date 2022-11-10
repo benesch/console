@@ -20,9 +20,7 @@ type ConnectionOption = "psql" | "other";
 
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();
-  const currentEnvironment = useRecoilValue(
-    currentEnvironmentState(user.accessToken)
-  );
+  const currentEnvironment = useRecoilValue(currentEnvironmentState);
   const [connectionOption, setConnectionOption] =
     React.useState<ConnectionOption>("psql");
   const borderColor = useColorModeValue(
