@@ -46,7 +46,7 @@ export type Environment =
 export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
 
 export const maybeEnvironmentForRegion = selectorFamily({
-  key: "maybeEnvironmentForRegion",
+  key: keys.MAYBE_ENVIRONMENTS_FOR_REGION,
   get:
     ({ regionId }: { regionId: string | undefined }) =>
     async ({ get }) => {
@@ -116,7 +116,7 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
 export const environmentsWithHealth = atom<
   Map<string, LoadedEnvironment> | undefined
 >({
-  key: "environmentsWithHealth",
+  key: keys.ENVIRONMENTS_WITH_HEALTH,
   default: undefined,
 });
 
