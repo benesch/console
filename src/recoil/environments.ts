@@ -2,7 +2,6 @@ import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
 import {
   atom,
-  atomFamily,
   selectorFamily,
   useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
 } from "recoil";
@@ -45,94 +44,17 @@ export type Environment =
   | EnabledEnvironment;
 export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
 
-export const environmentDetails = selectorFamily({
-  key: "environmentDetails",
+export const maybeEnvironmentForRegion = selectorFamily({
+  key: "maybeEnvironmentForRegion",
   get:
-    ({
-      environmentControllerUrl,
-      accessToken,
-    }: {
-      environmentControllerUrl: string;
-      accessToken: string;
-    }) =>
-    async () => {
-      const response = await environmentList(
-        environmentControllerUrl,
-        accessToken
-      );
-      return response.data;
-    },
-});
-
-export const maybeEnvironmentsForRegion = selectorFamily({
-  key: "maybeEnvironmentsForRegion",
-  get:
-    ({
-      environmentControllerUrl,
-      accessToken,
-    }: {
-      environmentControllerUrl: string | undefined;
-      accessToken: string;
-    }) =>
+    ({ regionId }: { regionId: string | undefined }) =>
     async ({ get }) => {
-      if (environmentControllerUrl) {
-        return get(
-          environmentDetails({ environmentControllerUrl, accessToken })
-        );
+      if (regionId) {
+        const environments = get(environmentsWithHealth);
+        return environments?.get(regionId);
       } else {
         return undefined;
       }
-    },
-});
-
-type FrozenEnvironment = Readonly<EnabledEnvironment>;
-export const environmentHealth = selectorFamily({
-  key: "environmentHealth",
-  get:
-    ({
-      environment,
-      accessToken,
-    }: {
-      environment: FrozenEnvironment;
-      accessToken: string;
-    }) =>
-    async (_arg) => {
-      // Determine if the environment is healthy by issuing a basic SQL query.
-      const controller = new AbortController();
-      const timeout = setTimeout(
-        () => controller.abort(),
-        10000 /* 10 seconds */
-      );
-      let health: EnvironmentHealth = "pending";
-      try {
-        if (!environment.resolvable) {
-          throw new Error(`environment unresolvable`);
-        }
-        const { errorMessage } = await executeSqlWithAccessToken(
-          environment,
-          "SELECT 1",
-          accessToken,
-          { signal: controller.signal }
-        );
-        if (errorMessage !== null) {
-          throw new Error(`environment unhealthy: ${errorMessage}`);
-        }
-        health = "healthy";
-      } catch (e) {
-        // Threshold for considering an environment to be stuck / crashed
-        const maxBootTime = { minutes: 5 };
-        const cutoff = add(
-          new Date(environment.creationTimestamp),
-          maxBootTime
-        );
-        if (new Date() > cutoff) {
-          health = "crashed";
-        } else {
-          health = "booting";
-        }
-      }
-      clearTimeout(timeout);
-      return health;
     },
 });
 
@@ -190,12 +112,11 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
   return result;
 };
 
-export const environmentsWithHealth = atomFamily<
-  Map<string, LoadedEnvironment> | undefined,
-  string
+export const environmentsWithHealth = atom<
+  Map<string, LoadedEnvironment> | undefined
 >({
   key: "environmentsWithHealth",
-  default: () => undefined,
+  default: undefined,
 });
 
 export const useEnvironmentsWithHealth = (
@@ -203,7 +124,7 @@ export const useEnvironmentsWithHealth = (
   options: { intervalMs?: number } = {}
 ) => {
   const [value, setValue] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
-    environmentsWithHealth(accessToken)
+    environmentsWithHealth
   );
 
   if (options.intervalMs) {
@@ -272,7 +193,7 @@ export const currentEnvironmentState = selectorFamily({
     (accessToken: string) =>
     ({ get }) => {
       const currentEnvironmentId = get(currentEnvironmentIdState);
-      const envs = get(environmentsWithHealth(accessToken));
+      const envs = get(environmentsWithHealth);
       if (!envs) return undefined;
       return envs.get(currentEnvironmentId);
     },

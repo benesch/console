@@ -5,14 +5,11 @@ import {
   useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
 } from "recoil";
 
-import {
-  createEnvironmentAssignment,
-  EnvironmentAssignment,
-} from "../../api/regionController";
+import { createEnvironmentAssignment } from "../../api/regionController";
 import config from "../../config";
 import {
   currentEnvironmentIdState,
-  maybeEnvironmentsForRegion,
+  maybeEnvironmentForRegion,
 } from "../../recoil/environments";
 
 export type CreateRegion = (regionId: string) => Promise<void>;
@@ -20,9 +17,6 @@ export type CreateRegion = (regionId: string) => Promise<void>;
 // Relies on the environment health polling in EnvironmentSelector
 const useCreateEnvironment = (accessToken: string) => {
   const [creatingRegionId, setCreatingRegionId] = React.useState<string>();
-  const [newAssignment, setNewAssignment] = React.useState<
-    EnvironmentAssignment | undefined
-  >(undefined);
   const [, setCurrentEnvironmentId] =
     useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentEnvironmentIdState);
 
@@ -32,12 +26,11 @@ const useCreateEnvironment = (accessToken: string) => {
     const region = config.cloudRegions.get(regionId)!;
     try {
       setCreatingRegionId(regionId);
-      const response = await createEnvironmentAssignment(
+      await createEnvironmentAssignment(
         region.regionControllerUrl,
         {},
         accessToken
       );
-      setNewAssignment(response.data);
     } catch (e: any) {
       console.log(e);
       setCreatingRegionId(undefined);
@@ -48,10 +41,9 @@ const useCreateEnvironment = (accessToken: string) => {
     }
   }, []);
 
-  const newEnvironments = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    maybeEnvironmentsForRegion({
-      environmentControllerUrl: newAssignment?.environmentControllerUrl,
-      accessToken: accessToken,
+  const newEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    maybeEnvironmentForRegion({
+      regionId: creatingRegionId,
     })
   );
 
@@ -61,16 +53,19 @@ const useCreateEnvironment = (accessToken: string) => {
      * TODO: check _status_ of env here rather than the current home page
      * when we no longer have the "we're setting up your region" intervening state.
      */
-    if (creatingRegionId && newEnvironments && newEnvironments.length > 0) {
-      setCreatingRegionId(undefined);
-      setNewAssignment(undefined);
+    if (
+      creatingRegionId &&
+      newEnvironment &&
+      newEnvironment.state !== "disabled"
+    ) {
       setCurrentEnvironmentId(creatingRegionId);
+      setCreatingRegionId(undefined);
       toast({
         title: "Region enabled.",
         status: "success",
       });
     }
-  }, [creatingRegionId, newEnvironments]);
+  }, [creatingRegionId, newEnvironment]);
 
   return {
     creatingRegionId,
