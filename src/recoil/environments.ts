@@ -142,28 +142,45 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
     assignmentMap.set(getRegionId(region), response.data);
   }
   for (const [regionId, assignments] of assignmentMap.entries()) {
-    if (assignments.length === 0) {
-      result.set(regionId, { state: "disabled" });
-    }
-    for (const { environmentControllerUrl } of assignments) {
-      const { data: envs } = await environmentList(
-        environmentControllerUrl,
-        accessToken
-      );
+    // Default to disabled state
+    // There is a brief time when a region is enabled where we have an assignment,
+    // but the environmentList call still returns nothing
+    result.set(regionId, { state: "disabled" });
 
-      for (const env of envs) {
-        const enabledEnv: EnabledEnvironment = {
-          ...env,
-          state: "enabled",
-          health: "pending",
-        };
-        const health = await fetchEnvironmentHealth(enabledEnv, accessToken);
-        result.set(regionId, {
-          ...enabledEnv,
-          health,
-        });
-      }
+    if (assignments.length === 0) {
+      continue;
     }
+    if (assignments.length > 1) {
+      throw new Error(
+        `region ${regionId} unexpectedly had ${assignments.length} environment assignments`
+      );
+    }
+    const assignment = assignments[0];
+
+    const { data: envs } = await environmentList(
+      assignment.environmentControllerUrl,
+      accessToken
+    );
+    if (envs.length === 0) {
+      continue;
+    }
+    if (envs.length > 1) {
+      throw new Error(
+        `environment assignment for ${assignment.cluster} unexpectedly had ${envs.length} environments`
+      );
+    }
+
+    const env = envs[0];
+    const enabledEnv: EnabledEnvironment = {
+      ...env,
+      state: "enabled",
+      health: "pending",
+    };
+    const health = await fetchEnvironmentHealth(enabledEnv, accessToken);
+    result.set(regionId, {
+      ...enabledEnv,
+      health,
+    });
   }
   return result;
 };
