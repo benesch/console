@@ -11,7 +11,7 @@ import {
   Environment as ApiEnvironment,
   environmentList,
 } from "../api/environmentController";
-import { executeSqlWithAccessToken } from "../api/materialized";
+import { executeSql } from "../api/materialized";
 import {
   EnvironmentAssignment,
   environmentAssignmentList,
@@ -157,7 +157,7 @@ const fetchEnvironmentHealth = async (
     if (!environment.resolvable) {
       throw new Error(`environment unresolvable`);
     }
-    const { errorMessage } = await executeSqlWithAccessToken(
+    const { errorMessage } = await executeSql(
       environment,
       "SELECT 1",
       accessToken,

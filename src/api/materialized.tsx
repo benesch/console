@@ -13,7 +13,7 @@ import {
   EnabledEnvironment,
 } from "../recoil/environments";
 import { assert } from "../util";
-import { FetchAuthedType, useAuth } from "./auth";
+import { useAuth } from "./auth";
 
 export interface Results {
   columns: Array<string>;
@@ -43,7 +43,7 @@ export function useSql(sql: string | undefined) {
 
     try {
       setLoading(true);
-      const { results: res, errorMessage } = await executeSqlWithAccessToken(
+      const { results: res, errorMessage } = await executeSql(
         environment,
         sql,
         user.accessToken
@@ -75,31 +75,10 @@ interface ExecuteSqlOutput {
   errorMessage: string | null;
 }
 
-export const executeSqlWithAccessToken = async (
-  environment: EnabledEnvironment,
-  query: string,
-  accessToken: string,
-  requestOpts?: RequestInit
-): Promise<ExecuteSqlOutput> => {
-  return executeSql(
-    environment,
-    query,
-    (input: RequestInfo, init?: RequestInit) =>
-      fetch(input, {
-        ...init,
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          ...init?.headers,
-        },
-      }),
-    requestOpts
-  );
-};
-
 export const executeSql = async (
   environment: EnabledEnvironment,
   query: string,
-  fetcher: FetchAuthedType,
+  accessToken: string,
   requestOpts?: RequestInit
 ): Promise<ExecuteSqlOutput> => {
   assert(environment.resolvable);
@@ -115,11 +94,12 @@ export const executeSql = async (
   }
 
   try {
-    const response = await fetcher(
+    const response = await fetch(
       `${config.environmentdScheme}://${address}/api/sql`,
       {
         method: "POST",
         headers: {
+          authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
