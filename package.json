@@ -96,6 +96,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "extract-zip": "^2.0.1",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
@@ -142,6 +143,13 @@
         ]
       }
     },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended",
+      "plugin:react-hooks/recommended",
+      "plugin:react/recommended"
+    ],
     "rules": {
       "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
@@ -178,13 +186,7 @@
           "propElementValues": "always"
         }
       ]
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:prettier/recommended",
-      "plugin:react/recommended"
-    ]
+    }
   },
   "browserslist": {
     "production": [
