@@ -11,13 +11,15 @@ import { Integrations } from "@sentry/tracing";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { RecoilRoot } from "recoil";
+import { RecoilEnv, RecoilRoot } from "recoil";
 
 import StatusPageWidget from "./components/StatusPageWidget";
 import config from "./config";
 import FronteggProviderWrapper from "./FronteggProviderWrapper";
 import Router from "./router";
 import * as theme from "./theme";
+
+RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
 // Configure Sentry error reporting.
 if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {

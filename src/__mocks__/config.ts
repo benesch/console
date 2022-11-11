@@ -13,6 +13,7 @@ export const globalConfigStub: GlobalConfig = {
   googleAnalyticsId: "google-analytics-id",
   environmentdScheme: "http",
   cloudRegions: new Map(),
+  recoilDuplicateCheckingEnabled: false,
 };
 
 export const mockGlobalConfig = (overrides: Partial<GlobalConfig> = {}) => {

@@ -61,6 +61,7 @@ const definePluginOptions: IDefinePluginOptions = {
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(null),
   __ENVIRONMENTD_SCHEME__: JSON.stringify(environmentdScheme),
   __CLOUD_REGIONS__: JSON.stringify(cloudRegions),
+  __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(true),
 };
 
 module.exports = merge(base, {
