@@ -18,21 +18,9 @@ export const dummyValidUser: User = {
   tenantId: "tenant-id",
 };
 
-/** we mock the authentication modules that depends on features not available in our jest setup */
-export const mockUseAuth = () => {
-  jest.mock("uuid", () => ({ v4: jest.fn(() => "pseudo-random") }));
-  jest.mock("@frontegg/react", () => {
-    return {
-      useAuth: jest.fn(() => dummyValidUser),
-    };
-  });
-  jest.mock("../auth", () => {
-    return {
-      AuthProvider: jest.fn(({ children }) => <>{children}</>),
-      RestfulProvider: jest.fn(({ children }) => <>{children}</>),
-      useAuth: jest.fn(() => ({
-        user: dummyValidUser,
-      })),
-    };
-  });
-};
+export const useAuth = jest.fn(() => ({
+  user: dummyValidUser,
+}));
+export const AuthProvider = jest.fn(({ children }) => <>{children}</>);
+export const RestfulProvider = jest.fn(({ children }) => <>{children}</>);
+export const hasEnvironmentReadPermission = jest.fn(() => true);

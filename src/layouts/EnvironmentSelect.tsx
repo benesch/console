@@ -94,21 +94,26 @@ type DotProps = {
 
 const Dot = ({ environment }: DotProps) => {
   let color;
+  let health;
   switch (environment.state) {
     case "enabled": {
       switch (environment.health) {
         case "pending":
-          // TODO: this should be a spinner. For now we just go with yellow.
+          // This state never shows, we don't render this until the data is loaded
           color = "yellow.400";
+          health = "pending";
           break;
         case "booting":
           color = "yellow.400";
+          health = "booting";
           break;
         case "healthy":
           color = "green.500";
+          health = "healthy";
           break;
         case "crashed":
           color = "red.400";
+          health = "crashed";
           break;
       }
       break;
@@ -120,6 +125,7 @@ const Dot = ({ environment }: DotProps) => {
   }
   return (
     <Box
+      data-testid={`health-${health}`}
       height="10px"
       width="10px"
       mr={2}
