@@ -4,6 +4,7 @@ import React from "react";
 import PageFooter, { getCurrentYear } from "./PageFooter";
 
 beforeAll(() => {
+  jest.useFakeTimers();
   jest.setSystemTime(new Date(2022, 3, 1));
 });
 
