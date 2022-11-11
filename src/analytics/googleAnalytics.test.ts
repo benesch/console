@@ -1,6 +1,6 @@
 import ReactGA from "react-ga";
 
-import { globalConfigStub } from "../__mocks__/config";
+import globalConfigStub from "../__mocks__/config";
 import { globalConfigNoAnalyticsSetup } from "./__mocks__";
 import GAAnalyticsClient from "./googleAnalytics";
 

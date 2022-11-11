@@ -1,4 +1,4 @@
-import { globalConfigStub } from "../__mocks__/config";
+import globalConfigStub from "../__mocks__/config";
 import { GlobalConfig } from "../config";
 
 // eslint-disable-next-line import/prefer-default-export
