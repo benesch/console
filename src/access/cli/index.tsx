@@ -54,7 +54,7 @@ const CLI = () => {
     if (!createInProgress) {
       asyncRequest();
     }
-  }, [createInProgress, tokensState]);
+  }, [tokensState, redirectUri, email, createInProgress]);
 
   const onYesClick = () => {
     addUserApiToken({

@@ -40,7 +40,7 @@ const AppPasswordsPage = () => {
   const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
   React.useEffect(() => {
     loadUserApiTokens();
-  }, []);
+  }, [loadUserApiTokens]);
   const tokensState = useApiTokensState();
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
@@ -56,7 +56,7 @@ const AppPasswordsPage = () => {
       return `mzp_${formattedClientId}${formattedSecret}`;
     }
     return "";
-  }, [tokensState]);
+  }, [createInProgress, tokensState]);
 
   const deleteCb = (clientId: string) => {
     setLatestDeletionId(clientId);

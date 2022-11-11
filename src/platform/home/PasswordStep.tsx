@@ -37,7 +37,7 @@ const PasswordStep = (props: BoxProps) => {
 
   React.useEffect(() => {
     loadUserApiTokens();
-  }, []);
+  }, [loadUserApiTokens]);
   React.useEffect(() => {
     if (
       loadingInProgress === false &&
@@ -45,7 +45,7 @@ const PasswordStep = (props: BoxProps) => {
     ) {
       addUserApiToken({ description: NEW_USER_DEFAULT_PASSWORD_NAME });
     }
-  }, [tokensState.apiTokensDataUser, loadingInProgress]);
+  }, [tokensState.apiTokensDataUser, loadingInProgress, addUserApiToken]);
   const newPassword = React.useMemo(() => {
     if (createInProgress) {
       return "";
@@ -59,7 +59,7 @@ const PasswordStep = (props: BoxProps) => {
       }
     }
     return "";
-  }, [tokensState]);
+  }, [createInProgress, tokensState]);
 
   let boxContents = (
     <Text color={grayText}>

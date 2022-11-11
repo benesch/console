@@ -27,35 +27,38 @@ const StatusPageWidget = (props: StatusPageWidgetProps) => {
     src += `?mobile=true`;
   }
 
-  function handleIframeMessage(event: MessageEvent) {
-    if (event.origin !== origin) {
-      return;
-    }
+  const handleIframeMessage = React.useCallback(
+    (event: MessageEvent) => {
+      if (event.origin !== origin) {
+        return;
+      }
 
-    switch (event.data.action) {
-      case "showFrame":
-        setVisible(true);
-        break;
+      switch (event.data.action) {
+        case "showFrame":
+          setVisible(true);
+          break;
 
-      case "dismissFrame":
-        setVisible(false);
-        break;
+        case "dismissFrame":
+          setVisible(false);
+          break;
 
-      case undefined:
-        // no-op - sometimes this is sent on initial load
-        break;
+        case undefined:
+          // no-op - sometimes this is sent on initial load
+          break;
 
-      default:
-        throw new Error(
-          `unexpected action from statuspage iframe: ${event.data.action}`
-        );
-    }
-  }
+        default:
+          throw new Error(
+            `unexpected action from statuspage iframe: ${event.data.action}`
+          );
+      }
+    },
+    [origin]
+  );
 
   useEffect(() => {
     window.addEventListener("message", handleIframeMessage);
     return () => window.removeEventListener("message", handleIframeMessage);
-  }, []);
+  }, [handleIframeMessage]);
 
   return (
     <chakra.iframe

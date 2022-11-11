@@ -35,7 +35,7 @@ export function useSql(sql: string | undefined) {
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
-  async function runSql() {
+  const runSql = React.useCallback(async () => {
     if (environment?.state !== "enabled" || !sql) {
       setResults(null);
       return;
@@ -61,11 +61,11 @@ export function useSql(sql: string | undefined) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [environment, sql, user.accessToken]);
 
   useEffect(() => {
     runSql();
-  }, [environment, sql]);
+  }, [environment, sql, runSql]);
 
   return { data: results, error, loading, refetch: runSql };
 }

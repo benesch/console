@@ -24,15 +24,11 @@ export const makeShimAnalyticsClient = () => {
   return instance;
 };
 
-const setupRenderTree = ({
-  passAnalyticsClient = true,
-}: { passAnalyticsClient?: boolean } = {}) => {
+const setupRenderTree = () => {
   const shimAnalyticsClients = [
     makeShimAnalyticsClient(),
     makeShimAnalyticsClient(),
   ];
-
-  const params = passAnalyticsClient ? { clients: shimAnalyticsClients } : {};
 
   const Home = () => {
     const navigate = useNavigate();
@@ -48,7 +44,10 @@ const setupRenderTree = ({
         <Route path="/" element={<Home />} />
         <Route path="somewhere" element={<div>somewhere</div>} />
       </Routes>
-      <AnalyticsOnEveryPage {...params} />
+      <AnalyticsOnEveryPage
+        config={globalConfigStub}
+        clients={shimAnalyticsClients}
+      />
     </MemoryRouter>
   );
 
@@ -58,8 +57,9 @@ const setupRenderTree = ({
   };
 };
 
+const fakeAuth = { user: { id: "123" } };
 jest.mock("@frontegg/react", () => ({
-  useAuth: jest.fn(() => ({ user: { id: "123" } })),
+  useAuth: jest.fn(() => fakeAuth),
 }));
 
 describe("analytics/AnalyticsOnEveryPage", () => {
@@ -80,33 +80,11 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     await waitFor(() => expect(client1.page).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(client2.page).toHaveBeenCalledTimes(2));
   });
-  it("should do nothing if no analytics client are provided", async () => {
-    const {
-      shimAnalyticsClients: [client1, client2],
-      renderResult,
-    } = setupRenderTree({
-      passAnalyticsClient: false,
-    });
-
-    const button = await renderResult.findByRole("button");
-    await userEvent.click(button);
-
-    const client1SentEventAnotherTime = await waitFor(
-      () => (client1.page as jest.Mock).mock.calls.length > 1
-    );
-
-    const client2SentEventAnotherTime = await waitFor(
-      () => (client2.page as jest.Mock).mock.calls.length > 1
-    );
-    expect(client1SentEventAnotherTime).toBe(false);
-    expect(client2SentEventAnotherTime).toBe(false);
-  });
 
   it("should identify the user if valid auth is available", () => {
     const {
       shimAnalyticsClients: [client],
     } = setupRenderTree();
-    expect(client.identify).toHaveBeenCalledTimes(2);
     expect(client.identify).toHaveBeenCalledWith("123");
   });
 

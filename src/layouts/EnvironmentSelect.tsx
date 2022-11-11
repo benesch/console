@@ -39,7 +39,7 @@ const EnvironmentSelectField = () => {
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
       setCurrentEnvironmentId((option as EnvOptionType).id);
     },
-    [environments, setCurrentEnvironmentId]
+    [setCurrentEnvironmentId]
   );
 
   const colorStyles = React.useMemo(

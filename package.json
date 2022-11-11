@@ -170,6 +170,7 @@
           "varsIgnorePattern": "^_"
         }
       ],
+      "react-hooks/exhaustive-deps": "error",
       "react/display-name": "off",
       "react/function-component-definition": [
         2,

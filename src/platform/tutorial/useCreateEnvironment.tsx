@@ -22,24 +22,27 @@ const useCreateEnvironment = (accessToken: string) => {
 
   const toast = useToast({ position: "top" });
 
-  const createRegion = React.useCallback(async (regionId: string) => {
-    const region = config.cloudRegions.get(regionId)!;
-    try {
-      setCreatingRegionId(regionId);
-      await createEnvironmentAssignment(
-        region.regionControllerUrl,
-        {},
-        accessToken
-      );
-    } catch (e: any) {
-      console.log(e);
-      setCreatingRegionId(undefined);
-      toast({
-        title: "Failed to enable region.",
-        status: "error",
-      });
-    }
-  }, []);
+  const createRegion = React.useCallback(
+    async (regionId: string) => {
+      const region = config.cloudRegions.get(regionId)!;
+      try {
+        setCreatingRegionId(regionId);
+        await createEnvironmentAssignment(
+          region.regionControllerUrl,
+          {},
+          accessToken
+        );
+      } catch (e: any) {
+        console.log(e);
+        setCreatingRegionId(undefined);
+        toast({
+          title: "Failed to enable region.",
+          status: "error",
+        });
+      }
+    },
+    [accessToken, toast]
+  );
 
   const newEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     maybeEnvironmentForRegion({
@@ -65,7 +68,7 @@ const useCreateEnvironment = (accessToken: string) => {
         status: "success",
       });
     }
-  }, [creatingRegionId, newEnvironment]);
+  }, [creatingRegionId, newEnvironment, setCurrentEnvironmentId, toast]);
 
   return {
     creatingRegionId,

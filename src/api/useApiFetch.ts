@@ -21,12 +21,12 @@ export const useApiFetch = <T>({
       setError(apiError);
     }
     setLoading(false);
-  }, []);
+  }, [apiFn]);
   React.useEffect(() => {
     if (lazy) return;
 
     refetch();
-  }, []);
+  }, [lazy, refetch]);
   return {
     data,
     loading,

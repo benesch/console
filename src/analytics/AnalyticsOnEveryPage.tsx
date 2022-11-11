@@ -1,9 +1,10 @@
 import { useAuth } from "@frontegg/react";
-import { useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router";
 
 import { GlobalConfig } from "../config";
-import useAnalyticsClients from "./hook";
+import GAAnalyticsClient from "./googleAnalytics";
+import SegmentAnalyticsClient from "./segment";
 import { AnalyticsClient } from "./types";
 
 /**
@@ -13,23 +14,30 @@ import { AnalyticsClient } from "./types";
  */
 const AnalyticsOnEveryPage: React.FC<
   React.PropsWithChildren<{
-    config?: GlobalConfig;
+    config: GlobalConfig;
     clients?: AnalyticsClient[];
   }>
 > = ({ config, clients }) => {
   const auth = useAuth((state) => state);
-  const allClients = useAnalyticsClients({ config, clients });
   const location = useLocation();
+  const allClients = React.useMemo(
+    () =>
+      clients ?? [
+        new GAAnalyticsClient(config),
+        new SegmentAnalyticsClient(config),
+      ],
+    [config, clients]
+  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     allClients.forEach((client) => {
       client.page();
     });
-  }, [location]);
+  }, [allClients, location]);
 
   // once we have valid auth, identify the further analytics events
   // otherwise, logout
-  useEffect(() => {
+  React.useEffect(() => {
     if (auth.user) {
       const u = auth.user;
       allClients.forEach((client) => {
@@ -40,7 +48,7 @@ const AnalyticsOnEveryPage: React.FC<
         client.reset();
       });
     }
-  }, [auth]);
+  }, [allClients, auth]);
   return null;
 };
 

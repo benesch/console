@@ -89,7 +89,7 @@ const GridLayout = (): JSX.Element => {
         status: "error",
       });
     }
-  }, [error]);
+  }, [error, toast]);
 
   /**
    * Handlers

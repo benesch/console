@@ -128,11 +128,9 @@ export const useEnvironmentsWithHealth = (
     environmentsWithHealth
   );
 
-  if (options.intervalMs) {
-    useInterval(async () => {
-      setValue(await fetchEnvironmentsWithHealth(accessToken));
-    }, options.intervalMs);
-  }
+  useInterval(async () => {
+    setValue(await fetchEnvironmentsWithHealth(accessToken));
+  }, options.intervalMs ?? null);
   if (value) {
     return value;
   }

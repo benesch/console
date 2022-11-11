@@ -29,7 +29,7 @@ export const useCopyableText = (text: string, delay?: number) => {
   const setCopiedState = React.useCallback(() => {
     setCopied(true);
     setTimeout(() => setCopied(false), delay || 1000);
-  }, [setCopied]);
+  }, [setCopied, delay]);
 
   const onClickCopy = () => {
     onCopy();
@@ -131,6 +131,8 @@ export const CopyableText: React.FC<
   const { onCopy, copied } = useCopyableText(
     contents ? contents : props.children || ""
   );
+  const textColor = useColorModeValue("purple.900", "purple.100");
+  const hoverColor = useColorModeValue("purple.500", "purple.300");
   if (!props.children) {
     return (
       <Text color="inherit" {...props}>
@@ -138,8 +140,6 @@ export const CopyableText: React.FC<
       </Text>
     );
   }
-  const textColor = useColorModeValue("purple.900", "purple.100");
-  const hoverColor = useColorModeValue("purple.500", "purple.300");
   return (
     <Button
       variant="link"
