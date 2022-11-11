@@ -145,13 +145,18 @@ export const useEnvironmentsWithHealth = (
   });
 };
 
-const fetchEnvironmentHealth = async (
+const defaultTimeout = 10_000; // 10 seconds
+const maxBootDuration = { minutes: 5 };
+
+export const fetchEnvironmentHealth = async (
   environment: EnabledEnvironment,
-  accessToken: string
+  accessToken: string,
+  timeoutMs: number = defaultTimeout,
+  maxBoot: Duration = maxBootDuration
 ) => {
   // Determine if the environment is healthy by issuing a basic SQL query.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000 /* 10 seconds */);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   let health: EnvironmentHealth = "pending";
   try {
     if (!environment.resolvable) {
@@ -164,13 +169,14 @@ const fetchEnvironmentHealth = async (
       { signal: controller.signal }
     );
     if (errorMessage !== null) {
-      throw new Error(`environment unhealthy: ${errorMessage}`);
+      console.warn(`environment unhealthy: ${errorMessage}`);
+      health = "crashed";
+    } else {
+      health = "healthy";
     }
-    health = "healthy";
   } catch (e) {
     // Threshold for considering an environment to be stuck / crashed
-    const maxBootTime = { minutes: 5 };
-    const cutoff = add(new Date(environment.creationTimestamp), maxBootTime);
+    const cutoff = add(new Date(environment.creationTimestamp), maxBoot);
     if (new Date() > cutoff) {
       health = "crashed";
     } else {

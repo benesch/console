@@ -93,52 +93,47 @@ export const executeSql = async (
     return result;
   }
 
-  try {
-    const response = await fetch(
-      `${config.environmentdScheme}://${address}/api/sql`,
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // Run all queries on the `mz_introspection` cluster, as it's
-          // guaranteed to exist. (The `default` cluster may have been dropped
-          // by the user.)
-          //
-          // TODO: allow the caller of `executeSql` to configure the cluster.
-          query: `SET cluster = mz_introspection; ${query}`,
-        }),
-        ...requestOpts,
-      }
-    );
-
-    const responseText = await response.text();
-
-    if (response.status === 400) {
-      result.errorMessage = responseText || defaultError;
-    } else {
-      const parsedResponse = JSON.parse(responseText);
-      const {
-        results: [_, data],
-      } = parsedResponse;
-      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-      const { error: resultsError, rows, col_names } = data || {};
-
-      if (resultsError) {
-        result.errorMessage = resultsError;
-      } else {
-        result.results = {
-          rows: rows,
-          columns: col_names,
-        };
-        result.errorMessage = null;
-      }
+  const response = await fetch(
+    `${config.environmentdScheme}://${address}/api/sql`,
+    {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Run all queries on the `mz_introspection` cluster, as it's
+        // guaranteed to exist. (The `default` cluster may have been dropped
+        // by the user.)
+        //
+        // TODO: allow the caller of `executeSql` to configure the cluster.
+        query: `SET cluster = mz_introspection; ${query}`,
+      }),
+      ...requestOpts,
     }
-  } catch (err) {
-    console.error(err);
-    result.errorMessage = defaultError;
+  );
+
+  const responseText = await response.text();
+
+  if (!response.ok) {
+    result.errorMessage = responseText || defaultError;
+  } else {
+    const parsedResponse = JSON.parse(responseText);
+    const {
+      results: [_, data],
+    } = parsedResponse;
+    // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
+    const { error: resultsError, rows, col_names } = data || {};
+
+    if (resultsError) {
+      result.errorMessage = resultsError;
+    } else {
+      result.results = {
+        rows: rows,
+        columns: col_names,
+      };
+      result.errorMessage = null;
+    }
   }
   return result;
 };

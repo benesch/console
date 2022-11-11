@@ -132,6 +132,7 @@
     ],
     "ignorePatterns": [
       "frontend/src/api/schemas",
+      "frontend/src/jest.setup.js",
       "vendor"
     ],
     "settings": {
