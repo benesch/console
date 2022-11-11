@@ -34,7 +34,6 @@ describe("analytics/googleanalytics", () => {
       expect(ReactGA.initialize).not.toHaveBeenCalled();
     });
     it("calling page should trigger a GA event emission", () => {
-      window.location.pathname = "/an-url";
       const client = makeGAClient();
       (ReactGA.pageview as jest.Mock).mockClear();
       client.page();

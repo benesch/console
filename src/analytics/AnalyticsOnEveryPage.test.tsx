@@ -1,5 +1,6 @@
 import { useAuth } from "@frontegg/react";
 import { render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 
@@ -70,7 +71,7 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     // initial page
 
     const button = await renderResult.findByRole("button");
-    button.click();
+    await userEvent.click(button);
 
     // So we have a component without any kind of returned node,
     // so testing library is not helpful, as it cannot target a "visible element"
@@ -88,7 +89,7 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     });
 
     const button = await renderResult.findByRole("button");
-    button.click();
+    await userEvent.click(button);
 
     const client1SentEventAnotherTime = await waitFor(
       () => (client1.page as jest.Mock).mock.calls.length > 1
