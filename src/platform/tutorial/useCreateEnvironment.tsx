@@ -1,15 +1,12 @@
 import { useToast } from "@chakra-ui/toast";
 import React from "react";
-import {
-  useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
-  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
-} from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { createEnvironmentAssignment } from "../../api/regionController";
 import config from "../../config";
 import {
-  currentEnvironmentIdState,
   maybeEnvironmentForRegion,
+  useSetCurrentEnvironment,
 } from "../../recoil/environments";
 
 export type CreateRegion = (regionId: string) => Promise<void>;
@@ -17,8 +14,7 @@ export type CreateRegion = (regionId: string) => Promise<void>;
 // Relies on the environment health polling in EnvironmentSelector
 const useCreateEnvironment = (accessToken: string) => {
   const [creatingRegionId, setCreatingRegionId] = React.useState<string>();
-  const [, setCurrentEnvironmentId] =
-    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentEnvironmentIdState);
+  const setCurrentEnvironmentId = useSetCurrentEnvironment();
 
   const toast = useToast({ position: "top" });
 

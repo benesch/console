@@ -5,6 +5,7 @@ import {
   selector,
   selectorFamily,
   useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
 } from "recoil";
 
 import {
@@ -18,6 +19,7 @@ import {
 } from "../api/regionController";
 import config from "../config";
 import { getRegionId } from "../types";
+import storageAvailable from "../utils/storageAvailable";
 import keys from "./keyConstants";
 
 /** The health of an environment. */
@@ -44,6 +46,8 @@ export type Environment =
   | DisabledEnvironment
   | EnabledEnvironment;
 export type LoadedEnvironment = DisabledEnvironment | EnabledEnvironment;
+
+export const SELECTED_REGION_KEY = "mz-selected-region";
 
 export const maybeEnvironmentForRegion = selectorFamily({
   key: keys.MAYBE_ENVIRONMENTS_FOR_REGION,
@@ -201,3 +205,13 @@ export const currentEnvironmentState = selector<LoadedEnvironment | undefined>({
     return envs.get(currentEnvironmentId);
   },
 });
+
+export const useSetCurrentEnvironment = () => {
+  const setCurrentEnvironmentId = useSetRecoilState(currentEnvironmentIdState);
+  return (newEnvironmentId: string) => {
+    setCurrentEnvironmentId(newEnvironmentId);
+    if (storageAvailable("localStorage")) {
+      window.localStorage.setItem(SELECTED_REGION_KEY, newEnvironmentId);
+    }
+  };
+};

@@ -13,13 +13,14 @@ import ReactSelect, {
   SingleValueProps,
   StylesConfig,
 } from "react-select";
-import { useRecoilState } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
 import {
   currentEnvironmentIdState,
   LoadedEnvironment,
   useEnvironmentsWithHealth,
+  useSetCurrentEnvironment,
 } from "../recoil/environments";
 import { reactSelectTheme } from "../theme";
 import colors from "../theme/colors";
@@ -31,7 +32,8 @@ const EnvironmentSelectField = () => {
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: 5000,
   });
-  const [currentEnvironmentId, setCurrentEnvironmentId] = useRecoilState(
+  const setCurrentEnvironmentId = useSetCurrentEnvironment();
+  const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentIdState
   );
 

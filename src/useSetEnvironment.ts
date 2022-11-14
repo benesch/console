@@ -1,10 +1,11 @@
 import React from "react";
 import { useSetRecoilState } from "recoil";
 
-import { currentEnvironmentIdState } from "./recoil/environments";
+import {
+  currentEnvironmentIdState,
+  SELECTED_REGION_KEY,
+} from "./recoil/environments";
 import storageAvailable from "./utils/storageAvailable";
-
-const SELECTED_REGION_KEY = "mz-selected-region";
 
 const useSetEnvironment = () => {
   const setCurrentEnvironment = useSetRecoilState(currentEnvironmentIdState);
