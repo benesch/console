@@ -64,6 +64,7 @@ const scriptSrc = [
   "https://www.google-analytics.com",
   "https://*.googletagmanager.com",
   "https://assets.frontegg.com",
+  "https://cdn.segment.com",
 ];
 
 const cspPolicy = {
@@ -72,14 +73,15 @@ const cspPolicy = {
   "connect-src": [
     "'self'",
     "https://o561021.ingest.sentry.io",
-    "https://cdn.segment.com/",
+    "https://api.segment.io",
+    "https://api.segment.materialize.com",
+    "https://cdn.segment.com",
     "https://assets.frontegg.com/",
     "https://*.google-analytics.com",
     "https://*.g.doubleclick.net",
     "https://*.analytics.google.com",
     "https://*.googletagmanager.com",
     "https://*.google.com",
-    "https://api.segment.io/",
     `https://ec.0.us-east-1.aws.${appHostname}`,
     `https://ec.0.eu-west-1.aws.${appHostname}`,
     `https://rc.us-east-1.aws.${appHostname}`,
