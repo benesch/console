@@ -43,6 +43,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __GOOGLE_ANALYTICS_ID__: JSON.stringify(googleAnalyticsId),
   __ENVIRONMENTD_SCHEME__: JSON.stringify("https"),
   __CLOUD_REGIONS__: requireEnv("CLOUD_REGIONS"),
+  __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
 };
 
 const metadataDir = `${__dirname}/public/_metadata`;

@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { Source, useSources } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
@@ -53,7 +53,9 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 const SourcesListPage = () => {
-  const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState
+  );
   const { sources, refetch } = useSources();
   useInterval(refetch, 5000);
   const grayText = useColorModeValue(
@@ -61,7 +63,7 @@ const SourcesListPage = () => {
     semanticColors.grayText.dark
   );
 
-  const isDisabled = currentEnvironment.state !== "enabled";
+  const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = sources === null;
   const isEmpty = !isLoading && sources.length === 0;
 

@@ -20,6 +20,7 @@ import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
 import { AuthProvider } from "./api/auth";
 import config from "./config";
 import { BaseLayout } from "./layouts/BaseLayout";
+import LoadingScreen from "./loading";
 import ClusterRoutes from "./platform/clusters/clusterRouter";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
@@ -102,9 +103,11 @@ const ProtectedRoutes = (props: RoutesProps) => {
   // Render the Routes.
   return (
     <AuthProvider user={user}>
-      <BaseLayout overflowY={layoutOverflow}>
-        <Routes {...props} />
-      </BaseLayout>
+      <React.Suspense fallback={<LoadingScreen />}>
+        <BaseLayout overflowY={layoutOverflow}>
+          <Routes {...props} />
+        </BaseLayout>
+      </React.Suspense>
     </AuthProvider>
   );
 };

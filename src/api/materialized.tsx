@@ -5,7 +5,7 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import config from "../config";
 import {
@@ -13,7 +13,7 @@ import {
   EnabledEnvironment,
 } from "../recoil/environments";
 import { assert } from "../util";
-import { FetchAuthedType, useAuth } from "./auth";
+import { useAuth } from "./auth";
 
 export interface Results {
   columns: Array<string>;
@@ -26,15 +26,17 @@ export interface Results {
  * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
  */
 export function useSql(sql: string | undefined) {
-  const { fetchAuthed } = useAuth();
-  const environment = useRecoilValue(currentEnvironmentState);
+  const { user } = useAuth();
+  const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
   async function runSql() {
-    if (environment.state !== "enabled" || !sql) {
+    if (environment?.state !== "enabled" || !sql) {
       setResults(null);
       return;
     }
@@ -44,7 +46,7 @@ export function useSql(sql: string | undefined) {
       const { results: res, errorMessage } = await executeSql(
         environment,
         sql,
-        fetchAuthed
+        user.accessToken
       );
       if (errorMessage) {
         setResults(null);
@@ -76,7 +78,7 @@ interface ExecuteSqlOutput {
 export const executeSql = async (
   environment: EnabledEnvironment,
   query: string,
-  fetcher: FetchAuthedType,
+  accessToken: string,
   requestOpts?: RequestInit
 ): Promise<ExecuteSqlOutput> => {
   assert(environment.resolvable);
@@ -92,11 +94,12 @@ export const executeSql = async (
   }
 
   try {
-    const response = await fetcher(
+    const response = await fetch(
       `${config.environmentdScheme}://${address}/api/sql`,
       {
         method: "POST",
         headers: {
+          authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

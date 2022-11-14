@@ -13,25 +13,27 @@ import ReactSelect, {
   SingleValueProps,
   StylesConfig,
 } from "react-select";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
 import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
 import {
   currentEnvironmentIdState,
   LoadedEnvironment,
-  loadedEnvironmentsState,
+  useEnvironmentsWithHealth,
 } from "../recoil/environments";
 import { reactSelectTheme } from "../theme";
 import colors from "../theme/colors";
 
 const EnvironmentSelectField = () => {
-  const environments = useRecoilValue(loadedEnvironmentsState);
-  const [currentEnvironmentId, setCurrentEnvironmentId] = useRecoilState(
-    currentEnvironmentIdState
-  );
   const colorModeContext = useColorMode();
   const { user } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
+  const environments = useEnvironmentsWithHealth(user.accessToken, {
+    intervalMs: 5000,
+  });
+  const [currentEnvironmentId, setCurrentEnvironmentId] = useRecoilState(
+    currentEnvironmentIdState
+  );
 
   const selectHandler = React.useCallback(
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
@@ -44,10 +46,6 @@ const EnvironmentSelectField = () => {
     () => getColorStyles(colorModeContext.colorMode),
     [colorModeContext]
   );
-
-  if (!environments) {
-    return <Spinner />;
-  }
 
   if (
     Array.from(environments.values()).every((e) => e.state === "disabled") ||
@@ -64,22 +62,24 @@ const EnvironmentSelectField = () => {
   const currentOption = options.find((o) => o.id === currentEnvironmentId)!;
 
   return (
-    <ReactSelect
-      id="environment-select"
-      aria-label="Environment"
-      name="environment-select"
-      components={{ Option: EnvOption, SingleValue }}
-      options={options}
-      value={currentOption}
-      onChange={selectHandler}
-      styles={colorStyles}
-      theme={(theme) => ({
-        ...theme,
-        ...reactSelectTheme,
-      })}
-      isMulti={false}
-      isSearchable={false}
-    />
+    <React.Suspense fallback={<Spinner />}>
+      <ReactSelect
+        id="environment-select"
+        aria-label="Environment"
+        name="environment-select"
+        components={{ Option: EnvOption, SingleValue }}
+        options={options}
+        value={currentOption}
+        onChange={selectHandler}
+        styles={colorStyles}
+        theme={(theme) => ({
+          ...theme,
+          ...reactSelectTheme,
+        })}
+        isMulti={false}
+        isSearchable={false}
+      />
+    </React.Suspense>
   );
 };
 

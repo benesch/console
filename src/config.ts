@@ -12,6 +12,8 @@ const config = {
   statuspageId: __STATUSPAGE_ID__,
   googleAnalyticsId: __GOOGLE_ANALYTICS_ID__,
   cloudRegions: new Map(__CLOUD_REGIONS__.map((r) => [getRegionId(r), r])),
+  recoilDuplicateCheckingEnabled:
+    __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__,
 };
 
 export type GlobalConfig = typeof config;

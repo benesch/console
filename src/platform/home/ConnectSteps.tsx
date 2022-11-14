@@ -7,10 +7,10 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { useAuth } from "@frontegg/react";
 import React, { ChangeEventHandler } from "react";
 import { useRecoilValue } from "recoil";
 
+import { useAuth } from "../../api/auth";
 import { CopyableBox } from "../../components/copyableComponents";
 import { currentEnvironmentState } from "../../recoil/environments";
 import { semanticColors } from "../../theme/colors";
@@ -33,7 +33,7 @@ const ConnectSteps = (): JSX.Element => {
       setConnectionOption(e.target.value as ConnectionOption);
     }, []);
 
-  if (currentEnvironment.state !== "enabled" || !user) {
+  if (!currentEnvironment || currentEnvironment.state !== "enabled" || !user) {
     return <Spinner />;
   }
 

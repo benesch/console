@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { Cluster } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
@@ -60,13 +60,15 @@ type Props = {
 };
 
 const ClustersListPage = ({ clusters }: Props) => {
-  const currentEnvironment = useRecoilValue(currentEnvironmentState);
+  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState
+  );
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
   );
 
-  const isDisabled = currentEnvironment.state !== "enabled";
+  const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = clusters === null;
   const isEmpty = !isLoading && clusters.length === 0;
 

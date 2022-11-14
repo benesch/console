@@ -34,4 +34,5 @@ declare global {
   const __STATUSPAGE_ID__: string;
   const __ENVIRONMENTD_SCHEME__: "http" | "https";
   const __CLOUD_REGIONS__: CloudRegion[];
+  const __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: boolean;
 }

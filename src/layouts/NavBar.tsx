@@ -17,6 +17,7 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Spinner,
   Tag,
   Text,
   useColorModeValue,
@@ -102,7 +103,9 @@ const NavBar = () => {
         pb={{ base: 0, lg: 2 }}
         order={{ base: 100, lg: 2 }}
       >
-        <EnvironmentSelectField />
+        <React.Suspense fallback={<Spinner />}>
+          <EnvironmentSelectField />
+        </React.Suspense>
       </Flex>
       <NavMenu
         order={{ base: 2, lg: 3 }}

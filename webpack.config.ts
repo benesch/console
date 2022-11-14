@@ -38,6 +38,7 @@ export interface IDefinePluginOptions extends Record<string, string> {
   __GOOGLE_ANALYTICS_ID__: string;
   __ENVIRONMENTD_SCHEME__: string;
   __CLOUD_REGIONS__: string;
+  __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: string;
 }
 
 const config: Configuration = {
