@@ -26,10 +26,13 @@ import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
 import SinksListPage from "./platform/sinks/SinksList";
 import SourcesListPage from "./platform/sources/SourcesList";
+import useSetEnvironment from "./useSetEnvironment";
 import { assert } from "./util";
 
 /** The root router for the application. */
 const Router = () => {
+  useSetEnvironment();
+
   return (
     <>
       <ProtectedRoutes>
