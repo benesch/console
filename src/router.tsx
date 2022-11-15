@@ -3,7 +3,8 @@
  * URL routing.
  */
 
-import { useAuth as useFronteggAuth } from "@frontegg/react";
+import { useAuth, useAuth as useFronteggAuth } from "@frontegg/react";
+import { useLDClient } from "launchdarkly-react-client-sdk";
 import React from "react";
 import {
   Navigate,
@@ -32,6 +33,13 @@ import { assert } from "./util";
 /** The root router for the application. */
 const Router = () => {
   useSetEnvironment();
+
+  const ldClient = useLDClient();
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    ldClient?.identify({ key: user?.id, email: user?.email });
+  }, [ldClient, user]);
 
   return (
     <>

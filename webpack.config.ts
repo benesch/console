@@ -30,6 +30,7 @@ const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
 
 export interface IDefinePluginOptions extends Record<string, string> {
   __FRONTEGG_URL__: string;
+  __LAUNCH_DARKLY_KEY__: string;
   __SEGMENT_API_KEY__: string;
   __SENTRY_DSN__: string;
   __SENTRY_ENVIRONMENT__: string;

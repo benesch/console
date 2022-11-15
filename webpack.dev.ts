@@ -51,6 +51,7 @@ if (process.env.PROXY_STACK) {
 
 const definePluginOptions: IDefinePluginOptions = {
   __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
+  __LAUNCH_DARKLY_KEY__: JSON.stringify("637415da95076410b99718e1"),
   __SEGMENT_API_KEY__: JSON.stringify("dGeQYRjmGVsqDI0KIARrAhTvk1BdJJhk"),
   __SENTRY_DSN__: JSON.stringify(process.env.SENTRY_DSN || null),
   __SENTRY_ENVIRONMENT__: JSON.stringify(

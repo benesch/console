@@ -26,6 +26,7 @@ export const getRegionId = (region: CloudRegion): string => {
 
 declare global {
   const __FRONTEGG_URL__: string;
+  const __LAUNCH_DARKLY_KEY__: string;
   const __SEGMENT_API_KEY__: string | null;
   const __SENTRY_DSN__: string | null;
   const __SENTRY_ENVIRONMENT__: string | null;

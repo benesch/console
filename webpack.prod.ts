@@ -22,6 +22,7 @@ function requireEnv(name: string) {
 const appHostname = requireEnv("APP_HOSTNAME");
 const provisionHostname = requireEnv("PROVISION_HOSTNAME");
 const fronteggUrl = requireEnv("FRONTEGG_URL");
+const launchDarklyKey = requireEnv("LAUNCH_DARKLY_KEY");
 
 const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
 const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
@@ -33,6 +34,7 @@ const gitSha = requireEnv("GIT_SHA");
 
 const DefinePluginOptions: IDefinePluginOptions = {
   __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
+  __LAUNCH_DARKLY_KEY__: JSON.stringify(launchDarklyKey),
   __SEGMENT_API_KEY__: JSON.stringify(
     process.env.FRONTEND_SEGMENT_API_KEY || null
   ),

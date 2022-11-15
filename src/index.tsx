@@ -8,6 +8,7 @@ import "./types";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
+import { LDProvider } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -37,7 +38,12 @@ document.body.appendChild(rootEl);
 const root = createRoot(rootEl);
 
 root.render(
-  <>
+  <LDProvider
+    clientSideID={config.launchDarklyKey}
+    reactOptions={{
+      useCamelCaseFlagKeys: false,
+    }}
+  >
     <ColorModeScript
       initialColorMode={theme.chakraTheme.config.initialColorMode}
     />
@@ -51,5 +57,5 @@ root.render(
       </ChakraProvider>
     </BrowserRouter>
     <StatusPageWidget id={config.statuspageId} />
-  </>
+  </LDProvider>
 );

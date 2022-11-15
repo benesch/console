@@ -2,6 +2,7 @@ import type { GlobalConfig } from "../config";
 
 const globalConfigStub: GlobalConfig = {
   fronteggUrl: "https://frontegg.com",
+  launchDarklyKey: "launchdarkly-dummy-key",
   segmentApiKey: "segment-api-key",
   sentryDsn: "https://sentry.io/sentry-key",
   sentryEnvironment: "sentry-environment",

@@ -23,6 +23,7 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
@@ -130,9 +131,8 @@ type NavItemType = {
   href: string;
   isInternal?: boolean;
 };
-
-const getNavItems = (isInternal: boolean): NavItemType[] => {
-  const gatedItems: NavItemType[] = isInternal
+const getNavItems = (areObjectPagesEnabled: boolean): NavItemType[] => {
+  const gatedItems: NavItemType[] = areObjectPagesEnabled
     ? [
         { label: "Clusters", href: "/clusters", isInternal: true },
         { label: "Sources", href: "/sources", isInternal: true },
@@ -151,10 +151,11 @@ const getNavItems = (isInternal: boolean): NavItemType[] => {
 };
 
 const NavMenu = (props: BoxProps) => {
-  const { user } = useAuth();
+  const flags = useFlags();
+  const areObjectPagesEnabled = flags["4254-object-pages"];
   const navItems = React.useMemo(
-    () => getNavItems(user.email.endsWith("@materialize.com")),
-    [user.email]
+    () => getNavItems(areObjectPagesEnabled),
+    [areObjectPagesEnabled]
   );
 
   return (
