@@ -136,6 +136,7 @@ const getNavItems = (isInternal: boolean): NavItemType[] => {
     ? [
         { label: "Clusters", href: "/clusters", isInternal: true },
         { label: "Sources", href: "/sources", isInternal: true },
+        { label: "Sinks", href: "/sinks", isInternal: true },
         // { label: "Editor", href: "/editor" },
       ]
     : [];

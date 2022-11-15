@@ -233,3 +233,54 @@ export function useSources() {
 
   return { sources, refetch };
 }
+
+export interface Sink {
+  id: string;
+  name: string;
+  type: string;
+  size?: string;
+}
+
+/**
+ * Fetches all sinks in the current environment
+ */
+export function useSinks() {
+  const sinkResponse = useSql("SHOW SINKS");
+  let sinks = null;
+  if (sinkResponse.data) {
+    const { rows } = sinkResponse.data;
+    sinks = rows.map(
+      (row) =>
+        ({
+          id: row[0],
+          name: row[0],
+          type: row[1],
+          size: row[2],
+        } as Sink)
+    );
+  }
+
+  const refetch = React.useCallback(() => {
+    sinkResponse.refetch();
+  }, [sinkResponse]);
+
+  return { sinks, refetch };
+}
+
+/**
+ * Fetches DDL for a sink
+ */
+export function useSinkDDL(sinkName: string) {
+  const ddlResponse = useSql(`SHOW CREATE SINK ${sinkName}`);
+  let ddl = null;
+  if (sinkName && ddlResponse.data) {
+    const { rows } = ddlResponse.data;
+    ddl = rows[0][1];
+  }
+
+  const refetch = React.useCallback(() => {
+    ddlResponse.refetch();
+  }, [ddlResponse]);
+
+  return { ddl, refetch };
+}
