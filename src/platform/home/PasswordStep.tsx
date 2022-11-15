@@ -9,7 +9,11 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
+import {
+  useApiTokensActions,
+  useApiTokensState,
+  useAuth,
+} from "@frontegg/react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -30,7 +34,9 @@ const PasswordStep = (props: BoxProps) => {
     semanticColors.divider.dark
   );
 
-  const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
+  const { user } = useAuth();
+  const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =
+    useApiTokensActions();
   const tokensState = useApiTokensState();
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
@@ -38,6 +44,10 @@ const PasswordStep = (props: BoxProps) => {
   React.useEffect(() => {
     loadUserApiTokens();
   }, [loadUserApiTokens]);
+  React.useEffect(() => {
+    resetApiTokensState();
+    // Reset token state when switching orgs, otherwise we continue to display stale app passwords
+  }, [resetApiTokensState, user?.tenantId]);
   React.useEffect(() => {
     if (
       loadingInProgress === false &&
