@@ -152,7 +152,10 @@ export const SampleCodeBoxWrapper = (props: SampleCodeBoxWrapperProps) => {
       {props.children}
       <Text fontSize="xs" textAlign="left" width="full">
         Having trouble?{" "}
-        <TextLink href={props.docsUrl || "//materialize.com/docs/"}>
+        <TextLink
+          href={props.docsUrl || "//materialize.com/docs/"}
+          target="_blank"
+        >
           View the documentation.
         </TextLink>
       </Text>

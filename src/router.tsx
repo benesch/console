@@ -24,6 +24,7 @@ import LoadingScreen from "./loading";
 import ClusterRoutes from "./platform/clusters/clusterRouter";
 import Editor from "./platform/editor/Editor";
 import Home from "./platform/home/Home";
+import SinksListPage from "./platform/sinks/SinksList";
 import SourcesListPage from "./platform/sources/SourcesList";
 import { assert } from "./util";
 
@@ -37,6 +38,7 @@ const Router = () => {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/clusters/*" element={<ClusterRoutes />} />
         <Route path="/sources" element={<SourcesListPage />} />
+        <Route path="/sinks" element={<SinksListPage />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="*" element={<RedirectToHome />} />
         <Route element={<Navigate to="/" replace />} />
