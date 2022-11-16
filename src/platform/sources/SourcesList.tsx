@@ -1,6 +1,12 @@
 import {
   Box,
   HStack,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Table,
   Tbody,
@@ -16,7 +22,7 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source, useSources } from "../../api/materialized";
+import { Source, useDDL, useSources } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
@@ -140,27 +146,56 @@ interface SourceTableProps {
 }
 
 const SourceTable = (props: SourceTableProps) => {
+  const [activeSourceName, setActiveSourceName] = React.useState("");
+  const { ddl, refetch } = useDDL("SOURCE", activeSourceName);
+  // if the active sink name changes, refetch data
+  React.useEffect(refetch, [refetch, activeSourceName]);
+  const hoverColor = useColorModeValue("gray.50", "gray.900");
   return (
-    <Card pt="2" px="0" pb="6">
-      <Table data-testid="source-table" borderRadius="xl">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Type</Th>
-            <Th>Size</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {props.sources.map((s) => (
-            <Tr key={s.id}>
-              <Td>{s.name}</Td>
-              <Td>{s.type}</Td>
-              <Td>{s.size || "-"}</Td>
+    <>
+      <Card pt="2" px="0" pb="6">
+        <Table data-testid="source-table" borderRadius="xl">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Type</Th>
+              <Th>Size</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Card>
+          </Thead>
+          <Tbody>
+            {props.sources.map((s) => (
+              <Tr
+                key={s.id}
+                onClick={() => setActiveSourceName(s.name)}
+                cursor="pointer"
+                _hover={{
+                  bg: hoverColor,
+                }}
+              >
+                <Td>{s.name}</Td>
+                <Td>{s.type}</Td>
+                <Td>{s.size || "-"}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Card>
+      <Modal
+        isOpen={!!activeSourceName && ddl}
+        onClose={() => setActiveSourceName("")}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{`DDL statement for source "${activeSourceName}"`}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pt="3" pb="6">
+            <CodeBlock title="SQL" contents={ddl}>
+              {ddl}
+            </CodeBlock>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

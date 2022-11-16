@@ -22,7 +22,7 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Sink, useSinkDDL, useSinks } from "../../api/materialized";
+import { Sink, useDDL, useSinks } from "../../api/materialized";
 import { Card, CardContent, CardHeader } from "../../components/cardComponents";
 import { CodeBlock } from "../../components/copyableComponents";
 import TextLink from "../../components/TextLink";
@@ -145,7 +145,7 @@ interface SinkTableProps {
 
 const SinkTable = (props: SinkTableProps) => {
   const [activeSinkName, setActiveSinkName] = React.useState("");
-  const { ddl, refetch } = useSinkDDL(activeSinkName);
+  const { ddl, refetch } = useDDL("SINK", activeSinkName);
   // if the active sink name changes, refetch data
   React.useEffect(refetch, [refetch, activeSinkName]);
   const hoverColor = useColorModeValue("gray.50", "gray.900");

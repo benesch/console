@@ -267,11 +267,13 @@ export function useSinks() {
   return { sinks, refetch };
 }
 
+type DDLNoun = "SINK" | "SOURCE";
+
 /**
- * Fetches DDL for a sink
+ * Fetches DDL for a noun
  */
-export function useSinkDDL(sinkName: string) {
-  const ddlResponse = useSql(`SHOW CREATE SINK ${sinkName}`);
+export function useDDL(noun: DDLNoun, sinkName: string) {
+  const ddlResponse = useSql(`SHOW CREATE ${noun} ${sinkName}`);
   let ddl = null;
   if (sinkName && ddlResponse.data) {
     const { rows } = ddlResponse.data;
