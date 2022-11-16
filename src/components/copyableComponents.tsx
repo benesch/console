@@ -22,27 +22,15 @@ import { semanticColors } from "../theme/colors";
 
 /** A hook that manage the copy mechanism and the icon state */
 export const useCopyableText = (text: string, delay?: number) => {
-  const { onCopy, setValue } = useClipboard(text);
-  const [copied, setCopied] = React.useState(false);
+  const { onCopy, setValue, hasCopied } = useClipboard(text, delay || 1000);
 
   React.useEffect(() => {
     setValue(text);
   }, [setValue, text]);
 
-  /** After 1s, we revert to the default state */
-  const setCopiedState = React.useCallback(() => {
-    setCopied(true);
-    setTimeout(() => setCopied(false), delay || 1000);
-  }, [setCopied, delay]);
-
-  const onClickCopy = () => {
-    onCopy();
-    setCopiedState();
-  };
-
   return {
-    onCopy: onClickCopy,
-    copied,
+    onCopy,
+    copied: hasCopied,
   };
 };
 
