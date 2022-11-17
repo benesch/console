@@ -35,6 +35,7 @@ const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
       py="2"
       fontWeight="400"
       fontSize="sm"
+      flexDir={{ base: "column", md: "row" }}
       boxShadow="footer"
       borderTopColor={borderColor}
       borderTopWidth={borderWidth}
