@@ -79,7 +79,7 @@ const PricingPage = () => {
         </Select>
       </HStack>
       <VStack alignItems="flex-start" spacing={8} mb={8}>
-        <Card px="0" pb="6" maxWidth="800px">
+        <Card px="0" pb="6" maxWidth="800px" minWidth="fit-content">
           <CardHeader>Pricing terms: {region}</CardHeader>
           <Table
             borderRadius="xl"
@@ -127,7 +127,7 @@ const PricingPage = () => {
             </HStack>
           </CardContent>
         </Card>
-        <Card>
+        <Card minWidth="fit-content">
           <CardHeader>Credit consumption tables: {region}</CardHeader>
           <CardContent pt={1} px={0}>
             <VStack spacing={6}>
