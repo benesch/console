@@ -38,7 +38,15 @@ const Router = () => {
   const { user } = useAuth();
 
   React.useEffect(() => {
-    ldClient?.identify({ key: user?.id, email: user?.email });
+    if (!ldClient || !user) return;
+
+    ldClient.identify({
+      key: user.id,
+      email: user.email,
+      custom: {
+        orgId: user.tenantId,
+      },
+    });
   }, [ldClient, user]);
 
   return (
