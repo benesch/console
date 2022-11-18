@@ -2,12 +2,12 @@ import { useToast } from "@chakra-ui/toast";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { createEnvironmentAssignment } from "../../api/regionController";
-import config from "../../config";
+import { createEnvironmentAssignment } from "~/api/regionController";
+import config from "~/config";
 import {
   maybeEnvironmentForRegion,
   useSetCurrentEnvironment,
-} from "../../recoil/environments";
+} from "~/recoil/environments";
 
 export type CreateRegion = (regionId: string) => Promise<void>;
 

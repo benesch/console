@@ -2,8 +2,7 @@ import { Tag } from "@chakra-ui/react";
 import * as React from "react";
 
 import { isValidString } from "~/utils/validators";
-
-import { currentVersion } from "./api";
+import { currentVersion } from "~/version/api";
 
 const Version = () => {
   if (!isValidString(currentVersion)) return null;

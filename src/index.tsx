@@ -3,7 +3,7 @@
  * Entry point for the frontend.
  */
 import "@fontsource/inter/variable-full.css";
-import "./types";
+import "~/types";
 
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
@@ -14,11 +14,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilEnv, RecoilRoot } from "recoil";
 
-import StatusPageWidget from "./components/StatusPageWidget";
-import config from "./config";
-import FronteggProviderWrapper from "./FronteggProviderWrapper";
-import Router from "./router";
-import * as theme from "./theme";
+import StatusPageWidget from "~/components/StatusPageWidget";
+import config from "~/config";
+import FronteggProviderWrapper from "~/FronteggProviderWrapper";
+import Router from "~/router";
+import * as theme from "~/theme";
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 

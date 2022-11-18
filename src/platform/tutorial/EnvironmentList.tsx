@@ -1,9 +1,9 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import config from "../../config";
-import CreateEnvironmentButton from "./CreateEnvironmentButton";
-import { CreateRegion } from "./useCreateEnvironment";
+import config from "~/config";
+import CreateEnvironmentButton from "~/platform/tutorial/CreateEnvironmentButton";
+import { CreateRegion } from "~/platform/tutorial/useCreateEnvironment";
 
 interface Props {
   createRegion: CreateRegion;

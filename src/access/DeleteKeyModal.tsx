@@ -8,7 +8,7 @@ import { ButtonProps, Text } from "@chakra-ui/react";
 import { useApiTokensActions } from "@frontegg/react";
 import React from "react";
 
-import DangerActionModal from "../components/DangerActionModal";
+import DangerActionModal from "~/components/DangerActionModal";
 
 interface Props extends ButtonProps {
   clientId: string;

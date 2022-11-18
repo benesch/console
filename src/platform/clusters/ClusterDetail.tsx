@@ -15,11 +15,11 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Cluster, Replica } from "../../api/materialized";
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { CodeBlock } from "../../components/copyableComponents";
-import TextLink from "../../components/TextLink";
-import { PageBreadcrumbs, PageHeader } from "../../layouts/BaseLayout";
+import { Cluster, Replica } from "~/api/materialized";
+import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import { CodeBlock } from "~/components/copyableComponents";
+import TextLink from "~/components/TextLink";
+import { PageBreadcrumbs, PageHeader } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -28,11 +28,11 @@ import {
   SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
-} from "../../layouts/listPageComponents";
-import { currentEnvironmentState } from "../../recoil/environments";
-import ClustersIcon from "../../svg/Clusters";
-import { semanticColors } from "../../theme/colors";
-import { ClusterDetailParams } from "./clusterRouter";
+} from "~/layouts/listPageComponents";
+import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { currentEnvironmentState } from "~/recoil/environments";
+import ClustersIcon from "~/svg/Clusters";
+import { semanticColors } from "~/theme/colors";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",

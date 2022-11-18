@@ -15,12 +15,12 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { CopyableBox } from "../components/copyableComponents";
-import TextLink from "../components/TextLink";
-import Missing from "../svg/Missing";
-import Slash from "../svg/Slash";
-import colors, { semanticColors } from "../theme/colors";
-import { NAV_LOGO_HEIGHT } from "./NavBar";
+import { CopyableBox } from "~/components/copyableComponents";
+import TextLink from "~/components/TextLink";
+import { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
+import Missing from "~/svg/Missing";
+import Slash from "~/svg/Slash";
+import colors, { semanticColors } from "~/theme/colors";
 
 type GenericListProps = {
   message: string;

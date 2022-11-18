@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { semanticColors } from "../theme/colors";
+import { semanticColors } from "~/theme/colors";
 
 /** A hook that manage the copy mechanism and the icon state */
 export const useCopyableText = (text: string, delay?: number) => {

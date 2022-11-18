@@ -2,19 +2,19 @@ import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { useAuth } from "../../api/auth";
+import { useAuth } from "~/api/auth";
+import ConnectSteps from "~/platform/home/ConnectSteps";
+import GetStartedDocs from "~/platform/home/GetStartedDocs";
+import PasswordStep from "~/platform/home/PasswordStep";
+import RegionCrashed from "~/platform/home/RegionCrashed";
+import StepsWhileLoading from "~/platform/home/StepsWhileLoading";
+import CreateEnvironmentButton from "~/platform/tutorial/CreateEnvironmentButton";
+import EnvironmentList from "~/platform/tutorial/EnvironmentList";
+import useCreateEnvironment from "~/platform/tutorial/useCreateEnvironment";
 import {
   currentEnvironmentIdState,
   useEnvironmentsWithHealth,
-} from "../../recoil/environments";
-import CreateEnvironmentButton from "../tutorial/CreateEnvironmentButton";
-import EnvironmentList from "../tutorial/EnvironmentList";
-import useCreateEnvironment from "../tutorial/useCreateEnvironment";
-import ConnectSteps from "./ConnectSteps";
-import GetStartedDocs from "./GetStartedDocs";
-import PasswordStep from "./PasswordStep";
-import RegionCrashed from "./RegionCrashed";
-import StepsWhileLoading from "./StepsWhileLoading";
+} from "~/recoil/environments";
 
 const Home = () => {
   const { user } = useAuth();

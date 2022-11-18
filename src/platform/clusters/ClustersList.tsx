@@ -15,11 +15,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Cluster } from "../../api/materialized";
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { CodeBlock } from "../../components/copyableComponents";
-import TextLink from "../../components/TextLink";
-import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
+import { Cluster } from "~/api/materialized";
+import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import { CodeBlock } from "~/components/copyableComponents";
+import TextLink from "~/components/TextLink";
+import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -28,10 +28,10 @@ import {
   SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
-} from "../../layouts/listPageComponents";
-import { currentEnvironmentState } from "../../recoil/environments";
-import ClustersIcon from "../../svg/Clusters";
-import { semanticColors } from "../../theme/colors";
+} from "~/layouts/listPageComponents";
+import { currentEnvironmentState } from "~/recoil/environments";
+import ClustersIcon from "~/svg/Clusters";
+import { semanticColors } from "~/theme/colors";
 
 const createClusterSuggestion = {
   title: "Create a cluster",

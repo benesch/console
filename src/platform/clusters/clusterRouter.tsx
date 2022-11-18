@@ -2,9 +2,9 @@ import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 
-import { Cluster, useClusters } from "../../api/materialized";
-import ClusterDetailPage from "./ClusterDetail";
-import ClustersListPage from "./ClustersList";
+import { Cluster, useClusters } from "~/api/materialized";
+import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
+import ClustersListPage from "~/platform/clusters/ClustersList";
 
 export type ClusterDetailParams = {
   clusterName: string;

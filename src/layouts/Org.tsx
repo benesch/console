@@ -1,8 +1,8 @@
 import { Tag } from "@chakra-ui/react";
 import * as React from "react";
 
-import { useAuth } from "../api/auth";
-import { CopyButton } from "../components/copyableComponents";
+import { useAuth } from "~/api/auth";
+import { CopyButton } from "~/components/copyableComponents";
 
 const Org = () => {
   const { user } = useAuth();

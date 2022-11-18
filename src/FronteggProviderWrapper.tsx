@@ -2,8 +2,8 @@ import { useColorMode } from "@chakra-ui/color-mode";
 import { FronteggProvider } from "@frontegg/react";
 import React from "react";
 
-import LoadingScreen from "./loading";
-import { fronteggAuthPageBackground, getFronteggTheme } from "./theme";
+import LoadingScreen from "~/loading";
+import { fronteggAuthPageBackground, getFronteggTheme } from "~/theme";
 
 type Props = {
   baseUrl: string;

@@ -27,14 +27,14 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import logo from "../../img/logo-reverse.svg";
-import { useAuth } from "../api/auth";
-import { SUPPORT_HREF } from "../components/SupportLink";
-import EnvironmentSelectField from "./EnvironmentSelect";
+import { useAuth } from "~/api/auth";
+import { SUPPORT_HREF } from "~/components/SupportLink";
+import logo from "~/img/logo-reverse.svg";
+import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
 import ProfileDropdown, {
   AVATAR_WIDTH,
   ProfileMenuItems,
-} from "./ProfileDropdown";
+} from "~/layouts/ProfileDropdown";
 
 export const NAV_HORIZONTAL_SPACING = 4;
 export const NAV_HOVER_STYLES = { bg: "whiteAlpha.200" };

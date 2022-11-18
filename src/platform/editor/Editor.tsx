@@ -2,11 +2,11 @@ import { Box, Flex, useColorModeValue, useToast } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
 
-import { useSql } from "../../api/materialized";
-import { Card } from "../../components/cardComponents";
-import Code from "./code/Code";
-import Schema from "./Schema";
-import Table from "./table/Table";
+import { useSql } from "~/api/materialized";
+import { Card } from "~/components/cardComponents";
+import Code from "~/platform/editor/code/Code";
+import Schema from "~/platform/editor/Schema";
+import Table from "~/platform/editor/table/Table";
 
 /**
  * Column rendering for text

@@ -1,7 +1,7 @@
 import { Box, useColorModeValue, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import TextLink from "../../components/TextLink";
+import TextLink from "~/components/TextLink";
 
 const GetStartedDocs = () => {
   const bg = useColorModeValue("blackAlpha.50", "whiteAlpha.100");

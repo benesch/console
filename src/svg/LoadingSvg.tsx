@@ -1,7 +1,7 @@
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import colors from "../theme/colors";
+import colors from "~/theme/colors";
 
 const animationStyles = `@keyframes bigBar {
     0% {

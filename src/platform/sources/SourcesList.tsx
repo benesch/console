@@ -22,11 +22,11 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source, useDDL, useSources } from "../../api/materialized";
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { CodeBlock } from "../../components/copyableComponents";
-import TextLink from "../../components/TextLink";
-import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
+import { Source, useDDL, useSources } from "~/api/materialized";
+import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import { CodeBlock } from "~/components/copyableComponents";
+import TextLink from "~/components/TextLink";
+import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -35,10 +35,10 @@ import {
   SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
-} from "../../layouts/listPageComponents";
-import { currentEnvironmentState } from "../../recoil/environments";
-import SourcesIcon from "../../svg/Sources";
-import { semanticColors } from "../../theme/colors";
+} from "~/layouts/listPageComponents";
+import { currentEnvironmentState } from "~/recoil/environments";
+import SourcesIcon from "~/svg/Sources";
+import { semanticColors } from "~/theme/colors";
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {

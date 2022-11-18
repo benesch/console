@@ -4,10 +4,10 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 
-import globalConfigStub from "../__mocks__/config";
-import { GlobalConfig } from "../config";
-import AnalyticsOnEveryPage from "./AnalyticsOnEveryPage";
-import { AnalyticsClient } from "./types";
+import globalConfigStub from "~/__mocks__/config";
+import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { AnalyticsClient } from "~/analytics/types";
+import { GlobalConfig } from "~/config";
 
 export class ShimAnalyticsClient extends AnalyticsClient {
   constructor(config: GlobalConfig) {

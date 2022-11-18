@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import PageFooter, { getCurrentYear } from "./PageFooter";
+import PageFooter, { getCurrentYear } from "~/layouts/PageFooter";
 
 beforeAll(() => {
   jest.useFakeTimers();

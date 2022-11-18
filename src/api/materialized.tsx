@@ -7,13 +7,13 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import config from "../config";
+import { useAuth } from "~/api/auth";
+import config from "~/config";
 import {
   currentEnvironmentState,
   EnabledEnvironment,
-} from "../recoil/environments";
-import { assert } from "../util";
-import { useAuth } from "./auth";
+} from "~/recoil/environments";
+import { assert } from "~/util";
 
 export interface Results {
   columns: Array<string>;

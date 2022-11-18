@@ -8,9 +8,9 @@ import { Text } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import React from "react";
 
-import TextLink from "../components/TextLink";
-import Version from "../version/Version";
-import Org from "./Org";
+import TextLink from "~/components/TextLink";
+import Org from "~/layouts/Org";
+import Version from "~/version/Version";
 
 /**
  * the current year as four digit

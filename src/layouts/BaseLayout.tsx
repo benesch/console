@@ -17,9 +17,9 @@ import {
 import * as CSS from "csstype";
 import * as React from "react";
 
-import { semanticColors } from "../theme/colors";
-import NavBar, { NAV_LOGO_HEIGHT } from "./NavBar";
-import PageFooter from "./PageFooter";
+import NavBar, { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
+import PageFooter from "~/layouts/PageFooter";
+import { semanticColors } from "~/theme/colors";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;

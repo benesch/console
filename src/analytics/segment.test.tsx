@@ -1,6 +1,6 @@
-import globalConfigStub from "../__mocks__/config";
-import { globalConfigNoAnalyticsSetup } from "./__mocks__";
-import { Buffer, default as SegmentAnalyticsClient } from "./segment";
+import globalConfigStub from "~/__mocks__/config";
+import { globalConfigNoAnalyticsSetup } from "~/analytics/__mocks__";
+import { Buffer, default as SegmentAnalyticsClient } from "~/analytics/segment";
 
 const makeSegmentAnalyticsClientWithNoApiKey = (): SegmentAnalyticsClient => {
   return new SegmentAnalyticsClient(globalConfigNoAnalyticsSetup);

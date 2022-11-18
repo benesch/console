@@ -8,8 +8,8 @@ import {
 import React from "react";
 import { useRecoilValue } from "recoil";
 
-import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
-import { currentEnvironmentIdState } from "../../recoil/environments";
+import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
+import { currentEnvironmentIdState } from "~/recoil/environments";
 
 const Dashboard = () => {
   const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);

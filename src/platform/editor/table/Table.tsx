@@ -19,8 +19,8 @@ import {
   useTable,
 } from "react-table";
 
-import { semanticColors } from "../../../theme/colors";
-import Pagination from "./Pagination";
+import Pagination from "~/platform/editor/table/Pagination";
+import { semanticColors } from "~/theme/colors";
 
 interface Props {
   columns: Array<Column>;
