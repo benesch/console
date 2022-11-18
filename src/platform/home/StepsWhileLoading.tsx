@@ -49,9 +49,9 @@ const StepsWhileLoading = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <CardHeader>1. Create a password</CardHeader>
+                <CardHeader>1. Create an app password</CardHeader>
                 <CardContent>
-                  App passwords are now available! Click here to generate one.
+                  Create an app password to connect to your Materialize region.
                 </CardContent>
               </LinkOverlay>
             </LinkBox>
