@@ -152,7 +152,7 @@ const SinkTable = (props: SinkTableProps) => {
 
   return (
     <>
-      <Card pt="2" px="0" pb="6">
+      <Card pt="2" px="0" pb="6" minWidth="fit-content">
         <Table data-testid="sink-table" borderRadius="xl">
           <Thead>
             <Tr>

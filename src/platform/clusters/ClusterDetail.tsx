@@ -157,7 +157,7 @@ interface ReplicaTableProps {
 
 const ReplicaTable = (props: ReplicaTableProps) => {
   return (
-    <Card pt="2" px="0" pb="6">
+    <Card pt="2" px="0" pb="6" minWidth="fit-content">
       <Table data-testid="cluster-table" borderRadius="xl">
         <Thead>
           <Tr>

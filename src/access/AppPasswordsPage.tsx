@@ -88,13 +88,11 @@ const AppPasswordsPage = () => {
             />
           )}
           <HStack spacing="5" alignItems="top" display="flex">
-            <VStack flex="1" spacing="5" minWidth="0">
-              <PasswordsTable
-                tokens={tokensState.apiTokensDataUser}
-                latestDeletionId={latestDeletionId}
-                deleteCb={deleteCb}
-              />
-            </VStack>
+            <PasswordsTable
+              tokens={tokensState.apiTokensDataUser}
+              latestDeletionId={latestDeletionId}
+              deleteCb={deleteCb}
+            />
             <VStack width="400px">
               <Card>
                 <Formik
@@ -154,7 +152,7 @@ const PasswordsTable = ({
   const disabledBg = useColorModeValue("gray.50", "gray.800");
   const disabledColor = useColorModeValue("gray.500", "gray.500");
   return (
-    <Card pt="2" px="0" pb="6" {...props}>
+    <Card pt="2" px="0" pb="6" minWidth="fit-content" {...props}>
       <Table borderRadius="xl">
         <Thead>
           <Tr>

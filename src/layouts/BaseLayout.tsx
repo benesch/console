@@ -83,7 +83,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
 export const PageHeader = ({ children, ...props }: StackProps) => {
   return (
     <Flex
-      minHeight={{ base: 0, lg: NAV_LOGO_HEIGHT }}
+      minHeight={NAV_LOGO_HEIGHT}
       {...props}
       flexDirection="column"
       alignItems="flex-start"

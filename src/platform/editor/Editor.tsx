@@ -129,7 +129,13 @@ const GridLayout = (): JSX.Element => {
         >
           <Code handleQuery={handleQuery} loading={loading} />
         </Card>
-        <Card key="table" flex={1} overflowY="hidden" shadow={shadow}>
+        <Card
+          key="table"
+          flex={1}
+          overflowY="hidden"
+          shadow={shadow}
+          minWidth="fit-content"
+        >
           <Box
             height="100%"
             bg={loading ? "whiteAlpha.100" : "transparent"}

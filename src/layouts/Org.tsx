@@ -8,7 +8,13 @@ const Org = () => {
   const { user } = useAuth();
   if (!user.email.endsWith("@materialize.com")) return null;
   return (
-    <Tag size="sm" variant="outline" opacity={0.8} fontSize="80%">
+    <Tag
+      size="sm"
+      variant="outline"
+      opacity={0.8}
+      fontSize="80%"
+      css={{ overflowWrap: "anywhere" }}
+    >
       Org ID {user.tenantId}
       <CopyButton contents={user.tenantId} px={1} ml={1} title="Copy org ID" />
     </Tag>
