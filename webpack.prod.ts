@@ -84,6 +84,8 @@ const cspPolicy = {
     "https://*.analytics.google.com",
     "https://*.googletagmanager.com",
     "https://*.google.com",
+    "https://app.launchdarkly.com",
+    "https://events.launchdarkly.com",
     `https://ec.0.us-east-1.aws.${appHostname}`,
     `https://ec.0.eu-west-1.aws.${appHostname}`,
     `https://rc.us-east-1.aws.${appHostname}`,
