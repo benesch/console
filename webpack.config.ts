@@ -35,17 +35,8 @@ const config: Configuration = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader",
+        loader: "babel-loader",
         exclude: /node_modules/,
-        options: {
-          // Type checking is provided by fork-ts-checker.
-          transpileOnly: true,
-          compilerOptions: {
-            sourceMap:
-              process.env.NODE_ENV !== "production" || process.env.SOURCE_MAPS,
-          },
-          configFile: "../tsconfig.json",
-        },
       },
       {
         test: /\.css$/i,

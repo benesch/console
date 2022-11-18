@@ -7,6 +7,7 @@ import "@fontsource/roboto-mono";
 import "~/types";
 // Initializes Sentry error reporting and tracing
 import "~/sentry";
+import "core-js/stable";
 
 import {
   ColorModeProvider,
