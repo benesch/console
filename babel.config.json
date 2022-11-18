@@ -1,4 +1,5 @@
 {
+  "plugins": ["@emotion"],
   "presets": [
     "@babel/react",
     "@babel/typescript",
