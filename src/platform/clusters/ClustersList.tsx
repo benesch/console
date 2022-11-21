@@ -168,7 +168,13 @@ const ClusterTable = (props: ClusterTableProps) => {
               }}
             >
               <Td>{c.name}</Td>
-              <Td>{c.replicas ? c.replicas.length : <Spinner size="sm" />}</Td>
+              <Td>
+                {c.replicas.loading ? (
+                  <Spinner size="sm" />
+                ) : (
+                  c.replicas.value.length
+                )}
+              </Td>
             </Tr>
           ))}
         </Tbody>

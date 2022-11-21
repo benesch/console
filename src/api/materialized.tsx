@@ -141,7 +141,10 @@ export const executeSql = async (
 export interface Cluster {
   id: string;
   name: string;
-  replicas?: Replica[];
+  replicas: {
+    value: Replica[];
+    loading: boolean;
+  };
 }
 
 export interface Replica {
@@ -158,8 +161,12 @@ export function useClusters() {
     "SELECT id, name FROM mz_clusters ORDER BY id"
   );
   const replicaResponse = useSql("SELECT * FROM (SHOW CLUSTER REPLICAS)");
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
   const replicasByCluster: { [clusterId: string]: Replica[] } = {};
+  if (!replicaResponse.loading && isInitialLoad) {
+    setIsInitialLoad(false);
+  }
   if (replicaResponse.data) {
     replicaResponse.data.rows.forEach((indexRow: string[]) => {
       const clusterName = indexRow[0];
@@ -188,7 +195,10 @@ export function useClusters() {
         ({
           id: row[0],
           name: row[1],
-          replicas: replicasByCluster[row[1]],
+          replicas: {
+            value: replicasByCluster[row[1]] ?? [],
+            loading: isInitialLoad,
+          },
         } as Cluster)
     );
   }

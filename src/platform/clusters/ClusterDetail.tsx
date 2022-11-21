@@ -73,7 +73,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     if (!cluster) {
       return null;
     } else {
-      return cluster.replicas || [];
+      return cluster.replicas.loading ? [] : cluster.replicas.value;
     }
   }, [cluster]);
 
