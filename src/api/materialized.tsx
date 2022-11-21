@@ -283,16 +283,14 @@ type DDLNoun = "SINK" | "SOURCE";
  * Fetches DDL for a noun
  */
 export function useDDL(noun: DDLNoun, sinkName: string) {
-  const ddlResponse = useSql(`SHOW CREATE ${noun} ${sinkName}`);
+  const { data, refetch } = useSql(
+    sinkName ? `SHOW CREATE ${noun} ${sinkName}` : undefined
+  );
   let ddl = null;
-  if (sinkName && ddlResponse.data) {
-    const { rows } = ddlResponse.data;
+  if (sinkName && data) {
+    const { rows } = data;
     ddl = rows[0][1];
   }
-
-  const refetch = React.useCallback(() => {
-    ddlResponse.refetch();
-  }, [ddlResponse]);
 
   return { ddl, refetch };
 }

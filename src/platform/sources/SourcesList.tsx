@@ -147,9 +147,8 @@ interface SourceTableProps {
 
 const SourceTable = (props: SourceTableProps) => {
   const [activeSourceName, setActiveSourceName] = React.useState("");
-  const { ddl, refetch } = useDDL("SOURCE", activeSourceName);
-  // if the active sink name changes, refetch data
-  React.useEffect(refetch, [refetch, activeSourceName]);
+  // automatically refetches if activeSourceName changes
+  const { ddl } = useDDL("SOURCE", activeSourceName);
   const hoverColor = useColorModeValue("gray.50", "gray.900");
   return (
     <>

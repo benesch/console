@@ -147,7 +147,9 @@ const SinkTable = (props: SinkTableProps) => {
   const [activeSinkName, setActiveSinkName] = React.useState("");
   const { ddl, refetch } = useDDL("SINK", activeSinkName);
   // if the active sink name changes, refetch data
-  React.useEffect(refetch, [refetch, activeSinkName]);
+  React.useEffect(() => {
+    refetch();
+  }, [refetch, activeSinkName]);
   const hoverColor = useColorModeValue("gray.50", "gray.900");
 
   return (
