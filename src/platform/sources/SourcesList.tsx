@@ -39,6 +39,7 @@ import {
 import { currentEnvironmentState } from "~/recoil/environments";
 import SourcesIcon from "~/svg/Sources";
 import { semanticColors } from "~/theme/colors";
+import { pollingDisabled } from "~/util";
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {
@@ -63,7 +64,7 @@ const SourcesListPage = () => {
     currentEnvironmentState
   );
   const { sources, refetch } = useSources();
-  useInterval(refetch, 5000);
+  useInterval(refetch, pollingDisabled() ? null : 5000);
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark

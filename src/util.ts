@@ -75,3 +75,12 @@ export function petname() {
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+/**
+ * Detects the presence of ?noPoll query string parameter, which we use to disable
+ * polling for development purposes.
+ */
+export function pollingDisabled() {
+  const params = new URLSearchParams(location.search);
+  return Array.from(params.keys()).includes("noPoll");
+}

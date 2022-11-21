@@ -39,6 +39,7 @@ import {
 import { currentEnvironmentState } from "~/recoil/environments";
 import SinksIcon from "~/svg/Sinks";
 import { semanticColors } from "~/theme/colors";
+import { pollingDisabled } from "~/util";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   FROM <view_name>
@@ -67,7 +68,7 @@ const SinksListPage = () => {
     currentEnvironmentState
   );
   const { sinks, refetch } = useSinks();
-  useInterval(refetch, 5000);
+  useInterval(refetch, pollingDisabled() ? null : 5000);
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
