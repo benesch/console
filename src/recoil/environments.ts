@@ -1,5 +1,6 @@
 import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
+import deepEqual from "fast-deep-equal";
 import {
   atom,
   selector,
@@ -128,15 +129,30 @@ export const useEnvironmentsWithHealth = (
   accessToken: string,
   options: { intervalMs?: number } = {}
 ) => {
-  const [value, setValue] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
+  const [environmentMap, setValue] = useRecoilState_TRANSITION_SUPPORT_UNSTABLE(
     environmentsWithHealth
   );
 
+  // The environment objects are used in dependency arrays,
+  // so the refrences need to be stable
+  const updateValue = (newEnvMap: Map<string, LoadedEnvironment>) => {
+    if (!environmentMap) {
+      setValue(newEnvMap);
+      return;
+    }
+    for (const [key, newValue] of newEnvMap.entries()) {
+      if (!deepEqual(environmentMap.get(key), newValue)) {
+        environmentMap.set(key, newValue);
+      }
+    }
+    return environmentMap;
+  };
+
   useInterval(async () => {
-    setValue(await fetchEnvironmentsWithHealth(accessToken));
+    updateValue(await fetchEnvironmentsWithHealth(accessToken));
   }, options.intervalMs ?? null);
-  if (value) {
-    return value;
+  if (environmentMap) {
+    return environmentMap;
   }
 
   throw new Promise((resolve) => {
