@@ -24,13 +24,14 @@ import {
 } from "~/recoil/environments";
 import { reactSelectTheme } from "~/theme";
 import colors from "~/theme/colors";
+import { isPollingDisabled } from "~/util";
 
 const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
   const { user } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
   const environments = useEnvironmentsWithHealth(user.accessToken, {
-    intervalMs: 5000,
+    intervalMs: isPollingDisabled() ? undefined : 5000,
   });
   const setCurrentEnvironmentId = useSetCurrentEnvironment();
   const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(

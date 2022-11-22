@@ -31,6 +31,8 @@ export function useSql(sql: string | undefined) {
     currentEnvironmentState
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const requestIdRef = React.useRef(1);
+  const controllerRef = React.useRef<AbortController>(new AbortController());
   const [results, setResults] = useState<Results | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
@@ -41,13 +43,21 @@ export function useSql(sql: string | undefined) {
       return;
     }
 
+    controllerRef.current = new AbortController();
+    const timeout = setTimeout(() => controllerRef.current.abort(), 5_000);
+    const requestId = requestIdRef.current;
     try {
       setLoading(true);
       const { results: res, errorMessage } = await executeSql(
         environment,
         sql,
-        user.accessToken
+        user.accessToken,
+        { signal: controllerRef.current.signal }
       );
+      if (requestIdRef.current > requestId) {
+        // a new query has been kicked off, ignore these results
+        return;
+      }
       if (errorMessage) {
         setResults(null);
         setError(errorMessage);
@@ -59,11 +69,14 @@ export function useSql(sql: string | undefined) {
       console.error(err);
       setError(defaultError);
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   }, [environment, sql, user.accessToken]);
 
   useEffect(() => {
+    requestIdRef.current += 1;
+    controllerRef.current.abort();
     runSql();
   }, [environment, sql, runSql]);
 

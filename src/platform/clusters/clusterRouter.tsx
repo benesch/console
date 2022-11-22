@@ -5,6 +5,7 @@ import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
+import { isPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {
   clusterName: string;
@@ -12,7 +13,7 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const { clusters, refetch } = useClusters();
-  useInterval(refetch, 5000);
+  useInterval(refetch, isPollingDisabled() ? null : 5000);
   return (
     <Routes>
       <Route path="/" element={<ClustersListPage clusters={clusters} />} />
