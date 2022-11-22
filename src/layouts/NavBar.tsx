@@ -134,9 +134,9 @@ type NavItemType = {
 const getNavItems = (areObjectPagesEnabled: boolean): NavItemType[] => {
   const gatedItems: NavItemType[] = areObjectPagesEnabled
     ? [
-        { label: "Clusters", href: "/clusters", isInternal: true },
-        { label: "Sources", href: "/sources", isInternal: true },
-        { label: "Sinks", href: "/sinks", isInternal: true },
+        { label: "Clusters", href: "/clusters" },
+        { label: "Sources", href: "/sources" },
+        { label: "Sinks", href: "/sinks" },
         // { label: "Editor", href: "/editor" },
       ]
     : [];
