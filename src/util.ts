@@ -80,7 +80,7 @@ export function sleep(ms: number) {
  * Detects the presence of ?noPoll query string parameter, which we use to disable
  * polling for development purposes.
  */
-export function pollingDisabled() {
+export function isPollingDisabled() {
   const params = new URLSearchParams(location.search);
   return Array.from(params.keys()).includes("noPoll");
 }
