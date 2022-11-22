@@ -270,30 +270,27 @@ const gradients = {
 
 const semanticColors = {
   bg: {
-    light: "#f9f9f9",
-    dark: `
-    ${gradients.primary.gradient},
-    ${gradients.primary.fallback}
-  `,
+    light: colors.white,
+    dark: colors.gray[900],
   },
   divider: {
     light: colors.gray[100],
-    dark: colors.gray[800],
+    dark: colors.gray[700],
   },
   card: {
     bg: {
       light: colors.white,
-      dark: "#000000aa",
+      dark: colors.gray[900],
     },
     border: {
-      light: "transparent",
+      light: colors.gray[100],
       dark: colors.gray[700],
     },
   },
   dropdown: {
     bg: {
       dark: colors.gray[700],
-      light: colors.gray[100],
+      light: colors.white,
     },
   },
   grayText: {
