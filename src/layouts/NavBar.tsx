@@ -27,7 +27,6 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import { useAuth } from "~/api/auth";
 import { SUPPORT_HREF } from "~/components/SupportLink";
 import logo from "~/img/logo-reverse.svg";
 import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
@@ -179,10 +178,11 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
-  const { user } = useAuth();
+  const flags = useFlags();
+  const areObjectPagesEnabled = flags["4254-object-pages"];
   const navItems = React.useMemo(
-    () => getNavItems(user.email.endsWith("@materialize.com")),
-    [user.email]
+    () => getNavItems(areObjectPagesEnabled),
+    [areObjectPagesEnabled]
   );
 
   return (
