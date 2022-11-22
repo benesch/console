@@ -1,4 +1,4 @@
-import { Spinner, TabPanel, TabPanels } from "@chakra-ui/react";
+import { Spinner, TabPanel, TabPanels, useColorModeValue } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
@@ -14,6 +14,7 @@ import { CodeBlock, CopyableBox } from "~/components/copyableComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 
 const ConnectSteps = (): JSX.Element => {
+  const borderColor = useColorModeValue("gray.200", "gray.700");
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
 
@@ -32,7 +33,10 @@ const ConnectSteps = (): JSX.Element => {
   return (
     <Card>
       <CardTabs>
-        <CardTabsHeaders data-test-id="connection-options">
+        <CardTabsHeaders
+          data-test-id="connection-options"
+          borderBottomColor={borderColor}
+        >
           <CardTab>Terminal</CardTab>
           <CardTab>External tools</CardTab>
         </CardTabsHeaders>
