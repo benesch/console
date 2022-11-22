@@ -11,6 +11,11 @@
     "strict": true,
     "sourceMap": true,
     "target": "es6",
+    "baseUrl": "./",
+    "paths": {
+      "~/*": ["./src/*"],
+      "~/img/*": ["./img/*"]
+    },
     "plugins": [
       {
         "name": "typescript-eslint-language-service"

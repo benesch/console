@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import colors from "../../theme/colors";
+import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import colors from "~/theme/colors";
 
 const StepsWhileLoading = () => {
   const linkColor = useColorModeValue("purple.600", "purple.200");

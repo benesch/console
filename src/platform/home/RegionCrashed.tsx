@@ -1,8 +1,8 @@
 import { Alert, AlertIcon, Flex, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
-import SupportLink from "../../components/SupportLink";
-import { EnabledEnvironment } from "../../recoil/environments";
+import SupportLink from "~/components/SupportLink";
+import { EnabledEnvironment } from "~/recoil/environments";
 
 export interface RegionCrashedProps {
   environment: EnabledEnvironment;

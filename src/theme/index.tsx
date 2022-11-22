@@ -15,10 +15,10 @@ import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
 
-import logo from "../../img/wordmark.svg";
-import SignupFooter from "../layouts/SignupFooter";
-import colors, { gradients, semanticColors, shadows } from "./colors";
-import * as components from "./components";
+import logo from "~/img/wordmark.svg";
+import SignupFooter from "~/layouts/SignupFooter";
+import colors, { gradients, semanticColors, shadows } from "~/theme/colors";
+import * as components from "~/theme/components";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 

@@ -3,10 +3,10 @@ import { rest } from "msw";
 import React from "react";
 import { RecoilRoot } from "recoil";
 
-import globalConfigStub from "../__mocks__/config";
-import { hasEnvironmentReadPermission } from "../api/auth";
-import server from "../api/mocks/server";
-import EnvironmentSelect from "./EnvironmentSelect";
+import globalConfigStub from "~/__mocks__/config";
+import { hasEnvironmentReadPermission } from "~/api/auth";
+import server from "~/api/mocks/server";
+import EnvironmentSelect from "~/layouts/EnvironmentSelect";
 
 // mock this before the test so that the current region gets set in recoil
 jest.mock("../config", () => ({

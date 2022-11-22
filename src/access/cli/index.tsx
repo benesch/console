@@ -3,7 +3,7 @@ import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router";
 
-import { useAuth } from "../../api/auth";
+import { useAuth } from "~/api/auth";
 
 const DEFAULT_CLI_URL = "http://localhost:8808";
 

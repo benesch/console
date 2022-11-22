@@ -18,9 +18,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 
-import { getCurrentTenant, useAuth } from "../api/auth";
-import { assert } from "../util";
-import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "./NavBar";
+import { getCurrentTenant, useAuth } from "~/api/auth";
+import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
+import { assert } from "~/util";
 
 export const AVATAR_WIDTH = 8;
 

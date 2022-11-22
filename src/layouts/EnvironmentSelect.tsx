@@ -15,15 +15,15 @@ import ReactSelect, {
 } from "react-select";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { hasEnvironmentReadPermission, useAuth } from "../api/auth";
+import { hasEnvironmentReadPermission, useAuth } from "~/api/auth";
 import {
   currentEnvironmentIdState,
   LoadedEnvironment,
   useEnvironmentsWithHealth,
   useSetCurrentEnvironment,
-} from "../recoil/environments";
-import { reactSelectTheme } from "../theme";
-import colors from "../theme/colors";
+} from "~/recoil/environments";
+import { reactSelectTheme } from "~/theme";
+import colors from "~/theme/colors";
 
 const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();

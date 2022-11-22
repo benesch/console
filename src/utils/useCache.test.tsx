@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import useCache from "./useCache";
+import useCache from "~/utils/useCache";
 
 /** a test component that displays the actual cache value */
 // we cannot use `@testing-library/react-hooks` as we cannot rerender a hook with new inputs

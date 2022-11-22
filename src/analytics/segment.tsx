@@ -4,8 +4,8 @@ import {
   SegmentEvent,
 } from "@segment/analytics-next";
 
-import { GlobalConfig } from "../config";
-import { AnalyticsClient } from "./types";
+import { AnalyticsClient } from "~/analytics/types";
+import { GlobalConfig } from "~/config";
 
 // We buffer up and queue events for the Segment SDK's `.push()`
 // method, which takes a method name and the payload for it

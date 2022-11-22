@@ -22,11 +22,11 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Sink, useDDL, useSinks } from "../../api/materialized";
-import { Card, CardContent, CardHeader } from "../../components/cardComponents";
-import { CodeBlock } from "../../components/copyableComponents";
-import TextLink from "../../components/TextLink";
-import { PageHeader, PageHeading } from "../../layouts/BaseLayout";
+import { Sink, useDDL, useSinks } from "~/api/materialized";
+import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import { CodeBlock } from "~/components/copyableComponents";
+import TextLink from "~/components/TextLink";
+import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -35,10 +35,10 @@ import {
   SampleCodeBoxWrapper,
   SQLSuggestion,
   SQLSuggestionBox,
-} from "../../layouts/listPageComponents";
-import { currentEnvironmentState } from "../../recoil/environments";
-import SinksIcon from "../../svg/Sinks";
-import { semanticColors } from "../../theme/colors";
+} from "~/layouts/listPageComponents";
+import { currentEnvironmentState } from "~/recoil/environments";
+import SinksIcon from "~/svg/Sinks";
+import { semanticColors } from "~/theme/colors";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   FROM <view_name>

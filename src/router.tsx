@@ -14,21 +14,21 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import AppPasswordsPage from "./access/AppPasswordsPage";
-import CLI from "./access/cli";
-import PricingPage from "./access/PricingPage";
-import AnalyticsOnEveryPage from "./analytics/AnalyticsOnEveryPage";
-import { AuthProvider } from "./api/auth";
-import config from "./config";
-import { BaseLayout } from "./layouts/BaseLayout";
-import LoadingScreen from "./loading";
-import ClusterRoutes from "./platform/clusters/clusterRouter";
-import Editor from "./platform/editor/Editor";
-import Home from "./platform/home/Home";
-import SinksListPage from "./platform/sinks/SinksList";
-import SourcesListPage from "./platform/sources/SourcesList";
-import useSetEnvironment from "./useSetEnvironment";
-import { assert } from "./util";
+import AppPasswordsPage from "~/access/AppPasswordsPage";
+import CLI from "~/access/cli";
+import PricingPage from "~/access/PricingPage";
+import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { AuthProvider } from "~/api/auth";
+import config from "~/config";
+import { BaseLayout } from "~/layouts/BaseLayout";
+import LoadingScreen from "~/loading";
+import ClusterRoutes from "~/platform/clusters/clusterRouter";
+import Editor from "~/platform/editor/Editor";
+import Home from "~/platform/home/Home";
+import SinksListPage from "~/platform/sinks/SinksList";
+import SourcesListPage from "~/platform/sources/SourcesList";
+import useSetEnvironment from "~/useSetEnvironment";
+import { assert } from "~/util";
 
 /** The root router for the application. */
 const Router = () => {

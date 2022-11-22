@@ -22,17 +22,17 @@ import { format } from "date-fns";
 import { Form, Formik } from "formik";
 import React from "react";
 
-import { useAuth } from "../api/auth";
+import DeleteKeyModal from "~/access/DeleteKeyModal";
+import { useAuth } from "~/api/auth";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "../components/cardComponents";
-import { CopyButton } from "../components/copyableComponents";
-import { SubmitButton, TextField } from "../components/formComponents";
-import { PageHeader, PageHeading } from "../layouts/BaseLayout";
-import DeleteKeyModal from "./DeleteKeyModal";
+} from "~/components/cardComponents";
+import { CopyButton } from "~/components/copyableComponents";
+import { SubmitButton, TextField } from "~/components/formComponents";
+import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");

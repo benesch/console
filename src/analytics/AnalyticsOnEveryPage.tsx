@@ -2,10 +2,10 @@ import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useLocation } from "react-router";
 
-import { GlobalConfig } from "../config";
-import GAAnalyticsClient from "./googleAnalytics";
-import SegmentAnalyticsClient from "./segment";
-import { AnalyticsClient } from "./types";
+import GAAnalyticsClient from "~/analytics/googleAnalytics";
+import SegmentAnalyticsClient from "~/analytics/segment";
+import { AnalyticsClient } from "~/analytics/types";
+import { GlobalConfig } from "~/config";
 
 /**
  * A react component that will emit analytics page event on location change

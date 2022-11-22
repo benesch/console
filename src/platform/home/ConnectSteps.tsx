@@ -9,9 +9,9 @@ import {
   CardTab,
   CardTabs,
   CardTabsHeaders,
-} from "../../components/cardComponents";
-import { CodeBlock, CopyableBox } from "../../components/copyableComponents";
-import { currentEnvironmentState } from "../../recoil/environments";
+} from "~/components/cardComponents";
+import { CodeBlock, CopyableBox } from "~/components/copyableComponents";
+import { currentEnvironmentState } from "~/recoil/environments";
 
 const ConnectSteps = (): JSX.Element => {
   const { user } = useAuth();

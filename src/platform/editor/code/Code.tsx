@@ -1,12 +1,12 @@
+import "codemirror/addon/hint/show-hint";
+import "codemirror/addon/hint/show-hint.css";
+import "codemirror/addon/hint/sql-hint";
 import "codemirror/lib/codemirror.css";
+import "codemirror/mode/sql/sql";
 import "codemirror/theme/material.css";
 import "codemirror/theme/monokai.css";
 import "codemirror/theme/panda-syntax.css";
-import "codemirror/mode/sql/sql";
-import "codemirror/addon/hint/show-hint";
-import "codemirror/addon/hint/sql-hint";
-import "codemirror/addon/hint/show-hint.css";
-import "./Codemirror.css";
+import "~/platform/editor/code/Codemirror.css";
 
 import { Box, Button } from "@chakra-ui/react";
 import React, { useCallback, useState } from "react";

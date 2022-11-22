@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { Form, Formik } from "formik";
 import React from "react";
 
-import { TextField } from "./formComponents";
+import { TextField } from "~/components/formComponents";
 
 describe("TextField", () => {
   it("Should respect maximum length of the field", async () => {

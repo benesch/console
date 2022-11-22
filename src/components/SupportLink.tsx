@@ -6,7 +6,7 @@
 import { LinkProps } from "@chakra-ui/react";
 import React from "react";
 
-import TextLink from "./TextLink";
+import TextLink from "~/components/TextLink";
 
 export const SUPPORT_EMAIL = "support@materialize.com";
 export const SUPPORT_HREF = `mailto:${SUPPORT_EMAIL}`;

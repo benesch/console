@@ -17,8 +17,8 @@ import {
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { CopyableBox } from "../../components/copyableComponents";
-import { semanticColors } from "../../theme/colors";
+import { CopyableBox } from "~/components/copyableComponents";
+import { semanticColors } from "~/theme/colors";
 
 const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
 

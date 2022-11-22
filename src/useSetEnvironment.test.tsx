@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { RecoilRoot, useRecoilValue } from "recoil";
 
-import { currentEnvironmentIdState } from "./recoil/environments";
-import useSetEnvironment from "./useSetEnvironment";
+import { currentEnvironmentIdState } from "~/recoil/environments";
+import useSetEnvironment from "~/useSetEnvironment";
 
 const TestComponent = () => {
   const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);

@@ -46,6 +46,10 @@ const config: Configuration = {
   entry: "./src/index.tsx",
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      "~/img": path.resolve(__dirname, "img"),
+      "~": path.resolve(__dirname, "src"),
+    },
   },
   module: {
     rules: [

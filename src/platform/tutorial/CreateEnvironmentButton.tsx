@@ -2,8 +2,8 @@ import { AddIcon } from "@chakra-ui/icons";
 import { Button, ButtonProps, Spinner } from "@chakra-ui/react";
 import React from "react";
 
-import { hasEnvironmentWritePermission, useAuth } from "../../api/auth";
-import { CreateRegion } from "./useCreateEnvironment";
+import { hasEnvironmentWritePermission, useAuth } from "~/api/auth";
+import { CreateRegion } from "~/platform/tutorial/useCreateEnvironment";
 
 interface Props extends ButtonProps {
   regionId: string;
