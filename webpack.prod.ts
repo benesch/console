@@ -1,6 +1,7 @@
 import CspWebpackPlugin from "@melloware/csp-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import fs from "fs";
+import path from "path";
 import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
@@ -31,6 +32,7 @@ const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
 const sentryRelease = requireEnv("SENTRY_RELEASE");
 
 const gitSha = requireEnv("GIT_SHA");
+const publicPath = `/assets/${gitSha}/`;
 
 const DefinePluginOptions: IDefinePluginOptions = {
   __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
@@ -171,6 +173,22 @@ const plugins = [
   }),
 ];
 
+if (process.env.SOURCE_MAPS) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const SentryPlugin = require("@sentry/webpack-plugin");
+  plugins.push(
+    new SentryPlugin({
+      include: path.resolve(__dirname, "dist", "frontend"),
+      org: "materializeinc",
+      project: "cloud-frontend",
+      release: process.env.SENTRY_RELEASE,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      urlPrefix: publicPath,
+      __SENTRY_DEBUG__: false,
+    })
+  );
+}
+
 if (process.env.BUNDLE_ANALYZE) {
   plugins.push(new BundleAnalyzerPlugin());
 }
@@ -180,6 +198,6 @@ module.exports = merge(base, {
   plugins,
   output: {
     crossOriginLoading: "anonymous",
-    publicPath: `/assets/${gitSha}/`,
+    publicPath,
   },
 });
