@@ -6,23 +6,6 @@ import { Configuration } from "webpack";
 export const statuspageId = "qf52z1jnw4q8";
 export const googleAnalyticsId = "UA-138552650-1";
 
-const additionalPlugins = [];
-
-if (process.env.SOURCE_MAPS) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const SentryPlugin = require("@sentry/webpack-plugin");
-  additionalPlugins.push(
-    new SentryPlugin({
-      include: path.resolve(__dirname, "dist", "frontend"),
-      org: "materializeinc",
-      project: "cloud-frontend",
-      release: process.env.SENTRY_RELEASE,
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      __SENTRY_DEBUG__: false,
-    })
-  );
-}
-
 const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
   favicon: "public/favicon.ico",
   template: "public/index.html",
@@ -80,7 +63,6 @@ const config: Configuration = {
   plugins: [
     new HtmlWebpackPlugin(HtmlWebpackPluginOptions),
     new MiniCssExtractPlugin(),
-    ...additionalPlugins,
   ],
   optimization: {
     splitChunks: {
