@@ -99,7 +99,7 @@ const ClustersListPage = ({ clusters }: Props) => {
             >
               {`CREATE CLUSTER <cluster_name>
   REPLICAS (
-    <replica_name> (SIZE = “xsmall”)
+    <replica_name> (SIZE = 'xsmall')
 );`}
             </CodeBlock>
           </SampleCodeBoxWrapper>

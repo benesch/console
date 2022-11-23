@@ -46,7 +46,7 @@ const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   INTO <item_name>
   FORMAT <format>
   ENVELOPE <envelope>
-  WITH (SIZE = “xsmall”);`;
+  WITH (SIZE = 'xsmall');`;
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {
