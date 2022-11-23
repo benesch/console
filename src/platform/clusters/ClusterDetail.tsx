@@ -106,12 +106,12 @@ const ClusterDetailPage = ({ cluster }: Props) => {
               title="Create a cluster replica"
               contents={`CREATE CLUSTER REPLICA
   ${clusterName}.<replica_name>
-  SIZE = “xsmall”;`}
+  SIZE = 'xsmall';`}
               lineNumbers
             >
               {`CREATE CLUSTER REPLICA
   ${clusterName}.<replica_name>
-  SIZE = “xsmall”;`}
+  SIZE = 'xsmall';`}
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
