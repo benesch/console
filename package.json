@@ -109,7 +109,7 @@
     "msw": "^0.48.1",
     "openapi-typescript": "^5.4.1",
     "pg": "^8.7.1",
-    "prettier": "^2.5.1",
+    "prettier": "^2.8.0",
     "pyright": "1.1.278",
     "react-refresh": "^0.11.0",
     "ts-jest": "^27.1.0",
