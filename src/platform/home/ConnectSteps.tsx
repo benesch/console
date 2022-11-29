@@ -1,4 +1,9 @@
-import { Spinner, TabPanel, TabPanels, useColorModeValue } from "@chakra-ui/react";
+import {
+  Spinner,
+  TabPanel,
+  TabPanels,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
