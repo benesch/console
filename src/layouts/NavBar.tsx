@@ -226,7 +226,7 @@ const NavItem = (props: NavItemType) => {
       px={NAV_HORIZONTAL_SPACING}
       py={2}
       transition="all 0.2s"
-      color="gray.200"
+      color="white"
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
         bg: "whiteAlpha.300",
