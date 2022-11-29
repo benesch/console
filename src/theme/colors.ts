@@ -2,22 +2,8 @@ const colors = {
   transparent: "transparent",
   trueBlack: "#000",
   black: "#111",
-  white: "#FFF",
+  white: "#FFF", // bg color for light mode
   offWhite: "#f9f9f9",
-  // true grayscale...more or less
-  bwGray: {
-    50: "#f7f3f5",
-    100: "#ded7d9",
-    200: "#c2bebf",
-    300: "#a7a5a6",
-    400: "#8c8c8c", // for b&w logo
-    500: "#737373",
-    600: "#5a5959",
-    700: "#423f40",
-    800: "#2a2526",
-    900: "#17080d",
-  },
-  // "gray" with a slight bit of blue-purple in it
   gray: {
     50: "#F7F7F8",
     100: "#EAE9EC",
@@ -28,7 +14,7 @@ const colors = {
     600: "#45424C",
     700: "#322F37",
     800: "#1D1B22",
-    900: "#0D1116",
+    900: "#0D1116", // bg color for dark mode
   },
   purple: {
     50: "#f1ecff",

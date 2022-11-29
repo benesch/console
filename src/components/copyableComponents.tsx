@@ -95,7 +95,7 @@ export const CopyButton: React.FC<
 export const CopyableBox: React.FC<
   React.PropsWithChildren<{ contents: string } & TextProps>
 > = ({ contents, p, ...props }) => {
-  const bgColor = useColorModeValue("bwGray.50", "gray.800");
+  const bgColor = useColorModeValue("gray.50", "gray.800");
   return (
     <HStack
       alignItems="stretch"

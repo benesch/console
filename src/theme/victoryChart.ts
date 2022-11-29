@@ -28,7 +28,7 @@ const COLOR_NAMES = shuffleEvenly(
     // filter out boring colors, colors used in chart UI, and colors too close to other colors
     if (
       typeof value === "string" ||
-      ["bwGray", "gray", "purple", "red"].indexOf(key) !== -1
+      ["gray", "purple", "red"].indexOf(key) !== -1
     ) {
       return [];
     } else if (["honeysuckle", "green"].indexOf(key) !== -1) {
