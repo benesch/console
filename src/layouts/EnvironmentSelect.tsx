@@ -156,7 +156,7 @@ const EnvOption: React.FunctionComponent<
   const isDarkMode = colorMode === "dark";
   const textColor = isDarkMode ? "white" : "black";
   const bg = isDarkMode ? "transparent" : "white";
-  const selectedBg = isDarkMode ? `#FFFFFF18` : "gray.50";
+  const selectedBg = isDarkMode ? `#FFFFFF18` : "transparent";
   const hoverBg = isDarkMode ? `#FFFFFF24` : "gray.100";
   const activeBg = isDarkMode ? `#FFFFFF36` : "gray.200";
   return (
