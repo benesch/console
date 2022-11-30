@@ -158,6 +158,7 @@ const SourceTable = (props: SourceTableProps) => {
           <Thead>
             <Tr>
               <Th>Name</Th>
+              <Th>Status</Th>
               <Th>Type</Th>
               <Th>Size</Th>
             </Tr>
@@ -173,8 +174,9 @@ const SourceTable = (props: SourceTableProps) => {
                 }}
               >
                 <Td>{s.name}</Td>
+                <Td>{s.status ?? "-"}</Td>
                 <Td>{s.type}</Td>
-                <Td>{s.size || "-"}</Td>
+                <Td>{s.size ?? "-"}</Td>
               </Tr>
             ))}
           </Tbody>
