@@ -235,7 +235,9 @@ export interface Source {
  * Fetches all sources in the current environment
  */
 export function useSources() {
-  const sourceResponse = useSql("SHOW SOURCES");
+  const sourceResponse = useSql(
+    "SELECT name, type, size FROM mz_sources WHERE id LIKE 'u%'"
+  );
   let sources = null;
   if (sourceResponse.data) {
     const { rows } = sourceResponse.data;
