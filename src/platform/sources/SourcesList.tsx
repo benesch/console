@@ -164,9 +164,9 @@ const SourceTable = (props: SourceTableProps) => {
           <Thead>
             <Tr>
               <Th>Name</Th>
-              <Th>Status</Th>
-              <Th>Type</Th>
-              <Th>Size</Th>
+              <Th width="25%">Status</Th>
+              <Th width="25%">Type</Th>
+              <Th width="25%">Size</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -179,7 +179,22 @@ const SourceTable = (props: SourceTableProps) => {
                   bg: hoverColor,
                 }}
               >
-                <Td>{s.name}</Td>
+                <Td>
+                  <Box
+                    maxW={{
+                      base: "120px",
+                      xl: "200px",
+                      "2xl": "400px",
+                      "3xl": "800px",
+                      "4xl": "1200px",
+                    }}
+                    whiteSpace="nowrap"
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                  >
+                    {s.name}
+                  </Box>
+                </Td>
                 <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
                 <Td>{s.type}</Td>
                 <Td>{s.size ?? "-"}</Td>
@@ -248,7 +263,7 @@ const getTextColor = (status: Source["status"]) => {
 const StatusPill = ({ status }: StatusPillProps) => {
   let icon = null;
   if (status === "starting") {
-    icon = <Spinner size="xs" />;
+    icon = <Spinner width="12px" height="12px" speed="0.75s" />;
   }
   if (status === "failed") {
     icon = <WarningIcon />;
