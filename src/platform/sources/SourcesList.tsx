@@ -1,3 +1,4 @@
+import { WarningIcon } from "@chakra-ui/icons";
 import {
   Box,
   HStack,
@@ -245,8 +246,18 @@ const getTextColor = (status: Source["status"]) => {
 };
 
 const StatusPill = ({ status }: StatusPillProps) => {
+  let icon = null;
+  if (status === "starting") {
+    icon = <Spinner size="xs" />;
+  }
+  if (status === "failed") {
+    icon = <WarningIcon />;
+  }
   return (
     <Box
+      display="flex"
+      alignItems="center"
+      gap="4px"
       borderRadius="40px"
       paddingY="2px"
       paddingX="8px"
@@ -256,6 +267,7 @@ const StatusPill = ({ status }: StatusPillProps) => {
       color={getTextColor(status)}
       width="fit-content"
     >
+      {icon}
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Box>
   );
