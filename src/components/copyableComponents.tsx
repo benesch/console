@@ -203,7 +203,7 @@ export const TabbedCodeBlock: React.FC<
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const hoverColor = useColorModeValue("black", "white");
   const hoverBg = useColorModeValue("whiteAlpha.400", "whiteAlpha.100");
-  const activeColor = useColorModeValue("purple.800", "purple.300");
+  const activeColor = useColorModeValue("gray.800", "gray.300");
   const grayText = useColorModeValue(
     semanticColors.grayText.light,
     semanticColors.grayText.dark
@@ -260,7 +260,7 @@ export const TabbedCodeBlock: React.FC<
                 key={`codeblock-tab-${title}`}
                 as="button"
                 onClick={() => setActiveTab(title)}
-                borderBottom="2px solid"
+                borderBottom="1px solid"
                 borderColor={title === activeTab ? activeColor : "transparent"}
                 textColor={title === activeTab ? activeColor : grayText}
                 _hover={{
