@@ -224,12 +224,20 @@ export function useClusters() {
   return { clusters, refetch };
 }
 
+export type SourceStatus =
+  | "created"
+  | "starting"
+  | "running"
+  | "stalled"
+  | "failed"
+  | "dropped";
+
 export interface Source {
   id: string;
   name: string;
   type: string;
   size?: string;
-  status?: string;
+  status?: SourceStatus;
 }
 
 /**

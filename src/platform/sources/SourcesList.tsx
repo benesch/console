@@ -22,7 +22,7 @@ import {
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source, useDDL, useSources } from "~/api/materialized";
+import { Source, SourceStatus, useDDL, useSources } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
@@ -154,7 +154,12 @@ const SourceTable = (props: SourceTableProps) => {
   return (
     <>
       <Card pt="2" px="0" pb="6" minWidth="fit-content">
-        <Table data-testid="source-table" borderRadius="xl">
+        <Table
+          variant="unstyled"
+          data-testid="source-table"
+          borderRadius="xl"
+          fontSize="14px"
+        >
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -174,7 +179,7 @@ const SourceTable = (props: SourceTableProps) => {
                 }}
               >
                 <Td>{s.name}</Td>
-                <Td>{s.status ?? "-"}</Td>
+                <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
                 <Td>{s.type}</Td>
                 <Td>{s.size ?? "-"}</Td>
               </Tr>
@@ -198,6 +203,61 @@ const SourceTable = (props: SourceTableProps) => {
         </ModalContent>
       </Modal>
     </>
+  );
+};
+
+interface StatusPillProps {
+  status: SourceStatus;
+}
+
+const getBackgroundColor = (status: Source["status"]) => {
+  switch (status) {
+    case "created":
+      return "#ECE5FF";
+    case "starting":
+      return "#ECE6FF";
+    case "running":
+      return "#DEF7E2";
+    case "stalled":
+      return "#F5E8CF";
+    case "failed":
+      return "#F5D4D9";
+    case "dropped":
+      return "#F7F7F8";
+  }
+};
+
+const getTextColor = (status: Source["status"]) => {
+  switch (status) {
+    case "created":
+      return "#1C1561";
+    case "starting":
+      return "#1C1561";
+    case "running":
+      return "#00471D";
+    case "stalled":
+      return "#8A5B01";
+    case "failed":
+      return "#B80F25";
+    case "dropped":
+      return "#736F7B";
+  }
+};
+
+const StatusPill = ({ status }: StatusPillProps) => {
+  return (
+    <Box
+      borderRadius="40px"
+      paddingY="2px"
+      paddingX="8px"
+      textAlign="center"
+      fontSize="12px"
+      backgroundColor={getBackgroundColor(status)}
+      color={getTextColor(status)}
+      width="fit-content"
+    >
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </Box>
   );
 };
 
