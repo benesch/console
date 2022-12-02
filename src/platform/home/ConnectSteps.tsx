@@ -1,25 +1,14 @@
-import {
-  Spinner,
-  TabPanel,
-  TabPanels,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
 
-import {
-  Card,
-  CardContent,
-  CardTab,
-  CardTabs,
-  CardTabsHeaders,
-} from "~/components/cardComponents";
-import { CodeBlock, CopyableBox } from "~/components/copyableComponents";
+import { TabbedCodeBlock } from "~/components/copyableComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
+import MonitorIcon from "~/svg/Monitor";
+import TerminalIcon from "~/svg/Terminal";
 
 const ConnectSteps = (): JSX.Element => {
-  const borderColor = useColorModeValue("gray.200", "gray.700");
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
 
@@ -36,41 +25,25 @@ const ConnectSteps = (): JSX.Element => {
   )}@${environmentdAddress}/materialize"`;
 
   return (
-    <Card>
-      <CardTabs>
-        <CardTabsHeaders
-          data-test-id="connection-options"
-          borderBottomColor={borderColor}
-        >
-          <CardTab>Terminal</CardTab>
-          <CardTab>External tools</CardTab>
-        </CardTabsHeaders>
-        <CardContent>
-          <TabPanels
-            minHeight="190.8px" // manually set to tallest panel's height
-          >
-            <TabPanel>
-              <CopyableBox contents={psqlCopyString}>
-                {psqlCopyString}
-              </CopyableBox>
-            </TabPanel>
-            <TabPanel>
-              <CodeBlock
-                title="Connection information"
-                contents={`HOST=${environmentdAddress.split(":")[0]}
+    <TabbedCodeBlock
+      data-test-id="connection-options"
+      lineNumbers
+      tabs={[
+        { title: "Terminal", contents: psqlCopyString, icon: <TerminalIcon /> },
+        {
+          title: "External tools",
+          contents: `HOST=${environmentdAddress.split(":")[0]}
 
 PORT=${environmentdAddress.split(":")[1]}
 
 USER=${user.email}
 
-DATABASE=materialize`}
-                lineNumbers
-              />
-            </TabPanel>
-          </TabPanels>
-        </CardContent>
-      </CardTabs>
-    </Card>
+DATABASE=materialize`,
+          icon: <MonitorIcon />,
+        },
+      ]}
+      minHeight="208px"
+    />
   );
 };
 
