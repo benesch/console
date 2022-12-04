@@ -40,7 +40,7 @@
     "@types/webpack-bundle-analyzer": "^4.6.0",
     "codemirror": "^5.65.10",
     "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.5.1",
+    "css-loader": "^6.7.2",
     "d3-scale-chromatic": "^3.0.0",
     "date-fns": "^2.29.3",
     "dayzed": "^3.2.2",
