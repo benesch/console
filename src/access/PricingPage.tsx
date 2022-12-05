@@ -92,7 +92,11 @@ const PricingPage = () => {
               <Tr>
                 <Th></Th>
                 {pricingTerms.cols.map((col) => (
-                  <Th key={`price-header-${col.title}`} textAlign="left">
+                  <Th
+                    key={`price-header-${col.title}`}
+                    textAlign="left"
+                    width="25%"
+                  >
                     {col.title}
                   </Th>
                 ))}
