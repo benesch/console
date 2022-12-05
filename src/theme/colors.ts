@@ -2,19 +2,60 @@ const colors = {
   transparent: "transparent",
   trueBlack: "#000",
   black: "#111",
-  white: "#FFF", // bg color for light mode
+  /**
+   * Light / Background Primary
+   * AND
+   * Light / Text Inverse
+   */
+  white: "#FFF",
   offWhite: "#f9f9f9",
   gray: {
+    /**
+     * Light / Background Secondary
+     * AND
+     * Dark / Text Inverse
+     */
     50: "#F7F7F8",
-    100: "#EAE9EC",
-    200: "#DDDCE0",
-    300: "#BCB9C0",
-    400: "#837D8C",
-    500: "#605B67",
-    600: "#45424C",
-    700: "#322F37",
-    800: "#1D1B22",
-    900: "#0D1116", // bg color for dark mode
+    /**
+     * Light / Background Tertiary
+     */
+    100: "#F1F1F3",
+    /**
+     * Light / Border Primary
+     */
+    200: "#EAE9EC",
+    /**
+     * Light / Border Secondary
+     */
+    300: "#E0DEE3",
+    /**
+     * Light / Border Secondary
+     */
+    400: "#BCB9C0",
+    /**
+     * Light / Text Secondary
+     */
+    500: "#726E77",
+    /**
+     * Dark / Border Secondary
+     */
+    600: "#3D3B40",
+    /**
+     * Dark / Border Primary
+     * AND
+     * Dark / Background Tertiary
+     */
+    700: "#323135",
+    /**
+     * Dark / Background Secondary
+     */
+    800: "#232225",
+    /**
+     * Light / Text Primary
+     * AND
+     * Dark / Background Primary
+     */
+    900: "#0D1116",
   },
   purple: {
     50: "#f1ecff",
