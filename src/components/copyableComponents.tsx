@@ -295,7 +295,7 @@ export const TabbedCodeBlock: React.FC<
         />
       </Flex>
       <chakra.pre
-        fontSize={props.fontSize || "sm"}
+        fontSize="sm"
         py={2}
         pl={4}
         pr={8}
@@ -346,7 +346,7 @@ const Line = (props: LineProps) => {
   );
   return (
     <chakra.span
-      fontSize="xs"
+      fontSize="sm"
       _before={{
         content: "counter(line)",
         color: grayText,
