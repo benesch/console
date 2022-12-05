@@ -92,7 +92,7 @@ const PricingPage = () => {
               <Tr>
                 <Th></Th>
                 {pricingTerms.cols.map((col) => (
-                  <Th key={`price-header-${col.title}`} textAlign="center">
+                  <Th key={`price-header-${col.title}`} textAlign="left">
                     {col.title}
                   </Th>
                 ))}
@@ -106,7 +106,7 @@ const PricingPage = () => {
                   {pricingTerms.cols.map((col, j) => (
                     <Td
                       key={`price-${region}-${rowTitle}-${j}}`}
-                      textAlign="center"
+                      textAlign="left"
                     >
                       {col.values[region][i]}
                     </Td>
