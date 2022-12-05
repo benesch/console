@@ -24,7 +24,7 @@
     "@chakra-ui/popover": "^2.1.2",
     "@chakra-ui/react": "^2.3.7",
     "@chakra-ui/toast": "^4.0.1",
-    "@emotion/react": "^11.10.4",
+    "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.8.1",
     "@fontsource/inter": "^4.5.14",
     "@frontegg/react": "^5.0.9",
