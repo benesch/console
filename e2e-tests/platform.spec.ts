@@ -159,9 +159,7 @@ async function connectRegionPostgres(
   page: Page,
   password: string
 ): Promise<Client> {
-  await page.click(
-    `[data-test-id=connection-options] button:text("External tools")`
-  );
+  await page.getByRole("button", { name: "External tools" }).click();
   const connectionInfo = await page.locator("pre").innerText();
   const lines = connectionInfo.split("\n").filter((line) => !!line);
   const hostAddress = lines.find((line) => line.startsWith("HOST="))?.slice(5);

@@ -149,37 +149,35 @@ const ClusterTable = (props: ClusterTableProps) => {
   const hoverColor = useColorModeValue("gray.50", "gray.900");
 
   return (
-    <Card pt="2" px="0" pb="6" minWidth="fit-content">
-      <Table data-testid="cluster-table" borderRadius="xl">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th># of Replicas</Th>
+    <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th># of Replicas</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {props.clusters.map((c) => (
+          <Tr
+            key={c.id}
+            onClick={() => navigate(`/clusters/${c.name}`)}
+            cursor="pointer"
+            _hover={{
+              bg: hoverColor,
+            }}
+          >
+            <Td>{c.name}</Td>
+            <Td>
+              {c.replicas.loading ? (
+                <Spinner size="sm" />
+              ) : (
+                c.replicas.value.length
+              )}
+            </Td>
           </Tr>
-        </Thead>
-        <Tbody>
-          {props.clusters.map((c) => (
-            <Tr
-              key={c.id}
-              onClick={() => navigate(`/clusters/${c.name}`)}
-              cursor="pointer"
-              _hover={{
-                bg: hoverColor,
-              }}
-            >
-              <Td>{c.name}</Td>
-              <Td>
-                {c.replicas.loading ? (
-                  <Spinner size="sm" />
-                ) : (
-                  c.replicas.value.length
-                )}
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Card>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 

@@ -1,3 +1,4 @@
+import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 import {
   mode,
   StyleFunctionProps,
@@ -5,7 +6,7 @@ import {
 } from "@chakra-ui/theme-tools";
 
 import { CARD_PADDING } from "../components/cardComponents";
-import { gradients, semanticColors, shadows } from "./colors";
+import colors, { gradients, semanticColors, shadows } from "./colors";
 
 export const Alert = {
   variants: {
@@ -97,6 +98,60 @@ export const Modal = {
     },
   },
 };
+
+const { defineMultiStyleConfig } = createMultiStyleConfigHelpers([
+  "table",
+  "th",
+]);
+
+const tableBorderStyle = `solid 1px ${colors.gray[200]}`;
+export const Table = defineMultiStyleConfig({
+  baseStyle: {},
+  variants: {
+    borderless: {
+      table: {
+        borderCollapse: "separate",
+        borderSpacing: 0,
+      },
+      th: {
+        textTransform: "none",
+        fontFamily: "body",
+        fontSize: "sm",
+        fontWeight: "normal",
+        color: "gray.400",
+        backgroundColor: "gray.50",
+        border: tableBorderStyle,
+        borderX: "none",
+        "&:first-child": {
+          borderRadius: "4px 0 0 4px",
+          borderLeft: tableBorderStyle,
+        },
+        "&:last-child": {
+          borderRadius: "0 4px 4px 0",
+          borderRight: tableBorderStyle,
+        },
+      },
+    },
+  },
+  sizes: {
+    md: {
+      th: {
+        height: "32px",
+        px: "4",
+        py: "0",
+        lineHeight: "4",
+        fontSize: "sm",
+      },
+      td: {
+        height: "40px",
+        px: "4",
+        py: "0",
+        lineHeight: "4",
+        fontSize: "sm",
+      },
+    },
+  },
+});
 
 export const Tabs = {
   variants: {

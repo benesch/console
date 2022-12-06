@@ -87,7 +87,7 @@ const AppPasswordsPage = () => {
               onClose={closeSecretBox}
             />
           )}
-          <HStack spacing="5" alignItems="top" display="flex">
+          <HStack spacing="5" alignItems="start" display="flex">
             <PasswordsTable
               tokens={tokensState.apiTokensDataUser}
               latestDeletionId={latestDeletionId}
@@ -149,51 +149,49 @@ const PasswordsTable = ({
   ...props
 }: APIKeysTableProps) => {
   const { user } = useAuth();
-  const disabledBg = useColorModeValue("gray.50", "gray.800");
+  const disabledBg = useColorModeValue("gray.100", "gray.800");
   const disabledColor = useColorModeValue("gray.500", "gray.500");
   return (
-    <Card pt="2" px="0" pb="6" minWidth="fit-content" {...props}>
-      <Table borderRadius="xl">
-        <Thead>
-          <Tr>
-            <Th width="50%">Name</Th>
-            <Th>Owner</Th>
-            <Th>Created</Th>
-            <Th />
-          </Tr>
-        </Thead>
-        <Tbody>
-          {tokens.map((token) => {
-            const isDeleting = token.clientId === latestDeletionId;
-            return (
-              <Tr
-                key={token.clientId}
-                bg={isDeleting ? disabledBg : "default"}
-                textColor={isDeleting ? disabledColor : "default"}
-                aria-label={token.description}
-              >
-                <Td>{token.description}</Td>
-                <Td>{user.name}</Td>
-                <Td>{format(new Date(token.createdAt), "yyyy/MM/dd")}</Td>
-                <Td>
-                  <DeleteKeyModal
-                    description={token.description}
-                    clientId={token.clientId}
-                    disabled={isDeleting}
-                    deleteCb={deleteCb}
-                  />
-                </Td>
-              </Tr>
-            );
-          })}
-          {tokens.length === 0 && (
-            <Tr>
-              <Td colSpan={4}>No app passwords yet.</Td>
+    <Table variant="borderless">
+      <Thead>
+        <Tr>
+          <Th width="50%">Name</Th>
+          <Th>Owner</Th>
+          <Th>Created</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      <Tbody>
+        {tokens.map((token) => {
+          const isDeleting = token.clientId === latestDeletionId;
+          return (
+            <Tr
+              key={token.clientId}
+              bg={isDeleting ? disabledBg : "default"}
+              textColor={isDeleting ? disabledColor : "default"}
+              aria-label={token.description}
+            >
+              <Td>{token.description}</Td>
+              <Td>{user.name}</Td>
+              <Td>{format(new Date(token.createdAt), "yyyy/MM/dd")}</Td>
+              <Td>
+                <DeleteKeyModal
+                  description={token.description}
+                  clientId={token.clientId}
+                  disabled={isDeleting}
+                  deleteCb={deleteCb}
+                />
+              </Td>
             </Tr>
-          )}
-        </Tbody>
-      </Table>
-    </Card>
+          );
+        })}
+        {tokens.length === 0 && (
+          <Tr>
+            <Td colSpan={4}>No app passwords yet.</Td>
+          </Tr>
+        )}
+      </Tbody>
+    </Table>
   );
 };
 

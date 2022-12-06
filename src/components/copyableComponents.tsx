@@ -3,8 +3,8 @@ import {
   Box,
   BoxProps,
   Flex,
-  Heading,
   HStack,
+  Spacer,
   Text,
   TextProps,
 } from "@chakra-ui/layout";
@@ -154,15 +154,25 @@ export const CopyableText: React.FC<
   );
 };
 
-interface CodeBlockProps {
+type CodeBlockTab = {
   title: string;
   /** The code to display. */
   contents: string;
+  icon?: React.ReactNode;
+};
+
+type CodeBlockExtraProps = {
   /** Whether to display line numbers. */
   lineNumbers?: boolean;
   /** Whether to force-wrap long lines. */
   wrap?: boolean;
-}
+};
+
+type TabbedCodeBlockProps = CodeBlockExtraProps & {
+  tabs: CodeBlockTab[];
+};
+
+type CodeBlockProps = CodeBlockTab & CodeBlockExtraProps;
 
 /**
  * A nicely-formatted block of code.
@@ -176,18 +186,30 @@ interface CodeBlockProps {
  * results in scroll bars. Setting `wrap` to `true` will cause long lines to
  * wrap instead.
  */
-export const CodeBlock: React.FC<
-  React.PropsWithChildren<CodeBlockProps & BoxProps>
-> = ({ title, wrap, lineNumbers, contents, ...props }) => {
+export const TabbedCodeBlock: React.FC<
+  React.PropsWithChildren<TabbedCodeBlockProps & BoxProps>
+> = ({
+  tabs,
+  lineNumbers,
+  wrap,
+  ...props
+}: TabbedCodeBlockProps & BoxProps) => {
+  const [activeTab, setActiveTab] = React.useState(tabs[0]?.title || "");
   const bg = useColorModeValue(
     semanticColors.card.bg.light,
     semanticColors.card.bg.dark
   );
   const headerBg = useColorModeValue("gray.50", "gray.900");
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const hoverColor = useColorModeValue("black", "white");
+  const hoverBg = useColorModeValue("whiteAlpha.400", "whiteAlpha.100");
+  const activeColor = useColorModeValue("gray.800", "gray.300");
+  const grayText = useColorModeValue(
+    semanticColors.grayText.light,
+    semanticColors.grayText.dark
   );
+
+  if (tabs.length === 0) return null;
 
   const preProps: HTMLChakraProps<"pre"> = {};
 
@@ -195,7 +217,9 @@ export const CodeBlock: React.FC<
     preProps.whiteSpace = "pre-wrap";
   }
 
-  let codeblockInnards: React.ReactNode = props.children || contents;
+  const contents =
+    tabs.find((tab) => tab.title === activeTab)?.contents || tabs[0].contents;
+  let codeblockInnards: React.ReactNode = contents;
   if (lineNumbers) {
     codeblockInnards = contents.split("\n").map((line, i) => (
       <Line key={`line-${i}`} index={i}>
@@ -204,8 +228,6 @@ export const CodeBlock: React.FC<
       </Line>
     ));
     preProps.ml = 6;
-    preProps.borderLeft = "1px solid";
-    preProps.borderLeftColor = borderColor;
   }
 
   return (
@@ -227,34 +249,53 @@ export const CodeBlock: React.FC<
         borderTopLeftRadius="md"
         borderTopRightRadius="md"
         w="full"
-        alignItems="center"
+        alignItems="stretch"
+        justifyContent="flex-start"
+        pl="2"
       >
-        <Heading
-          size="xs"
-          fontWeight="400"
-          flex={1}
-          px={2}
-          py={1}
-          textAlign="left"
-        >
-          {title}
-        </Heading>
+        {tabs.length > 1 ? (
+          <>
+            {tabs.map(({ title, icon }) => (
+              <CodeBlockHeading
+                key={`codeblock-tab-${title}`}
+                as="button"
+                onClick={() => setActiveTab(title)}
+                borderBottom="1px solid"
+                borderColor={title === activeTab ? activeColor : "transparent"}
+                textColor={title === activeTab ? activeColor : grayText}
+                _hover={{
+                  textColor: hoverColor,
+                  bg: hoverBg,
+                }}
+              >
+                <Box w="4" h="4">
+                  {icon}
+                </Box>
+                <span>{title}</span>
+              </CodeBlockHeading>
+            ))}
+          </>
+        ) : (
+          <CodeBlockHeading>
+            <span>{tabs[0].title}</span>
+          </CodeBlockHeading>
+        )}
+        <Spacer />
         <CopyButton
           contents={contents}
           flex={0}
-          px="4px"
+          px="4"
           py="0px"
-          mr="2px"
           h="auto"
           fontSize="sm"
-          borderRadius="md"
+          borderTopRightRadius="sm"
           _hover={{
-            bg: "gray.100",
+            bg: "whiteAlpha.400",
           }}
         />
       </Flex>
       <chakra.pre
-        fontSize={props.fontSize || "sm"}
+        fontSize="sm"
         py={2}
         pl={4}
         pr={8}
@@ -266,6 +307,31 @@ export const CodeBlock: React.FC<
       </chakra.pre>
     </Box>
   );
+};
+
+const CodeBlockHeading = ({ children, ...props }: BoxProps) => {
+  return (
+    <HStack
+      fontSize="sm"
+      fontWeight="400"
+      flex={0}
+      px={2}
+      py={2}
+      mb="-1px"
+      textAlign="left"
+      whiteSpace="nowrap"
+      spacing="2"
+      {...props}
+    >
+      {children}
+    </HStack>
+  );
+};
+
+export const CodeBlock: React.FC<
+  React.PropsWithChildren<CodeBlockProps & BoxProps>
+> = ({ title, contents, ...props }) => {
+  return <TabbedCodeBlock tabs={[{ title, contents }]} {...props} />;
 };
 
 interface LineProps {
@@ -280,15 +346,16 @@ const Line = (props: LineProps) => {
   );
   return (
     <chakra.span
-      fontSize="xs"
+      fontSize="sm"
       _before={{
         content: "counter(line)",
         color: grayText,
         position: "absolute",
         left: "0",
-        px: 2,
+        px: 4,
         textAlign: "right",
         userSelect: "none",
+        fontSize: "sm",
       }}
       sx={{ counterIncrement: "line", wordWrap: "normal" }}
     >
