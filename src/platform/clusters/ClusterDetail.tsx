@@ -157,24 +157,22 @@ interface ReplicaTableProps {
 
 const ReplicaTable = (props: ReplicaTableProps) => {
   return (
-    <Card pt="2" px="0" pb="6" minWidth="fit-content">
-      <Table data-testid="cluster-table" borderRadius="xl">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Size</Th>
+    <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th>Size</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {props.replicas.map((r) => (
+          <Tr key={r.replica}>
+            <Td>{r.replica}</Td>
+            <Td>{r.size}</Td>
           </Tr>
-        </Thead>
-        <Tbody>
-          {props.replicas.map((r) => (
-            <Tr key={r.replica}>
-              <Td>{r.replica}</Td>
-              <Td>{r.size}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </Card>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 

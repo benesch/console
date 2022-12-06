@@ -155,33 +155,31 @@ const SinkTable = (props: SinkTableProps) => {
 
   return (
     <>
-      <Card pt="2" px="0" pb="6" minWidth="fit-content">
-        <Table data-testid="sink-table" borderRadius="xl">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Type</Th>
-              <Th>Size</Th>
+      <Table variant="borderless" data-testid="sink-table" borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Type</Th>
+            <Th>Size</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.sinks.map((s) => (
+            <Tr
+              key={s.id}
+              onClick={() => setActiveSinkName(s.name)}
+              cursor="pointer"
+              _hover={{
+                bg: hoverColor,
+              }}
+            >
+              <Td>{s.name}</Td>
+              <Td>{s.type}</Td>
+              <Td>{s.size || "-"}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {props.sinks.map((s) => (
-              <Tr
-                key={s.id}
-                onClick={() => setActiveSinkName(s.name)}
-                cursor="pointer"
-                _hover={{
-                  bg: hoverColor,
-                }}
-              >
-                <Td>{s.name}</Td>
-                <Td>{s.type}</Td>
-                <Td>{s.size || "-"}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Card>
+          ))}
+        </Tbody>
+      </Table>
       <Modal
         isOpen={!!activeSinkName && ddl}
         onClose={() => setActiveSinkName("")}

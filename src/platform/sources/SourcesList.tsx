@@ -151,58 +151,51 @@ const SourceTable = (props: SourceTableProps) => {
   const [activeSourceName, setActiveSourceName] = React.useState("");
   // automatically refetches if activeSourceName changes
   const { ddl } = useDDL("SOURCE", activeSourceName);
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
+  const hoverColor = useColorModeValue("gray.100", "gray.900");
   return (
     <>
-      <Card pt="2" px="0" pb="6" minWidth="fit-content">
-        <Table
-          variant="unstyled"
-          data-testid="source-table"
-          borderRadius="xl"
-          fontSize="14px"
-        >
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th width="25%">Status</Th>
-              <Th width="25%">Type</Th>
-              <Th width="25%">Size</Th>
+      <Table variant="borderless" data-testid="source-table" borderRadius="xl">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th width="25%">Status</Th>
+            <Th width="25%">Type</Th>
+            <Th width="25%">Size</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {props.sources.map((s) => (
+            <Tr
+              key={s.id}
+              onClick={() => setActiveSourceName(s.name)}
+              cursor="pointer"
+              _hover={{
+                bg: hoverColor,
+              }}
+            >
+              <Td>
+                <Box
+                  maxW={{
+                    base: "120px",
+                    xl: "200px",
+                    "2xl": "400px",
+                    "3xl": "800px",
+                    "4xl": "1200px",
+                  }}
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {s.name}
+                </Box>
+              </Td>
+              <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
+              <Td>{s.type}</Td>
+              <Td>{s.size ?? "-"}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {props.sources.map((s) => (
-              <Tr
-                key={s.id}
-                onClick={() => setActiveSourceName(s.name)}
-                cursor="pointer"
-                _hover={{
-                  bg: hoverColor,
-                }}
-              >
-                <Td>
-                  <Box
-                    maxW={{
-                      base: "120px",
-                      xl: "200px",
-                      "2xl": "400px",
-                      "3xl": "800px",
-                      "4xl": "1200px",
-                    }}
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                  >
-                    {s.name}
-                  </Box>
-                </Td>
-                <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
-                <Td>{s.type}</Td>
-                <Td>{s.size ?? "-"}</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Card>
+          ))}
+        </Tbody>
+      </Table>
       <Modal
         isOpen={!!activeSourceName && ddl}
         onClose={() => setActiveSourceName("")}
@@ -277,7 +270,7 @@ const StatusPill = ({ status }: StatusPillProps) => {
       paddingY="2px"
       paddingX="8px"
       textAlign="center"
-      fontSize="12px"
+      fontSize="xs"
       fontWeight="500"
       backgroundColor={getBackgroundColor(status)}
       color={getTextColor(status)}
