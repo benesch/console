@@ -278,6 +278,7 @@ const StatusPill = ({ status }: StatusPillProps) => {
       paddingX="8px"
       textAlign="center"
       fontSize="12px"
+      fontWeight="500"
       backgroundColor={getBackgroundColor(status)}
       color={getTextColor(status)}
       width="fit-content"
