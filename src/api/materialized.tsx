@@ -312,7 +312,7 @@ type DDLNoun = "SINK" | "SOURCE";
 /**
  * Fetches DDL for a noun
  */
-export function useDDL(noun: DDLNoun, sinkName: string) {
+export function useDDL(noun: DDLNoun, sinkName?: string) {
   const { data, refetch } = useSql(
     sinkName ? `SHOW CREATE ${noun} ${sinkName}` : undefined
   );

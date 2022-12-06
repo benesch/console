@@ -2,12 +2,6 @@ import { WarningIcon } from "@chakra-ui/icons";
 import {
   Box,
   HStack,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Table,
   Tbody,
@@ -16,14 +10,14 @@ import {
   Th,
   Thead,
   Tr,
-  useInterval,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source, SourceStatus, useDDL, useSources } from "~/api/materialized";
+import { Source, SourceStatus, useSources } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
@@ -39,7 +33,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SourcesIcon from "~/svg/Sources";
-import { isPollingDisabled } from "~/util";
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {
@@ -59,14 +52,15 @@ const sourcesSuggestions: SQLSuggestion[] = [
   },
 ];
 
-const SourcesListPage = () => {
-  const { colors } = useTheme();
+interface SourceListProps {
+  sources: Source[] | null;
+}
 
+const SourcesListPage = ({ sources }: SourceListProps) => {
+  const { colors } = useTheme();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
-  const { sources, refetch } = useSources();
-  useInterval(refetch, isPollingDisabled() ? null : 5000);
 
   const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = sources === null;
@@ -149,88 +143,51 @@ interface SourceTableProps {
 
 const SourceTable = (props: SourceTableProps) => {
   const { colors } = useTheme();
-  const [activeSourceName, setActiveSourceName] = React.useState("");
-  // automatically refetches if activeSourceName changes
-  const { ddl } = useDDL("SOURCE", activeSourceName);
+  const navigate = useNavigate();
 
   return (
-    <>
-      <Table variant="borderless" data-testid="source-table" borderRadius="xl">
-        <Thead background={colors.semanticColors.background.secondary}>
-          <Tr>
-            <Th>Name</Th>
-            <Th width="25%">Status</Th>
-            <Th width="25%">Type</Th>
-            <Th width="25%">Size</Th>
+    <Table variant="borderless" data-testid="source-table" borderRadius="xl">
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th width="25%">Status</Th>
+          <Th width="25%">Type</Th>
+          <Th width="25%">Size</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {props.sources.map((s) => (
+          <Tr
+            key={s.id}
+            onClick={() => navigate(`/sources/${s.name}`)}
+            cursor="pointer"
+            _hover={{
+              bg: colors.semanticColors.background.secondary,
+            }}
+          >
+            <Td>
+              <Box
+                maxW={{
+                  base: "120px",
+                  xl: "200px",
+                  "2xl": "400px",
+                  "3xl": "800px",
+                  "4xl": "1200px",
+                }}
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+              >
+                {s.name}
+              </Box>
+            </Td>
+            <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
+            <Td>{s.type}</Td>
+            <Td>{s.size ?? "-"}</Td>
           </Tr>
-        </Thead>
-        <Tbody>
-          {props.sources.map((s) => (
-            <Tr
-              key={s.id}
-              onClick={() => setActiveSourceName(s.name)}
-              cursor="pointer"
-              _hover={{
-                bg: colors.semanticColors.background.secondary,
-              }}
-            >
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
-              >
-                <Box
-                  maxW={{
-                    base: "120px",
-                    xl: "200px",
-                    "2xl": "400px",
-                    "3xl": "800px",
-                    "4xl": "1200px",
-                  }}
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                >
-                  {s.name}
-                </Box>
-              </Td>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
-              >
-                {s.status ? <StatusPill status={s.status} /> : "-"}
-              </Td>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
-              >
-                {s.type}
-              </Td>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
-              >
-                {s.size ?? "-"}
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-      <Modal
-        isOpen={!!activeSourceName && ddl}
-        onClose={() => setActiveSourceName("")}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{`DDL statement for source "${activeSourceName}"`}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pt="3" pb="6">
-            <CodeBlock title="SQL" contents={ddl}>
-              {ddl}
-            </CodeBlock>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 
