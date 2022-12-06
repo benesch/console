@@ -224,30 +224,47 @@ export function useClusters() {
   return { clusters, refetch };
 }
 
+export type SourceStatus =
+  | "created"
+  | "starting"
+  | "running"
+  | "stalled"
+  | "failed"
+  | "dropped";
+
 export interface Source {
   id: string;
   name: string;
   type: string;
   size?: string;
+  status?: SourceStatus;
 }
 
 /**
  * Fetches all sources in the current environment
  */
 export function useSources() {
-  const sourceResponse = useSql("SHOW SOURCES");
-  let sources = null;
+  const sourceResponse = useSql(`SELECT s.oid, s.name, s.type, s.size,
+  (
+    SELECT status
+    FROM mz_internal.mz_source_status_history h
+    WHERE h.source_id = s.id
+    ORDER BY occurred_at DESC
+    LIMIT 1
+  ) status
+FROM mz_sources s
+WHERE id LIKE 'u%';
+`);
+  let sources: Source[] | null = null;
   if (sourceResponse.data) {
     const { rows } = sourceResponse.data;
-    sources = rows.map(
-      (row) =>
-        ({
-          id: row[0],
-          name: row[0],
-          type: row[1],
-          size: row[2],
-        } as Source)
-    );
+    sources = rows.map((row) => ({
+      id: row[0],
+      name: row[1],
+      type: row[2],
+      size: row[3],
+      status: row[4],
+    }));
   }
 
   const refetch = React.useCallback(() => {
