@@ -32,6 +32,7 @@
       "title": "Compute (credits per hour)",
       "values": {
         "AWS/us-east-1": [
+          { "title": "2xs", "value": "0.5" },
           { "title": "xs", "value": "1" },
           { "title": "s", "value": "2" },
           { "title": "m", "value": "4" },
@@ -44,6 +45,7 @@
           { "title": "6xl", "value": "512" }
         ],
         "AWS/eu-west-1": [
+          { "title": "2xs", "value": "0.5" },
           { "title": "xs", "value": "1" },
           { "title": "s", "value": "2" },
           { "title": "m", "value": "4" },
