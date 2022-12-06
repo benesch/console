@@ -148,6 +148,11 @@ const ClusterTable = (props: ClusterTableProps) => {
   const navigate = useNavigate();
   const hoverColor = useColorModeValue("gray.50", "gray.900");
 
+  const dividerColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
+
   return (
     <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
       <Thead>
@@ -166,8 +171,10 @@ const ClusterTable = (props: ClusterTableProps) => {
               bg: hoverColor,
             }}
           >
-            <Td>{c.name}</Td>
-            <Td>
+            <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              {c.name}
+            </Td>
+            <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
               {c.replicas.loading ? (
                 <Spinner size="sm" />
               ) : (

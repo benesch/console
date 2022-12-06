@@ -147,11 +147,17 @@ interface SinkTableProps {
 const SinkTable = (props: SinkTableProps) => {
   const [activeSinkName, setActiveSinkName] = React.useState("");
   const { ddl, refetch } = useDDL("SINK", activeSinkName);
+  const hoverColor = useColorModeValue("gray.50", "gray.900");
+
+  const dividerColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
+
   // if the active sink name changes, refetch data
   React.useEffect(() => {
     refetch();
   }, [refetch, activeSinkName]);
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
 
   return (
     <>
@@ -173,9 +179,15 @@ const SinkTable = (props: SinkTableProps) => {
                 bg: hoverColor,
               }}
             >
-              <Td>{s.name}</Td>
-              <Td>{s.type}</Td>
-              <Td>{s.size || "-"}</Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.name}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.type}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.size || "-"}
+              </Td>
             </Tr>
           ))}
         </Tbody>

@@ -152,6 +152,12 @@ const SourceTable = (props: SourceTableProps) => {
   // automatically refetches if activeSourceName changes
   const { ddl } = useDDL("SOURCE", activeSourceName);
   const hoverColor = useColorModeValue("gray.100", "gray.900");
+
+  const dividerColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
+
   return (
     <>
       <Table variant="borderless" data-testid="source-table" borderRadius="xl">
@@ -173,7 +179,7 @@ const SourceTable = (props: SourceTableProps) => {
                 bg: hoverColor,
               }}
             >
-              <Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
                 <Box
                   maxW={{
                     base: "120px",
@@ -189,9 +195,15 @@ const SourceTable = (props: SourceTableProps) => {
                   {s.name}
                 </Box>
               </Td>
-              <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
-              <Td>{s.type}</Td>
-              <Td>{s.size ?? "-"}</Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.status ? <StatusPill status={s.status} /> : "-"}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.type}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {s.size ?? "-"}
+              </Td>
             </Tr>
           ))}
         </Tbody>
