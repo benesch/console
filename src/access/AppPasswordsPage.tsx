@@ -33,6 +33,7 @@ import {
 import { CopyButton } from "~/components/copyableComponents";
 import { SubmitButton, TextField } from "~/components/formComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
+import { semanticColors } from "~/theme/colors";
 
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
@@ -151,6 +152,11 @@ const PasswordsTable = ({
   const { user } = useAuth();
   const disabledBg = useColorModeValue("gray.100", "gray.800");
   const disabledColor = useColorModeValue("gray.500", "gray.500");
+  const dividerColor = useColorModeValue(
+    semanticColors.divider.light,
+    semanticColors.divider.dark
+  );
+
   return (
     <Table variant="borderless">
       <Thead>
@@ -171,10 +177,19 @@ const PasswordsTable = ({
               textColor={isDeleting ? disabledColor : "default"}
               aria-label={token.description}
             >
-              <Td>{token.description}</Td>
-              <Td>{user.name}</Td>
-              <Td>{format(new Date(token.createdAt), "yyyy/MM/dd")}</Td>
-              <Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {" "}
+                {token.description}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {" "}
+                {user.name}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+                {" "}
+                {format(new Date(token.createdAt), "yyyy/MM/dd")}
+              </Td>
+              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
                 <DeleteKeyModal
                   description={token.description}
                   clientId={token.clientId}
