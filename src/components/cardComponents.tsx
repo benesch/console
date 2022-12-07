@@ -14,7 +14,7 @@ import {
 import { Tab, TabList, TabListProps, TabProps, Tabs } from "@chakra-ui/tabs";
 import React from "react";
 
-import { semanticColors } from "~/theme/colors";
+import { semanticColors, shadows } from "~/theme/colors";
 
 export const CARD_PADDING = 4;
 
@@ -49,7 +49,7 @@ export const Card = React.forwardRef(
       semanticColors.card.border.light,
       semanticColors.card.border.dark
     );
-    const shadow = useColorModeValue("glowLight", "glowDark");
+    const shadow = useColorModeValue(shadows.light.level2, shadows.dark.level2);
     return (
       <Box
         ref={ref}

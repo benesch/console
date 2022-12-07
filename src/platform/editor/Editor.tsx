@@ -7,6 +7,7 @@ import { Card } from "~/components/cardComponents";
 import Code from "~/platform/editor/code/Code";
 import Schema from "~/platform/editor/Schema";
 import Table from "~/platform/editor/table/Table";
+import { shadows } from "~/theme/colors";
 
 /**
  * Column rendering for text
@@ -49,7 +50,7 @@ const GridLayout = (): JSX.Element => {
   /**
    * Styles (Smaller glow due to background and overflows)
    */
-  const shadow = useColorModeValue("glowLight", "smallGlowDark");
+  const shadow = useColorModeValue(shadows.light.level2, shadows.dark.level2);
 
   /**
    * Hooks

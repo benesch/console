@@ -37,7 +37,7 @@ export const Button = {
       color: "offWhite",
       backgroundColor: gradients.accentDark1.fallback,
       background: gradients.accentDark1.gradient,
-      shadow: shadows.glowLight,
+      shadow: shadows.light.level2,
       ...gradients.accentDark1.animation,
       ":hover": {
         color: "white",
