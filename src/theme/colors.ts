@@ -327,26 +327,51 @@ const semanticColors = {
 };
 
 const shadows = {
+  light: {
+    level1: `
+      box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.04);
+    `,
+    level2: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.08);
+      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.04);
+    `,
+    level3: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.08);
+      box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.06);
+      box-shadow: 0px 6px 8px 0px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.04);
+    `,
+    level4: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.08);
+      box-shadow: 0px 12px 20px 0px rgba(0, 0, 0, 0.08);
+      box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.08);
+    `,
+  },
+  dark: {
+    level1: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.16);
+    `,
+    level2: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.24);
+    `,
+    level3: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 6px 8px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.24);
+    `,
+    level4: `
+      box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 12px 20px 0px rgba(0, 0, 0, 0.24);
+      box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.24);
+    `,
+  },
   footer: "0 -2px 1px #0000000d",
-  glowDark: `
-    0px 0.6px 0.7px hsla(254, 50%, 18%, 30%),
-    0px 1.8px 2px hsla(254, 50%, 18%, 30%),
-    0px 4.3px 4.8px -1.7px hsla(254, 50%, 18%, 30%),
-    0px 10.3px 11.6px -2.5px hsla(254, 50%, 18%, 30%)
-  `,
-  glowLight: `
-    0px 0.6px 0.7px hsla(254, 30%, 18%, 6%),
-    0px 1.8px 2px hsla(254, 30%, 18%, 2%),
-    0px 4.3px 4.8px -1.7px hsla(254, 30%, 18%, 2%),
-    0px 10.3px 11.6px -2.5px hsla(254, 30%, 18%, 4%)
-  `,
-  smallGlowDark: `
-    0px 12px 15px rgb(80 26 251 / 8%),
-    0px 7px 8px rgb(80 26 251 / 6%),
-    0px 3px 3.25px rgb(80 26 251 / 4%),
-    0px -7px 8px rgb(80 26 251 / 6%),
-    0px -3px 3.25px rgb(80 26 251 / 4%)
-  `,
 };
 
 export default colors;
