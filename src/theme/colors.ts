@@ -372,25 +372,6 @@ const shadows = {
     `,
   },
   footer: "0 -2px 1px #0000000d",
-  // glowDark: `
-  //   0px 0.6px 0.7px hsla(254, 50%, 18%, 30%),
-  //   0px 1.8px 2px hsla(254, 50%, 18%, 30%),
-  //   0px 4.3px 4.8px -1.7px hsla(254, 50%, 18%, 30%),
-  //   0px 10.3px 11.6px -2.5px hsla(254, 50%, 18%, 30%)
-  // `,
-  // glowLight: `
-  //   0px 0.6px 0.7px hsla(254, 30%, 18%, 6%),
-  //   0px 1.8px 2px hsla(254, 30%, 18%, 2%),
-  //   0px 4.3px 4.8px -1.7px hsla(254, 30%, 18%, 2%),
-  //   0px 10.3px 11.6px -2.5px hsla(254, 30%, 18%, 4%)
-  // `,
-  // smallGlowDark: `
-  //   0px 12px 15px rgb(80 26 251 / 8%),
-  //   0px 7px 8px rgb(80 26 251 / 6%),
-  //   0px 3px 3.25px rgb(80 26 251 / 4%),
-  //   0px -7px 8px rgb(80 26 251 / 6%),
-  //   0px -3px 3.25px rgb(80 26 251 / 4%)
-  // `,
 };
 
 export default colors;
