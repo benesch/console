@@ -18,7 +18,7 @@ const GetStartedDocs = () => {
       </Box>
       <Box p={4}>
         Need more help?{" "}
-        <TextLink href="https://materialize.com/s/chat">
+        <TextLink href="https://materialize.com/s/chat" target="_blank">
           Check out our community slack
         </TextLink>{" "}
         or{" "}
