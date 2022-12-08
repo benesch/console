@@ -12,14 +12,12 @@ import {
   HStack,
   Spinner,
   StackProps,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
 
 import NavBar, { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
-import { semanticColors } from "~/theme/colors";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
@@ -120,10 +118,6 @@ export interface PageBreadcrumbsProps {
  * This goes inside a PageHeader for a header that is a series of paths.
  */
 export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
   return (
@@ -133,7 +127,7 @@ export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
         return (
           <PageHeading
             key={`crumb-${crumb}-${i}`}
-            color={isLast ? "default" : grayText}
+            color={isLast ? "default" : "semanticColors.grayText"}
             fontWeight={500}
           >
             {`${crumb}${isLast ? "" : " / "}`}

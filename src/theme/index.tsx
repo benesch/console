@@ -10,7 +10,7 @@
  * Frontegg.
  */
 
-import { extendTheme } from "@chakra-ui/react";
+import { ChakraTheme, extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
@@ -20,14 +20,19 @@ import SignupFooter from "~/layouts/SignupFooter";
 import colors, { gradients, semanticColors, shadows } from "~/theme/colors";
 import * as components from "~/theme/components";
 
+import darkColors from "./dark";
+import lightColors from "./light";
+
 const fontDefault = "intervariable, Arial, sans-serif";
 
-export const chakraTheme = extendTheme({
-  global: {
-    body: {
-      fontFamily: fontDefault,
-    },
-  },
+export const initialColorMode = "system";
+export const config: ChakraTheme["config"] = {
+  cssVarPrefix: "ck",
+  initialColorMode,
+  useSystemColorMode: true,
+};
+
+export const baseTheme = {
   breakpoints: {
     sm: "30em", // 480px
     md: "48em", // 768px
@@ -67,11 +72,18 @@ export const chakraTheme = extendTheme({
       },
     }),
   },
-  gradients,
-  config: {
-    cssVarPrefix: "ck",
-    initialColorMode: "system",
-    useSystemColorMode: true,
+  config,
+};
+
+export const darkTheme = extendTheme(baseTheme, {
+  colors: {
+    semanticColors: darkColors,
+  },
+});
+
+export const lightTheme = extendTheme(baseTheme, {
+  colors: {
+    semanticColors: lightColors,
   },
 });
 
