@@ -121,7 +121,10 @@ const SinksListPage = () => {
                 </Text>
                 <Text color={grayText}>
                   Having trouble?{" "}
-                  <TextLink href="https://materialize.com/docs/overview/key-concepts/#sinks">
+                  <TextLink
+                    href="https://materialize.com/docs/overview/key-concepts/#sinks"
+                    target="_blank"
+                  >
                     View the documentation.
                   </TextLink>
                 </Text>
