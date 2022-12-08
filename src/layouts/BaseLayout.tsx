@@ -17,7 +17,7 @@ import {
 import * as CSS from "csstype";
 import * as React from "react";
 
-import NavBar, { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
+import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
 
 export interface BaseLayoutProps {
@@ -82,7 +82,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
 export const PageHeader = ({ children, ...props }: StackProps) => {
   return (
     <Flex
-      minHeight={NAV_LOGO_HEIGHT}
+      my="6"
       {...props}
       flexDirection="column"
       alignItems="flex-start"
@@ -104,7 +104,13 @@ export interface PageHeadingProps extends HeadingProps {
  */
 export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
   return (
-    <Heading fontWeight="500" fontSize="2xl" my={0} {...props}>
+    <Heading
+      lineHeight="32px"
+      fontWeight="500"
+      fontSize="2xl"
+      my={0}
+      {...props}
+    >
       {children}
     </Heading>
   );
