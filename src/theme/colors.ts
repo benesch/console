@@ -29,7 +29,7 @@ const colors = {
      */
     300: "#E0DEE3",
     /**
-     * Light / Border Secondary
+     * Dark / Forground Secondary
      */
     400: "#BCB9C0",
     /**
@@ -96,14 +96,26 @@ const colors = {
     900: "#2e0225",
   },
   red: {
-    50: "#ffe2ee",
-    100: "#ffb1c9",
+    /**
+     * Light / Error background
+     */
+    50: "#ffebeb", // changed from default chakra theme
+    /**
+     * Light / Error Border
+     */
+    100: "#ffd1d1", // changed from default chakra theme
     200: "#ff7fa5",
     300: "#ff4d82",
     400: "#fe1d5e",
     500: "#e50644",
-    600: "#af0034",
-    700: "#810026",
+    /**
+     * Dark / Error Background
+     */
+    600: "#803737", // changed from default chakra theme
+    /**
+     * Dark / Error Border
+     */
+    700: "#562525", // changed from default chakra theme
     800: "#4f0016",
     900: "#35000f",
   },
@@ -120,16 +132,28 @@ const colors = {
     900: "#3a0f01",
   },
   yellow: {
-    50: "#fefff5",
-    100: "#fdfee2",
+    50: "#f9fbd0",
+    /**
+     * Light / Warning Background
+     */
+    100: "#fdfee2", // changed from default chakra theme
     200: "#fcfdc9",
     300: "#fafba7",
-    400: "#f7f97b",
+    /**
+     * Light / Warning Border
+     */
+    400: "#eeef8f", // changed from default chakra theme
     500: "#f5f754",
     600: "#dde00a",
     700: "#c5c809",
-    800: "#a3a608",
-    900: "#737505",
+    /**
+     * Dark / Warning Border
+     */
+    800: "#82840a",
+    /**
+     * Dark / Warning Background
+     */
+    900: "#354e04",
   },
   honeysuckle: {
     50: "#f6ffdc",
@@ -168,16 +192,28 @@ const colors = {
     900: "#00312f",
   },
   blue: {
-    50: "#d9f8ff",
-    100: "#ace4ff",
+    /**
+     * Light / Warn Background
+     */
+    50: "#d9f8ff", // changed from default chakra theme
+    /**
+     * Light / Warn Border
+     */
+    100: "#d1d6ff", // changed from default chakra theme
     200: "#7bd1ff",
     300: "#59C3FF",
     400: "#1EAEFF", // highlight
     500: "#0093e6",
     600: "#0072b4",
-    700: "#005282",
+    /**
+     * Dark / Warn Border
+     */
+    700: "#4e547e", // changed from default chakra theme
     800: "#014166",
-    900: "#003151",
+    /**
+     * Dark / Warn Background
+     */
+    900: "#2f324c", // changed from default chakra theme
   },
   cobalt: {
     50: "#e3e5ff",

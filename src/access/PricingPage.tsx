@@ -10,7 +10,7 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { AdminPortal } from "@frontegg/react";
@@ -20,7 +20,6 @@ import data from "~/access/pricing.json";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
-import { semanticColors } from "~/theme/colors";
 
 type StaticRegion = "AWS/us-east-1" | "AWS/eu-west-1";
 
@@ -30,13 +29,10 @@ const showFronteggSubscriptionPortal = () => {
 };
 
 const PricingPage = () => {
+  const { colors } = useTheme();
   const { pricingTerms, consumptionTables, regions, terms } = data;
   const [region, setRegion] = React.useState<StaticRegion>(
     regions[0] as StaticRegion
-  );
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
   );
 
   const capacityPricingNotice = (
@@ -44,7 +40,7 @@ const PricingPage = () => {
       rowSpan={3}
       borderLeftStyle="solid"
       borderLeftWidth="1px"
-      borderLeftColor={borderColor}
+      borderLeftColor={colors.semanticColors.border.primary}
       textAlign="center"
     >
       For information on

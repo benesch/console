@@ -14,7 +14,7 @@ import {
   HTMLChakraProps,
   Tooltip,
   useClipboard,
-  useColorModeValue,
+  useTheme,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -91,13 +91,13 @@ export const CopyButton: React.FC<
 export const CopyableBox: React.FC<
   React.PropsWithChildren<{ contents: string } & TextProps>
 > = ({ contents, p, ...props }) => {
-  const bgColor = useColorModeValue("gray.50", "gray.800");
+  const { colors } = useTheme();
   return (
     <HStack
       alignItems="stretch"
       spacing={0}
       borderRadius="lg"
-      bg={bgColor}
+      bg={colors.semanticColors.background.secondary}
       w="full"
       fontSize="sm"
       {...props}
@@ -107,46 +107,6 @@ export const CopyableBox: React.FC<
       </Box>
       <CopyButton fontSize="md" contents={contents} w="40px" minH="full" />
     </HStack>
-  );
-};
-
-/** A component that enable the children text to be copied */
-export const CopyableText: React.FC<
-  React.PropsWithChildren<
-    TextProps & { children: string | null; contents?: string }
-  >
-> = ({ contents, ...props }) => {
-  const { onCopy, copied } = useCopyableText(
-    contents ? contents : props.children || ""
-  );
-  const textColor = useColorModeValue("purple.900", "purple.100");
-  const hoverColor = useColorModeValue("purple.500", "purple.300");
-  if (!props.children) {
-    return (
-      <Text color="inherit" {...props}>
-        -
-      </Text>
-    );
-  }
-  return (
-    <Button
-      variant="link"
-      onClick={onCopy}
-      fontWeight="normal"
-      color={textColor}
-      title={props.title || "Copy"}
-      sx={{
-        ":hover": {
-          color: hoverColor,
-        },
-      }}
-      maxW="100%"
-    >
-      <HStack alignItems="flex-start" py={1} width="100%">
-        <Text color="inherit" {...props}></Text>
-        <CopyStateIcon copied={copied} />
-      </HStack>
-    </Button>
   );
 };
 
@@ -190,20 +150,8 @@ export const TabbedCodeBlock: React.FC<
   wrap,
   ...props
 }: TabbedCodeBlockProps & BoxProps) => {
+  const { colors } = useTheme();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.title || "");
-  const bg = useColorModeValue(
-    semanticColors.card.bg.light,
-    semanticColors.card.bg.dark
-  );
-  const headerBg = useColorModeValue("gray.50", "gray.900");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
-  const hoverColor = useColorModeValue("black", "white");
-  const hoverBg = useColorModeValue("whiteAlpha.400", "whiteAlpha.100");
-  const activeColor = useColorModeValue("gray.800", "gray.300");
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
 
   if (tabs.length === 0) return null;
 
@@ -228,11 +176,11 @@ export const TabbedCodeBlock: React.FC<
 
   return (
     <Box
-      bg={bg}
+      bg={colors.semanticColors.background.primary}
       role="group"
       position="relative"
       border="1px"
-      borderColor={borderColor}
+      borderColor={colors.semanticColors.border.primary}
       borderRadius="md"
       w="full"
       textAlign="left"
@@ -240,8 +188,8 @@ export const TabbedCodeBlock: React.FC<
     >
       <Flex
         borderBottom="1px"
-        bg={headerBg}
-        borderColor={borderColor}
+        bg={colors.semanticColors.background.secondary}
+        borderColor={colors.semanticColors.border.primary}
         borderTopLeftRadius="md"
         borderTopRightRadius="md"
         w="full"
@@ -257,11 +205,18 @@ export const TabbedCodeBlock: React.FC<
                 as="button"
                 onClick={() => setActiveTab(title)}
                 borderBottom="1px solid"
-                borderColor={title === activeTab ? activeColor : "transparent"}
-                textColor={title === activeTab ? activeColor : grayText}
+                borderColor={
+                  title === activeTab
+                    ? colors.semanticColors.foreground.primary
+                    : "transparent"
+                }
+                textColor={
+                  title === activeTab
+                    ? colors.semanticColors.foreground.primary
+                    : colors.semanticColors.foreground.secondary
+                }
                 _hover={{
-                  textColor: hoverColor,
-                  bg: hoverBg,
+                  bg: colors.semanticColors.foreground.tertiary,
                 }}
               >
                 <Box w="4" h="4">
@@ -336,16 +291,14 @@ interface LineProps {
 }
 
 const Line = (props: LineProps) => {
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
+  const { colors } = useTheme();
   return (
     <chakra.span
       fontSize="sm"
       _before={{
         content: "counter(line)",
-        color: grayText,
+        color: colors.semanticColors.foreground.secondary,
+        opacity: 0.7,
         position: "absolute",
         left: "0",
         px: 4,

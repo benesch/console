@@ -1,7 +1,5 @@
-import { useColorModeValue } from "@chakra-ui/react";
+import { useTheme } from "@chakra-ui/react";
 import React from "react";
-
-import colors from "~/theme/colors";
 
 const animationStyles = `@keyframes bigBar {
     0% {
@@ -80,14 +78,14 @@ const animationStyles = `@keyframes bigBar {
 const LoadingSvg: React.FC<
   React.PropsWithChildren<{ fillColor?: string; width?: number }>
 > = ({ fillColor, width = 128 }) => {
-  const fillColorFromMode = useColorModeValue(colors.purple[700], "white");
+  const { colors } = useTheme();
   return (
     <svg
       className="m-loading-mark"
       width={width}
       viewBox="0 0 33.8232 27.916767"
       xmlns="http://www.w3.org/2000/svg"
-      fill={fillColor ?? fillColorFromMode}
+      fill={fillColor ?? colors.semanticColors.accent.purple}
     >
       <style>{animationStyles}</style>
       <path

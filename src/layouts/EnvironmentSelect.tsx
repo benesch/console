@@ -4,6 +4,7 @@ import {
   HStack,
   Spinner,
   useColorMode,
+  useTheme,
 } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, {
@@ -185,16 +186,18 @@ const EnvOption: React.FunctionComponent<
 
 const getColorStyles = (mode: ColorMode): StylesConfig<EnvOptionType> => {
   const isDarkMode = mode === "dark";
+  const textColor = isDarkMode ? colors.gray[50] : colors.gray[900];
+  const unfocusedBorderColor = isDarkMode ? colors.gray[700] : colors.gray[300];
   return {
     control: (styles, state) => ({
       ...styles,
       backgroundColor: "transparent",
       color: state.isFocused ? colors.purple[400] : colors.white,
       minWidth: "200px",
-      borderRadius: "0.375rem",
+      borderRadius: "8px",
+      borderColor: state.isFocused ? colors.purple[400] : unfocusedBorderColor,
       ":hover": {
         ...styles[":hover"],
-        borderColor: state.isFocused ? colors.purple[400] : colors.gray[100],
       },
       ":active": {
         ...styles[":active"],

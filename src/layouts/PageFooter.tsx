@@ -4,8 +4,7 @@
  */
 
 import { HStack } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/react";
-import { useColorModeValue } from "@chakra-ui/react";
+import { Text, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import TextLink from "~/components/TextLink";
@@ -20,15 +19,13 @@ export const getCurrentYear = () => new Date().getFullYear();
 
 /** A footer component */
 const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const footerBg = useColorModeValue("white", "gray.900");
-  const color = useColorModeValue("gray.500", "gray.200");
-  const borderWidth = useColorModeValue("0", "1px");
-  const borderColor = useColorModeValue("transparent", "gray.700");
+  const { colors } = useTheme();
+
   return (
     <HStack
       spacing="4"
-      bg={footerBg}
-      color={color}
+      bg={colors.semanticColors.background.primary}
+      color={colors.semanticColors.foreground.secondary}
       textAlign="center"
       alignItems="center"
       justifyContent="center"
@@ -37,8 +34,8 @@ const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
       fontSize="sm"
       flexDir={{ base: "column", md: "row" }}
       boxShadow="footer"
-      borderTopColor={borderColor}
-      borderTopWidth={borderWidth}
+      borderTopColor={colors.semanticColors.border.primary}
+      borderTopWidth="1px"
     >
       <Text>© {getCurrentYear()} Materialize, Inc.</Text>
       <TextLink href="https://materialize.com/privacy-policy" target="_blank">

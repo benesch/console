@@ -6,28 +6,22 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
-import colors from "~/theme/colors";
 
 const StepsWhileLoading = () => {
-  const linkColor = useColorModeValue("purple.600", "purple.200");
-  const hoverColor = useColorModeValue(
-    `${colors.purple[500]}66`,
-    `${colors.purple[300]}99`
-  );
+  const { colors } = useTheme();
 
   const interimStepStyles = {
     borderRadius: "lg",
     sx: {
       ":hover": {
-        boxShadow: `0px 1px 6px ${hoverColor}`,
         h2: {
-          color: linkColor,
+          color: colors.semanticColors.accent.purple,
         },
       },
     },

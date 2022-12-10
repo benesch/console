@@ -20,8 +20,8 @@ import SignupFooter from "~/layouts/SignupFooter";
 import colors, { gradients, semanticColors, shadows } from "~/theme/colors";
 import * as components from "~/theme/components";
 
-import darkColors from "./dark";
-import lightColors from "./light";
+import darkColors, { darkShadows } from "./dark";
+import lightColors, { lightShadows } from "./light";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 
@@ -57,7 +57,6 @@ export const baseTheme = {
     body: fontDefault,
     mono: "'Fira Code', Menlo, monospace",
   },
-  shadows,
   styles: {
     global: (props: StyleFunctionProps) => ({
       body: {
@@ -79,12 +78,14 @@ export const darkTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: darkColors,
   },
+  shadows: darkShadows,
 });
 
 export const lightTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: lightColors,
   },
+  shadows: lightShadows,
 });
 
 // Extracted from Figma.

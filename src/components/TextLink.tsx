@@ -1,10 +1,16 @@
-import { Link, LinkProps, useColorModeValue } from "@chakra-ui/react";
+import { Link, LinkProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 const TextLink = (props: LinkProps) => {
-  const linkColor = useColorModeValue("purple.600", "purple.200");
+  const { colors } = useTheme();
 
-  return <Link color={linkColor} textDecoration="underline" {...props} />;
+  return (
+    <Link
+      color={colors.semanticColors.accent.purple}
+      textDecoration="underline"
+      {...props}
+    />
+  );
 };
 
 export default TextLink;

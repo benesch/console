@@ -10,7 +10,7 @@ import {
   MenuList,
   Tag,
   Text,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { AdminPortal, useAuthActions } from "@frontegg/react";
@@ -25,8 +25,8 @@ import { assert } from "~/util";
 export const AVATAR_WIDTH = 8;
 
 const ProfileDropdown = (props: ButtonProps) => {
+  const { colors } = useTheme();
   const { user, tenantsState } = useAuth();
-  const emailColor = useColorModeValue("gray.500", "gray.200");
   const { switchTenant } = useAuthActions();
 
   const tenantSwitchingEnabled = tenantsState.tenants.length > 1;
@@ -61,10 +61,14 @@ const ProfileDropdown = (props: ButtonProps) => {
         </HStack>
       </MenuButton>
       {/* zIndex superior to Code Editor Run button */}
-      <MenuList zIndex={2}>
+      <MenuList zIndex={2} pb={2}>
         <VStack px="3" pt="3" pb="2" align="left" lineHeight="1.3" spacing="0">
           <Text fontWeight="semibold">{user.name}</Text>
-          <Text mt="1" fontSize="xs" color={emailColor}>
+          <Text
+            mt="1"
+            fontSize="xs"
+            color={colors.semanticColors.foreground.secondary}
+          >
             {user.email}
           </Text>
         </VStack>
@@ -129,7 +133,6 @@ const ProfileDropdown = (props: ButtonProps) => {
 export const ProfileMenuItems = () => {
   const navigate = useNavigate();
   const { routes: authRoutes } = useAuth();
-  const signoutColor = useColorModeValue("red.500", "red.300");
   return (
     <>
       <MenuItem as={RouterLink} to="/access" fontWeight="medium">
@@ -141,9 +144,9 @@ export const ProfileMenuItems = () => {
       <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
         Pricing
       </MenuItem>
+      <MenuDivider />
       <MenuItem
         fontWeight="medium"
-        color={signoutColor}
         onClick={() => navigate(authRoutes.logoutUrl)}
       >
         Sign out

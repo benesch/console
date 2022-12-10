@@ -1,16 +1,30 @@
-import { useColorModeValue } from "@chakra-ui/react";
+import { useTheme } from "@chakra-ui/react";
 import React from "react";
 
-import colors from "~/theme/colors";
-
 const MonitorIcon = () => {
-  const strokeColor = useColorModeValue(colors.gray[500], colors.gray[300]);
+  const { colors } = useTheme();
+
   return (
     <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_185_547)">
-        <rect x="1" y="2" width="14" height="10" rx="2" stroke={strokeColor} />
-        <path d="M8 12V14" stroke={strokeColor} strokeLinecap="round" />
-        <path d="M10 14H6" stroke={strokeColor} strokeLinecap="round" />
+        <rect
+          x="1"
+          y="2"
+          width="14"
+          height="10"
+          rx="2"
+          stroke={colors.semanticColors.foreground.secondary}
+        />
+        <path
+          d="M8 12V14"
+          stroke={colors.semanticColors.foreground.secondary}
+          strokeLinecap="round"
+        />
+        <path
+          d="M10 14H6"
+          stroke={colors.semanticColors.foreground.secondary}
+          strokeLinecap="round"
+        />
       </g>
       <defs>
         <clipPath id="clip0_185_547">

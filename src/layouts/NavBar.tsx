@@ -20,7 +20,8 @@ import {
   Spinner,
   Tag,
   Text,
-  useColorModeValue,
+  useColorMode,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
@@ -28,7 +29,8 @@ import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import { SUPPORT_HREF } from "~/components/SupportLink";
-import logo from "~/img/logo-reverse.svg";
+import blackLogo from "~/img/logo-black.svg";
+import whiteLogo from "~/img/logo-white.svg";
 import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
 import ProfileDropdown, {
   AVATAR_WIDTH,
@@ -36,12 +38,12 @@ import ProfileDropdown, {
 } from "~/layouts/ProfileDropdown";
 
 export const NAV_HORIZONTAL_SPACING = 4;
-export const NAV_HOVER_STYLES = { bg: "whiteAlpha.200" };
+export const NAV_HOVER_STYLES = { cursor: "pointer", bg: "whiteAlpha.200" };
 export const NAV_LOGO_HEIGHT = "72px";
 
 const NavBar = () => {
-  const borderWidth = useColorModeValue("0", "1px");
-  const borderColor = useColorModeValue("transparent", "gray.700");
+  const { colors } = useTheme();
+  const { colorMode } = useColorMode();
 
   return (
     <Flex
@@ -49,13 +51,13 @@ const NavBar = () => {
       justify="flex-start"
       align={{ base: "center", lg: "stretch" }}
       pb={{ base: 0, lg: 2 }}
-      bg="purple.900"
-      color="white"
+      bg={colors.semanticColors.background.secondary}
+      color={colors.semanticColors.foreground.primary}
       minH={{ base: "auto", lg: "full" }}
       minW="240px"
-      borderRightWidth={{ base: 0, lg: borderWidth }}
-      borderBottomWidth={{ base: borderWidth, lg: 0 }}
-      borderColor={borderColor}
+      borderRightWidth={{ base: 0, lg: 1 }}
+      borderBottomWidth={{ base: 1, lg: 0 }}
+      borderColor={colors.semanticColors.border.primary}
     >
       <HStack
         mx={0}
@@ -84,12 +86,12 @@ const NavBar = () => {
             ml={0}
           >
             <chakra.img
-              src={logo}
+              src={colorMode === "light" ? blackLogo : whiteLogo}
               height={{ base: 6, md: 9 }}
               aria-label="Logo"
             ></chakra.img>
           </VStack>
-          <Text fontWeight="700" fontSize="md">
+          <Text fontWeight="700" fontSize="md" pt="3px">
             Materialize
           </Text>
         </HStack>
@@ -214,6 +216,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
 };
 
 const NavItem = (props: NavItemType) => {
+  const { colors } = useTheme();
   const location = useLocation();
   const href = props.href || "#";
   const active = location.pathname === href;
@@ -226,20 +229,19 @@ const NavItem = (props: NavItemType) => {
       px={NAV_HORIZONTAL_SPACING}
       py={2}
       transition="all 0.2s"
-      color="white"
+      color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
-        bg: "whiteAlpha.300",
-        color: "white",
-        paddingLeft: "3px",
-        borderTop: "3px solid transparent",
-        borderBottom: { base: "3px solid white", lg: "3px solid transparent" },
-        borderLeft: { base: "3px solid transparent", lg: 0 },
-        borderRight: { base: "3px solid transparent", lg: "3px solid white" },
+        bg: colors.semanticColors.background.tertiary,
+        color: colors.semanticColors.foreground.primary,
+        paddingLeft: "4px",
+        borderRightWidth: { base: "0px", lg: "2px" },
+        borderRightColor: {
+          base: "transparent",
+          lg: colors.semanticColors.accent.purple,
+        },
         px: 4,
       }}
-      borderTop="3px solid transparent"
-      borderBottom="3px solid transparent"
     >
       <Box fontWeight="semibold">{props.label}</Box>
       {props.isInternal && (
@@ -266,6 +268,7 @@ const NavItem = (props: NavItemType) => {
 };
 
 const HelpDropdown = () => {
+  const { colors } = useTheme();
   return (
     <Menu>
       <MenuButton
@@ -284,19 +287,20 @@ const HelpDropdown = () => {
             alignItems="center"
           >
             <Box
-              bg="white"
+              bg={colors.semanticColors.background.tertiary}
               rounded="full"
-              h="5"
-              w="5"
-              color="purple.900"
+              h="8"
+              w="8"
+              color={colors.semanticColors.foreground.primary}
               display="flex"
               alignItems="center"
               justifyContent="center"
+              fontSize="md"
             >
               ?
             </Box>
           </Flex>
-          <Text>Help</Text>
+          <Text color={colors.semanticColors.foreground.primary}>Help</Text>
         </HStack>
       </MenuButton>
       <MenuList>

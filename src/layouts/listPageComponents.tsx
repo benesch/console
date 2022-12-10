@@ -10,7 +10,7 @@ import {
   BoxProps,
   Heading,
   Text,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -20,7 +20,6 @@ import TextLink from "~/components/TextLink";
 import { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
 import Missing from "~/svg/Missing";
 import Slash from "~/svg/Slash";
-import colors, { semanticColors } from "~/theme/colors";
 
 type GenericListProps = {
   message: string;
@@ -41,13 +40,15 @@ export type SQLSuggestion = {
 };
 
 export const SQLSuggestionBox = ({ title, string }: SQLSuggestion) => {
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
+  const { colors } = useTheme();
+
   return (
     <VStack spacing={1} alignItems="stretch">
-      <Text size="xs" fontWeight="600" color={grayText}>
+      <Text
+        size="xs"
+        fontWeight="600"
+        color={colors.semanticColors.foreground.secondary}
+      >
         {title}
       </Text>
       <CopyableBox contents={string}>{string}</CopyableBox>
@@ -92,22 +93,38 @@ type IconBoxProps = BoxProps & {
 };
 
 export const IconBox = ({ type, children }: IconBoxProps) => {
-  const iconColor = useColorModeValue("gray.200", "gray.300");
-  const slashColor = useColorModeValue("gray.900", "white");
-  const bgColor = useColorModeValue(
-    semanticColors.bg.light,
-    colors.purple[900]
+  const { colors } = useTheme();
+
+  let overlapIcon = (
+    <Slash
+      fillColor={colors.semanticColors.foreground.primary}
+      bgColor={colors.semanticColors.background.primary}
+    />
   );
-  let overlapIcon = <Slash fillColor={slashColor} bgColor={bgColor} />;
   switch (type) {
     case "Missing":
-      overlapIcon = <Missing fillColor={slashColor} bgColor={bgColor} />;
+      overlapIcon = (
+        <Missing
+          fillColor={colors.semanticColors.foreground.primary}
+          bgColor={colors.semanticColors.background.primary}
+        />
+      );
       break;
     default:
-      overlapIcon = <Slash fillColor={slashColor} bgColor={bgColor} />;
+      overlapIcon = (
+        <Slash
+          fillColor={colors.semanticColors.foreground.primary}
+          bgColor={colors.semanticColors.background.primary}
+        />
+      );
   }
   return (
-    <Box stroke={iconColor} h="40px" w="40px" position="relative">
+    <Box
+      stroke={colors.semanticColors.border.primary}
+      h="40px"
+      w="40px"
+      position="relative"
+    >
       <Box
         p="8px"
         position="absolute"

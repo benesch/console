@@ -8,7 +8,7 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -61,14 +61,11 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
+  const { colors } = useTheme();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
   const replicas: Replica[] | null = React.useMemo(() => {
     if (!cluster) {
       return null;
@@ -123,11 +120,11 @@ const ClusterDetailPage = ({ cluster }: Props) => {
             <CardHeader>Interacting with cluster replicas</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Cluster replicas are where Materialize creates and maintains
                   dataflows.
                 </Text>
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#clusters"
@@ -156,6 +153,7 @@ interface ReplicaTableProps {
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
+  const { colors } = useTheme();
   return (
     <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
       <Thead>
@@ -166,9 +164,25 @@ const ReplicaTable = (props: ReplicaTableProps) => {
       </Thead>
       <Tbody>
         {props.replicas.map((r) => (
-          <Tr key={r.replica}>
-            <Td>{r.replica}</Td>
-            <Td>{r.size}</Td>
+          <Tr
+            key={r.replica}
+            cursor="pointer"
+            _hover={{
+              bg: colors.semanticColors.background.secondary,
+            }}
+          >
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
+              {r.replica}
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
+              {r.size}
+            </Td>
           </Tr>
         ))}
       </Tbody>

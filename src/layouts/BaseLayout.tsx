@@ -12,6 +12,7 @@ import {
   HStack,
   Spinner,
   StackProps,
+  useTheme,
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
@@ -118,6 +119,7 @@ export interface PageBreadcrumbsProps {
  * This goes inside a PageHeader for a header that is a series of paths.
  */
 export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
+  const { colors } = useTheme();
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
   return (
@@ -127,7 +129,9 @@ export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
         return (
           <PageHeading
             key={`crumb-${crumb}-${i}`}
-            color={isLast ? "default" : "semanticColors.grayText"}
+            color={
+              isLast ? "default" : colors.semanticColors.foreground.secondary
+            }
             fontWeight={500}
           >
             {`${crumb}${isLast ? "" : " / "}`}
