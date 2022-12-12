@@ -1,6 +1,6 @@
 import React from "react";
 
-const ClustersIcon = () => (
+const CopyIcon = () => (
   <svg
     width="16"
     height="16"
@@ -17,4 +17,4 @@ const ClustersIcon = () => (
   </svg>
 );
 
-export default ClustersIcon;
+export default CopyIcon;

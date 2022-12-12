@@ -1,4 +1,4 @@
-import { CheckIcon, IconProps } from "@chakra-ui/icons";
+import { IconProps } from "@chakra-ui/icons";
 import {
   Box,
   BoxProps,
@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
+import CheckmarkIcon from "~/svg/CheckmarkIcon";
 import CopyIcon from "~/svg/CopyIcon";
 import { semanticColors } from "~/theme/colors";
 
@@ -40,10 +41,9 @@ export const CopyStateIcon: React.FC<
 > = ({ copied }) => {
   if (copied)
     return (
-      <CheckIcon
+      <CheckmarkIcon
         data-testid="copyable-checkicon"
         aria-label="Text has been copied"
-        mt="-2px"
       />
     );
   return <CopyIcon data-testid="copyable-copyicon" aria-label="Copy text" />;
