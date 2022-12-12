@@ -38,7 +38,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SinksIcon from "~/svg/Sinks";
-import { semanticColors } from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>

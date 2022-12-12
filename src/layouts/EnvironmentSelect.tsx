@@ -4,7 +4,6 @@ import {
   HStack,
   Spinner,
   useColorMode,
-  useTheme,
 } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, {
@@ -186,7 +185,6 @@ const EnvOption: React.FunctionComponent<
 
 const getColorStyles = (mode: ColorMode): StylesConfig<EnvOptionType> => {
   const isDarkMode = mode === "dark";
-  const textColor = isDarkMode ? colors.gray[50] : colors.gray[900];
   const unfocusedBorderColor = isDarkMode ? colors.gray[700] : colors.gray[300];
   return {
     control: (styles, state) => ({

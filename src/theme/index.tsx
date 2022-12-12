@@ -17,7 +17,7 @@ import React from "react";
 
 import logo from "~/img/wordmark.svg";
 import SignupFooter from "~/layouts/SignupFooter";
-import colors, { gradients, semanticColors, shadows } from "~/theme/colors";
+import colors, { gradients, semanticColors } from "~/theme/colors";
 import * as components from "~/theme/components";
 
 import darkColors, { darkShadows } from "./dark";

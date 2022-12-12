@@ -5,11 +5,9 @@ import {
   Flex,
   HStack,
   Spacer,
-  Text,
   TextProps,
 } from "@chakra-ui/layout";
 import {
-  Button,
   chakra,
   HTMLChakraProps,
   Tooltip,
@@ -20,7 +18,6 @@ import React from "react";
 
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
 import CopyIcon from "~/svg/CopyIcon";
-import { semanticColors } from "~/theme/colors";
 
 /** A hook that manage the copy mechanism and the icon state */
 export const useCopyableText = (text: string, delay?: number) => {

@@ -32,7 +32,6 @@ import {
 import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
-import { semanticColors } from "~/theme/colors";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",

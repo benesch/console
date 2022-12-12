@@ -39,7 +39,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SourcesIcon from "~/svg/Sources";
-import { semanticColors } from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
 const sourcesSuggestions: SQLSuggestion[] = [
