@@ -11,6 +11,7 @@ const semanticColors = {
     purple: colors.purple[600],
     brightPurple: colors.purple[400],
     green: colors.green[500],
+    red: colors.red[500],
   },
   foreground: {
     primary: colors.gray[900],

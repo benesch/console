@@ -106,7 +106,13 @@ const colors = {
     100: "#ffd1d1", // changed from default chakra theme
     200: "#ff7fa5",
     300: "#ff4d82",
+    /**
+     * Dark / Accent Red
+     */
     400: "#fe1d5e",
+    /**
+     * Light / Accent Red
+     */
     500: "#e50644",
     /**
      * Dark / Error Background
