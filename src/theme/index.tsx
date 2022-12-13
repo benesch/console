@@ -183,25 +183,3 @@ export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
         },
       })*/
 });
-
-export const reactSelectTheme = {
-  colors: {
-    primary: colors.purple[500],
-    primary25: colors.purple[100],
-    primary50: colors.purple[200],
-    primary75: colors.purple[400],
-    danger: colors.red[400],
-    dangerLight: colors.red[100],
-    neutral0: colors.white,
-    neutral5: colors.gray[50],
-    neutral10: colors.gray[100],
-    neutral20: colors.gray[200],
-    neutral30: colors.gray[300],
-    neutral40: colors.gray[400],
-    neutral50: colors.gray[500],
-    neutral60: colors.gray[600],
-    neutral70: colors.gray[700],
-    neutral80: colors.gray[800],
-    neutral90: colors.gray[900],
-  },
-};
