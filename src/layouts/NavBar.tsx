@@ -38,7 +38,10 @@ import ProfileDropdown, {
 } from "~/layouts/ProfileDropdown";
 
 export const NAV_HORIZONTAL_SPACING = 4;
-export const NAV_HOVER_STYLES = { cursor: "pointer", bg: "whiteAlpha.200" };
+export const NAV_HOVER_STYLES = {
+  cursor: "pointer",
+  bg: "semanticColors.background.tertiary",
+};
 export const NAV_LOGO_HEIGHT = "72px";
 
 const NavBar = () => {
