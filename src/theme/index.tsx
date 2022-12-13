@@ -20,8 +20,8 @@ import SignupFooter from "~/layouts/SignupFooter";
 import colors, { gradients, semanticColors } from "~/theme/colors";
 import * as components from "~/theme/components";
 
-import darkColors, { darkShadows } from "./dark";
-import lightColors, { lightShadows } from "./light";
+import { darkColors, darkShadows } from "./dark";
+import { lightColors, lightShadows } from "./light";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 

@@ -6,7 +6,7 @@
 
 import colors from "./colors";
 
-const semanticColors = {
+export const lightColors = {
   accent: {
     purple: colors.purple[600],
     brightPurple: colors.purple[400],
@@ -57,5 +57,3 @@ export const lightShadows = {
       box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.08);
     `,
 };
-
-export default semanticColors;
