@@ -6,6 +6,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -29,7 +30,7 @@ const showFronteggSubscriptionPortal = () => {
 };
 
 const PricingPage = () => {
-  const { pricingTerms, consumptionTables, regions } = data;
+  const { pricingTerms, consumptionTables, regions, terms } = data;
   const [region, setRegion] = React.useState<StaticRegion>(
     regions[0] as StaticRegion
   );
@@ -91,7 +92,11 @@ const PricingPage = () => {
               <Tr>
                 <Th></Th>
                 {pricingTerms.cols.map((col) => (
-                  <Th key={`price-header-${col.title}`} textAlign="center">
+                  <Th
+                    key={`price-header-${col.title}`}
+                    textAlign="left"
+                    width="25%"
+                  >
                     {col.title}
                   </Th>
                 ))}
@@ -105,7 +110,7 @@ const PricingPage = () => {
                   {pricingTerms.cols.map((col, j) => (
                     <Td
                       key={`price-${region}-${rowTitle}-${j}}`}
-                      textAlign="center"
+                      textAlign="left"
                     >
                       {col.values[region][i]}
                     </Td>
@@ -116,15 +121,21 @@ const PricingPage = () => {
             </Tbody>
           </Table>
           <CardContent>
-            <HStack justifyContent="flex-start" pt={2}>
-              <Button
-                variant="gradient-1"
-                size="lg"
-                onClick={showFronteggSubscriptionPortal}
-              >
-                Manage subscription
-              </Button>
-            </HStack>
+            <VStack spacing={4} alignItems="stretch" fontSize="sm">
+              <Text>
+                Free Network Egress up to 1TB for a limited time during Early
+                Access*
+              </Text>
+              <HStack justifyContent="flex-start" pt={2}>
+                <Button
+                  variant="gradient-1"
+                  size="lg"
+                  onClick={showFronteggSubscriptionPortal}
+                >
+                  Manage subscription
+                </Button>
+              </HStack>
+            </VStack>
           </CardContent>
         </Card>
         <Card minWidth="fit-content">
@@ -157,6 +168,11 @@ const PricingPage = () => {
                 </Table>
               ))}
             </VStack>
+          </CardContent>
+        </Card>
+        <Card minWidth="fit-content">
+          <CardContent>
+            <Text fontSize="xs">*{terms}</Text>
           </CardContent>
         </Card>
       </VStack>
