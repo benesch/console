@@ -1,9 +1,10 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { Box, HStack, Spinner, VStack } from "@chakra-ui/react";
+import { Box, BoxProps, HStack, Spinner, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useParams } from "react-router-dom";
 
 import { Source, useDDL } from "~/api/materialized";
+import { CopyableBox } from "~/components/copyableComponents";
 import { PageBreadcrumbs, PageHeader } from "~/layouts/BaseLayout";
 
 export interface SourceDetailProps {
@@ -20,7 +21,28 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         <VStack spacing={1} alignItems="start">
           <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]} />
           {source && (
-            <ExpandablePanel text="SHOW CREATE SINK">{ddl}</ExpandablePanel>
+            <ExpandablePanel text="SHOW CREATE SINK">
+              <Box
+                mt={4}
+                p={6}
+                border="solid 1px"
+                borderRadius="8px"
+                borderColor="semanticColors.border.primary"
+              >
+                <Box fontSize="14px" fontWeight="500">
+                  {source.name} DDL Statement
+                </Box>
+                <Box
+                  fontSize="14px"
+                  color="semanticColors.foreground.secondary"
+                >
+                  The following statement was used to create this sink.
+                </Box>
+                <CopyableBox mt={4} contents={ddl}>
+                  {ddl}
+                </CopyableBox>
+              </Box>
+            </ExpandablePanel>
           )}
         </VStack>
       </PageHeader>
@@ -31,21 +53,31 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
   );
 };
 
-export interface ExpandablePanelProps {
+export type ExpandablePanelProps = BoxProps & {
   text: string;
   children: React.ReactNode;
-}
+};
 
-const ExpandablePanel = ({ text, children }: ExpandablePanelProps) => {
+const ExpandablePanel = ({
+  text,
+  children,
+  ...boxProps
+}: ExpandablePanelProps) => {
   const [show, setShow] = React.useState(false);
+
   return (
-    <>
-      <Box fontSize="xs" onClick={() => setShow(!show)}>
+    <Box>
+      <Box
+        color="semanticColors.accent.purple"
+        fontSize="xs"
+        onClick={() => setShow(!show)}
+        {...boxProps}
+      >
         {text}
         {show ? <ChevronUpIcon /> : <ChevronDownIcon />}
       </Box>
       {show && children}
-    </>
+    </Box>
   );
 };
 
