@@ -17,7 +17,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source, SourceStatus, useSources } from "~/api/materialized";
+import { Source, SourceStatus } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
@@ -158,7 +158,7 @@ const SourceTable = (props: SourceTableProps) => {
       <Tbody>
         {props.sources.map((s) => (
           <Tr
-            key={s.id}
+            key={s.oid}
             onClick={() => navigate(`/sources/${s.name}`)}
             cursor="pointer"
             _hover={{

@@ -234,6 +234,7 @@ export type SourceStatus =
 
 export interface Source {
   id: string;
+  oid: number;
   name: string;
   type: string;
   size?: string;
@@ -244,7 +245,7 @@ export interface Source {
  * Fetches all sources in the current environment
  */
 export function useSources() {
-  const sourceResponse = useSql(`SELECT s.oid, s.name, s.type, s.size,
+  const sourceResponse = useSql(`SELECT s.id, s.oid, s.name, s.type, s.size,
   (
     SELECT status
     FROM mz_internal.mz_source_status_history h
@@ -260,10 +261,11 @@ WHERE id LIKE 'u%';
     const { rows } = sourceResponse.data;
     sources = rows.map((row) => ({
       id: row[0],
-      name: row[1],
-      type: row[2],
-      size: row[3],
-      status: row[4],
+      oid: row[1],
+      name: row[2],
+      type: row[3],
+      size: row[4],
+      status: row[5],
     }));
   }
 
@@ -272,6 +274,51 @@ WHERE id LIKE 'u%';
   }, [sourceResponse]);
 
   return { sources, refetch };
+}
+
+export interface SourceError {
+  error: string;
+  details: string;
+  occurred_at: Date;
+}
+
+/**
+ * Fetches errors for a specific source
+ */
+export function useSourceErrors({
+  limit = 20,
+  sourceId,
+}: {
+  limit?: number;
+  sourceId?: string;
+}) {
+  const result = useSql(
+    sourceId
+      ? `
+  SELECT error, details, occurred_at
+  FROM mz_internal.mz_source_status_history h
+  WHERE source_id = '${sourceId}'
+  AND error IS NOT NULL
+  ORDER BY occurred_at DESC
+  LIMIT ${limit};
+`
+      : undefined
+  );
+  let errors: SourceError[] | null = null;
+  if (result.data) {
+    const { rows } = result.data;
+    errors = rows.map((row) => ({
+      error: row[0],
+      details: row[1],
+      occurred_at: new Date(row[2]),
+    }));
+  }
+
+  const refetch = React.useCallback(() => {
+    result.refetch();
+  }, [result]);
+
+  return { errors, refetch };
 }
 
 export interface Sink {

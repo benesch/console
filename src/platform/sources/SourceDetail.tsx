@@ -1,9 +1,27 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { Box, BoxProps, HStack, Spinner, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  HStack,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  VStack,
+} from "@chakra-ui/react";
+import { format } from "date-fns";
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { Source, useDDL } from "~/api/materialized";
+import {
+  Source,
+  SourceError,
+  useDDL,
+  useSourceErrors,
+} from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import { PageBreadcrumbs, PageHeader } from "~/layouts/BaseLayout";
 
@@ -14,6 +32,7 @@ export interface SourceDetailProps {
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams();
   const { ddl } = useDDL("SOURCE", source?.name);
+  const { errors } = useSourceErrors({ sourceId: source?.id });
 
   return (
     <>
@@ -47,9 +66,43 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         </VStack>
       </PageHeader>
       <HStack spacing={6} alignItems="flex-start">
-        {source ? <div>{source.name}</div> : <Spinner />}
+        {errors ? <SourceErrorsTable errors={errors} /> : <Spinner />}
       </HStack>
     </>
+  );
+};
+
+interface SourceErrorsTableProps {
+  errors: SourceError[];
+}
+
+const SourceErrorsTable = ({ errors }: SourceErrorsTableProps) => {
+  if (errors.length === 0) {
+    return <Box>No errors</Box>;
+  }
+  return (
+    <Table
+      variant="borderless"
+      data-testid="source-errors-table"
+      borderRadius="xl"
+    >
+      <Thead>
+        <Tr>
+          <Th>Error</Th>
+          <Th>Details</Th>
+          <Th>Last encountered</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {errors.map((error) => (
+          <Tr key={error.occurred_at.getMilliseconds()}>
+            <Td>{error.error}</Td>
+            <Td>{error.details}</Td>
+            <Td>{format(error.occurred_at, "MM-dd-yy HH:mm:ss")}</Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   );
 };
 
