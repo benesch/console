@@ -118,7 +118,7 @@ export const Table = defineMultiStyleConfig({
         borderWidth: "1px",
         borderColor: "semanticColors.border.secondary",
         borderX: "none",
-        "&:first-child": {
+        "&:first-of-type": {
           borderRadius: "8px 0 0 8px",
           borderLeftWidth: "1px",
           borderLeftStyle: "solid",
