@@ -23,6 +23,7 @@ import {
   useSourceErrors,
 } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
+import StatusPill from "~/components/StatusPill";
 import { PageBreadcrumbs, PageHeader } from "~/layouts/BaseLayout";
 
 export interface SourceDetailProps {
@@ -38,7 +39,9 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
     <>
       <PageHeader>
         <VStack spacing={1} alignItems="start">
-          <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]} />
+          <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
+            {source?.status && <StatusPill status={source.status} />}
+          </PageBreadcrumbs>
           {source && (
             <ExpandablePanel text="SHOW CREATE SINK">
               <Box

@@ -118,13 +118,14 @@ export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
 
 export interface PageBreadcrumbsProps {
   crumbs: string[];
+  children?: React.ReactNode;
 }
 
 /**
  * A container for breadcrumbs.
  * This goes inside a PageHeader for a header that is a series of paths.
  */
-export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
+export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
   const { colors } = useTheme();
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
@@ -144,6 +145,7 @@ export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
           </PageHeading>
         );
       })}
+      {children}
     </HStack>
   );
 };
