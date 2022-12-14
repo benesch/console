@@ -17,7 +17,7 @@ import React from "react";
 
 import logo from "~/img/wordmark.svg";
 import SignupFooter from "~/layouts/SignupFooter";
-import colors, { gradients, semanticColors } from "~/theme/colors";
+import colors, { gradients } from "~/theme/colors";
 import * as components from "~/theme/components";
 
 import { darkColors, darkShadows } from "./dark";
@@ -60,7 +60,7 @@ export const baseTheme = {
   styles: {
     global: (props: StyleFunctionProps) => ({
       body: {
-        bg: mode(semanticColors.bg.light, semanticColors.bg.dark)(props),
+        bg: mode(colors.white, colors.gray[900])(props),
       },
       "*": {
         fontVariantLigatures: "none",
@@ -129,7 +129,7 @@ export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
         hover: colors.purple[800],
       },
       background: {
-        default: semanticColors.card.bg.light,
+        default: colors.white,
       },
     },
     // navigation: {

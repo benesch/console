@@ -337,37 +337,6 @@ const gradients = {
   },
 };
 
-const semanticColors = {
-  bg: {
-    light: colors.white,
-    dark: colors.gray[900],
-  },
-  divider: {
-    light: colors.gray[100],
-    dark: colors.gray[700],
-  },
-  card: {
-    bg: {
-      light: colors.white,
-      dark: colors.gray[900],
-    },
-    border: {
-      light: colors.gray[100],
-      dark: colors.gray[700],
-    },
-  },
-  dropdown: {
-    bg: {
-      dark: colors.gray[700],
-      light: colors.white,
-    },
-  },
-  grayText: {
-    light: colors.gray[500],
-    dark: colors.gray[200],
-  },
-};
-
 const shadows = {
   light: {
     level1: `
@@ -418,4 +387,4 @@ const shadows = {
 
 export default colors;
 
-export { gradients, semanticColors, shadows };
+export { gradients, shadows };

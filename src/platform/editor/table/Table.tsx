@@ -7,7 +7,6 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import React, { ChangeEvent } from "react";
 import {
@@ -20,7 +19,6 @@ import {
 } from "react-table";
 
 import Pagination from "~/platform/editor/table/Pagination";
-import { semanticColors } from "~/theme/colors";
 
 interface Props {
   columns: Array<Column>;
@@ -72,11 +70,6 @@ const Table: React.FC<React.PropsWithChildren<Props>> = ({
     usePagination
   );
 
-  const dividerColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
-
   /**
    * Handlers
    */
@@ -92,7 +85,7 @@ const Table: React.FC<React.PropsWithChildren<Props>> = ({
         flex={1}
         overflow="auto"
         borderBottom="1px solid"
-        borderColor={dividerColor}
+        borderColor="semanticColors.divider"
         py={1}
       >
         <ChakraTable {...getTableProps()} style={{ borderSpacing: 0 }}>
