@@ -28,7 +28,7 @@ export const lightColors = {
   },
   border: {
     primary: colors.gray[200],
-    secondary: colors.gray[400],
+    secondary: colors.gray[300],
     error: colors.red[100],
     info: colors.blue[100],
     warn: colors.yellow[400],

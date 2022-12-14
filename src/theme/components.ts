@@ -98,7 +98,7 @@ const { defineMultiStyleConfig } = createMultiStyleConfigHelpers([
   "th",
 ]);
 
-const tableBorderStyle = `solid 1px ${colors.gray[300]}`;
+const tableBorderStyle = `solid 1px ${`semanticColors.border.secondary`}`;
 export const Table = defineMultiStyleConfig({
   baseStyle: {},
   variants: {
@@ -110,19 +110,25 @@ export const Table = defineMultiStyleConfig({
       th: {
         textTransform: "none",
         fontFamily: "body",
-        color: "gray.500",
+        color: "semanticColors.foreground.secondary",
         fontSize: "sm",
         fontWeight: "500",
-        backgroundColor: "gray.50",
+        backgroundColor: "semanticColors.background.secondary",
         border: tableBorderStyle,
+        borderWidth: "1px",
+        borderColor: "semanticColors.border.secondary",
         borderX: "none",
         "&:first-child": {
           borderRadius: "8px 0 0 8px",
-          borderLeft: tableBorderStyle,
+          borderLeftWidth: "1px",
+          borderLeftStyle: "solid",
+          borderLeftColor: "semanticColors.border.secondary",
         },
         "&:last-child": {
           borderRadius: "0 8px 8px 0",
-          borderRight: tableBorderStyle,
+          borderRightWidth: "1px",
+          borderRightStyle: "solid",
+          borderRightColor: "semanticColors.border.secondary",
         },
       },
     },
