@@ -4,17 +4,9 @@
  */
 
 import { BoxProps, Flex, HeadingProps } from "@chakra-ui/layout";
-import {
-  Box,
-  Heading,
-  HStack,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Heading, HStack, Text, useTheme } from "@chakra-ui/react";
 import { Tab, TabList, TabListProps, TabProps, Tabs } from "@chakra-ui/tabs";
 import React from "react";
-
-import { semanticColors, shadows } from "~/theme/colors";
 
 export const CARD_PADDING = 4;
 
@@ -41,22 +33,15 @@ export const CARD_PADDING = 4;
  */
 export const Card = React.forwardRef(
   (props: BoxProps, ref: React.LegacyRef<HTMLDivElement> | undefined) => {
-    const bg = useColorModeValue(
-      semanticColors.card.bg.light,
-      semanticColors.card.bg.dark
-    );
-    const borderColor = useColorModeValue(
-      semanticColors.card.border.light,
-      semanticColors.card.border.dark
-    );
-    const shadow = useColorModeValue(shadows.light.level2, shadows.dark.level2);
+    const { colors, shadows } = useTheme();
+
     return (
       <Box
         ref={ref}
-        bg={bg}
-        shadow={shadow}
+        bg={colors.semanticColors.background.primary}
+        shadow={shadows.level2}
         border="1px solid"
-        borderColor={borderColor}
+        borderColor={colors.semanticColors.border.primary}
         width="100%"
         borderRadius="xl"
         {...props}
@@ -78,14 +63,11 @@ export const CardTitle = (props: CardTitleProps) => {
 
 /** A header for a `Card`. */
 export const CardHeader = (props: CardTitleProps) => {
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const { colors } = useTheme();
   return (
     <CardTitle
       borderBottomWidth="1px"
-      borderBottomColor={borderColor}
+      borderBottomColor={colors.semanticColors.border.primary}
       {...props}
     />
   );
@@ -121,15 +103,12 @@ export interface CardFooterProps {
 
 /** A footer for a `Card`. */
 export const CardFooter = (props: CardFooterProps) => {
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const { colors } = useTheme();
   return (
     <HStack
       display="flex"
       borderTop="1px"
-      borderTopColor={borderColor}
+      borderTopColor={colors.semanticColors.border.primary}
       p={CARD_PADDING}
     >
       {props.children}

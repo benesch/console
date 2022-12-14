@@ -22,7 +22,6 @@ import {
   useEnvironmentsWithHealth,
   useSetCurrentEnvironment,
 } from "~/recoil/environments";
-import { reactSelectTheme } from "~/theme";
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
@@ -75,10 +74,6 @@ const EnvironmentSelectField = () => {
         value={currentOption}
         onChange={selectHandler}
         styles={colorStyles}
-        theme={(theme) => ({
-          ...theme,
-          ...reactSelectTheme,
-        })}
         isMulti={false}
         isSearchable={false}
       />
@@ -142,7 +137,7 @@ const SingleValue: React.FunctionComponent<
   React.PropsWithChildren<SingleValueProps<EnvOptionType>>
 > = ({ innerProps, data }) => {
   return (
-    <HStack {...innerProps} spacing={0} color="white">
+    <HStack {...innerProps} spacing={0}>
       <Dot environment={data.environment} />
       <Box>{data.id}</Box>
     </HStack>
@@ -185,32 +180,28 @@ const EnvOption: React.FunctionComponent<
 
 const getColorStyles = (mode: ColorMode): StylesConfig<EnvOptionType> => {
   const isDarkMode = mode === "dark";
+  const unfocusedBorderColor = isDarkMode ? colors.gray[600] : colors.gray[300];
+  const unfocusedIconHoverColor = isDarkMode
+    ? colors.gray[300]
+    : colors.gray[500];
   return {
     control: (styles, state) => ({
       ...styles,
       backgroundColor: "transparent",
-      color: state.isFocused ? colors.purple[400] : colors.white,
       minWidth: "200px",
-      borderRadius: "0.375rem",
-      ":hover": {
-        ...styles[":hover"],
-        borderColor: state.isFocused ? colors.purple[400] : colors.gray[100],
-      },
-      ":active": {
-        ...styles[":active"],
-        borderColor: colors.purple[400],
-      },
+      borderRadius: "8px",
+      borderColor: state.isFocused ? colors.purple[400] : unfocusedBorderColor,
     }),
     indicatorSeparator: () => ({}),
-    dropdownIndicator: (styles, state) => ({
+    dropdownIndicator: (styles) => ({
       ...styles,
-      color: state.isFocused ? colors.purple[400] : colors.white,
+      color: isDarkMode ? colors.gray[300] : colors.gray[500],
       ":active": {
         ...styles[":active"],
       },
       ":hover": {
         ...styles[":hover"],
-        color: state.isFocused ? colors.purple[400] : colors.gray[100],
+        color: unfocusedIconHoverColor,
       },
     }),
     menu: (styles) => ({

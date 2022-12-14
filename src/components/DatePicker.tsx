@@ -70,6 +70,7 @@ const Calendar = ({
   getForwardProps,
   getDateProps,
 }: RenderProps) => {
+  // TODO: Convert to semantic colors
   const todayColor = useColorModeValue("purple.100", "purple.800");
   const todayHoverColor = useColorModeValue("purple.50", "purple.900");
 

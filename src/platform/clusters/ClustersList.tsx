@@ -8,7 +8,7 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -31,7 +31,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
-import { semanticColors } from "~/theme/colors";
 
 const createClusterSuggestion = {
   title: "Create a cluster",
@@ -60,12 +59,10 @@ type Props = {
 };
 
 const ClustersListPage = ({ clusters }: Props) => {
+  const { colors } = useTheme();
+
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
-  );
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
   );
 
   const isDisabled = currentEnvironment?.state !== "enabled";
@@ -112,11 +109,11 @@ const ClustersListPage = ({ clusters }: Props) => {
             <CardHeader>Interacting with clusters</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Clusters are logical components that let you express resource
                   isolation for all dataflow-powered objects.
                 </Text>
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#clusters"
@@ -146,12 +143,8 @@ interface ClusterTableProps {
 
 const ClusterTable = (props: ClusterTableProps) => {
   const navigate = useNavigate();
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
 
-  const dividerColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const { colors } = useTheme();
 
   return (
     <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
@@ -168,13 +161,19 @@ const ClusterTable = (props: ClusterTableProps) => {
             onClick={() => navigate(`/clusters/${c.name}`)}
             cursor="pointer"
             _hover={{
-              bg: hoverColor,
+              bg: colors.semanticColors.background.secondary,
             }}
           >
-            <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
               {c.name}
             </Td>
-            <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
               {c.replicas.loading ? (
                 <Spinner size="sm" />
               ) : (

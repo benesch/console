@@ -6,7 +6,7 @@ import {
   HStack,
   Spinner,
   Text,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import {
@@ -18,23 +18,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { CopyableBox } from "~/components/copyableComponents";
-import { semanticColors } from "~/theme/colors";
 
 const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
 
 const PasswordStep = (props: BoxProps) => {
-  const bg = useColorModeValue(
-    semanticColors.card.bg.light,
-    semanticColors.card.bg.dark
-  );
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
-  const borderColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const { colors } = useTheme();
 
   const { user } = useAuth();
   const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =
@@ -74,14 +62,17 @@ const PasswordStep = (props: BoxProps) => {
   }, [createInProgress, tokensState]);
 
   let boxContents = (
-    <Text color={grayText}>
+    <Text color={colors.semanticColors.foreground.secondary}>
       App passwords cannot be displayed after initial creation.
     </Text>
   );
 
   if (loadingInProgress) {
     boxContents = (
-      <Flex alignItems="center" color={grayText}>
+      <Flex
+        alignItems="center"
+        color={colors.semanticColors.foreground.secondary}
+      >
         <Spinner size="sm" mr={2} /> Loading...
       </Flex>
     );
@@ -89,7 +80,10 @@ const PasswordStep = (props: BoxProps) => {
 
   if (createInProgress) {
     boxContents = (
-      <Flex alignItems="center" color={grayText}>
+      <Flex
+        alignItems="center"
+        color={colors.semanticColors.foreground.secondary}
+      >
         <Spinner size="sm" mr={2} /> Generating new app password...
       </Flex>
     );
@@ -103,11 +97,8 @@ const PasswordStep = (props: BoxProps) => {
           <CopyableBox contents={newPassword}>{newPassword}</CopyableBox>
         </VStack>
         <Text pt={3} fontSize="sm">
-          Copy this app password somewhere safe. App passwords{" "}
-          <Text fontWeight="bold" as="span">
-            cannot
-          </Text>{" "}
-          be displayed after initial creation!
+          Copy this app password somewhere safe. App passwords cannot be
+          displayed after initial creation!
         </Text>
       </>
     );
@@ -118,12 +109,17 @@ const PasswordStep = (props: BoxProps) => {
       alignItems="stretch"
       spacing={2}
       border="1px"
-      bg={bg}
-      borderColor={borderColor}
+      bg={colors.semanticColors.background.primary}
+      borderColor={colors.semanticColors.border.primary}
       borderRadius="xl"
       {...props}
     >
-      <HStack p={4} py={2} borderBottom="1px" borderColor={borderColor}>
+      <HStack
+        p={4}
+        py={2}
+        borderBottom="1px"
+        borderColor={colors.semanticColors.border.primary}
+      >
         <Text flex={1} fontWeight="500" fontSize="md">
           App passwords
         </Text>

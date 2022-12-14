@@ -6,7 +6,7 @@ import {
 } from "@chakra-ui/theme-tools";
 
 import { CARD_PADDING } from "../components/cardComponents";
-import colors, { gradients, semanticColors, shadows } from "./colors";
+import colors, { gradients, shadows } from "./colors";
 
 export const Alert = {
   variants: {
@@ -58,10 +58,7 @@ export const Modal = {
     header: {
       border: "0",
       borderBottom: "1px solid",
-      borderBottomColor: mode(
-        semanticColors.divider.light,
-        semanticColors.divider.dark
-      )(props),
+      borderBottomColor: mode(colors.gray[100], colors.gray[700])(props),
       fontWeight: "400",
     },
     dialog: {
@@ -70,10 +67,7 @@ export const Modal = {
     footer: {
       border: "0",
       borderTop: "1px solid",
-      borderTopColor: mode(
-        semanticColors.divider.light,
-        semanticColors.divider.dark
-      )(props),
+      borderTopColor: mode(colors.gray[100], colors.gray[700])(props),
       fontWeight: "400",
     },
     closeButton: {

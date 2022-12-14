@@ -16,8 +16,8 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
   useInterval,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -39,7 +39,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SourcesIcon from "~/svg/Sources";
-import { semanticColors } from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
 const sourcesSuggestions: SQLSuggestion[] = [
@@ -61,15 +60,13 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 const SourcesListPage = () => {
+  const { colors } = useTheme();
+
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
   const { sources, refetch } = useSources();
   useInterval(refetch, isPollingDisabled() ? null : 5000);
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
 
   const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = sources === null;
@@ -118,11 +115,11 @@ CREATE SOURCE <source_name>
             <CardHeader>Interacting with sources</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   A source describes an external system you want Materialize to
                   read data from.
                 </Text>
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#sources"
@@ -151,20 +148,15 @@ interface SourceTableProps {
 }
 
 const SourceTable = (props: SourceTableProps) => {
+  const { colors } = useTheme();
   const [activeSourceName, setActiveSourceName] = React.useState("");
   // automatically refetches if activeSourceName changes
   const { ddl } = useDDL("SOURCE", activeSourceName);
-  const hoverColor = useColorModeValue("gray.100", "gray.900");
-
-  const dividerColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
 
   return (
     <>
       <Table variant="borderless" data-testid="source-table" borderRadius="xl">
-        <Thead>
+        <Thead background={colors.semanticColors.background.secondary}>
           <Tr>
             <Th>Name</Th>
             <Th width="25%">Status</Th>
@@ -179,10 +171,13 @@ const SourceTable = (props: SourceTableProps) => {
               onClick={() => setActiveSourceName(s.name)}
               cursor="pointer"
               _hover={{
-                bg: hoverColor,
+                bg: colors.semanticColors.background.secondary,
               }}
             >
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 <Box
                   maxW={{
                     base: "120px",
@@ -198,13 +193,22 @@ const SourceTable = (props: SourceTableProps) => {
                   {s.name}
                 </Box>
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.status ? <StatusPill status={s.status} /> : "-"}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.type}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.size ?? "-"}
               </Td>
             </Tr>

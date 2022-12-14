@@ -15,8 +15,8 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
   useInterval,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -38,7 +38,6 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SinksIcon from "~/svg/Sinks";
-import { semanticColors } from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
@@ -64,15 +63,12 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 const SinksListPage = () => {
+  const { colors } = useTheme();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
   const { sinks, refetch } = useSinks();
   useInterval(refetch, isPollingDisabled() ? null : 5000);
-  const grayText = useColorModeValue(
-    semanticColors.grayText.light,
-    semanticColors.grayText.dark
-  );
 
   const isDisabled = currentEnvironment?.state !== "enabled";
   const isLoading = sinks === null;
@@ -115,11 +111,11 @@ const SinksListPage = () => {
             <CardHeader>Interacting with sinks</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   A sink describes an external system you want Materialize to
                   read data from.
                 </Text>
-                <Text color={grayText}>
+                <Text color={colors.semanticColors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#sinks"
@@ -148,14 +144,9 @@ interface SinkTableProps {
 }
 
 const SinkTable = (props: SinkTableProps) => {
+  const { colors } = useTheme();
   const [activeSinkName, setActiveSinkName] = React.useState("");
   const { ddl, refetch } = useDDL("SINK", activeSinkName);
-  const hoverColor = useColorModeValue("gray.50", "gray.900");
-
-  const dividerColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
 
   // if the active sink name changes, refetch data
   React.useEffect(() => {
@@ -179,16 +170,25 @@ const SinkTable = (props: SinkTableProps) => {
               onClick={() => setActiveSinkName(s.name)}
               cursor="pointer"
               _hover={{
-                bg: hoverColor,
+                bg: colors.semanticColors.background.secondary,
               }}
             >
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.name}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.type}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {s.size || "-"}
               </Td>
             </Tr>

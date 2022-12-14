@@ -1,13 +1,17 @@
-import { Box, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, useTheme, VStack } from "@chakra-ui/react";
 import React from "react";
 
 import TextLink from "~/components/TextLink";
 
 const GetStartedDocs = () => {
-  const bg = useColorModeValue("blackAlpha.50", "whiteAlpha.100");
+  const { colors } = useTheme();
   return (
     <VStack spacing={2} alignItems="stretch">
-      <Box p={4} borderRadius="lg" bg={bg}>
+      <Box
+        p={4}
+        borderRadius="lg"
+        bg={colors.semanticColors.background.secondary}
+      >
         <TextLink
           href="https://materialize.com/docs/get-started/"
           target="_blank"

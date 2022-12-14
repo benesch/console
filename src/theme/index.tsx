@@ -10,24 +10,29 @@
  * Frontegg.
  */
 
-import { extendTheme } from "@chakra-ui/react";
+import { ChakraTheme, extendTheme } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
 
 import logo from "~/img/wordmark.svg";
 import SignupFooter from "~/layouts/SignupFooter";
-import colors, { gradients, semanticColors, shadows } from "~/theme/colors";
+import colors, { gradients } from "~/theme/colors";
 import * as components from "~/theme/components";
+
+import { darkColors, darkShadows } from "./dark";
+import { lightColors, lightShadows } from "./light";
 
 const fontDefault = "intervariable, Arial, sans-serif";
 
-export const chakraTheme = extendTheme({
-  global: {
-    body: {
-      fontFamily: fontDefault,
-    },
-  },
+export const initialColorMode = "system";
+export const config: ChakraTheme["config"] = {
+  cssVarPrefix: "ck",
+  initialColorMode,
+  useSystemColorMode: true,
+};
+
+export const baseTheme = {
   breakpoints: {
     sm: "30em", // 480px
     md: "48em", // 768px
@@ -52,11 +57,10 @@ export const chakraTheme = extendTheme({
     body: fontDefault,
     mono: "'Fira Code', Menlo, monospace",
   },
-  shadows,
   styles: {
     global: (props: StyleFunctionProps) => ({
       body: {
-        bg: mode(semanticColors.bg.light, semanticColors.bg.dark)(props),
+        bg: mode(colors.white, colors.gray[900])(props),
       },
       "*": {
         fontVariantLigatures: "none",
@@ -67,12 +71,21 @@ export const chakraTheme = extendTheme({
       },
     }),
   },
-  gradients,
-  config: {
-    cssVarPrefix: "ck",
-    initialColorMode: "system",
-    useSystemColorMode: true,
+  config,
+};
+
+export const darkTheme = extendTheme(baseTheme, {
+  colors: {
+    semanticColors: darkColors,
   },
+  shadows: darkShadows,
+});
+
+export const lightTheme = extendTheme(baseTheme, {
+  colors: {
+    semanticColors: lightColors,
+  },
+  shadows: lightShadows,
 });
 
 // Extracted from Figma.
@@ -116,7 +129,7 @@ export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
         hover: colors.purple[800],
       },
       background: {
-        default: semanticColors.card.bg.light,
+        default: colors.white,
       },
     },
     // navigation: {
@@ -170,25 +183,3 @@ export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
         },
       })*/
 });
-
-export const reactSelectTheme = {
-  colors: {
-    primary: colors.purple[500],
-    primary25: colors.purple[100],
-    primary50: colors.purple[200],
-    primary75: colors.purple[400],
-    danger: colors.red[400],
-    dangerLight: colors.red[100],
-    neutral0: colors.white,
-    neutral5: colors.gray[50],
-    neutral10: colors.gray[100],
-    neutral20: colors.gray[200],
-    neutral30: colors.gray[300],
-    neutral40: colors.gray[400],
-    neutral50: colors.gray[500],
-    neutral60: colors.gray[600],
-    neutral70: colors.gray[700],
-    neutral80: colors.gray[800],
-    neutral90: colors.gray[900],
-  },
-};

@@ -1,7 +1,9 @@
+import { ThemeProvider } from "@emotion/react";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
 import PageFooter, { getCurrentYear } from "~/layouts/PageFooter";
+import { lightTheme } from "~/theme";
 
 beforeAll(() => {
   jest.useFakeTimers();
@@ -21,11 +23,19 @@ describe("components/footer", () => {
 
   describe("PageFooter", () => {
     it("should display the current year", () => {
-      render(<PageFooter />);
+      render(
+        <ThemeProvider theme={lightTheme}>
+          <PageFooter />
+        </ThemeProvider>
+      );
       expect(screen.getByText("© 2022 Materialize, Inc.")).toBeDefined();
     });
     it("should display a link to the jira status page", () => {
-      render(<PageFooter />);
+      render(
+        <ThemeProvider theme={lightTheme}>
+          <PageFooter />
+        </ThemeProvider>
+      );
       const link = screen.getByText("System Status") as HTMLAnchorElement;
       expect(link).toBeDefined();
       expect(link.href).toBe("https://status.materialize.com/");

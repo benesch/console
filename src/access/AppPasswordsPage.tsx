@@ -13,7 +13,7 @@ import {
   Th,
   Thead,
   Tr,
-  useColorModeValue,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
@@ -33,7 +33,6 @@ import {
 import { CopyButton } from "~/components/copyableComponents";
 import { SubmitButton, TextField } from "~/components/formComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
-import { semanticColors } from "~/theme/colors";
 
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
@@ -150,12 +149,7 @@ const PasswordsTable = ({
   ...props
 }: APIKeysTableProps) => {
   const { user } = useAuth();
-  const disabledBg = useColorModeValue("gray.100", "gray.800");
-  const disabledColor = useColorModeValue("gray.500", "gray.500");
-  const dividerColor = useColorModeValue(
-    semanticColors.divider.light,
-    semanticColors.divider.dark
-  );
+  const { colors } = useTheme();
 
   return (
     <Table variant="borderless">
@@ -173,23 +167,39 @@ const PasswordsTable = ({
           return (
             <Tr
               key={token.clientId}
-              bg={isDeleting ? disabledBg : "default"}
-              textColor={isDeleting ? disabledColor : "default"}
+              textColor={
+                isDeleting
+                  ? colors.semanticColors.foreground.primary
+                  : "default"
+              }
+              opacity={isDeleting ? 0.5 : 1}
               aria-label={token.description}
             >
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {" "}
                 {token.description}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {" "}
                 {user.name}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 {" "}
                 {format(new Date(token.createdAt), "yyyy/MM/dd")}
               </Td>
-              <Td borderBottomWidth="1px" borderBottomColor={dividerColor}>
+              <Td
+                borderBottomWidth="1px"
+                borderBottomColor={colors.semanticColors.border.primary}
+              >
                 <DeleteKeyModal
                   description={token.description}
                   clientId={token.clientId}
@@ -217,24 +227,33 @@ type SecretBoxProps = {
 };
 
 const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
-  const keyBg = useColorModeValue("whiteAlpha.300", "whiteAlpha.100");
-  const keyBorder = useColorModeValue("whiteAlpha.600", "whiteAlpha.300");
+  const { colors } = useTheme();
   return (
-    <Alert status="info" mb={2} size="sm">
+    <Alert
+      status="info"
+      mb={2}
+      size="sm"
+      background={colors.semanticColors.background.info}
+      borderRadius="md"
+      borderWidth="1px"
+      borderColor={colors.semanticColors.border.info}
+    >
       <VStack alignItems="flex-start" width="100%">
-        <AlertDescription width="100%" px={4}>
-          <HStack alignItems="center">
-            <Text>New password {`"${name}"`}:</Text>
+        <AlertDescription width="100%" px={2}>
+          <VStack alignItems="start">
+            <Text fontSize="md" fontWeight="500">
+              New password {`"${name}"`}:
+            </Text>
             <HStack
               role="group"
-              bg={keyBg}
+              bg={colors.semanticColors.background.primary}
               borderWidth="1px"
-              borderColor={keyBorder}
+              borderColor={colors.semanticColors.border.primary}
               borderRadius={4}
               px={2}
               py={1}
             >
-              <Text fontWeight="bold" aria-label="clientId">
+              <Text fontWeight="400" aria-label="clientId">
                 {password}
               </Text>
               <CopyButton
@@ -245,8 +264,12 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
                 flex="0 0 auto"
               />
             </HStack>
-          </HStack>
-          <Text pt={3}>
+          </VStack>
+          <Text
+            pt={1}
+            fontSize="sm"
+            color={colors.semanticColors.foreground.primary}
+          >
             Write this down; you will not be able to see your app password again
             after you reload!
           </Text>
@@ -257,6 +280,7 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
         right={1}
         top={1}
         size="sm"
+        color={colors.semanticColors.foreground.secondary}
         onClick={onClose}
       />
     </Alert>
