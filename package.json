@@ -108,7 +108,7 @@
     "miragejs": "^0.1.46",
     "msw": "^0.48.1",
     "openapi-typescript": "^5.4.1",
-    "pg": "^8.7.1",
+    "pg": "^8.8.0",
     "prettier": "^2.8.0",
     "pyright": "1.1.278",
     "react-refresh": "^0.11.0",
