@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Container,
   CSSObject,
@@ -19,7 +20,6 @@ import { format } from "date-fns";
 import { DateObj, Props as DayzedProps, RenderProps, useDayzed } from "dayzed";
 import { Calendar as CalendarInterface } from "dayzed";
 import React from "react";
-import { Box } from "victory";
 
 const monthNamesShort = [
   "Jan",
