@@ -19,7 +19,7 @@ const SourceRoutes = () => {
     <Routes>
       <Route path="/" element={<SourcesList sources={sources} />} />
       <Route
-        path=":sourceName"
+        path=":sourceName/*"
         element={<SourceOrRedirect sources={sources} />}
       />
     </Routes>

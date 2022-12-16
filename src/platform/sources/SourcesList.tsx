@@ -159,7 +159,7 @@ const SourceTable = (props: SourceTableProps) => {
         {props.sources.map((s) => (
           <Tr
             key={s.oid}
-            onClick={() => navigate(`/sources/${s.name}`)}
+            onClick={() => navigate(`/sources/${s.name}/errors`)}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,
