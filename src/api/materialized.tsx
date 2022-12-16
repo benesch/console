@@ -288,9 +288,13 @@ export interface SourceError {
 export function useSourceErrors({
   limit = 20,
   sourceId,
+  startTime,
+  endTime,
 }: {
   limit?: number;
   sourceId?: string;
+  startTime: Date;
+  endTime: Date;
 }) {
   const result = useSql(
     sourceId
@@ -299,6 +303,7 @@ export function useSourceErrors({
   FROM mz_internal.mz_source_status_history h
   WHERE source_id = '${sourceId}'
   AND error IS NOT NULL
+  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
   GROUP BY h.error
   ORDER BY last_occurred DESC
   LIMIT ${limit};`

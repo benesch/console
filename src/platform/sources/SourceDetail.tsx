@@ -3,6 +3,7 @@ import {
   Box,
   BoxProps,
   HStack,
+  Select,
   Spinner,
   Table,
   Tbody,
@@ -12,7 +13,7 @@ import {
   Tr,
   VStack,
 } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { format, subMinutes } from "date-fns";
 import React from "react";
 import { useParams } from "react-router-dom";
 
@@ -33,7 +34,17 @@ export interface SourceDetailProps {
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams();
   const { ddl } = useDDL("SOURCE", source?.name);
-  const { errors } = useSourceErrors({ sourceId: source?.id });
+  const [timePeriodMinutes, setTimePeriod] = React.useState(15);
+  const endTime = React.useMemo(() => new Date(), []);
+  const startTime = React.useMemo(
+    () => subMinutes(endTime, timePeriodMinutes),
+    [timePeriodMinutes, endTime]
+  );
+  const { errors } = useSourceErrors({
+    sourceId: source?.id,
+    startTime,
+    endTime,
+  });
 
   return (
     <>
@@ -69,7 +80,26 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         </VStack>
       </PageHeader>
       <HStack spacing={6} alignItems="flex-start">
-        {errors ? <SourceErrorsTable errors={errors} /> : <Spinner />}
+        <VStack width="100%">
+          <Box display="flex" justifyContent="right" width="100%">
+            <Select
+              fontSize="14px"
+              width="auto"
+              value={timePeriodMinutes}
+              onChange={(e) => setTimePeriod(parseInt(e.target.value))}
+            >
+              <option value="15">Last 15 minutes</option>
+              <option value="60">Last hour</option>
+              <option value="180">Last 3 hours</option>
+              <option value="360">Last 6 hours</option>
+              <option value="720">Last 12 hours</option>
+              <option value="1440">Last 24 hours</option>
+              <option value="4320">Last 3 days</option>
+              <option value="43200">Last 30 days</option>
+            </Select>
+          </Box>
+          {errors ? <SourceErrorsTable errors={errors} /> : <Spinner />}
+        </VStack>
       </HStack>
     </>
   );
