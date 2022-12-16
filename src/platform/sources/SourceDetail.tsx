@@ -1,5 +1,4 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { Box, BoxProps, VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, Routes, useParams } from "react-router-dom";
 
@@ -7,6 +6,7 @@ import { Source, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
+  ExpandablePanel,
   PageBreadcrumbs,
   PageHeader,
   PageTab,
@@ -68,34 +68,6 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         <Route path="errors" element={<SourceErrors source={source} />} />
       </Routes>
     </>
-  );
-};
-
-export type ExpandablePanelProps = BoxProps & {
-  text: string;
-  children: React.ReactNode;
-};
-
-const ExpandablePanel = ({
-  text,
-  children,
-  ...boxProps
-}: ExpandablePanelProps) => {
-  const [show, setShow] = React.useState(false);
-
-  return (
-    <Box>
-      <Box
-        color="semanticColors.accent.purple"
-        fontSize="xs"
-        onClick={() => setShow(!show)}
-        {...boxProps}
-      >
-        {text}
-        {show ? <ChevronUpIcon /> : <ChevronDownIcon />}
-      </Box>
-      {show && children}
-    </Box>
   );
 };
 

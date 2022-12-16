@@ -3,6 +3,7 @@
  * Base layout and supporting components, like page headers.
  */
 
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   BoxProps,
@@ -203,5 +204,33 @@ export const PageTab = (props: PageTabProps) => {
         {children}
       </Box>
     </NavLink>
+  );
+};
+
+export type ExpandablePanelProps = BoxProps & {
+  text: string;
+  children: React.ReactNode;
+};
+
+export const ExpandablePanel = ({
+  text,
+  children,
+  ...boxProps
+}: ExpandablePanelProps) => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <Box>
+      <Box
+        color="semanticColors.accent.purple"
+        fontSize="xs"
+        onClick={() => setShow(!show)}
+        {...boxProps}
+      >
+        {text}
+        {show ? <ChevronUpIcon /> : <ChevronDownIcon />}
+      </Box>
+      {show && children}
+    </Box>
   );
 };
