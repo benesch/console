@@ -6,6 +6,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -21,7 +22,7 @@ export interface SourceDetailProps {
   source?: Source;
 }
 
-const timePeriodOptions = {
+const timePeriodOptions: Record<string, string> = {
   "15": "Last 15 minutes",
   "60": "Last hour",
   "180": "Last 3 hours",
@@ -30,6 +31,11 @@ const timePeriodOptions = {
   "1440": "Last 24 hours",
   "4320": "Last 3 days",
   "43200": "Last 30 days",
+};
+
+const titleForTimePeriod = (timePeriodMinutes: number) => {
+  const period = timePeriodOptions[timePeriodMinutes.toString()];
+  return `Errors over the ${period.toLowerCase()}`;
 };
 
 const defaultTimePeriod = Object.keys(timePeriodOptions)[0];
@@ -71,7 +77,8 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%">
-        <Box display="flex" justifyContent="right" width="100%">
+        <Box display="flex" justifyContent="space-between" width="100%">
+          <Text fontWeight={500}>{titleForTimePeriod(timePeriodMinutes)}</Text>
           <Select
             fontSize="14px"
             width="auto"

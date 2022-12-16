@@ -56,9 +56,10 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
           )}
         </VStack>
         <PageTabStrip>
+          {/* Hide this until we have content for this tab
           <PageTab to={`/sources/${params.sourceName}`} end>
             Overview
-          </PageTab>
+          </PageTab>*/}
           <PageTab to="errors">Errors</PageTab>
         </PageTabStrip>
       </PageHeader>
