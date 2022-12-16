@@ -319,11 +319,7 @@ export function useSourceErrors({
     }));
   }
 
-  const refetch = React.useCallback(() => {
-    result.refetch();
-  }, [result]);
-
-  return { errors, refetch };
+  return { ...result, data: errors };
 }
 
 export interface Sink {

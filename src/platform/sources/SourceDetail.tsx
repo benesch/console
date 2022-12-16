@@ -74,7 +74,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
     navigate(url.pathname + url.search, { replace: true });
     setTimePeriodMinutes(parseInt(timePeroid));
   };
-  const { errors } = useSourceErrors({
+  const { data: errors, loading } = useSourceErrors({
     sourceId: source?.id,
     startTime,
     endTime,
@@ -132,7 +132,11 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
               <option value="43200">Last 30 days</option>
             </Select>
           </Box>
-          {errors ? <SourceErrorsTable errors={errors} /> : <Spinner />}
+          {!loading && errors ? (
+            <SourceErrorsTable errors={errors} />
+          ) : (
+            <Spinner />
+          )}
         </VStack>
       </HStack>
     </>
