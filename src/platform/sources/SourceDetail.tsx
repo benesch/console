@@ -6,7 +6,12 @@ import { Route, Routes, useParams } from "react-router-dom";
 import { Source, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
-import { PageBreadcrumbs, PageHeader } from "~/layouts/BaseLayout";
+import {
+  PageBreadcrumbs,
+  PageHeader,
+  PageTab,
+  PageTabStrip,
+} from "~/layouts/BaseLayout";
 
 import SourceErrors from "./SourceErrors";
 
@@ -50,6 +55,12 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
             </ExpandablePanel>
           )}
         </VStack>
+        <PageTabStrip>
+          <PageTab to={`/sources/${params.sourceName}`} end>
+            Overview
+          </PageTab>
+          <PageTab to="errors">Errors</PageTab>
+        </PageTabStrip>
       </PageHeader>
       <Routes>
         <Route path="/" element={<div>overview</div>} />

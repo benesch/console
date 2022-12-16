@@ -4,6 +4,8 @@
  */
 
 import {
+  Box,
+  BoxProps,
   Center,
   Container,
   Flex,
@@ -16,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
+import { NavLink, NavLinkProps } from "react-router-dom";
 
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
@@ -24,6 +27,8 @@ export interface BaseLayoutProps {
   children?: React.ReactNode;
   overflowY?: CSS.Property.Overflow;
 }
+
+export const MAIN_CONTENT_MARIGIN = 10;
 
 /**
  * The base layout for logged-in users, containing the navigation bar at the
@@ -57,7 +62,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           flex={1}
           as="main"
           maxW="100%"
-          px={{ base: 10, xl: 10 }}
+          px={MAIN_CONTENT_MARIGIN}
           pb={4}
         >
           <Flex flexDir="column" w="full" h="full">
@@ -87,6 +92,7 @@ export const PageHeader = ({ children, ...props }: StackProps) => {
       flexDirection="column"
       alignItems="flex-start"
       justifyContent="center"
+      width="100%"
     >
       {children}
     </Flex>
@@ -147,5 +153,55 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
       })}
       {children}
     </HStack>
+  );
+};
+
+export interface PageTabStripProps {
+  children: React.ReactNode;
+}
+
+export const PageTabStrip = ({ children }: PageTabStripProps) => {
+  const { space } = useTheme();
+  const mainContentMargin = space[MAIN_CONTENT_MARIGIN];
+
+  return (
+    <HStack
+      width={`calc(100% + ${mainContentMargin} * 2)`}
+      style={{ marginLeft: `-${mainContentMargin}` }}
+      px={mainContentMargin}
+      mt={4}
+      borderBottom="solid 1px"
+      borderColor="semanticColors.border.primary"
+      spacing={10}
+    >
+      {children}
+    </HStack>
+  );
+};
+
+export type PageTabProps = NavLinkProps & {
+  children: React.ReactNode;
+  tabProps?: BoxProps;
+};
+export const PageTab = (props: PageTabProps) => {
+  const { colors } = useTheme();
+  const { children, tabProps, ...navLinkProps } = props;
+
+  return (
+    <NavLink
+      style={({ isActive }) =>
+        isActive
+          ? {
+              borderBottom: `solid 1px ${colors.semanticColors.accent.purple}`,
+              marginBottom: "-1px",
+            }
+          : undefined
+      }
+      {...navLinkProps}
+    >
+      <Box lineHeight="20px" fontSize="14px" pb={2} {...tabProps}>
+        {children}
+      </Box>
+    </NavLink>
   );
 };
