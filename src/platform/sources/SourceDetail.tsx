@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { format, subMinutes } from "date-fns";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Source,
@@ -31,15 +31,49 @@ export interface SourceDetailProps {
   source?: Source;
 }
 
+const timePeriodOptions = {
+  "15": "Last 15 minutes",
+  "60": "Last hour",
+  "180": "Last 3 hours",
+  "360": "Last 6 hours",
+  "720": "Last 12 hours",
+  "1440": "Last 24 hours",
+  "4320": "Last 3 days",
+  "43200": "Last 30 days",
+};
+
+const defaultTimePeriod = Object.keys(timePeriodOptions)[0];
+const parseTimePeriod = () => {
+  const params = new URLSearchParams(window.location.search);
+  const timePeriodParam = params.get("timePeroid") ?? defaultTimePeriod;
+  const period = Object.keys(timePeriodOptions).includes(timePeriodParam)
+    ? timePeriodParam
+    : defaultTimePeriod;
+  return parseInt(period);
+};
+
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams();
+  const navigate = useNavigate();
   const { ddl } = useDDL("SOURCE", source?.name);
-  const [timePeriodMinutes, setTimePeriod] = React.useState(15);
   const endTime = React.useMemo(() => new Date(), []);
-  const startTime = React.useMemo(
-    () => subMinutes(endTime, timePeriodMinutes),
-    [timePeriodMinutes, endTime]
+  const [timePeriodMinutes, setTimePeriodMinutes] = React.useState(
+    parseInt(defaultTimePeriod)
   );
+  React.useMemo(() => {
+    setTimePeriodMinutes(parseTimePeriod());
+  }, []);
+
+  const startTime = React.useMemo(() => {
+    return subMinutes(endTime, timePeriodMinutes);
+  }, [timePeriodMinutes, endTime]);
+
+  const setTimePeriod = (timePeroid: string) => {
+    const url = new URL(window.location.toString());
+    url.searchParams.set("timePeroid", timePeroid);
+    navigate(url.pathname + url.search, { replace: true });
+    setTimePeriodMinutes(parseInt(timePeroid));
+  };
   const { errors } = useSourceErrors({
     sourceId: source?.id,
     startTime,
@@ -86,7 +120,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
               fontSize="14px"
               width="auto"
               value={timePeriodMinutes}
-              onChange={(e) => setTimePeriod(parseInt(e.target.value))}
+              onChange={(e) => setTimePeriod(e.target.value)}
             >
               <option value="15">Last 15 minutes</option>
               <option value="60">Last hour</option>
