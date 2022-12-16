@@ -92,16 +92,16 @@ const SourceErrorsTable = ({ errors }: SourceErrorsTableProps) => {
       <Thead>
         <Tr>
           <Th>Error</Th>
-          <Th>Details</Th>
+          <Th>Count</Th>
           <Th>Last encountered</Th>
         </Tr>
       </Thead>
       <Tbody>
         {errors.map((error) => (
-          <Tr key={error.occurred_at.getMilliseconds()}>
+          <Tr key={error.lastOccurred.getMilliseconds()}>
             <Td>{error.error}</Td>
-            <Td>{error.details}</Td>
-            <Td>{format(error.occurred_at, "MM-dd-yy HH:mm:ss")}</Td>
+            <Td>{error.count}</Td>
+            <Td>{format(error.lastOccurred, "MM-dd-yy HH:mm:ss")}</Td>
           </Tr>
         ))}
       </Tbody>

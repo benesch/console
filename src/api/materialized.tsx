@@ -278,8 +278,8 @@ WHERE id LIKE 'u%';
 
 export interface SourceError {
   error: string;
-  details: string;
-  occurred_at: Date;
+  lastOccurred: Date;
+  count: number;
 }
 
 /**
@@ -295,22 +295,22 @@ export function useSourceErrors({
   const result = useSql(
     sourceId
       ? `
-  SELECT error, details, occurred_at
+  SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
   FROM mz_internal.mz_source_status_history h
   WHERE source_id = '${sourceId}'
   AND error IS NOT NULL
-  ORDER BY occurred_at DESC
-  LIMIT ${limit};
-`
+  GROUP BY h.error
+  ORDER BY last_occurred DESC
+  LIMIT ${limit};`
       : undefined
   );
   let errors: SourceError[] | null = null;
   if (result.data) {
     const { rows } = result.data;
     errors = rows.map((row) => ({
-      error: row[0],
-      details: row[1],
-      occurred_at: new Date(row[2]),
+      lastOccurred: new Date(row[0]),
+      error: row[1],
+      count: row[2],
     }));
   }
 
