@@ -1,9 +1,10 @@
+import { useTheme } from "@chakra-ui/react";
 import { differenceInHours, subMinutes } from "date-fns";
 import React from "react";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -17,6 +18,7 @@ export interface Props {
 }
 
 const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
+  const { colors } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),
@@ -36,11 +38,9 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={statuses}>
-        <Line type="linear" dataKey="count" stroke="#8884d8" />
+      <BarChart data={statuses} barSize={4}>
         <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="4" />
         <XAxis
-          allowDataOverflow={false}
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
           axisLine={false}
@@ -52,7 +52,8 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           }
         />
         <YAxis axisLine={false} tickLine={false} allowDecimals={false} />
-      </LineChart>
+        <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
+      </BarChart>
     </ResponsiveContainer>
   );
 };
