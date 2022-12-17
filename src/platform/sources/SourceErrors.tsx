@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 
 import { Source, SourceError, useSourceErrors } from "~/api/materialized";
 
+import SourceErrorsGraph from "./SourceErrorsGraph";
+
 export interface SourceDetailProps {
   source?: Source;
 }
@@ -101,6 +103,12 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
             <option value="43200">Last 30 days</option>
           </Select>
         </Box>
+        {source && (
+          <SourceErrorsGraph
+            sourceId={source.id}
+            timePeriodMinutes={timePeriodMinutes}
+          />
+        )}
         {!loading && errors ? (
           <SourceErrorsTable errors={errors} />
         ) : (

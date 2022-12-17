@@ -322,6 +322,49 @@ export function useSourceErrors({
   return { ...result, data: errors };
 }
 
+export interface SourceErrorBucket {
+  count: number;
+  timestamp: number;
+}
+
+export function useSourceStatuses({
+  sourceId,
+  startTime,
+  endTime,
+  bucketSizeSeconds,
+}: {
+  limit?: number;
+  sourceId?: string;
+  startTime: Date;
+  endTime: Date;
+  bucketSizeSeconds: number;
+}) {
+  const result = useSql(
+    sourceId
+      ? `
+  SELECT count(h.error),
+    (floor(extract(epoch from occurred_at) / ${bucketSizeSeconds}) * ${bucketSizeSeconds}) * 1000 as bin_start
+  FROM mz_internal.mz_source_status_history h
+  WHERE source_id = '${sourceId}'
+  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
+  GROUP BY bin_start
+  ORDER BY bin_start;`
+      : undefined
+  );
+  let statuses: SourceErrorBucket[] | null = null;
+  if (result.data) {
+    const { rows } = result.data;
+    statuses = rows.map((row) => {
+      return {
+        count: row[0] as number,
+        timestamp: row[1] as number,
+      };
+    });
+  }
+
+  return { statuses, error: result.error, refetch: result.refetch };
+}
+
 export interface Sink {
   id: string;
   name: string;
@@ -361,7 +404,7 @@ type DDLNoun = "SINK" | "SOURCE";
  * Fetches DDL for a noun
  */
 export function useDDL(noun: DDLNoun, sinkName?: string) {
-  const { data, refetch } = useSql(
+  const { data, error, refetch } = useSql(
     sinkName ? `SHOW CREATE ${noun} ${sinkName}` : undefined
   );
   let ddl = null;
@@ -370,5 +413,5 @@ export function useDDL(noun: DDLNoun, sinkName?: string) {
     ddl = rows[0][1];
   }
 
-  return { ddl, refetch };
+  return { ddl, error, refetch };
 }
