@@ -41,7 +41,7 @@ const titleForTimePeriod = (timePeriodMinutes: number) => {
 const defaultTimePeriod = Object.keys(timePeriodOptions)[0];
 const parseTimePeriod = () => {
   const params = new URLSearchParams(window.location.search);
-  const timePeriodParam = params.get("timePeroid") ?? defaultTimePeriod;
+  const timePeriodParam = params.get("timePeriod") ?? defaultTimePeriod;
   const period = Object.keys(timePeriodOptions).includes(timePeriodParam)
     ? timePeriodParam
     : defaultTimePeriod;
@@ -62,11 +62,11 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
 
-  const setTimePeriod = (timePeroid: string) => {
+  const setTimePeriod = (timePeriod: string) => {
     const url = new URL(window.location.toString());
-    url.searchParams.set("timePeroid", timePeroid);
+    url.searchParams.set("timePeriod", timePeriod);
     navigate(url.pathname + url.search, { replace: true });
-    setTimePeriodMinutes(parseInt(timePeroid));
+    setTimePeriodMinutes(parseInt(timePeriod));
   };
   const { data: errors, loading } = useSourceErrors({
     sourceId: source?.id,
