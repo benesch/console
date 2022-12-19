@@ -313,7 +313,7 @@ export function useSourceErrors({
   if (result.data) {
     const { rows } = result.data;
     errors = rows.map((row) => ({
-      lastOccurred: new Date(row[0]),
+      lastOccurred: new Date(parseInt(row[0])),
       error: row[1],
       count: row[2],
     }));
