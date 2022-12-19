@@ -222,7 +222,7 @@ export const ExpandablePanel = ({
   return (
     <Box>
       <Box
-        color="semanticColors.accent.purple"
+        color="semanticColors.accent.brightPurple"
         fontSize="xs"
         cursor="pointer"
         onClick={() => setShow(!show)}
