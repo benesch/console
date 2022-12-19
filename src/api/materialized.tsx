@@ -234,6 +234,7 @@ export type SourceStatus =
 
 export interface Source {
   id: string;
+  oid: number;
   name: string;
   type: string;
   size?: string;
@@ -244,7 +245,7 @@ export interface Source {
  * Fetches all sources in the current environment
  */
 export function useSources() {
-  const sourceResponse = useSql(`SELECT s.oid, s.name, s.type, s.size,
+  const sourceResponse = useSql(`SELECT s.id, s.oid, s.name, s.type, s.size,
   (
     SELECT status
     FROM mz_internal.mz_source_status_history h
@@ -260,10 +261,11 @@ WHERE id LIKE 'u%';
     const { rows } = sourceResponse.data;
     sources = rows.map((row) => ({
       id: row[0],
-      name: row[1],
-      type: row[2],
-      size: row[3],
-      status: row[4],
+      oid: row[1],
+      name: row[2],
+      type: row[3],
+      size: row[4],
+      status: row[5],
     }));
   }
 
@@ -272,6 +274,52 @@ WHERE id LIKE 'u%';
   }, [sourceResponse]);
 
   return { sources, refetch };
+}
+
+export interface SourceError {
+  error: string;
+  lastOccurred: Date;
+  count: number;
+}
+
+/**
+ * Fetches errors for a specific source
+ */
+export function useSourceErrors({
+  limit = 20,
+  sourceId,
+  startTime,
+  endTime,
+}: {
+  limit?: number;
+  sourceId?: string;
+  startTime: Date;
+  endTime: Date;
+}) {
+  const result = useSql(
+    sourceId
+      ? `
+  SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
+  FROM mz_internal.mz_source_status_history h
+  WHERE source_id = '${sourceId}'
+  AND error IS NOT NULL
+  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
+  GROUP BY h.error
+  ORDER BY last_occurred DESC
+  LIMIT ${limit};`
+      : undefined
+  );
+  let errors: SourceError[] | null = null;
+  if (result.data) {
+    const { rows } = result.data;
+    errors = rows.map((row) => ({
+      lastOccurred: new Date(row[0]),
+      error: row[1],
+      count: row[2],
+    }));
+  }
+
+  return { ...result, data: errors };
 }
 
 export interface Sink {
@@ -312,7 +360,7 @@ type DDLNoun = "SINK" | "SOURCE";
 /**
  * Fetches DDL for a noun
  */
-export function useDDL(noun: DDLNoun, sinkName: string) {
+export function useDDL(noun: DDLNoun, sinkName?: string) {
   const { data, refetch } = useSql(
     sinkName ? `SHOW CREATE ${noun} ${sinkName}` : undefined
   );

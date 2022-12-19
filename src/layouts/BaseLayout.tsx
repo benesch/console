@@ -3,7 +3,10 @@
  * Base layout and supporting components, like page headers.
  */
 
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
+  Box,
+  BoxProps,
   Center,
   Container,
   Flex,
@@ -16,14 +19,17 @@ import {
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
+import { NavLink, NavLinkProps } from "react-router-dom";
 
-import NavBar, { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
+import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
   overflowY?: CSS.Property.Overflow;
 }
+
+export const MAIN_CONTENT_MARIGIN = 10;
 
 /**
  * The base layout for logged-in users, containing the navigation bar at the
@@ -57,7 +63,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           flex={1}
           as="main"
           maxW="100%"
-          px={{ base: 10, xl: 10 }}
+          px={MAIN_CONTENT_MARIGIN}
           pb={4}
         >
           <Flex flexDir="column" w="full" h="full">
@@ -82,11 +88,12 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
 export const PageHeader = ({ children, ...props }: StackProps) => {
   return (
     <Flex
-      minHeight={NAV_LOGO_HEIGHT}
+      my="6"
       {...props}
       flexDirection="column"
       alignItems="flex-start"
       justifyContent="center"
+      width="100%"
     >
       {children}
     </Flex>
@@ -104,7 +111,13 @@ export interface PageHeadingProps extends HeadingProps {
  */
 export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
   return (
-    <Heading fontWeight="500" fontSize="2xl" my={0} {...props}>
+    <Heading
+      lineHeight="32px"
+      fontWeight="500"
+      fontSize="2xl"
+      my={0}
+      {...props}
+    >
       {children}
     </Heading>
   );
@@ -112,13 +125,14 @@ export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
 
 export interface PageBreadcrumbsProps {
   crumbs: string[];
+  children?: React.ReactNode;
 }
 
 /**
  * A container for breadcrumbs.
  * This goes inside a PageHeader for a header that is a series of paths.
  */
-export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
+export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
   const { colors } = useTheme();
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
@@ -138,6 +152,85 @@ export const PageBreadcrumbs = ({ crumbs }: PageBreadcrumbsProps) => {
           </PageHeading>
         );
       })}
+      {children}
     </HStack>
+  );
+};
+
+export interface PageTabStripProps {
+  children: React.ReactNode;
+}
+
+export const PageTabStrip = ({ children }: PageTabStripProps) => {
+  const { space } = useTheme();
+  const mainContentMargin = space[MAIN_CONTENT_MARIGIN];
+
+  return (
+    <HStack
+      width={`calc(100% + ${mainContentMargin} * 2)`}
+      style={{ marginLeft: `-${mainContentMargin}` }}
+      px={mainContentMargin}
+      mt={4}
+      borderBottom="solid 1px"
+      borderColor="semanticColors.border.primary"
+      spacing={10}
+    >
+      {children}
+    </HStack>
+  );
+};
+
+export type PageTabProps = NavLinkProps & {
+  children: React.ReactNode;
+  tabProps?: BoxProps;
+};
+export const PageTab = (props: PageTabProps) => {
+  const { colors } = useTheme();
+  const { children, tabProps, ...navLinkProps } = props;
+
+  return (
+    <NavLink
+      style={({ isActive }) =>
+        isActive
+          ? {
+              borderBottom: `solid 1px ${colors.semanticColors.accent.purple}`,
+              marginBottom: "-1px",
+            }
+          : undefined
+      }
+      {...navLinkProps}
+    >
+      <Box lineHeight="20px" fontSize="14px" pb={2} {...tabProps}>
+        {children}
+      </Box>
+    </NavLink>
+  );
+};
+
+export type ExpandablePanelProps = BoxProps & {
+  text: string;
+  children: React.ReactNode;
+};
+
+export const ExpandablePanel = ({
+  text,
+  children,
+  ...boxProps
+}: ExpandablePanelProps) => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <Box>
+      <Box
+        color="semanticColors.accent.purple"
+        fontSize="xs"
+        onClick={() => setShow(!show)}
+        {...boxProps}
+      >
+        {text}
+        {show ? <ChevronUpIcon /> : <ChevronDownIcon />}
+      </Box>
+      {show && children}
+    </Box>
   );
 };

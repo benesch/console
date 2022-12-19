@@ -26,7 +26,7 @@ import ClusterRoutes from "~/platform/clusters/clusterRouter";
 import Editor from "~/platform/editor/Editor";
 import Home from "~/platform/home/Home";
 import SinksListPage from "~/platform/sinks/SinksList";
-import SourcesListPage from "~/platform/sources/SourcesList";
+import SourceRoutes from "~/platform/sources/SourceRoutes";
 import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
 
@@ -56,7 +56,7 @@ const Router = () => {
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/clusters/*" element={<ClusterRoutes />} />
-        <Route path="/sources" element={<SourcesListPage />} />
+        <Route path="/sources/*" element={<SourceRoutes />} />
         <Route path="/sinks" element={<SinksListPage />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="*" element={<RedirectToHome />} />
