@@ -31,7 +31,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
             {source?.status && <StatusPill status={source.status} />}
           </PageBreadcrumbs>
           {source && (
-            <ExpandablePanel text="SHOW CREATE SINK">
+            <ExpandablePanel text="SHOW CREATE SOURCE">
               <Box
                 mt={4}
                 p={6}
@@ -46,7 +46,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
                   fontSize="14px"
                   color="semanticColors.foreground.secondary"
                 >
-                  The following statement was used to create this sink.
+                  The following statement was used to create this source.
                 </Box>
                 <CopyableBox mt={4} contents={ddl}>
                   {ddl}
