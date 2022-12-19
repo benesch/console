@@ -43,7 +43,7 @@
     "css-loader": "^6.7.2",
     "d3-scale-chromatic": "^3.0.0",
     "date-fns": "^2.29.3",
-    "dayzed": "^3.2.2",
+    "dayzed": "^3.2.3",
     "deep-eql": "^4.1.1",
     "downloadjs": "^1.4.7",
     "fast-deep-equal": "^3.1.3",
