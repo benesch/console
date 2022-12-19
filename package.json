@@ -19,7 +19,7 @@
     "concurrently": "concurrently"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.11",
+    "@chakra-ui/icons": "^2.0.14",
     "@chakra-ui/modal": "^2.2.2",
     "@chakra-ui/popover": "^2.1.2",
     "@chakra-ui/react": "^2.4.3",
