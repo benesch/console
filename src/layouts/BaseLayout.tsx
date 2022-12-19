@@ -229,7 +229,13 @@ export const PageTab = (props: PageTabProps) => {
       }
       {...navLinkProps}
     >
-      <Box lineHeight="20px" fontSize="14px" pb={2} {...tabProps}>
+      <Box
+        lineHeight="20px"
+        fontSize="14px"
+        fontWeight="500"
+        pb={2}
+        {...tabProps}
+      >
         {children}
       </Box>
     </NavLink>

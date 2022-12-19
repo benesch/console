@@ -1,4 +1,4 @@
-import { useTheme } from "@chakra-ui/react";
+import { Spinner, useTheme } from "@chakra-ui/react";
 import { differenceInHours, subMinutes } from "date-fns";
 import React from "react";
 import {
@@ -13,12 +13,12 @@ import {
 import { useSourceStatuses } from "~/api/materialized";
 
 export interface Props {
-  sourceId: string;
+  sourceId?: string;
   timePeriodMinutes: number;
 }
 
 const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),
@@ -34,7 +34,9 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
     bucketSizeSeconds,
   });
 
-  if (!statuses) return null;
+  if (!sourceId || !statuses) {
+    return <Spinner />;
+  }
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -48,10 +50,22 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           dataKey="timestamp"
           minTickGap={20}
           tickFormatter={(value) =>
-            differenceInHours(endTime, new Date(value)).toString()
+            `${differenceInHours(endTime, new Date(value)).toString()}h`
           }
+          style={{
+            fontSize: "12px",
+            fontFamily: fonts.mono,
+          }}
         />
-        <YAxis axisLine={false} tickLine={false} allowDecimals={false} />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          allowDecimals={false}
+          style={{
+            fontSize: "12px",
+            fontFamily: fonts.mono,
+          }}
+        />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
       </BarChart>
     </ResponsiveContainer>

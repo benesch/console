@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   HStack,
   Select,
   Spinner,
@@ -10,6 +11,7 @@ import {
   Th,
   Thead,
   Tr,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import { format, subMinutes } from "date-fns";
@@ -51,6 +53,7 @@ const parseTimePeriod = () => {
 };
 
 const SourceErrors = ({ source }: SourceDetailProps) => {
+  const { colors } = useTheme();
   const navigate = useNavigate();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = React.useState(
@@ -78,39 +81,45 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
 
   return (
     <HStack spacing={6} alignItems="flex-start">
-      <VStack width="100%" alignItems="flex-start">
+      <VStack width="100%" alignItems="flex-start" spacing={6}>
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
+          border={`solid 1px ${colors.semanticColors.border.primary}`}
+          borderRadius="8px"
+          py={4}
+          px={6}
           width="100%"
           mb={4}
         >
-          <Text fontSize="16px" fontWeight="500">
-            Source Errors
-          </Text>
-          <Select
-            fontSize="14px"
-            width="auto"
-            value={timePeriodMinutes}
-            onChange={(e) => setTimePeriod(e.target.value)}
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            width="100%"
+            mb={2}
           >
-            <option value="15">Last 15 minutes</option>
-            <option value="60">Last hour</option>
-            <option value="180">Last 3 hours</option>
-            <option value="360">Last 6 hours</option>
-            <option value="720">Last 12 hours</option>
-            <option value="1440">Last 24 hours</option>
-            <option value="4320">Last 3 days</option>
-            <option value="43200">Last 30 days</option>
-          </Select>
-        </Box>
-        {source && (
+            <Text fontSize="16px" fontWeight="500">
+              Source Errors
+            </Text>
+            <Select
+              fontSize="14px"
+              width="auto"
+              value={timePeriodMinutes}
+              onChange={(e) => setTimePeriod(e.target.value)}
+            >
+              <option value="15">Last 15 minutes</option>
+              <option value="60">Last hour</option>
+              <option value="180">Last 3 hours</option>
+              <option value="360">Last 6 hours</option>
+              <option value="720">Last 12 hours</option>
+              <option value="1440">Last 24 hours</option>
+              <option value="4320">Last 3 days</option>
+              <option value="43200">Last 30 days</option>
+            </Select>
+          </Flex>
           <SourceErrorsGraph
-            sourceId={source.id}
+            sourceId={source?.id}
             timePeriodMinutes={timePeriodMinutes}
           />
-        )}
+        </Box>
         {!loading && errors ? (
           <SourceErrorsTable
             errors={errors}
