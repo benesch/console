@@ -77,7 +77,12 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%">
-        <Box display="flex" justifyContent="space-between" width="100%">
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          width="100%"
+        >
           <Text fontWeight={500}>{titleForTimePeriod(timePeriodMinutes)}</Text>
           <Select
             fontSize="14px"
