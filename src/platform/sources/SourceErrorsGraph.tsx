@@ -1,4 +1,4 @@
-import { Spinner, useTheme } from "@chakra-ui/react";
+import { Flex, Spinner, useTheme } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -23,6 +23,8 @@ export interface Props {
   timePeriodMinutes: number;
 }
 
+const heightPx = 300;
+
 const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const { colors, fonts } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
@@ -41,12 +43,16 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   });
 
   if (!sourceId || loading || !statuses) {
-    return <Spinner />;
+    return (
+      <Flex height={heightPx} alignItems="center" justifyContent="center">
+        <Spinner />
+      </Flex>
+    );
   }
 
   const ticks = statuses.filter((_, i) => i % 2 === 0).map((s) => s.timestamp);
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={heightPx}>
       <BarChart data={statuses} barSize={4}>
         <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="4" />
         <XAxis
