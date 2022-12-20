@@ -55,7 +55,7 @@ export const baseTheme = {
   fonts: {
     heading: `"Encoding Sans Expanded", ${fontDefault}`,
     body: fontDefault,
-    mono: "'Fira Code', Menlo, monospace",
+    mono: "'Roboto Mono', Menlo, monospace",
   },
   styles: {
     global: (props: StyleFunctionProps) => ({

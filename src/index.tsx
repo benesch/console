@@ -3,6 +3,7 @@
  * Entry point for the frontend.
  */
 import "@fontsource/inter/variable-full.css";
+import "@fontsource/roboto-mono";
 import "~/types";
 
 import {
