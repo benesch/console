@@ -25,6 +25,7 @@ export const darkColors = {
     error: colors.red[700],
     info: colors.blue[900],
     warn: colors.yellow[900],
+    inverse: colors.gray[200],
   },
   border: {
     primary: colors.gray[700],

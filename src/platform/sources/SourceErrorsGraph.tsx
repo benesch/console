@@ -6,6 +6,7 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -65,6 +66,27 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
             fontSize: "12px",
             fontFamily: fonts.mono,
           }}
+        />
+        <Tooltip
+          formatter={(value) => {
+            return [`${value} errors`];
+          }}
+          contentStyle={{
+            background: colors.semanticColors.background.inverse,
+            border: 0,
+            borderRadius: "8px",
+            fontSize: "14px",
+            lineHeight: "16px",
+            padding: "4px 8px",
+          }}
+          wrapperStyle={{
+            outline: "none",
+          }}
+          itemStyle={{
+            color: colors.semanticColors.foreground.inverse,
+          }}
+          labelFormatter={() => ""}
+          cursor={false}
         />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
       </BarChart>
