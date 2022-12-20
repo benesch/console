@@ -365,7 +365,7 @@ export function useSourceStatuses({
     });
   }
 
-  return { statuses, error: result.error, refetch: result.refetch };
+  return { ...result, data: statuses };
 }
 
 export interface Sink {

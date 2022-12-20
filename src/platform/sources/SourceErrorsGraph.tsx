@@ -28,14 +28,14 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const bucketSizeSeconds = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60;
   }, [timePeriodMinutes]);
-  const { statuses } = useSourceStatuses({
+  const { loading, data: statuses } = useSourceStatuses({
     sourceId: sourceId,
     startTime,
     endTime,
     bucketSizeSeconds,
   });
 
-  if (!sourceId || !statuses) {
+  if (!sourceId || loading || !statuses) {
     return <Spinner />;
   }
 
