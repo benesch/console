@@ -199,7 +199,6 @@ export const PageTabStrip = ({ children }: PageTabStripProps) => {
       width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
       px={mainContentMargin}
-      mt={4}
       borderBottom="solid 1px"
       borderColor="semanticColors.border.primary"
       spacing={10}

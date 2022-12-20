@@ -26,42 +26,44 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
   return (
     <>
       <PageHeader>
-        <VStack spacing={1} alignItems="start">
-          <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
-            {source?.status && <StatusPill status={source.status} />}
-          </PageBreadcrumbs>
-          {source && (
-            <ExpandablePanel text="SHOW CREATE SOURCE">
-              <Box
-                mt={4}
-                p={6}
-                border="solid 1px"
-                borderRadius="8px"
-                borderColor="semanticColors.border.primary"
-              >
-                <Box fontSize="14px" fontWeight="500">
-                  {source.name} DDL Statement
-                </Box>
+        <VStack spacing={6} alignItems="start" width="100%">
+          <VStack spacing={2} alignItems="start">
+            <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
+              {source?.status && <StatusPill status={source.status} />}
+            </PageBreadcrumbs>
+            {source && (
+              <ExpandablePanel text="SHOW CREATE SOURCE">
                 <Box
-                  fontSize="14px"
-                  color="semanticColors.foreground.secondary"
+                  mt={4}
+                  p={6}
+                  border="solid 1px"
+                  borderRadius="8px"
+                  borderColor="semanticColors.border.primary"
                 >
-                  The following statement was used to create this source.
+                  <Box fontSize="14px" fontWeight="500">
+                    {source.name} DDL Statement
+                  </Box>
+                  <Box
+                    fontSize="14px"
+                    color="semanticColors.foreground.secondary"
+                  >
+                    The following statement was used to create this source.
+                  </Box>
+                  <CopyableBox mt={4} contents={ddl}>
+                    {ddl}
+                  </CopyableBox>
                 </Box>
-                <CopyableBox mt={4} contents={ddl}>
-                  {ddl}
-                </CopyableBox>
-              </Box>
-            </ExpandablePanel>
-          )}
-        </VStack>
-        <PageTabStrip>
-          {/* Hide this until we have content for this tab
+              </ExpandablePanel>
+            )}
+          </VStack>
+          <PageTabStrip>
+            {/* Hide this until we have content for this tab
           <PageTab to={`/sources/${params.sourceName}`} end>
             Overview
           </PageTab>*/}
-          <PageTab to="errors">Errors</PageTab>
-        </PageTabStrip>
+            <PageTab to="errors">Errors</PageTab>
+          </PageTabStrip>
+        </VStack>
       </PageHeader>
       <Routes>
         <Route path="/" element={<div>overview</div>} />
