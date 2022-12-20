@@ -1,5 +1,10 @@
 import { Spinner, useTheme } from "@chakra-ui/react";
-import { differenceInHours, subMinutes } from "date-fns";
+import {
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  subMinutes,
+} from "date-fns";
 import React from "react";
 import {
   Bar,
@@ -39,6 +44,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
     return <Spinner />;
   }
 
+  const ticks = statuses.filter((_, i) => i % 2 === 0).map((s) => s.timestamp);
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={statuses} barSize={4}>
@@ -48,11 +54,24 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           type="number"
           axisLine={false}
           tickLine={false}
+          ticks={ticks}
+          interval={0}
           dataKey="timestamp"
-          minTickGap={20}
-          tickFormatter={(value) =>
-            `${differenceInHours(endTime, new Date(value)).toString()}h`
-          }
+          tickFormatter={(value) => {
+            if (timePeriodMinutes < 6 * 60) {
+              return `${differenceInMinutes(
+                endTime,
+                new Date(value)
+              ).toString()}m`;
+            }
+            if (timePeriodMinutes < 30 * 24 * 60) {
+              return `${differenceInHours(
+                endTime,
+                new Date(value)
+              ).toString()}h`;
+            }
+            return `${differenceInDays(endTime, new Date(value)).toString()}d`;
+          }}
           style={{
             fontSize: "12px",
             fontFamily: fonts.mono,
