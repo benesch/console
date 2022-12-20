@@ -351,7 +351,8 @@ export function useSourceStatuses({
     GROUP BY bin_start
     ORDER BY bin_start
   )
-  WHERE bin_start > '${startTime.getTime()}';`
+  WHERE bin_start > '${startTime.getTime()}'
+  ORDER BY bin_start;`
       : undefined
   );
   let statuses: SourceErrorBucket[] | null = null;
@@ -360,7 +361,7 @@ export function useSourceStatuses({
     statuses = rows.map((row) => {
       return {
         count: row[0] as number,
-        timestamp: row[1] as number,
+        timestamp: parseInt(row[1]) as number,
       };
     });
   }
