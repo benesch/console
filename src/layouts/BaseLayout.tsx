@@ -3,7 +3,11 @@
  * Base layout and supporting components, like page headers.
  */
 
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@chakra-ui/icons";
 import {
   Alert,
   AlertIcon,
@@ -166,7 +170,7 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
   return (
-    <HStack>
+    <HStack spacing={0}>
       {crumbs.map((crumb, i: number) => {
         const isLast = i === crumbs.length - 1;
         return (
@@ -177,7 +181,10 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
             }
             fontWeight={500}
           >
-            {`${crumb}${isLast ? "" : " / "}`}
+            <>
+              {crumb}
+              {isLast ? null : <ChevronRightIcon />}
+            </>
           </PageHeading>
         );
       })}
