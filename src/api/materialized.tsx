@@ -245,16 +245,12 @@ export interface Source {
  * Fetches all sources in the current environment
  */
 export function useSources() {
-  const sourceResponse = useSql(`SELECT s.id, s.oid, s.name, s.type, s.size,
-  (
-    SELECT status
-    FROM mz_internal.mz_source_status_history h
-    WHERE h.source_id = s.id
-    ORDER BY occurred_at DESC
-    LIMIT 1
-  ) status
+  const sourceResponse =
+    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status
 FROM mz_sources s
-WHERE id LIKE 'u%';
+LEFT OUTER JOIN mz_internal.mz_source_statuses st
+ON st.id = s.id
+WHERE s.id LIKE 'u%';
 `);
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
