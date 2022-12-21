@@ -78,7 +78,7 @@ export function useSql(sql: string | undefined) {
     requestIdRef.current += 1;
     controllerRef.current.abort();
     runSql();
-  }, [environment, sql, runSql]);
+  }, [runSql]);
 
   return { data: results, error, loading, refetch: runSql };
 }
