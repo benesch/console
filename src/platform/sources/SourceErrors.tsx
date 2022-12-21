@@ -120,29 +120,28 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
             timePeriodMinutes={timePeriodMinutes}
           />
         </Box>
-        {!loading && errors ? (
-          <SourceErrorsTable
-            errors={errors}
-            timePeriodMinutes={timePeriodMinutes}
-          />
-        ) : (
-          <Spinner />
-        )}
+        <SourceErrorsTable
+          errors={errors}
+          loading={loading}
+          timePeriodMinutes={timePeriodMinutes}
+        />
       </VStack>
     </HStack>
   );
 };
 
 interface SourceErrorsTableProps {
-  errors: SourceError[];
+  errors: SourceError[] | null;
+  loading: boolean;
   timePeriodMinutes: number;
 }
 
 const SourceErrorsTable = ({
   errors,
+  loading,
   timePeriodMinutes,
 }: SourceErrorsTableProps) => {
-  if (errors.length === 0) {
+  if (errors?.length === 0) {
     return <Box>No errors</Box>;
   }
   return (
@@ -150,67 +149,73 @@ const SourceErrorsTable = ({
       <Text fontSize="16px" fontWeight={500}>
         {titleForTimePeriod(timePeriodMinutes)}
       </Text>
-      <Table
-        variant="borderless"
-        data-testid="source-errors-table"
-        borderRadius="xl"
-      >
-        <Thead>
-          <Tr>
-            <Th>Error</Th>
-            <Th>Count</Th>
-            <Th>Last encountered</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {errors.map((error) => (
-            <Tr
-              key={error.lastOccurred.getMilliseconds()}
-              sx={{
-                _hover: {
-                  backgroundColor: "semanticColors.background.secondary",
-                },
-              }}
-            >
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor="semanticColors.border.primary"
-              >
-                {error.error}
-              </Td>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor="semanticColors.border.primary"
-              >
-                {error.count}
-              </Td>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor="semanticColors.border.primary"
-              >
-                <Text
-                  color="semanticColors.foreground.secondary"
-                  display="inline"
-                >
-                  {format(error.lastOccurred, "MM-dd-yy")}
-                </Text>
-                <Text
-                  color="semanticColors.foreground.secondary"
-                  display="inline"
-                >
-                  {" · "}
-                </Text>
-                <Text
-                  color="semanticColors.foreground.primary"
-                  display="inline"
-                >
-                  {format(error.lastOccurred, "HH:mm:ss")}
-                </Text>
-              </Td>
+      {!errors || loading ? (
+        <Flex justifyContent="center" width="100%">
+          <Spinner />
+        </Flex>
+      ) : (
+        <Table
+          variant="borderless"
+          data-testid="source-errors-table"
+          borderRadius="xl"
+        >
+          <Thead>
+            <Tr>
+              <Th>Error</Th>
+              <Th>Count</Th>
+              <Th>Last encountered</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {errors.map((error) => (
+              <Tr
+                key={error.lastOccurred.getMilliseconds()}
+                sx={{
+                  _hover: {
+                    backgroundColor: "semanticColors.background.secondary",
+                  },
+                }}
+              >
+                <Td
+                  borderBottomWidth="1px"
+                  borderBottomColor="semanticColors.border.primary"
+                >
+                  {error.error}
+                </Td>
+                <Td
+                  borderBottomWidth="1px"
+                  borderBottomColor="semanticColors.border.primary"
+                >
+                  {error.count}
+                </Td>
+                <Td
+                  borderBottomWidth="1px"
+                  borderBottomColor="semanticColors.border.primary"
+                >
+                  <Text
+                    color="semanticColors.foreground.secondary"
+                    display="inline"
+                  >
+                    {format(error.lastOccurred, "MM-dd-yy")}
+                  </Text>
+                  <Text
+                    color="semanticColors.foreground.secondary"
+                    display="inline"
+                  >
+                    {" · "}
+                  </Text>
+                  <Text
+                    color="semanticColors.foreground.primary"
+                    display="inline"
+                  >
+                    {format(error.lastOccurred, "HH:mm:ss")}
+                  </Text>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      )}
     </VStack>
   );
 };
