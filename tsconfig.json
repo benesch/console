@@ -10,12 +10,14 @@
     "resolveJsonModule": true,
     "strict": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "target": "es6",
     "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"],
       "~/img/*": ["./img/*"]
     },
+    "noEmit": true,
     "plugins": [
       {
         "name": "typescript-eslint-language-service"

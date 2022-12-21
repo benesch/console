@@ -13,6 +13,7 @@
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",
     "pyright": "pyright",
+    "typecheck": "cd frontend && tsc",
     "gen:api": "cd api && openapi-typescript '*.yml' --output ../frontend/src/api/schemas/",
     "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com CLOUD_REGIONS=[] GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
