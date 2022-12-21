@@ -239,6 +239,7 @@ export interface Source {
   type: string;
   size?: string;
   status?: SourceStatus;
+  error?: string;
 }
 
 /**
@@ -246,7 +247,7 @@ export interface Source {
  */
 export function useSources() {
   const sourceResponse =
-    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status
+    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status, st.error
 FROM mz_sources s
 LEFT OUTER JOIN mz_internal.mz_source_statuses st
 ON st.id = s.id
@@ -262,6 +263,7 @@ WHERE s.id LIKE 'u%';
       type: row[3],
       size: row[4],
       status: row[5],
+      error: row[6],
     }));
   }
 

@@ -82,6 +82,21 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%" alignItems="flex-start" spacing={6}>
+        {source?.error && (
+          <Box
+            width="100%"
+            bg={colors.semanticColors.background.error}
+            border={`solid 1px ${colors.semanticColors.border.error}`}
+            rounded="lg"
+            p={4}
+            marginTop={2}
+          >
+            <Text opacity="0.6" color="semanticColors.accent.red">
+              Source error
+            </Text>
+            <Text color="semanticColors.accent.red">{source?.error}</Text>
+          </Box>
+        )}
         <Box
           border={`solid 1px ${colors.semanticColors.border.primary}`}
           borderRadius="8px"
