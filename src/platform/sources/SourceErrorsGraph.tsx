@@ -50,7 +50,15 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
     );
   }
 
-  const ticks = statuses.filter((_, i) => i % 2 === 0).map((s) => s.timestamp);
+  // Show an X axis tick on every other possible bar, even if there are no errors
+  const startTimeMs = startTime.getTime();
+  const bucketSizeMs = bucketSizeSeconds * 1000;
+  const duration = endTime.getTime() - startTimeMs;
+  const tickSlots = Array.from({
+    length: duration / bucketSizeMs / 2,
+  }) as undefined[];
+  const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
+
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
       <BarChart data={statuses} barSize={4}>
