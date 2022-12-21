@@ -327,7 +327,7 @@ export interface SourceErrorBucket {
   timestamp: number;
 }
 
-export function useSourceStatuses({
+export function useBucketedSourceErrors({
   sourceId,
   startTime,
   endTime,

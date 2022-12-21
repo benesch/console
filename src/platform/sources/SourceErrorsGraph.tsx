@@ -16,7 +16,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { useSourceStatuses } from "~/api/materialized";
+import { useBucketedSourceErrors } from "~/api/materialized";
 
 export interface Props {
   sourceId?: string;
@@ -35,7 +35,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const bucketSizeSeconds = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60;
   }, [timePeriodMinutes]);
-  const { loading, data: statuses } = useSourceStatuses({
+  const { loading, data: statuses } = useBucketedSourceErrors({
     sourceId: sourceId,
     startTime,
     endTime,
