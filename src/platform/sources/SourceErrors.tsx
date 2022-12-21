@@ -82,6 +82,7 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
           justifyContent="space-between"
           alignItems="center"
           width="100%"
+          mb={4}
         >
           <Text fontWeight={500}>{titleForTimePeriod(timePeriodMinutes)}</Text>
           <Select
@@ -133,10 +134,47 @@ const SourceErrorsTable = ({ errors }: SourceErrorsTableProps) => {
       </Thead>
       <Tbody>
         {errors.map((error) => (
-          <Tr key={error.lastOccurred.getMilliseconds()}>
-            <Td>{error.error}</Td>
-            <Td>{error.count}</Td>
-            <Td>{format(error.lastOccurred, "MM-dd-yy HH:mm:ss")}</Td>
+          <Tr
+            key={error.lastOccurred.getMilliseconds()}
+            sx={{
+              _hover: {
+                backgroundColor: "semanticColors.background.secondary",
+              },
+            }}
+          >
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor="semanticColors.border.primary"
+            >
+              {error.error}
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor="semanticColors.border.primary"
+            >
+              {error.count}
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor="semanticColors.border.primary"
+            >
+              <Text
+                color="semanticColors.foreground.secondary"
+                display="inline"
+              >
+                {format(error.lastOccurred, "MM-dd-yy")}
+              </Text>
+              <Text
+                color="semanticColors.foreground.secondary"
+                display="inline"
+              >
+                {" "}
+                ·{" "}
+              </Text>
+              <Text color="semanticColors.foreground.primary" display="inline">
+                {format(error.lastOccurred, "HH:mm:ss")}
+              </Text>
+            </Td>
           </Tr>
         ))}
       </Tbody>
