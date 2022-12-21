@@ -19,6 +19,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Source, SourceError, useSourceErrors } from "~/api/materialized";
+import AlertBox from "~/components/AlertBox";
 
 import SourceErrorsGraph from "./SourceErrorsGraph";
 
@@ -82,64 +83,58 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%" alignItems="flex-start" spacing={6}>
-        {source?.error && (
+        <VStack width="100%" alignItems="flex-start" spacing={4}>
+          {source?.error && (
+            <AlertBox>
+              <Text opacity="0.6" color="semanticColors.accent.red">
+                Source error
+              </Text>
+              <Text color="semanticColors.accent.red">{source?.error}</Text>
+            </AlertBox>
+          )}
           <Box
+            border={`solid 1px ${colors.semanticColors.border.primary}`}
+            borderRadius="8px"
+            py={4}
+            px={6}
             width="100%"
-            bg={colors.semanticColors.background.error}
-            border={`solid 1px ${colors.semanticColors.border.error}`}
-            rounded="lg"
-            p={4}
-            marginTop={2}
           >
-            <Text opacity="0.6" color="semanticColors.accent.red">
-              Source error
-            </Text>
-            <Text color="semanticColors.accent.red">{source?.error}</Text>
-          </Box>
-        )}
-        <Box
-          border={`solid 1px ${colors.semanticColors.border.primary}`}
-          borderRadius="8px"
-          py={4}
-          px={6}
-          width="100%"
-          mb={4}
-        >
-          <Flex
-            justifyContent="space-between"
-            alignItems="center"
-            width="100%"
-            mb={2}
-          >
-            <Text fontSize="16px" fontWeight="500">
-              Source Errors
-            </Text>
-            <Select
-              fontSize="14px"
-              width="auto"
-              value={timePeriodMinutes}
-              onChange={(e) => setTimePeriod(e.target.value)}
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              width="100%"
+              mb={2}
             >
-              <option value="15">Last 15 minutes</option>
-              <option value="60">Last hour</option>
-              <option value="180">Last 3 hours</option>
-              <option value="360">Last 6 hours</option>
-              <option value="720">Last 12 hours</option>
-              <option value="1440">Last 24 hours</option>
-              <option value="4320">Last 3 days</option>
-              <option value="43200">Last 30 days</option>
-            </Select>
-          </Flex>
-          <SourceErrorsGraph
-            sourceId={source?.id}
+              <Text fontSize="16px" fontWeight="500">
+                Source Errors
+              </Text>
+              <Select
+                fontSize="14px"
+                width="auto"
+                value={timePeriodMinutes}
+                onChange={(e) => setTimePeriod(e.target.value)}
+              >
+                <option value="15">Last 15 minutes</option>
+                <option value="60">Last hour</option>
+                <option value="180">Last 3 hours</option>
+                <option value="360">Last 6 hours</option>
+                <option value="720">Last 12 hours</option>
+                <option value="1440">Last 24 hours</option>
+                <option value="4320">Last 3 days</option>
+                <option value="43200">Last 30 days</option>
+              </Select>
+            </Flex>
+            <SourceErrorsGraph
+              sourceId={source?.id}
+              timePeriodMinutes={timePeriodMinutes}
+            />
+          </Box>
+          <SourceErrorsTable
+            errors={errors}
+            loading={loading}
             timePeriodMinutes={timePeriodMinutes}
           />
-        </Box>
-        <SourceErrorsTable
-          errors={errors}
-          loading={loading}
-          timePeriodMinutes={timePeriodMinutes}
-        />
+        </VStack>
       </VStack>
     </HStack>
   );
