@@ -151,9 +151,6 @@ const SourceErrorsTable = ({
   loading,
   timePeriodMinutes,
 }: SourceErrorsTableProps) => {
-  if (errors?.length === 0) {
-    return <Box>No errors</Box>;
-  }
   return (
     <VStack spacing={6} width="100%" alignItems="flex-start">
       <Text fontSize="16px" fontWeight={500}>
@@ -225,6 +222,11 @@ const SourceErrorsTable = ({
             ))}
           </Tbody>
         </Table>
+      )}
+      {errors?.length === 0 && (
+        <Flex width="100%" justifyContent="center">
+          No errors
+        </Flex>
       )}
     </VStack>
   );

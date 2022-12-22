@@ -122,6 +122,11 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           cursor={false}
         />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
+        {statuses?.length === 0 && (
+          <text x="50%" y="50%" textAnchor="middle">
+            No data
+          </text>
+        )}
       </BarChart>
     </ResponsiveContainer>
   );
