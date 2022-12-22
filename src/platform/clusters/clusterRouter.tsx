@@ -22,7 +22,7 @@ const ClusterRoutes = () => {
         element={<ClustersListPage clusterResponse={clusterResponse} />}
       />
       <Route
-        path=":clusterName"
+        path=":clusterName/*"
         element={<ClusterOrRedirect clusters={clusterResponse.data} />}
       />
     </Routes>
