@@ -218,7 +218,7 @@ const SourceErrorsTable = ({
                     color="semanticColors.foreground.primary"
                     display="inline"
                   >
-                    {format(error.lastOccurred, "HH:mm:ss")}
+                    {format(error.lastOccurred, "HH:mm:ss")} UTC
                   </Text>
                 </Td>
               </Tr>
