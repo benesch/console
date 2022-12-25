@@ -108,7 +108,7 @@
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.5",
     "miragejs": "^0.1.46",
-    "msw": "^0.48.1",
+    "msw": "^0.49.2",
     "openapi-typescript": "^5.4.1",
     "pg": "^8.7.1",
     "prettier": "^2.8.0",
