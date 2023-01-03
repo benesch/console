@@ -1,8 +1,9 @@
-import { Flex, Spinner, useTheme } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text, useTheme } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
+  format,
   subMinutes,
 } from "date-fns";
 import React from "react";
@@ -16,7 +17,8 @@ import {
   YAxis,
 } from "recharts";
 
-import { useBucketedSourceErrors } from "~/api/materialized";
+import { SourceErrorBucket, useBucketedSourceErrors } from "~/api/materialized";
+import colors from "~/theme/colors";
 
 export interface Props {
   sourceId?: string;
@@ -26,7 +28,10 @@ export interface Props {
 const heightPx = 300;
 
 const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
-  const { colors, fonts } = useTheme();
+  const {
+    colors: { semanticColors },
+    fonts,
+  } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),
@@ -101,11 +106,8 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           }}
         />
         <Tooltip
-          formatter={(value) => {
-            return [`${value} errors`];
-          }}
           contentStyle={{
-            background: colors.semanticColors.background.inverse,
+            background: semanticColors.background.inverse,
             border: 0,
             borderRadius: "8px",
             fontSize: "14px",
@@ -116,7 +118,40 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
             outline: "none",
           }}
           itemStyle={{
-            color: colors.semanticColors.foreground.inverse,
+            color: semanticColors.foreground.inverse,
+          }}
+          content={({ active, payload }) => {
+            if (!active || !payload || !payload.length) return null;
+
+            const bucket = payload[0].payload as SourceErrorBucket;
+            const barStart = new Date(bucket.timestamp);
+            const barEnd = new Date(bucket.timestamp + bucketSizeMs);
+            const startLabel = `${format(barStart, "MM-dd-yy")} ${format(
+              barStart,
+              "HH:mm"
+            )} UTC`;
+            const endLabel = `${format(barEnd, "MM-dd-yy")} ${format(
+              barEnd,
+              "HH:mm"
+            )} UTC`;
+            return (
+              <Box
+                background={colors.gray[700]}
+                border="0"
+                borderRadius="lg"
+                px="8px"
+                py="4px"
+              >
+                <Text
+                  fontSize="14"
+                  color={colors.gray[50]}
+                >{`${bucket.count} errors`}</Text>
+                <Text
+                  fontSize="12"
+                  color={colors.gray[400]}
+                >{`${startLabel} - ${endLabel}`}</Text>
+              </Box>
+            );
           }}
           labelFormatter={() => ""}
           cursor={false}
