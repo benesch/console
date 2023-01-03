@@ -55,7 +55,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const bucketSizeMs = bucketSizeSeconds * 1000;
   const duration = endTime.getTime() - startTimeMs;
   const tickSlots = Array.from({
-    length: duration / bucketSizeMs / 2,
+    length: Math.round(duration / bucketSizeMs / 2),
   }) as undefined[];
   const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
 
