@@ -67,7 +67,11 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
       <BarChart data={statuses} barSize={4}>
-        <CartesianGrid vertical={false} stroke="#ccc" strokeDasharray="4" />
+        <CartesianGrid
+          vertical={false}
+          stroke={semanticColors.border.primary}
+          strokeDasharray="4"
+        />
         <XAxis
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"

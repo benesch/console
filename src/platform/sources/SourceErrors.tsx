@@ -86,10 +86,12 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
         <VStack width="100%" alignItems="flex-start" spacing={4}>
           {source?.error && (
             <AlertBox>
-              <Text opacity="0.6" color="semanticColors.accent.red">
+              <Text opacity="0.6" color="semanticColors.foreground.primary">
                 Source error
               </Text>
-              <Text color="semanticColors.accent.red">{source?.error}</Text>
+              <Text color="semanticColors.foregroun.primary">
+                {source?.error}
+              </Text>
             </AlertBox>
           )}
           <Box
