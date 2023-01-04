@@ -161,6 +161,8 @@ export interface Replica {
   replica: string;
   size?: string;
   cluster: string;
+  cpuPercent: number;
+  memoryPercent: number;
 }
 
 /**
@@ -190,6 +192,8 @@ export function useClusters() {
         replica: row[1] as string,
         size: row[3] as string,
         cluster: clusterName,
+        cpuPercent: row[5] as number,
+        memoryPercent: row[6] as number,
       };
       if (clusterMap.has(clusterId)) {
         const cluster = clusterMap.get(clusterId);
