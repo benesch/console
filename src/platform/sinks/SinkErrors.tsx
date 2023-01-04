@@ -18,13 +18,13 @@ import { format, subMinutes } from "date-fns";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { GroupedError, Source, useSourceErrors } from "~/api/materialized";
+import { GroupedError, Sink, useSinkErrors } from "~/api/materialized";
 import AlertBox from "~/components/AlertBox";
 
-import SourceErrorsGraph from "./SourceErrorsGraph";
+import SinkErrorsGraph from "./SinkErrorsGraph";
 
-export interface SourceDetailProps {
-  source?: Source;
+export interface SinkDetailProps {
+  sink?: Sink;
 }
 
 const timePeriodOptions: Record<string, string> = {
@@ -53,7 +53,7 @@ const parseTimePeriod = () => {
   return parseInt(period);
 };
 
-const SourceErrors = ({ source }: SourceDetailProps) => {
+const SinkErrors = ({ sink }: SinkDetailProps) => {
   const { colors } = useTheme();
   const navigate = useNavigate();
   const endTime = React.useMemo(() => new Date(), []);
@@ -74,8 +74,8 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
     navigate(url.pathname + url.search, { replace: true });
     setTimePeriodMinutes(parseInt(timePeriod));
   };
-  const { data: errors, loading } = useSourceErrors({
-    sourceId: source?.id,
+  const { data: errors, loading } = useSinkErrors({
+    sinkId: sink?.id,
     startTime,
     endTime,
   });
@@ -84,13 +84,13 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%" alignItems="flex-start" spacing={6}>
         <VStack width="100%" alignItems="flex-start" spacing={4}>
-          {source?.error && (
+          {sink?.error && (
             <AlertBox>
               <Text opacity="0.6" color="semanticColors.foreground.primary">
-                Source error
+                Sink error
               </Text>
               <Text color="semanticColors.foregroun.primary">
-                {source?.error}
+                {sink?.error}
               </Text>
             </AlertBox>
           )}
@@ -108,7 +108,7 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
               mb={2}
             >
               <Text fontSize="16px" fontWeight="500">
-                Source Errors
+                Sink Errors
               </Text>
               <Select
                 fontSize="14px"
@@ -126,12 +126,12 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
                 <option value="43200">Last 30 days</option>
               </Select>
             </Flex>
-            <SourceErrorsGraph
-              sourceId={source?.id}
+            <SinkErrorsGraph
+              sinkId={sink?.id}
               timePeriodMinutes={timePeriodMinutes}
             />
           </Box>
-          <SourceErrorsTable
+          <SinkErrorsTable
             errors={errors}
             loading={loading}
             timePeriodMinutes={timePeriodMinutes}
@@ -142,17 +142,17 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   );
 };
 
-interface SourceErrorsTableProps {
+interface SinkErrorsTableProps {
   errors: GroupedError[] | null;
   loading: boolean;
   timePeriodMinutes: number;
 }
 
-const SourceErrorsTable = ({
+const SinkErrorsTable = ({
   errors,
   loading,
   timePeriodMinutes,
-}: SourceErrorsTableProps) => {
+}: SinkErrorsTableProps) => {
   return (
     <VStack spacing={6} width="100%" alignItems="flex-start">
       <Text fontSize="16px" fontWeight={500}>
@@ -165,7 +165,7 @@ const SourceErrorsTable = ({
       ) : (
         <Table
           variant="borderless"
-          data-testid="source-errors-table"
+          data-testid="sink-errors-table"
           borderRadius="xl"
         >
           <Thead>
@@ -234,4 +234,4 @@ const SourceErrorsTable = ({
   );
 };
 
-export default SourceErrors;
+export default SinkErrors;

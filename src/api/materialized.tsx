@@ -216,7 +216,7 @@ export function useClusters() {
 
 export type ClusterResponse = ReturnType<typeof useClusters>;
 
-export type SourceStatus =
+export type ConnectorStatus =
   | "created"
   | "starting"
   | "running"
@@ -230,7 +230,7 @@ export interface Source {
   name: string;
   type: string;
   size?: string;
-  status?: SourceStatus;
+  status?: ConnectorStatus;
   error?: string;
 }
 
@@ -266,7 +266,7 @@ WHERE s.id LIKE 'u%';
   return { sources, refetch };
 }
 
-export interface SourceError {
+export interface GroupedError {
   error: string;
   lastOccurred: Date;
   count: number;
@@ -299,7 +299,7 @@ export function useSourceErrors({
   LIMIT ${limit};`
       : undefined
   );
-  let errors: SourceError[] | null = null;
+  let errors: GroupedError[] | null = null;
   if (result.data) {
     const { rows } = result.data;
     errors = rows.map((row) => ({
@@ -312,7 +312,47 @@ export function useSourceErrors({
   return { ...result, data: errors };
 }
 
-export interface SourceErrorBucket {
+/**
+ * Fetches errors for a specific sink
+ */
+export function useSinkErrors({
+  limit = 20,
+  sinkId,
+  startTime,
+  endTime,
+}: {
+  limit?: number;
+  sinkId?: string;
+  startTime: Date;
+  endTime: Date;
+}) {
+  const result = useSql(
+    sinkId
+      ? `
+  SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
+  FROM mz_internal.mz_sink_status_history h
+  WHERE sink_id = '${sinkId}'
+  AND error IS NOT NULL
+  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
+  GROUP BY h.error
+  ORDER BY last_occurred DESC
+  LIMIT ${limit};`
+      : undefined
+  );
+  let errors: GroupedError[] | null = null;
+  if (result.data) {
+    const { rows } = result.data;
+    errors = rows.map((row) => ({
+      lastOccurred: new Date(parseInt(row[0])),
+      error: row[1],
+      count: row[2],
+    }));
+  }
+
+  return { ...result, data: errors };
+}
+
+export interface TimestampedCounts {
   count: number;
   timestamp: number;
 }
@@ -344,7 +384,48 @@ GROUP BY bin_start
 ORDER BY bin_start DESC;`
       : undefined
   );
-  let statuses: SourceErrorBucket[] | null = null;
+  let statuses: TimestampedCounts[] | null = null;
+  if (result.data) {
+    const { rows } = result.data;
+    statuses = rows.map((row) => {
+      return {
+        count: row[0] as number,
+        timestamp: parseInt(row[1]) as number,
+      };
+    });
+  }
+
+  return { ...result, data: statuses };
+}
+
+export function useBucketedSinkErrors({
+  sinkId,
+  startTime,
+  endTime,
+  bucketSizeSeconds,
+}: {
+  limit?: number;
+  sinkId?: string;
+  startTime: Date;
+  endTime: Date;
+  bucketSizeSeconds: number;
+}) {
+  const result = useSql(
+    sinkId
+      ? `
+SELECT
+  COUNT(error) count,
+  EXTRACT(epoch FROM date_bin(
+    interval '${bucketSizeSeconds} seconds', occurred_at, '${startTime.toISOString()}'
+    )) * 1000 as bin_start
+FROM mz_internal.mz_sink_status_history
+WHERE sink_id = '${sinkId}'
+AND occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
+GROUP BY bin_start
+ORDER BY bin_start DESC;`
+      : undefined
+  );
+  let statuses: TimestampedCounts[] | null = null;
   if (result.data) {
     const { rows } = result.data;
     statuses = rows.map((row) => {
@@ -363,25 +444,33 @@ export interface Sink {
   name: string;
   type: string;
   size?: string;
+  status?: ConnectorStatus;
+  error?: string;
 }
 
 /**
  * Fetches all sinks in the current environment
  */
 export function useSinks() {
-  const sinkResponse = useSql("SHOW SINKS");
-  let sinks = null;
+  const sinkResponse =
+    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status, st.error
+FROM mz_sinks s
+LEFT OUTER JOIN mz_internal.mz_sink_statuses st
+ON st.id = s.id
+WHERE s.id LIKE 'u%';
+`);
+  let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
     const { rows } = sinkResponse.data;
-    sinks = rows.map(
-      (row) =>
-        ({
-          id: row[0],
-          name: row[0],
-          type: row[1],
-          size: row[2],
-        } as Sink)
-    );
+    sinks = rows.map((row) => ({
+      id: row[0],
+      oid: row[1],
+      name: row[2],
+      type: row[3],
+      size: row[4],
+      status: row[5],
+      error: row[6],
+    }));
   }
 
   const refetch = React.useCallback(() => {

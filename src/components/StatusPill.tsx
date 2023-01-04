@@ -2,10 +2,10 @@ import { WarningIcon } from "@chakra-ui/icons";
 import { Box, Spinner } from "@chakra-ui/react";
 import React from "react";
 
-import { Source, SourceStatus } from "~/api/materialized";
+import { ConnectorStatus, Source } from "~/api/materialized";
 
 interface StatusPillProps {
-  status: SourceStatus;
+  status: ConnectorStatus;
 }
 
 const getBackgroundColor = (status: Source["status"]) => {
