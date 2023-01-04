@@ -398,7 +398,7 @@ type DDLNoun = "SINK" | "SOURCE";
  */
 export function useDDL(noun: DDLNoun, sinkName?: string) {
   const { data, error, refetch } = useSql(
-    sinkName ? `SHOW CREATE ${noun} ${sinkName}` : undefined
+    sinkName ? `SHOW CREATE ${noun} "${sinkName}"` : undefined
   );
   let ddl = null;
   if (sinkName && data) {
