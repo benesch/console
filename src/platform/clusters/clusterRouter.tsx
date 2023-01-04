@@ -12,14 +12,18 @@ export type ClusterDetailParams = {
 };
 
 const ClusterRoutes = () => {
-  const { clusters, refetch } = useClusters();
-  useInterval(refetch, isPollingDisabled() ? null : 5000);
+  const clusterResponse = useClusters();
+  useInterval(clusterResponse.refetch, isPollingDisabled() ? null : 5000);
+
   return (
     <Routes>
-      <Route path="/" element={<ClustersListPage clusters={clusters} />} />
+      <Route
+        path="/"
+        element={<ClustersListPage clusterResponse={clusterResponse} />}
+      />
       <Route
         path=":clusterName"
-        element={<ClusterOrRedirect clusters={clusters} />}
+        element={<ClusterOrRedirect clusters={clusterResponse.data} />}
       />
     </Routes>
   );

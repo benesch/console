@@ -15,7 +15,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Cluster } from "~/api/materialized";
+import { Cluster, ClusterResponse } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
@@ -55,18 +55,19 @@ const clustersSuggestions: SQLSuggestion[] = [
 ];
 
 type Props = {
-  clusters: Cluster[] | null;
+  clusterResponse: ClusterResponse;
 };
 
-const ClustersListPage = ({ clusters }: Props) => {
+const ClustersListPage = ({ clusterResponse }: Props) => {
   const { colors } = useTheme();
 
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
 
-  const isDisabled = currentEnvironment?.state !== "enabled";
+  const { data: clusters } = clusterResponse;
   const isLoading = clusters === null;
+  const isDisabled = currentEnvironment?.state !== "enabled";
   const isEmpty = !isLoading && clusters.length === 0;
 
   return (
@@ -174,11 +175,7 @@ const ClusterTable = (props: ClusterTableProps) => {
               borderBottomWidth="1px"
               borderBottomColor={colors.semanticColors.border.primary}
             >
-              {c.replicas.loading ? (
-                <Spinner size="sm" />
-              ) : (
-                c.replicas.value.length
-              )}
+              {c.replicas.length}
             </Td>
           </Tr>
         ))}

@@ -65,13 +65,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
-  const replicas: Replica[] | null = React.useMemo(() => {
-    if (!cluster) {
-      return null;
-    } else {
-      return cluster.replicas.loading ? [] : cluster.replicas.value;
-    }
-  }, [cluster]);
+  const replicas = cluster?.replicas;
 
   const isDisabled =
     !currentEnvironmentState || currentEnvironment?.state !== "enabled";

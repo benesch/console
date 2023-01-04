@@ -154,10 +154,7 @@ export const executeSql = async (
 export interface Cluster {
   id: string;
   name: string;
-  replicas: {
-    value: Replica[];
-    loading: boolean;
-  };
+  replicas: Replica[];
 }
 
 export interface Replica {
@@ -170,59 +167,50 @@ export interface Replica {
  * Fetches all clusters in the current environment.
  */
 export function useClusters() {
-  const clusterResponse = useSql(
-    "SELECT id, name FROM mz_clusters ORDER BY id"
+  const response = useSql(
+    `SELECT r.id,
+    r.name as replica_name,
+    r.cluster_id,
+    r.size,
+    c.name as cluster_Name,
+    u.cpu_percent_normalized,
+    u.memory_percent
+  FROM mz_cluster_replicas r
+  JOIN mz_clusters c ON c.id = r.cluster_id
+  JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
+  ORDER BY r.id;`
   );
-  const replicaResponse = useSql("SELECT * FROM (SHOW CLUSTER REPLICAS)");
-  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
-  const replicasByCluster: { [clusterId: string]: Replica[] } = {};
-  if (!replicaResponse.loading && isInitialLoad) {
-    setIsInitialLoad(false);
-  }
-  if (replicaResponse.data) {
-    replicaResponse.data.rows.forEach((indexRow: string[]) => {
-      const clusterName = indexRow[0];
+  const clusterMap: Map<string, Cluster> = new Map();
+  if (response.data) {
+    response.data.rows.forEach((row: string | number[]) => {
+      const clusterId = row[2] as string;
+      const clusterName = row[4] as string;
       const replica: Replica = {
-        cluster: indexRow[0],
-        replica: indexRow[1],
-        size: indexRow[2],
+        replica: row[1] as string,
+        size: row[3] as string,
+        cluster: clusterName,
       };
-      if (replicasByCluster[clusterName]) {
-        replicasByCluster[clusterName] = [
-          ...replicasByCluster[clusterName],
-          replica,
-        ];
+      if (clusterMap.has(clusterId)) {
+        const cluster = clusterMap.get(clusterId);
+        cluster?.replicas.push(replica);
       } else {
-        replicasByCluster[clusterName] = [replica];
+        clusterMap.set(clusterId, {
+          id: clusterId,
+          name: clusterName,
+          replicas: [replica],
+        });
       }
     });
   }
 
-  let clusters = null;
-  if (clusterResponse.data) {
-    const { rows } = clusterResponse.data;
-
-    clusters = rows.map(
-      (row) =>
-        ({
-          id: row[0],
-          name: row[1],
-          replicas: {
-            value: replicasByCluster[row[1]] ?? [],
-            loading: isInitialLoad,
-          },
-        } as Cluster)
-    );
-  }
-
-  const refetch = React.useCallback(() => {
-    clusterResponse.refetch();
-    replicaResponse.refetch();
-  }, [clusterResponse, replicaResponse]);
-
-  return { clusters, refetch };
+  return {
+    ...response,
+    data: response.data ? Array.from(clusterMap.values()) : null,
+  };
 }
+
+export type ClusterResponse = ReturnType<typeof useClusters>;
 
 export type SourceStatus =
   | "created"
