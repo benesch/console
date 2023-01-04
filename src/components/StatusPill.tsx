@@ -1,12 +1,12 @@
 import { WarningIcon } from "@chakra-ui/icons";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, BoxProps, Spinner } from "@chakra-ui/react";
 import React from "react";
 
 import { ConnectorStatus, Source } from "~/api/materialized";
 
-interface StatusPillProps {
+export type StatusPillProps = BoxProps & {
   status: ConnectorStatus;
-}
+};
 
 const getBackgroundColor = (status: Source["status"]) => {
   switch (status) {
@@ -42,7 +42,7 @@ const getTextColor = (status: Source["status"]) => {
   }
 };
 
-const StatusPill = ({ status }: StatusPillProps) => {
+const StatusPill = ({ status, ...boxProps }: StatusPillProps) => {
   let icon = null;
   if (status === "starting") {
     icon = <Spinner width="12px" height="12px" speed="0.75s" />;
@@ -64,6 +64,7 @@ const StatusPill = ({ status }: StatusPillProps) => {
       backgroundColor={getBackgroundColor(status)}
       color={getTextColor(status)}
       width="fit-content"
+      {...boxProps}
     >
       {icon}
       {status.charAt(0).toUpperCase() + status.slice(1)}

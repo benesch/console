@@ -29,7 +29,11 @@ const SinkDetail = ({ sink }: SinkDetailProps) => {
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start">
             <PageBreadcrumbs crumbs={["Sinks", params.sinkName ?? ""]}>
-              {sink?.status && <StatusPill status={sink.status} />}
+              {sink?.status && (
+                <Box>
+                  <StatusPill ml={2} status={sink.status} />
+                </Box>
+              )}
             </PageBreadcrumbs>
             {sink && (
               <ExpandablePanel text="SHOW CREATE SINK">

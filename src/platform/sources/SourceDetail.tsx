@@ -29,7 +29,11 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start">
             <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
-              {source?.status && <StatusPill status={source.status} />}
+              {source?.status && (
+                <Box>
+                  <StatusPill ml={2} status={source.status} />
+                </Box>
+              )}
             </PageBreadcrumbs>
             {source && (
               <ExpandablePanel text="SHOW CREATE SOURCE">
