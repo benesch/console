@@ -108,7 +108,12 @@ const AppPasswordsPage = () => {
                       <CardHeader>Generate new password</CardHeader>
                       <CardContent>
                         <VStack pb={2}>
-                          <TextField name="name" label="Name" size="sm" />
+                          <TextField
+                            name="name"
+                            label="Name"
+                            size="sm"
+                            autoCorrect="off"
+                          />
                         </VStack>
                       </CardContent>
 
