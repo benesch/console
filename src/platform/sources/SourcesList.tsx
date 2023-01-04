@@ -43,9 +43,9 @@ const sourcesSuggestions: SQLSuggestion[] = [
   {
     title: "Create a source",
     string: `CREATE SOURCE <source_name>
-    FROM <source_connection>
-    FORMAT <format_type>
-    WITH (SIZE='3xsmall');`,
+  FROM <source_connection>
+  FORMAT <format_type>
+  WITH (SIZE='3xsmall');`,
   },
   {
     title: "Drop a source",

@@ -27,7 +27,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
-          <VStack spacing={2} alignItems="start">
+          <VStack spacing={2} alignItems="start" width="100%">
             <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
               {source?.status && (
                 <Box>

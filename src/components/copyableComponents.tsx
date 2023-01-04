@@ -67,7 +67,7 @@ export const CopyButton: React.FC<
       }}
       onClick={() => !copied && onCopy()}
       flex={0}
-      px={3}
+      p={3}
       {...props}
     >
       <Tooltip
@@ -85,6 +85,8 @@ export const CopyButton: React.FC<
   );
 };
 
+const CopyButtonWidth = "40px";
+
 /** Copyable component with a bg box but no line breaks  */
 export const CopyableBox: React.FC<
   React.PropsWithChildren<{ contents: string } & TextProps>
@@ -92,7 +94,7 @@ export const CopyableBox: React.FC<
   const { colors } = useTheme<MaterializeTheme>();
   return (
     <HStack
-      alignItems="stretch"
+      alignItems="start"
       spacing={0}
       borderRadius="lg"
       bg={colors.semanticColors.background.secondary}
@@ -100,10 +102,23 @@ export const CopyableBox: React.FC<
       fontSize="sm"
       {...props}
     >
-      <Box fontFamily="mono" p={p || 2} pl={4} flex={1} wordBreak="break-all">
+      <Box
+        as="pre"
+        fontFamily="mono"
+        p={p ?? 2}
+        pl={4}
+        flex={1}
+        whiteSpace="pre-wrap"
+        width={`calc(100% - ${CopyButtonWidth})`}
+      >
         {props.children}
       </Box>
-      <CopyButton fontSize="md" contents={contents} w="40px" minH="full" />
+      <CopyButton
+        fontSize="md"
+        contents={contents}
+        w={CopyButtonWidth}
+        minH="full"
+      />
     </HStack>
   );
 };

@@ -247,7 +247,7 @@ export const ExpandablePanel = ({
   const [show, setShow] = React.useState(false);
 
   return (
-    <Box>
+    <Box width="100%">
       <Box
         color="semanticColors.accent.brightPurple"
         fontSize="xs"
