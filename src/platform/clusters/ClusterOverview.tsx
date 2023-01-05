@@ -17,14 +17,21 @@ import {
 } from "recharts";
 
 import { useClusterUtilization } from "~/api/materialize/websocket";
-import { Cluster } from "~/api/materialized";
+import { Cluster, Replica } from "~/api/materialized";
 import colors from "~/theme/colors";
 
 export interface Props {
   cluster?: Cluster;
 }
 
+export interface DataPoint {
+  timestamp: number;
+  [replicaKey: string]: number;
+}
+
 const heightPx = 300;
+const cpuPercentName = (id: number) => `replica${id}CpuPercent`;
+const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
 
 const ClusterOverview = ({ cluster }: Props) => {
   const endTime = React.useMemo(() => new Date(), []);
@@ -35,44 +42,69 @@ const ClusterOverview = ({ cluster }: Props) => {
 
   const { data } = useClusterUtilization(cluster?.id, startTime, endTime);
 
+  const timestampMap = new Map<number, DataPoint[]>();
+  for (const datum of data) {
+    const dataForTimestamp = timestampMap.get(datum.timestamp);
+    const dataPoint = {
+      timestamp: datum.timestamp,
+      [cpuPercentName(datum.id)]: datum.cpuPercent,
+      [memoryPercentName(datum.id)]: datum.memoryPercent,
+    };
+    if (dataForTimestamp) {
+      dataForTimestamp.push(dataPoint);
+    } else {
+      timestampMap.set(datum.timestamp, [dataPoint]);
+    }
+  }
+  const graphData = Array.from(timestampMap.values()).flat();
+
   return (
-    <Flex>
-      <UtilizationGraph
-        dataKey="cpuPercent"
-        data={data}
-        startTime={startTime}
-        endTime={endTime}
-        timePeriodMinutes={timePeriodMinutes}
-        lineColor={colors.red[500]}
-      />
-      <UtilizationGraph
-        dataKey="memoryPercent"
-        data={data}
-        startTime={startTime}
-        endTime={endTime}
-        timePeriodMinutes={timePeriodMinutes}
-        lineColor={colors.purple[500]}
-      />
+    <Flex height={heightPx}>
+      {cluster && (
+        <>
+          <UtilizationGraph
+            dataKeyFn={cpuPercentName}
+            data={graphData}
+            startTime={startTime}
+            endTime={endTime}
+            timePeriodMinutes={timePeriodMinutes}
+            lineColor={colors.red[500]}
+            replicas={cluster.replicas}
+          />
+          <UtilizationGraph
+            dataKeyFn={memoryPercentName}
+            data={graphData}
+            startTime={startTime}
+            endTime={endTime}
+            timePeriodMinutes={timePeriodMinutes}
+            lineColor={colors.purple[500]}
+            replicas={cluster.replicas}
+          />
+        </>
+      )}
     </Flex>
   );
 };
 
 interface UtilizationGraph {
-  dataKey: string;
   data: any;
-  startTime: Date;
+  dataKeyFn: (id: number) => string;
   endTime: Date;
-  timePeriodMinutes: number;
   lineColor: string;
+  replicas: Replica[];
+  startTime: Date;
+  timePeriodMinutes: number;
 }
 
+const lineColors = [colors.red[500], colors.purple[500], colors.blue[500]];
+
 export const UtilizationGraph = ({
-  dataKey,
   data,
-  startTime,
+  dataKeyFn,
   endTime,
+  replicas,
+  startTime,
   timePeriodMinutes,
-  lineColor,
 }: UtilizationGraph) => {
   const {
     colors: { semanticColors },
@@ -141,7 +173,16 @@ export const UtilizationGraph = ({
           labelFormatter={() => ""}
           cursor={false}
         />
-        <Line dataKey={dataKey} fill={lineColor} isAnimationActive={false} />
+        {replicas.map((r, i) => {
+          return (
+            <Line
+              key={r.id}
+              dataKey={dataKeyFn(r.id)}
+              fill={lineColors[i]}
+              isAnimationActive={false}
+            />
+          );
+        })}
         {data?.length === 0 && (
           <text x="50%" y="50%" textAnchor="middle">
             No data

@@ -173,6 +173,7 @@ export interface Cluster {
 }
 
 export interface Replica {
+  id: number;
   replica: string;
   size?: string;
   cluster: string;
@@ -204,6 +205,7 @@ export function useClusters() {
       const clusterId = row[2] as string;
       const clusterName = row[4] as string;
       const replica: Replica = {
+        id: row[0] as number,
         replica: row[1] as string,
         size: row[3] as string,
         cluster: clusterName,

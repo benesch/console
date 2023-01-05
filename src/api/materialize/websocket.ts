@@ -106,6 +106,7 @@ export const useSqlWs = (): [
 
 export interface ReplicaUtilization {
   id: number;
+  timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
 }
@@ -168,15 +169,13 @@ export const useClusterUtilization = (
           const mzdiff = result.payload[1] as number;
           // ignore retractions
           if (mzdiff === 1) {
-            setData((val) => [
-              ...val,
-              {
-                id: result.payload[2] as number,
-                timestamp: result.payload[0] as number,
-                cpuPercent: result.payload[3] as number,
-                memoryPercent: result.payload[4] as number,
-              },
-            ]);
+            const utilization: ReplicaUtilization = {
+              id: result.payload[2] as number,
+              timestamp: result.payload[0] as number,
+              cpuPercent: result.payload[3] as number,
+              memoryPercent: result.payload[4] as number,
+            };
+            setData((val) => [...val, utilization]);
           }
         }
       }
