@@ -115,7 +115,7 @@ export const useClusterUtilization = (
   startTime: Date,
   endTime: Date
 ) => {
-  const [results, setResults] = React.useState<ReplicaUtilization[]>([]);
+  const [data, setData] = React.useState<ReplicaUtilization[]>([]);
   const [errors, setErrors] = React.useState<string[]>([]);
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
@@ -154,26 +154,27 @@ export const useClusterUtilization = (
       setQuerySent(true);
     }
 
-    ws.onResult((data) => {
-      if (data.type === "Error") {
-        setErrors((val) => [...val, data.payload]);
+    ws.onResult((result) => {
+      if (result.type === "Error") {
+        setErrors((val) => [...val, result.payload]);
       }
-      if (data.type === "Row") {
+      if (result.type === "Row") {
         if (!minFrontier) {
-          const result = JSON.parse(
-            data.payload[0] as string
+          const { determination } = JSON.parse(
+            result.payload[0] as string
           ) as ExplainTimestampResult;
-          setMinFrontier(result.determination.since.elements[0]);
+          setMinFrontier(determination.since.elements[0]);
         } else {
-          const mzdiff = data.payload[1];
+          const mzdiff = result.payload[1] as number;
           // ignore retractions
           if (mzdiff === 1) {
-            setResults((val) => [
+            setData((val) => [
               ...val,
               {
-                id: data.payload[2] as number,
-                cpuPercent: data.payload[3] as number,
-                memoryPercent: data.payload[4] as number,
+                id: result.payload[2] as number,
+                timestamp: result.payload[0] as number,
+                cpuPercent: result.payload[3] as number,
+                memoryPercent: result.payload[4] as number,
               },
             ]);
           }
@@ -196,5 +197,5 @@ export const useClusterUtilization = (
     endTime,
   ]);
 
-  return { results, errors };
+  return { data, errors };
 };
