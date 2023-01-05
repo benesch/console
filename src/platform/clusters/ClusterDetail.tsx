@@ -65,13 +65,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
-  const replicas: Replica[] | null = React.useMemo(() => {
-    if (!cluster) {
-      return null;
-    } else {
-      return cluster.replicas.loading ? [] : cluster.replicas.value;
-    }
-  }, [cluster]);
+  const replicas = cluster?.replicas;
 
   const isDisabled =
     !currentEnvironmentState || currentEnvironment?.state !== "enabled";
@@ -159,6 +153,8 @@ const ReplicaTable = (props: ReplicaTableProps) => {
         <Tr>
           <Th>Name</Th>
           <Th>Size</Th>
+          <Th>Memory</Th>
+          <Th>CPU</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -181,6 +177,30 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               borderBottomColor={colors.semanticColors.border.primary}
             >
               {r.size}
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
+              {r.memoryPercent.toFixed(1)}
+              <Text
+                as="span"
+                color={colors.semanticColors.foreground.secondary}
+              >
+                %
+              </Text>
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
+              {r.cpuPercent.toFixed(1)}
+              <Text
+                as="span"
+                color={colors.semanticColors.foreground.secondary}
+              >
+                %
+              </Text>
             </Td>
           </Tr>
         ))}
