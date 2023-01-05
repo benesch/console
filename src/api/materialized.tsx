@@ -174,7 +174,7 @@ export function useClusters() {
     r.name as replica_name,
     r.cluster_id,
     r.size,
-    c.name as cluster_Name,
+    c.name as cluster_name,
     u.cpu_percent_normalized,
     u.memory_percent
   FROM mz_cluster_replicas r
@@ -195,9 +195,9 @@ export function useClusters() {
         cpuPercent: row[5] as number,
         memoryPercent: row[6] as number,
       };
-      if (clusterMap.has(clusterId)) {
-        const cluster = clusterMap.get(clusterId);
-        cluster?.replicas.push(replica);
+      const cluster = clusterMap.get(clusterId);
+      if (cluster) {
+        cluster.replicas.push(replica);
       } else {
         clusterMap.set(clusterId, {
           id: clusterId,
