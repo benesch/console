@@ -20,6 +20,21 @@ export interface Results {
   rows: Array<any>;
 }
 
+export interface ExplainTimestampResult {
+  determination: {
+    timestamp_context: { TimelineTimestamp: Array<number | string> };
+    since: { elements: number[] };
+    upper: { elements: number[] };
+    largest_not_in_advance_of_upper: number;
+    oracle_read_ts: number;
+  };
+  sources: {
+    name: string;
+    read_frontier: number[];
+    write_frontier: number[];
+  }[];
+}
+
 /**
  * A React hook that runs a SQL query against the current environment.
  * @params {string} sql to execute in the environment coord or current global coord.
