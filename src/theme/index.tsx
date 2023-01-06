@@ -53,7 +53,7 @@ export const baseTheme = {
     // nb: style guide color palettes without a standard chakra equivalent: indigo, lavender
   },
   fonts: {
-    heading: `"Encoding Sans Expanded", ${fontDefault}`,
+    heading: fontDefault,
     body: fontDefault,
     mono: "'Roboto Mono', Menlo, monospace",
   },
