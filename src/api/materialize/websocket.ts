@@ -1,3 +1,4 @@
+import { useAuth } from "@frontegg/react";
 import React, { MutableRefObject } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
@@ -59,6 +60,7 @@ export const useSqlWs = (): [
   boolean,
   MutableRefObject<SqlWebSocket | undefined>
 ] => {
+  const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -67,13 +69,21 @@ export const useSqlWs = (): [
 
   React.useEffect(() => {
     let socket: WebSocket;
-    if (currentEnvironment?.state === "enabled") {
+    if (user && currentEnvironment?.state === "enabled") {
       socket = new WebSocket(
-        `wss://${encodeURIComponent("robin@materialize.com")}:@${
-          currentEnvironment.environmentdHttpsAddress
-        }/api/experimental/sql`
+        `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
+      socket.addEventListener("message", (event: MessageEvent) => {
+        if (event.data.payload === "ReadyForQuery") {
+          setSocketReady(true);
+        }
+      });
       socket.onopen = function () {
+        socket.send(
+          JSON.stringify({
+            token: user?.accessToken,
+          })
+        );
         setSocketReady(true);
       };
       socket.onclose = function (event) {
@@ -99,7 +109,7 @@ export const useSqlWs = (): [
         setSocketReady(false);
       }
     };
-  }, [currentEnvironment]);
+  }, [currentEnvironment, user, user?.accessToken]);
 
   return [socketReady, socketRef];
 };
