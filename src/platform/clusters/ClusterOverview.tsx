@@ -1,4 +1,4 @@
-import { Box, Flex, Text, useTheme } from "@chakra-ui/react";
+import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -123,17 +123,17 @@ const ClusterOverview = ({ cluster }: Props) => {
   return (
     <Box>
       <Flex width="100%" justifyContent="space-between">
-        <Text>Resource Usage</Text>
+        <Text fontSize="md">Resource Usage</Text>
         <TimePeriodSelect
           timePeriodMinutes={timePeriodMinutes}
           setTimePeriodMinutes={setTimePeriodMinutes}
         />
       </Flex>
-      <Flex>
+      <HStack spacing={6}>
         {cluster && (
           <>
             <Box width="100%">
-              CPU
+              <Text fontSize="xs">CPU</Text>
               <UtilizationGraph
                 dataKeyFn={cpuPercentName}
                 data={graphData}
@@ -142,10 +142,11 @@ const ClusterOverview = ({ cluster }: Props) => {
                 timePeriodMinutes={timePeriodMinutes}
                 lineColor={colors.red[500]}
                 replicas={cluster.replicas}
+                bucketSizeMs={bucketSizeMs}
               />
             </Box>
             <Box width="100%">
-              Memory
+              <Text fontSize="xs">Memory</Text>
               <UtilizationGraph
                 dataKeyFn={memoryPercentName}
                 data={graphData}
@@ -154,11 +155,12 @@ const ClusterOverview = ({ cluster }: Props) => {
                 timePeriodMinutes={timePeriodMinutes}
                 lineColor={colors.purple[500]}
                 replicas={cluster.replicas}
+                bucketSizeMs={bucketSizeMs}
               />
             </Box>
           </>
         )}
-      </Flex>
+      </HStack>
     </Box>
   );
 };
@@ -171,6 +173,7 @@ interface UtilizationGraph {
   replicas: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
+  bucketSizeMs: number;
 }
 
 const lineColors = [colors.red[500], colors.purple[500], colors.blue[500]];
@@ -182,15 +185,26 @@ export const UtilizationGraph = ({
   replicas,
   startTime,
   timePeriodMinutes,
+  bucketSizeMs,
 }: UtilizationGraph) => {
   const {
     colors: { semanticColors },
     fonts,
   } = useTheme();
+  const startTimeMs = startTime.getTime();
+  const duration = endTime.getTime() - startTimeMs;
+  const tickSlots = Array.from({
+    length: Math.round(duration / bucketSizeMs / 2),
+  }) as undefined[];
+  const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <LineChart data={data} barSize={4}>
+      <LineChart
+        data={data}
+        barSize={4}
+        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
+      >
         <CartesianGrid
           vertical={false}
           stroke={semanticColors.border.primary}
@@ -201,7 +215,7 @@ export const UtilizationGraph = ({
           type="number"
           axisLine={false}
           tickLine={false}
-          interval={0}
+          ticks={ticks}
           dataKey="timestamp"
           style={{
             fontSize: "12px",
@@ -255,8 +269,9 @@ export const UtilizationGraph = ({
             <Line
               key={r.id}
               dataKey={dataKeyFn(r.id)}
-              fill={lineColors[i]}
+              stroke={lineColors[i]}
               isAnimationActive={false}
+              dot={false}
             />
           );
         })}
