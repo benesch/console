@@ -171,7 +171,7 @@ export const useClusterUtilization = (
           if (mzdiff === 1) {
             const utilization: ReplicaUtilization = {
               id: result.payload[2] as number,
-              timestamp: result.payload[0] as number,
+              timestamp: parseInt(result.payload[0] as string),
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,
             };

@@ -16,7 +16,10 @@ import {
   YAxis,
 } from "recharts";
 
-import { useClusterUtilization } from "~/api/materialize/websocket";
+import {
+  ReplicaUtilization,
+  useClusterUtilization,
+} from "~/api/materialize/websocket";
 import { Cluster, Replica } from "~/api/materialized";
 import colors from "~/theme/colors";
 
@@ -42,21 +45,77 @@ const ClusterOverview = ({ cluster }: Props) => {
 
   const { data } = useClusterUtilization(cluster?.id, startTime, endTime);
 
-  const timestampMap = new Map<number, DataPoint[]>();
-  for (const datum of data) {
-    const dataForTimestamp = timestampMap.get(datum.timestamp);
-    const dataPoint = {
-      timestamp: datum.timestamp,
-      [cpuPercentName(datum.id)]: datum.cpuPercent,
-      [memoryPercentName(datum.id)]: datum.memoryPercent,
-    };
-    if (dataForTimestamp) {
-      dataForTimestamp.push(dataPoint);
-    } else {
-      timestampMap.set(datum.timestamp, [dataPoint]);
+  const bucketSizeMs = React.useMemo(() => {
+    return (timePeriodMinutes / 15) * 60 * 1000;
+  }, [timePeriodMinutes]);
+
+  const buckets = React.useMemo(() => {
+    const startTimestamp = startTime.getTime();
+    const endTimestamp = endTime.getTime();
+    const result = [];
+    let currentBucket = startTimestamp;
+    while (currentBucket < endTimestamp) {
+      result.push(currentBucket);
+      currentBucket += bucketSizeMs;
     }
-  }
-  const graphData = Array.from(timestampMap.values()).flat();
+    return result;
+  }, [bucketSizeMs, endTime, startTime]);
+
+  type ReplicaId = number;
+  type Timestamp = number;
+  type ReplicaMap = Map<ReplicaId, ReplicaUtilization[]>;
+
+  const graphData = React.useMemo(() => {
+    const bucketMap = new Map<Timestamp, ReplicaMap>();
+    for (const datum of data) {
+      const bucket = buckets.find(
+        (b) =>
+          // greater than the start of the bucket, less than the end
+          datum.timestamp >= b && datum.timestamp <= b + bucketSizeMs
+      );
+      if (!bucket) {
+        continue;
+      }
+      const replicaMap = bucketMap.get(bucket);
+
+      if (replicaMap) {
+        const replicaBucket = replicaMap.get(datum.id);
+        if (replicaBucket) {
+          replicaBucket.push(datum);
+        } else {
+          replicaMap.set(datum.id, [datum]);
+        }
+      } else {
+        bucketMap.set(bucket, new Map([[datum.id, [datum]]]));
+      }
+    }
+    const result: DataPoint[] = [];
+    for (const [bucket, replicaMap] of bucketMap.entries()) {
+      const bucketValue: DataPoint = { timestamp: bucket };
+      for (const replica of cluster?.replicas ?? []) {
+        const utilizations = replicaMap.get(replica.id);
+        if (!utilizations) {
+          continue;
+        }
+        let maxCpu = utilizations[0];
+        for (const value of utilizations) {
+          if (value.cpuPercent > maxCpu.cpuPercent) {
+            maxCpu = value;
+          }
+        }
+        let maxMemory = utilizations[0];
+        for (const value of utilizations) {
+          if (value.memoryPercent > maxMemory.memoryPercent) {
+            maxMemory = value;
+          }
+        }
+        bucketValue[cpuPercentName(replica.id)] = maxCpu.cpuPercent;
+        bucketValue[memoryPercentName(replica.id)] = maxMemory.memoryPercent;
+      }
+      result.push(bucketValue);
+    }
+    return result;
+  }, [bucketSizeMs, buckets, cluster?.replicas, data]);
 
   return (
     <Flex height={heightPx}>
