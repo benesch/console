@@ -122,16 +122,22 @@ export const useClusterUtilization = (
   const [querySent, setQuerySent] = React.useState<boolean>(false);
   const [minFrontier, setMinFrontier] = React.useState<number | undefined>();
   const [socketReady, socketRef] = useSqlWs();
-  const utilizationQuery = `SELECT r.id,
-    u.cpu_percent_normalized,
-    u.memory_percent
-  FROM mz_cluster_replicas r
-  JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
-  WHERE r.cluster_id = '${clusterId}'`;
+
+  React.useEffect(() => {
+    setQuerySent(false);
+    setExplainSent(false);
+  }, [clusterId, startTime, endTime]);
 
   React.useEffect(() => {
     const ws = socketRef.current;
     if (!ws || !clusterId) return;
+
+    const utilizationQuery = `SELECT r.id,
+  u.cpu_percent_normalized,
+  u.memory_percent
+FROM mz_cluster_replicas r
+JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
+WHERE r.cluster_id = '${clusterId}'`;
 
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
@@ -191,7 +197,6 @@ export const useClusterUtilization = (
     querySent,
     explainSent,
     minFrontier,
-    utilizationQuery,
     startTime,
     endTime,
   ]);
