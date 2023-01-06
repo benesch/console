@@ -1,4 +1,4 @@
-import { Flex, useTheme } from "@chakra-ui/react";
+import { Box, Flex, Text, useTheme } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -21,6 +21,9 @@ import {
   useClusterUtilization,
 } from "~/api/materialize/websocket";
 import { Cluster, Replica } from "~/api/materialized";
+import TimePeriodSelect, {
+  useTimePeriodMinutes,
+} from "~/components/TimePeriodSelect";
 import colors from "~/theme/colors";
 
 export interface Props {
@@ -38,7 +41,7 @@ const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
 
 const ClusterOverview = ({ cluster }: Props) => {
   const endTime = React.useMemo(() => new Date(), []);
-  const [timePeriodMinutes, _setTimePeriodMinutes] = React.useState(60);
+  const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const startTime = React.useMemo(() => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
@@ -118,30 +121,45 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [bucketSizeMs, buckets, cluster?.replicas, data]);
 
   return (
-    <Flex height={heightPx}>
-      {cluster && (
-        <>
-          <UtilizationGraph
-            dataKeyFn={cpuPercentName}
-            data={graphData}
-            startTime={startTime}
-            endTime={endTime}
-            timePeriodMinutes={timePeriodMinutes}
-            lineColor={colors.red[500]}
-            replicas={cluster.replicas}
-          />
-          <UtilizationGraph
-            dataKeyFn={memoryPercentName}
-            data={graphData}
-            startTime={startTime}
-            endTime={endTime}
-            timePeriodMinutes={timePeriodMinutes}
-            lineColor={colors.purple[500]}
-            replicas={cluster.replicas}
-          />
-        </>
-      )}
-    </Flex>
+    <Box>
+      <Flex width="100%" justifyContent="space-between">
+        <Text>Resource Usage</Text>
+        <TimePeriodSelect
+          timePeriodMinutes={timePeriodMinutes}
+          setTimePeriodMinutes={setTimePeriodMinutes}
+        />
+      </Flex>
+      <Flex>
+        {cluster && (
+          <>
+            <Box width="100%">
+              CPU
+              <UtilizationGraph
+                dataKeyFn={cpuPercentName}
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                lineColor={colors.red[500]}
+                replicas={cluster.replicas}
+              />
+            </Box>
+            <Box width="100%">
+              Memory
+              <UtilizationGraph
+                dataKeyFn={memoryPercentName}
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                lineColor={colors.purple[500]}
+                replicas={cluster.replicas}
+              />
+            </Box>
+          </>
+        )}
+      </Flex>
+    </Box>
   );
 };
 
