@@ -118,12 +118,14 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
   return result;
 };
 
-export const environmentsWithHealth = atom<
-  Map<string, LoadedEnvironment> | undefined
->({
+export type EnvironmentsWithHealth = Map<string, LoadedEnvironment>;
+export const environmentsWithHealth = atom<EnvironmentsWithHealth | undefined>({
   key: keys.ENVIRONMENTS_WITH_HEALTH,
   default: undefined,
 });
+
+// Ensure we don't issue duplicate environment health queries
+let pendingEnvironmentsWithHealth: Promise<EnvironmentsWithHealth> | undefined;
 
 export const useEnvironmentsWithHealth = (
   accessToken: string,
@@ -155,12 +157,19 @@ export const useEnvironmentsWithHealth = (
     return environmentMap;
   }
 
-  throw new Promise((resolve) => {
-    fetchEnvironmentsWithHealth(accessToken).then((result) => {
-      setValue(result);
-      resolve(result);
+  if (pendingEnvironmentsWithHealth) {
+    throw pendingEnvironmentsWithHealth;
+  } else {
+    const promise = new Promise<EnvironmentsWithHealth>((resolve) => {
+      fetchEnvironmentsWithHealth(accessToken).then((result) => {
+        setValue(result);
+        resolve(result);
+        pendingEnvironmentsWithHealth = undefined;
+      });
     });
-  });
+    pendingEnvironmentsWithHealth = promise;
+    throw promise;
+  }
 };
 
 const defaultTimeout = 10_000; // 10 seconds
