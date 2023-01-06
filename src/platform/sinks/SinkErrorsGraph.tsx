@@ -17,17 +17,17 @@ import {
   YAxis,
 } from "recharts";
 
-import { TimestampedCounts, useBucketedSourceErrors } from "~/api/materialized";
+import { TimestampedCounts, useBucketedSinkErrors } from "~/api/materialized";
 import colors from "~/theme/colors";
 
 export interface Props {
-  sourceId?: string;
+  sinkId?: string;
   timePeriodMinutes: number;
 }
 
 const heightPx = 300;
 
-const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
+const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
   const {
     colors: { semanticColors },
     fonts,
@@ -40,14 +40,14 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const bucketSizeSeconds = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60;
   }, [timePeriodMinutes]);
-  const { loading, data: statuses } = useBucketedSourceErrors({
-    sourceId: sourceId,
+  const { loading, data: statuses } = useBucketedSinkErrors({
+    sinkId: sinkId,
     startTime,
     endTime,
     bucketSizeSeconds,
   });
 
-  if (!sourceId || loading || !statuses) {
+  if (!sinkId || loading || !statuses) {
     return (
       <Flex height={heightPx} alignItems="center" justifyContent="center">
         <Spinner />
@@ -171,4 +171,4 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   );
 };
 
-export default SourceErrorsGraph;
+export default SinkErrorsGraph;

@@ -2,7 +2,7 @@ import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, Routes, useParams } from "react-router-dom";
 
-import { Source, useDDL } from "~/api/materialized";
+import { Sink, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
@@ -13,30 +13,30 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 
-import SourceErrors from "./SourceErrors";
+import SinkErrors from "./SinkErrors";
 
-export interface SourceDetailProps {
-  source?: Source;
+export interface SinkDetailProps {
+  sink?: Sink;
 }
 
-const SourceDetail = ({ source }: SourceDetailProps) => {
+const SinkDetail = ({ sink }: SinkDetailProps) => {
   const params = useParams();
-  const { ddl } = useDDL("SOURCE", source?.name);
+  const { ddl } = useDDL("SINK", sink?.name);
 
   return (
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start">
-            <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
-              {source?.status && (
+            <PageBreadcrumbs crumbs={["Sinks", params.sinkName ?? ""]}>
+              {sink?.status && (
                 <Box>
-                  <StatusPill ml={2} status={source.status} />
+                  <StatusPill ml={2} status={sink.status} />
                 </Box>
               )}
             </PageBreadcrumbs>
-            {source && (
-              <ExpandablePanel text="SHOW CREATE SOURCE">
+            {sink && (
+              <ExpandablePanel text="SHOW CREATE SINK">
                 <Box
                   mt={4}
                   p={6}
@@ -45,13 +45,13 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
                   borderColor="semanticColors.border.primary"
                 >
                   <Box fontSize="14px" fontWeight="500">
-                    {source.name} DDL Statement
+                    {sink.name} DDL Statement
                   </Box>
                   <Box
                     fontSize="14px"
                     color="semanticColors.foreground.secondary"
                   >
-                    The following statement was used to create this source.
+                    The following statement was used to create this sink.
                   </Box>
                   <CopyableBox mt={4} contents={ddl}>
                     {ddl}
@@ -62,7 +62,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
           </VStack>
           <PageTabStrip>
             {/* Hide this until we have content for this tab
-          <PageTab to={`/sources/${params.sourceName}`} end>
+          <PageTab to={`/sinks/${params.sinkName}`} end>
             Overview
           </PageTab>*/}
             <PageTab to="errors">Errors</PageTab>
@@ -71,10 +71,10 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
       </PageHeader>
       <Routes>
         <Route path="/" element={<div>overview</div>} />
-        <Route path="errors" element={<SourceErrors source={source} />} />
+        <Route path="errors" element={<SinkErrors sink={sink} />} />
       </Routes>
     </>
   );
 };
 
-export default SourceDetail;
+export default SinkDetail;

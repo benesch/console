@@ -221,7 +221,12 @@ const NavItem = (props: NavItemType) => {
   const { colors } = useTheme();
   const location = useLocation();
   const href = props.href || "#";
-  const active = location.pathname === href;
+  const active =
+    // top level nav items show active on nested routes
+    // index must be exact match
+    href.length > 1
+      ? location.pathname.startsWith(href)
+      : location.pathname === href;
 
   const linkContents = (
     <HStack
