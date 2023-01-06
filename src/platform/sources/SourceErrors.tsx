@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   HStack,
-  Select,
   Spinner,
   Table,
   Tbody,
@@ -16,10 +15,12 @@ import {
 } from "@chakra-ui/react";
 import { format, subMinutes } from "date-fns";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 import { GroupedError, Source, useSourceErrors } from "~/api/materialized";
 import AlertBox from "~/components/AlertBox";
+import TimePeriodSelect, {
+  useTimePeriodMinutes,
+} from "~/components/TimePeriodSelect";
 
 import SourceErrorsGraph from "./SourceErrorsGraph";
 
@@ -43,37 +44,15 @@ const titleForTimePeriod = (timePeriodMinutes: number) => {
   return `Errors over the ${period.toLowerCase()}`;
 };
 
-const defaultTimePeriod = Object.keys(timePeriodOptions)[0];
-const parseTimePeriod = () => {
-  const params = new URLSearchParams(window.location.search);
-  const timePeriodParam = params.get("timePeriod") ?? defaultTimePeriod;
-  const period = Object.keys(timePeriodOptions).includes(timePeriodParam)
-    ? timePeriodParam
-    : defaultTimePeriod;
-  return parseInt(period);
-};
-
 const SourceErrors = ({ source }: SourceDetailProps) => {
   const { colors } = useTheme();
-  const navigate = useNavigate();
   const endTime = React.useMemo(() => new Date(), []);
-  const [timePeriodMinutes, setTimePeriodMinutes] = React.useState(
-    parseInt(defaultTimePeriod)
-  );
-  React.useMemo(() => {
-    setTimePeriodMinutes(parseTimePeriod());
-  }, []);
+  const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 
   const startTime = React.useMemo(() => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
 
-  const setTimePeriod = (timePeriod: string) => {
-    const url = new URL(window.location.toString());
-    url.searchParams.set("timePeriod", timePeriod);
-    navigate(url.pathname + url.search, { replace: true });
-    setTimePeriodMinutes(parseInt(timePeriod));
-  };
   const { data: errors, loading } = useSourceErrors({
     sourceId: source?.id,
     startTime,
@@ -110,21 +89,10 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
               <Text fontSize="16px" fontWeight="500">
                 Source Errors
               </Text>
-              <Select
-                fontSize="14px"
-                width="auto"
-                value={timePeriodMinutes}
-                onChange={(e) => setTimePeriod(e.target.value)}
-              >
-                <option value="15">Last 15 minutes</option>
-                <option value="60">Last hour</option>
-                <option value="180">Last 3 hours</option>
-                <option value="360">Last 6 hours</option>
-                <option value="720">Last 12 hours</option>
-                <option value="1440">Last 24 hours</option>
-                <option value="4320">Last 3 days</option>
-                <option value="43200">Last 30 days</option>
-              </Select>
+              <TimePeriodSelect
+                timePeriodMinutes={timePeriodMinutes}
+                setTimePeriodMinutes={setTimePeriodMinutes}
+              />
             </Flex>
             <SourceErrorsGraph
               sourceId={source?.id}
