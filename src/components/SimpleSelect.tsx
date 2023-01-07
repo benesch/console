@@ -25,6 +25,9 @@ const SimpleSelect = ({ children, value, onChange }: SimpleSelectProps) => {
         0px 0px 0px 0px hsla(0, 0%, 0%, 0)" // for performance while transitioning
       transition="box-shadow 50ms ease-out"
       sx={{
+        _hover: {
+          cursor: "pointer",
+        },
         _focus: {
           borderColor: semanticColors.accent.brightPurple,
           boxShadow:
