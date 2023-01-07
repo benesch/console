@@ -2,6 +2,8 @@ import { Select } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import SimpleSelect from "./SimpleSelect";
+
 export const timePeriodOptions: Record<string, string> = {
   "15": "Last 15 minutes",
   "60": "Last hour",
@@ -60,9 +62,7 @@ const TimePeriodSelect = ({
   );
 
   return (
-    <Select
-      fontSize="14px"
-      width="auto"
+    <SimpleSelect
       value={timePeriodMinutes}
       onChange={(e) => setTimePeriod(e.target.value)}
     >
@@ -71,7 +71,7 @@ const TimePeriodSelect = ({
           {text}
         </option>
       ))}
-    </Select>
+    </SimpleSelect>
   );
 };
 
