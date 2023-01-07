@@ -20,14 +20,15 @@ const SimpleSelect = ({ children, value, onChange }: SimpleSelectProps) => {
       rounded="8px"
       borderWidth="1px"
       boxShadow="
-        0px 1px 3px 0px hsla(0, 0%, 0%, 0.06); 
-        0px 1px 1px 0px hsla(0, 0%, 0%, 0.04);
-        0px 0px 0px 0px hsla(257, 100%, 65%, 0.24)" // for performance while transitioning
+        0px 1px 3px 0px hsla(0, 0%, 0%, 0.06), 
+        0px 1px 1px 0px hsla(0, 0%, 0%, 0.04),
+        0px 0px 0px 0px hsla(0, 0%, 0%, 0)" // for performance while transitioning
       transition="box-shadow 50ms ease-out"
       sx={{
         _focus: {
           borderColor: semanticColors.accent.brightPurple,
-          boxShadow: "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)", // accent.brightPurple,
+          boxShadow:
+            "0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)", // accent.brightPurple,
         },
       }}
       borderColor={semanticColors.border.secondary}
