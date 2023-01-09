@@ -11,7 +11,6 @@ const SimpleSelect = (props: SimpleSelectProps) => {
     <Select
       fontSize="14px"
       lineHeight="16px"
-      fontFamily="Inter"
       height="32px"
       width="auto"
       rounded="8px"
