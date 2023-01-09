@@ -1,6 +1,7 @@
 import { useInterval } from "@chakra-ui/react";
 import { add } from "date-fns";
 import deepEqual from "fast-deep-equal";
+import React from "react";
 import {
   atom,
   selector,
@@ -118,12 +119,16 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
   return result;
 };
 
-export const environmentsWithHealth = atom<
-  Map<string, LoadedEnvironment> | undefined
->({
+export type EnvironmentsWithHealth = Map<string, LoadedEnvironment>;
+export const environmentsWithHealth = atom<EnvironmentsWithHealth | undefined>({
   key: keys.ENVIRONMENTS_WITH_HEALTH,
   default: undefined,
 });
+
+// Ensure we don't issue duplicate environment health queries
+let pendingEnvironmentsWithHealth: Promise<EnvironmentsWithHealth> | undefined;
+// Ensure only a single instance of useEnvironmentsWithHealth will poll
+let isPollingEnvironmentHealth = false;
 
 export const useEnvironmentsWithHealth = (
   accessToken: string,
@@ -148,19 +153,44 @@ export const useEnvironmentsWithHealth = (
     return environmentMap;
   };
 
+  const [pollingInterval, setPollingInterval] = React.useState<number | null>(
+    null
+  );
+
+  React.useEffect(() => {
+    if (!isPollingEnvironmentHealth && options.intervalMs) {
+      isPollingEnvironmentHealth = true;
+      setPollingInterval(options?.intervalMs);
+    }
+    return () => {
+      if (pollingInterval) {
+        // If the instance that is polling unmounts, let another instance poll
+        isPollingEnvironmentHealth = false;
+        setPollingInterval(null);
+      }
+    };
+  }, [options.intervalMs, pollingInterval]);
+
   useInterval(async () => {
     updateValue(await fetchEnvironmentsWithHealth(accessToken));
-  }, options.intervalMs ?? null);
+  }, pollingInterval);
   if (environmentMap) {
     return environmentMap;
   }
 
-  throw new Promise((resolve) => {
-    fetchEnvironmentsWithHealth(accessToken).then((result) => {
-      setValue(result);
-      resolve(result);
+  if (pendingEnvironmentsWithHealth) {
+    throw pendingEnvironmentsWithHealth;
+  } else {
+    const promise = new Promise<EnvironmentsWithHealth>((resolve) => {
+      fetchEnvironmentsWithHealth(accessToken).then((result) => {
+        setValue(result);
+        resolve(result);
+        pendingEnvironmentsWithHealth = undefined;
+      });
     });
-  });
+    pendingEnvironmentsWithHealth = promise;
+    throw promise;
+  }
 };
 
 const defaultTimeout = 10_000; // 10 seconds
