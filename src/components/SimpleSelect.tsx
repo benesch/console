@@ -1,13 +1,9 @@
-import { Select, useTheme } from "@chakra-ui/react";
+import { Select, SelectProps, useTheme } from "@chakra-ui/react";
 import * as React from "react";
 
-export interface SimpleSelectProps {
-  children: React.ReactNode;
-  value?: string | number; // TODO: this is probably too constraining. Need to figure out the right type sig here
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-}
+export type SimpleSelectProps = SelectProps;
 
-const SimpleSelect = ({ children, value, onChange }: SimpleSelectProps) => {
+const SimpleSelect = (props: SimpleSelectProps) => {
   const {
     colors: { semanticColors },
   } = useTheme();
@@ -35,11 +31,8 @@ const SimpleSelect = ({ children, value, onChange }: SimpleSelectProps) => {
         },
       }}
       borderColor={semanticColors.border.secondary}
-      value={value}
-      onChange={onChange}
-    >
-      {children}
-    </Select>
+      {...props}
+    />
   );
 };
 
