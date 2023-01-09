@@ -1,3 +1,4 @@
+import { selectAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 import {
   mode,
@@ -92,6 +93,17 @@ export const Modal = {
     },
   },
 };
+
+const { defineMultiStyleConfig: defineSelectConfig, definePartsStyle } =
+  createMultiStyleConfigHelpers(selectAnatomy.keys);
+
+export const Select = defineSelectConfig({
+  baseStyle: definePartsStyle({
+    icon: {
+      color: "semanticColors.foreground.secondary",
+    },
+  }),
+});
 
 const { defineMultiStyleConfig } = createMultiStyleConfigHelpers([
   "table",
