@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
+import { Box, Flex, HStack, Spinner, Text, useTheme } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -40,6 +40,9 @@ const cpuPercentName = (id: number) => `replica${id}CpuPercent`;
 const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
 
 const ClusterOverview = ({ cluster }: Props) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const startTime = React.useMemo(() => {
@@ -69,6 +72,8 @@ const ClusterOverview = ({ cluster }: Props) => {
   type ReplicaMap = Map<ReplicaId, ReplicaUtilization[]>;
 
   const graphData = React.useMemo(() => {
+    if (!data) return undefined;
+
     const bucketMap = new Map<Timestamp, ReplicaMap>();
     for (const datum of data) {
       const bucket = buckets.find(
@@ -121,56 +126,60 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [bucketSizeMs, buckets, cluster?.replicas, data]);
 
   return (
-    <Box>
+    <Box
+      border={`solid 1px ${semanticColors.border.primary}`}
+      borderRadius="8px"
+      py={4}
+      px={6}
+      width="100%"
+    >
       <Flex width="100%" justifyContent="space-between">
-        <Text fontSize="md">Resource Usage</Text>
+        <Text fontWeight={500} fontSize="md">
+          Resource Usage
+        </Text>
         <TimePeriodSelect
           timePeriodMinutes={timePeriodMinutes}
           setTimePeriodMinutes={setTimePeriodMinutes}
         />
       </Flex>
       <HStack spacing={6}>
-        {cluster && (
-          <>
-            <Box width="100%">
-              <Text fontSize="xs">CPU</Text>
-              <UtilizationGraph
-                dataKeyFn={cpuPercentName}
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                lineColor={colors.red[500]}
-                replicas={cluster.replicas}
-                bucketSizeMs={bucketSizeMs}
-              />
-            </Box>
-            <Box width="100%">
-              <Text fontSize="xs">Memory</Text>
-              <UtilizationGraph
-                dataKeyFn={memoryPercentName}
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                lineColor={colors.purple[500]}
-                replicas={cluster.replicas}
-                bucketSizeMs={bucketSizeMs}
-              />
-            </Box>
-          </>
-        )}
+        <Box width="100%">
+          <Text fontSize="xs">CPU</Text>
+          <UtilizationGraph
+            dataKeyFn={cpuPercentName}
+            data={graphData}
+            startTime={startTime}
+            endTime={endTime}
+            timePeriodMinutes={timePeriodMinutes}
+            lineColor={colors.red[500]}
+            replicas={cluster?.replicas}
+            bucketSizeMs={bucketSizeMs}
+          />
+        </Box>
+        <Box width="100%">
+          <Text fontSize="xs">Memory</Text>
+          <UtilizationGraph
+            dataKeyFn={memoryPercentName}
+            data={graphData}
+            startTime={startTime}
+            endTime={endTime}
+            timePeriodMinutes={timePeriodMinutes}
+            lineColor={colors.purple[500]}
+            replicas={cluster?.replicas}
+            bucketSizeMs={bucketSizeMs}
+          />
+        </Box>
       </HStack>
     </Box>
   );
 };
 
 interface UtilizationGraph {
-  data: any;
+  data?: DataPoint[];
   dataKeyFn: (id: number) => string;
   endTime: Date;
   lineColor: string;
-  replicas: Replica[];
+  replicas?: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
   bucketSizeMs: number;
@@ -197,6 +206,14 @@ export const UtilizationGraph = ({
     length: Math.round(duration / bucketSizeMs / 2),
   }) as undefined[];
   const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
+
+  if (!replicas || !data) {
+    return (
+      <Flex height={heightPx} alignItems="center" justifyContent="center">
+        <Spinner />
+      </Flex>
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>

@@ -126,7 +126,7 @@ export const useClusterUtilization = (
   startTime: Date,
   endTime: Date
 ) => {
-  const [data, setData] = React.useState<ReplicaUtilization[]>([]);
+  const [data, setData] = React.useState<ReplicaUtilization[] | null>(null);
   const [errors, setErrors] = React.useState<string[]>([]);
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
@@ -191,7 +191,7 @@ WHERE r.cluster_id = '${clusterId}'`;
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,
             };
-            setData((val) => [...val, utilization]);
+            setData((val) => (val ? [...val, utilization] : [utilization]));
           }
         }
       }
