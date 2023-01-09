@@ -47,7 +47,7 @@ const TimePeriodSelect = ({
   const setTimePeriod = (timePeriod: string) => {
     const url = new URL(window.location.toString());
     url.searchParams.set("timePeriod", timePeriod);
-    navigate(url.pathname + url.search, { replace: true });
+    navigate(url.pathname + url.search + url.hash, { replace: true });
     setTimePeriodMinutes(parseInt(timePeriod));
   };
 
