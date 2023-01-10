@@ -40,6 +40,7 @@ export interface DataPoint {
 const heightPx = 300;
 const cpuPercentName = (id: number) => `replica${id}CpuPercent`;
 const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
+const lineColors = [colors.red[500], colors.purple[500], colors.blue[500]];
 
 const ClusterOverview = ({ cluster }: Props) => {
   const {
@@ -66,6 +67,9 @@ const ClusterOverview = ({ cluster }: Props) => {
         : [parseInt(selectedReplica)],
     [cluster?.replicas, selectedReplica]
   );
+  const replicaColorMap = React.useMemo(() => {
+    return new Map(cluster?.replicas.map((r, i) => [r.id, lineColors[i]]));
+  }, [cluster?.replicas]);
 
   const bucketSizeMs = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60 * 1000;
@@ -187,7 +191,7 @@ const ClusterOverview = ({ cluster }: Props) => {
             startTime={startTime}
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
-            lineColor={colors.red[500]}
+            replicaColorMap={replicaColorMap}
             replicaIds={selectedReplicaIds}
             bucketSizeMs={bucketSizeMs}
           />
@@ -200,7 +204,7 @@ const ClusterOverview = ({ cluster }: Props) => {
             startTime={startTime}
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
-            lineColor={colors.purple[500]}
+            replicaColorMap={replicaColorMap}
             replicaIds={selectedReplicaIds}
             bucketSizeMs={bucketSizeMs}
           />
@@ -214,23 +218,22 @@ interface UtilizationGraph {
   data?: DataPoint[];
   dataKeyFn: (id: number) => string;
   endTime: Date;
-  lineColor: string;
+  replicaColorMap: Map<number, string>;
   replicaIds?: number[];
   startTime: Date;
   timePeriodMinutes: number;
   bucketSizeMs: number;
 }
 
-const lineColors = [colors.red[500], colors.purple[500], colors.blue[500]];
-
 export const UtilizationGraph = ({
+  bucketSizeMs,
   data,
   dataKeyFn,
   endTime,
+  replicaColorMap,
   replicaIds,
   startTime,
   timePeriodMinutes,
-  bucketSizeMs,
 }: UtilizationGraph) => {
   const {
     colors: { semanticColors },
@@ -317,12 +320,12 @@ export const UtilizationGraph = ({
           labelFormatter={() => ""}
           cursor={false}
         />
-        {replicaIds.map((id, i) => {
+        {replicaIds.map((id) => {
           return (
             <Line
               key={id}
               dataKey={dataKeyFn(id)}
-              stroke={lineColors[i]}
+              stroke={replicaColorMap.get(id)}
               isAnimationActive={false}
               dot={false}
             />
