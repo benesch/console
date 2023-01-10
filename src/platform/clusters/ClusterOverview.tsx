@@ -156,7 +156,7 @@ const ClusterOverview = ({ cluster }: Props) => {
       }
       result.push(bucketValue);
     }
-    return result;
+    return result.sort((a, b) => a.timestamp - b.timestamp);
   }, [bucketSizeMs, buckets, data, selectedReplicaIds]);
 
   if (errors.length === 1 && errors[0] === "Region unavailable") {
