@@ -70,18 +70,9 @@ export const useSqlWs = () => {
       setSocketReady(true);
     }
   }, []);
-  const handleClose = React.useCallback((event: CloseEvent) => {
-    if (event.wasClean) {
-      console.log(
-        `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-      );
-    } else {
-      setSocketReady(false);
-      setSocketError("Connection error");
-      // this happens when the client closes the connection, which seems odd
-      // event.code is usually 1006 in this case
-      console.log("[close] Connection died", event);
-    }
+  const handleClose = React.useCallback((_: CloseEvent) => {
+    setSocketReady(false);
+    setSocketError("Connection error");
   }, []);
   React.useEffect(() => {
     let socket: WebSocket;
@@ -225,7 +216,8 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
     });
 
     ws.socket.onerror = function (event) {
-      console.log("[error]", event);
+      console.error("[websocket error]", event);
+      setErrors((val) => [...val, "Unexpected error"]);
     };
   }, [
     socketRef,
