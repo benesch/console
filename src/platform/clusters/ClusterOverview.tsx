@@ -29,7 +29,7 @@ import {
   ReplicaUtilization,
   useClusterUtilization,
 } from "~/api/materialize/websocket";
-import { Cluster } from "~/api/materialized";
+import { Cluster, Replica } from "~/api/materialized";
 import FullPageError from "~/components/FullPageError";
 import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
@@ -41,14 +41,18 @@ export interface Props {
   cluster?: Cluster;
 }
 
+export interface ReplicaData {
+  id: number;
+  data: DataPoint[];
+}
+
 export interface DataPoint {
   timestamp: number;
-  [replicaKey: string]: number;
+  cpuPercent: number;
+  memoryPercent: number;
 }
 
 const heightPx = 300;
-const cpuPercentName = (id: number) => `replica${id}CpuPercent`;
-const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
 const lineColors = [
   colors.cobalt[700],
   colors.turquoise[600],
@@ -75,13 +79,13 @@ const ClusterOverview = ({ cluster }: Props) => {
     selectedReplica === "all" ? undefined : parseInt(selectedReplica)
   );
 
-  const selectedReplicaIds = React.useMemo(
-    () =>
-      selectedReplica === "all"
-        ? cluster?.replicas.map((r) => r.id)
-        : [parseInt(selectedReplica)],
-    [cluster?.replicas, selectedReplica]
-  );
+  const selectedReplicas = React.useMemo(() => {
+    if (!cluster) return [];
+
+    return selectedReplica === "all"
+      ? cluster.replicas
+      : [cluster.replicas[parseInt(selectedReplica)]];
+  }, [cluster, selectedReplica]);
   const replicaColorMap = React.useMemo(() => {
     return new Map(
       cluster?.replicas.map((r, i) => [
@@ -112,7 +116,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   type ReplicaMap = Map<ReplicaId, ReplicaUtilization[]>;
 
   const graphData = React.useMemo(() => {
-    if (!data) return undefined;
+    if (!cluster || !data) return undefined;
 
     const bucketMap = new Map<Timestamp, ReplicaMap>();
     for (const datum of data) {
@@ -137,11 +141,12 @@ const ClusterOverview = ({ cluster }: Props) => {
         bucketMap.set(bucket, new Map([[datum.id, [datum]]]));
       }
     }
-    const result: DataPoint[] = [];
-    for (const [bucket, replicaMap] of bucketMap.entries()) {
-      const bucketValue: DataPoint = { timestamp: bucket };
-      for (const replicaId of selectedReplicaIds ?? []) {
-        const utilizations = replicaMap.get(replicaId);
+    const chartData: ReplicaData[] = [];
+    for (const replica of selectedReplicas ?? []) {
+      const lineData: DataPoint[] = [];
+      for (const [bucket, replicaMap] of bucketMap.entries()) {
+        if (!replica) continue;
+        const utilizations = replicaMap.get(replica.id);
         if (!utilizations) {
           continue;
         }
@@ -157,13 +162,20 @@ const ClusterOverview = ({ cluster }: Props) => {
             maxMemory = value;
           }
         }
-        bucketValue[cpuPercentName(replicaId)] = maxCpu.cpuPercent;
-        bucketValue[memoryPercentName(replicaId)] = maxMemory.memoryPercent;
+        const bucketValue: DataPoint = {
+          timestamp: bucket,
+          cpuPercent: maxCpu.cpuPercent,
+          memoryPercent: maxMemory.memoryPercent,
+        };
+        lineData.push(bucketValue);
       }
-      result.push(bucketValue);
+      chartData.push({
+        id: replica.id,
+        data: lineData.sort((a, b) => a.timestamp - b.timestamp),
+      });
     }
-    return result.sort((a, b) => a.timestamp - b.timestamp);
-  }, [bucketSizeMs, buckets, data, selectedReplicaIds]);
+    return chartData;
+  }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
   if (errors.length === 1 && errors[0] === "Region unavailable") {
     return <FullPageError message="This region is currently unavailable" />;
@@ -206,26 +218,26 @@ const ClusterOverview = ({ cluster }: Props) => {
         <Box width="100%">
           <Text fontSize="xs">CPU</Text>
           <UtilizationGraph
-            dataKeyFn={cpuPercentName}
+            dataKey="cpuPercent"
             data={graphData}
             startTime={startTime}
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
             replicaColorMap={replicaColorMap}
-            replicaIds={selectedReplicaIds}
+            replicas={selectedReplicas}
             bucketSizeMs={bucketSizeMs}
           />
         </Box>
         <Box width="100%">
           <Text fontSize="xs">Memory</Text>
           <UtilizationGraph
-            dataKeyFn={memoryPercentName}
+            dataKey="memoryPercent"
             data={graphData}
             startTime={startTime}
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
             replicaColorMap={replicaColorMap}
-            replicaIds={selectedReplicaIds}
+            replicas={selectedReplicas}
             bucketSizeMs={bucketSizeMs}
           />
         </Box>
@@ -235,11 +247,11 @@ const ClusterOverview = ({ cluster }: Props) => {
 };
 
 interface UtilizationGraph {
-  data?: DataPoint[];
-  dataKeyFn: (id: number) => string;
+  data?: ReplicaData[];
+  dataKey: string;
   endTime: Date;
   replicaColorMap: Map<number, { name: string; color: string }>;
-  replicaIds?: number[];
+  replicas?: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
   bucketSizeMs: number;
@@ -248,10 +260,10 @@ interface UtilizationGraph {
 export const UtilizationGraph = ({
   bucketSizeMs,
   data,
-  dataKeyFn,
+  dataKey,
   endTime,
   replicaColorMap,
-  replicaIds,
+  replicas,
   startTime,
   timePeriodMinutes,
 }: UtilizationGraph) => {
@@ -270,7 +282,7 @@ export const UtilizationGraph = ({
     [replicaColorMap]
   );
 
-  if (!replicaIds || !data) {
+  if (!replicas || !data) {
     return (
       <Flex height={heightPx} alignItems="center" justifyContent="center">
         <Spinner />
@@ -280,11 +292,7 @@ export const UtilizationGraph = ({
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <LineChart
-        data={data}
-        barSize={4}
-        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
-      >
+      <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <CartesianGrid
           vertical={false}
           stroke={semanticColors.border.primary}
@@ -344,12 +352,16 @@ export const UtilizationGraph = ({
           labelFormatter={() => ""}
           cursor={false}
         />
-        {replicaIds.map((id) => {
+        {data.map((replicaData) => {
+          const replica = replicas.find((r) => r.id === replicaData.id);
+          if (!replica) return;
           return (
             <Line
-              key={id}
-              dataKey={dataKeyFn(id)}
-              stroke={replicaColorMap.get(id)?.color}
+              name={replica.replica}
+              key={replica.id}
+              dataKey={dataKey}
+              stroke={replicaColorMap.get(replica.id)?.color}
+              data={replicaData.data}
               isAnimationActive={false}
               dot={false}
             />

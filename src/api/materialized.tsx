@@ -175,7 +175,7 @@ export interface Cluster {
 export interface Replica {
   id: number;
   replica: string;
-  size?: string;
+  size: string;
   cluster: string;
   cpuPercent?: number;
   memoryPercent?: number;
