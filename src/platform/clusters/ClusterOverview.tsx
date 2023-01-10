@@ -1,4 +1,12 @@
-import { Box, Flex, HStack, Spinner, Text, useTheme } from "@chakra-ui/react";
+import {
+  Box,
+  chakra,
+  Flex,
+  HStack,
+  Spinner,
+  Text,
+  useTheme,
+} from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -8,6 +16,7 @@ import {
 import React from "react";
 import {
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -68,7 +77,12 @@ const ClusterOverview = ({ cluster }: Props) => {
     [cluster?.replicas, selectedReplica]
   );
   const replicaColorMap = React.useMemo(() => {
-    return new Map(cluster?.replicas.map((r, i) => [r.id, lineColors[i]]));
+    return new Map(
+      cluster?.replicas.map((r, i) => [
+        r.id,
+        { name: r.replica, color: lineColors[i] },
+      ])
+    );
   }, [cluster?.replicas]);
 
   const bucketSizeMs = React.useMemo(() => {
@@ -218,7 +232,7 @@ interface UtilizationGraph {
   data?: DataPoint[];
   dataKeyFn: (id: number) => string;
   endTime: Date;
-  replicaColorMap: Map<number, string>;
+  replicaColorMap: Map<number, { name: string; color: string }>;
   replicaIds?: number[];
   startTime: Date;
   timePeriodMinutes: number;
@@ -245,6 +259,10 @@ export const UtilizationGraph = ({
     length: Math.round(duration / bucketSizeMs / 2),
   }) as undefined[];
   const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
+  const legendData = React.useMemo(
+    () => Array.from(replicaColorMap.entries()),
+    [replicaColorMap]
+  );
 
   if (!replicaIds || !data) {
     return (
@@ -325,12 +343,31 @@ export const UtilizationGraph = ({
             <Line
               key={id}
               dataKey={dataKeyFn(id)}
-              stroke={replicaColorMap.get(id)}
+              stroke={replicaColorMap.get(id)?.color}
               isAnimationActive={false}
               dot={false}
             />
           );
         })}
+        <Legend
+          verticalAlign="bottom"
+          height={36}
+          content={() => (
+            <HStack spacing={4} as="ul" ml={16}>
+              {legendData.map(([replicaId, { name, color }]) => (
+                <HStack as="li" alignItems="center" key={replicaId}>
+                  <chakra.div
+                    backgroundColor={color}
+                    height="8px"
+                    width="8px"
+                    borderRadius="8px"
+                  ></chakra.div>
+                  <div>{name}</div>
+                </HStack>
+              ))}
+            </HStack>
+          )}
+        />
         {data?.length === 0 && (
           <text x="50%" y="50%" textAnchor="middle">
             No data
