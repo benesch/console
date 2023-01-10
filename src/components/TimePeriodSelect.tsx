@@ -18,17 +18,17 @@ const defaultTimePeriod = Object.keys(timePeriodOptions)[0];
 
 export const useTimePeriodMinutes = (defaultValue = defaultTimePeriod) => {
   const [timePeriodMinutes, setTimePeriodMinutes] = React.useState(
-    parseInt(defaultValue)
+    parseTimePeriod(defaultValue)
   );
   return [timePeriodMinutes, setTimePeriodMinutes] as const;
 };
 
-const parseTimePeriod = () => {
+const parseTimePeriod = (defaultValue: string) => {
   const params = new URLSearchParams(window.location.search);
   const timePeriodParam = params.get("timePeriod") ?? defaultTimePeriod;
   const period = Object.keys(timePeriodOptions).includes(timePeriodParam)
     ? timePeriodParam
-    : defaultTimePeriod;
+    : defaultValue;
   return parseInt(period);
 };
 
@@ -50,15 +50,6 @@ const TimePeriodSelect = ({
     navigate(url.pathname + url.search + url.hash, { replace: true });
     setTimePeriodMinutes(parseInt(timePeriod));
   };
-
-  React.useMemo(
-    () => {
-      setTimePeriodMinutes(parseTimePeriod());
-    },
-    // We only want to run this on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
 
   return (
     <SimpleSelect
