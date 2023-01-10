@@ -152,7 +152,7 @@ const ClusterTable = (props: ClusterTableProps) => {
       <Thead>
         <Tr>
           <Th>Name</Th>
-          <Th># of Replicas</Th>
+          <Th>Replicas</Th>
         </Tr>
       </Thead>
       <Tbody>
