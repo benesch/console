@@ -49,7 +49,13 @@ export interface DataPoint {
 const heightPx = 300;
 const cpuPercentName = (id: number) => `replica${id}CpuPercent`;
 const memoryPercentName = (id: number) => `replica${id}MemoryPercent`;
-const lineColors = [colors.red[500], colors.purple[500], colors.blue[500]];
+const lineColors = [
+  colors.cobalt[700],
+  colors.turquoise[600],
+  colors.blue[700],
+  colors.yellow[700],
+  colors.green[500],
+];
 
 const ClusterOverview = ({ cluster }: Props) => {
   const {
