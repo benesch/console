@@ -20,8 +20,9 @@ import {
   ReplicaUtilization,
   useClusterUtilization,
 } from "~/api/materialize/websocket";
-import { Cluster, Replica } from "~/api/materialized";
+import { Cluster } from "~/api/materialized";
 import FullPageError from "~/components/FullPageError";
+import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
@@ -46,6 +47,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   } = useTheme();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
+  const [selectedReplica, setSelectedReplica] = React.useState("all");
   const startTime = React.useMemo(() => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
@@ -53,7 +55,16 @@ const ClusterOverview = ({ cluster }: Props) => {
   const { data, errors } = useClusterUtilization(
     cluster?.id,
     startTime,
-    endTime
+    endTime,
+    selectedReplica === "all" ? undefined : parseInt(selectedReplica)
+  );
+
+  const selectedReplicaIds = React.useMemo(
+    () =>
+      selectedReplica === "all"
+        ? cluster?.replicas.map((r) => r.id)
+        : [parseInt(selectedReplica)],
+    [cluster?.replicas, selectedReplica]
   );
 
   const bucketSizeMs = React.useMemo(() => {
@@ -105,8 +116,8 @@ const ClusterOverview = ({ cluster }: Props) => {
     const result: DataPoint[] = [];
     for (const [bucket, replicaMap] of bucketMap.entries()) {
       const bucketValue: DataPoint = { timestamp: bucket };
-      for (const replica of cluster?.replicas ?? []) {
-        const utilizations = replicaMap.get(replica.id);
+      for (const replicaId of selectedReplicaIds ?? []) {
+        const utilizations = replicaMap.get(replicaId);
         if (!utilizations) {
           continue;
         }
@@ -122,13 +133,13 @@ const ClusterOverview = ({ cluster }: Props) => {
             maxMemory = value;
           }
         }
-        bucketValue[cpuPercentName(replica.id)] = maxCpu.cpuPercent;
-        bucketValue[memoryPercentName(replica.id)] = maxMemory.memoryPercent;
+        bucketValue[cpuPercentName(replicaId)] = maxCpu.cpuPercent;
+        bucketValue[memoryPercentName(replicaId)] = maxMemory.memoryPercent;
       }
       result.push(bucketValue);
     }
     return result;
-  }, [bucketSizeMs, buckets, cluster?.replicas, data]);
+  }, [bucketSizeMs, buckets, data, selectedReplicaIds]);
 
   if (errors.length === 1 && errors[0] === "Region unavailable") {
     return <FullPageError message="This region is currently unavailable" />;
@@ -144,14 +155,28 @@ const ClusterOverview = ({ cluster }: Props) => {
       px={6}
       width="100%"
     >
-      <Flex width="100%" justifyContent="space-between">
-        <Text fontWeight={500} fontSize="md">
-          Resource Usage
-        </Text>
-        <TimePeriodSelect
-          timePeriodMinutes={timePeriodMinutes}
-          setTimePeriodMinutes={setTimePeriodMinutes}
-        />
+      <Flex width="100%" justifyContent="space-between" mb="4">
+        <Text fontSize="md">Resource Usage</Text>
+        <HStack>
+          {cluster && (
+            <LabeledSelect
+              label="replicas"
+              value={selectedReplica}
+              onChange={(e) => setSelectedReplica(e.target.value)}
+            >
+              <option value="all">All</option>
+              {cluster.replicas.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.replica}
+                </option>
+              ))}
+            </LabeledSelect>
+          )}
+          <TimePeriodSelect
+            timePeriodMinutes={timePeriodMinutes}
+            setTimePeriodMinutes={setTimePeriodMinutes}
+          />
+        </HStack>
       </Flex>
       <HStack spacing={6}>
         <Box width="100%">
@@ -163,7 +188,7 @@ const ClusterOverview = ({ cluster }: Props) => {
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
             lineColor={colors.red[500]}
-            replicas={cluster?.replicas}
+            replicaIds={selectedReplicaIds}
             bucketSizeMs={bucketSizeMs}
           />
         </Box>
@@ -176,7 +201,7 @@ const ClusterOverview = ({ cluster }: Props) => {
             endTime={endTime}
             timePeriodMinutes={timePeriodMinutes}
             lineColor={colors.purple[500]}
-            replicas={cluster?.replicas}
+            replicaIds={selectedReplicaIds}
             bucketSizeMs={bucketSizeMs}
           />
         </Box>
@@ -190,7 +215,7 @@ interface UtilizationGraph {
   dataKeyFn: (id: number) => string;
   endTime: Date;
   lineColor: string;
-  replicas?: Replica[];
+  replicaIds?: number[];
   startTime: Date;
   timePeriodMinutes: number;
   bucketSizeMs: number;
@@ -202,7 +227,7 @@ export const UtilizationGraph = ({
   data,
   dataKeyFn,
   endTime,
-  replicas,
+  replicaIds,
   startTime,
   timePeriodMinutes,
   bucketSizeMs,
@@ -218,7 +243,7 @@ export const UtilizationGraph = ({
   }) as undefined[];
   const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
 
-  if (!replicas || !data) {
+  if (!replicaIds || !data) {
     return (
       <Flex height={heightPx} alignItems="center" justifyContent="center">
         <Spinner />
@@ -292,11 +317,11 @@ export const UtilizationGraph = ({
           labelFormatter={() => ""}
           cursor={false}
         />
-        {replicas.map((r, i) => {
+        {replicaIds.map((id, i) => {
           return (
             <Line
-              key={r.id}
-              dataKey={dataKeyFn(r.id)}
+              key={id}
+              dataKey={dataKeyFn(id)}
               stroke={lineColors[i]}
               isAnimationActive={false}
               dot={false}

@@ -134,7 +134,8 @@ export interface ReplicaUtilization {
 export const useClusterUtilization = (
   clusterId: string | undefined,
   startTime: Date,
-  endTime: Date
+  endTime: Date,
+  replicaId?: number
 ) => {
   const [data, setData] = React.useState<ReplicaUtilization[] | null>(null);
   const [errors, setErrors] = React.useState<string[]>([]);
@@ -155,7 +156,8 @@ export const useClusterUtilization = (
   React.useEffect(() => {
     setQuerySent(false);
     setExplainSent(false);
-  }, [clusterId, startTime, endTime]);
+    setMinFrontier(undefined);
+  }, [replicaId, clusterId, startTime, endTime]);
 
   React.useEffect(() => {
     const ws = socketRef.current;
@@ -166,7 +168,8 @@ export const useClusterUtilization = (
   u.memory_percent
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
-WHERE r.cluster_id = '${clusterId}'`;
+WHERE r.cluster_id = '${clusterId}'
+${replicaId ? `AND r.id = ${replicaId}` : ""}`;
 
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
@@ -228,6 +231,7 @@ WHERE r.cluster_id = '${clusterId}'`;
     minFrontier,
     startTime,
     endTime,
+    replicaId,
   ]);
 
   return { data, errors };
