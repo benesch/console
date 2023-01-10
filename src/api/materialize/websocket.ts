@@ -181,6 +181,10 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
       if (start < frontier) {
         start = frontier;
       }
+      if (start > endTime) {
+        // We observed this at least once, not sure why it happens
+        start = endTime;
+      }
       ws.send({
         query: `SUBSCRIBE (${utilizationQuery})
   AS OF TIMESTAMP '${start.toISOString()}'
