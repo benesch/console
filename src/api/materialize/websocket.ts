@@ -1,5 +1,5 @@
 import { useAuth } from "@frontegg/react";
-import React, { MutableRefObject } from "react";
+import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { currentEnvironmentState } from "~/recoil/environments";
@@ -56,20 +56,29 @@ export class SqlWebSocket {
   }
 }
 
-export const useSqlWs = (): [
-  boolean,
-  MutableRefObject<SqlWebSocket | undefined>
-] => {
+export const useSqlWs = () => {
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
   const socketRef = React.useRef<SqlWebSocket>();
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
+  const [socketError, setSocketError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let socket: WebSocket;
-    if (user && currentEnvironment?.state === "enabled") {
+    if (
+      user &&
+      currentEnvironment?.state === "enabled" &&
+      currentEnvironment.health === "crashed"
+    ) {
+      setSocketError("Region unavailable");
+    }
+    if (
+      user &&
+      currentEnvironment?.state === "enabled" &&
+      currentEnvironment.health === "healthy"
+    ) {
       socket = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
@@ -92,6 +101,8 @@ export const useSqlWs = (): [
             `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
           );
         } else {
+          setSocketReady(false);
+          setSocketError("Connection error");
           // this happens when the client closes the connection, which seems odd
           // event.code is usually 1006 in this case
           console.log("[close] Connection died", event);
@@ -101,17 +112,16 @@ export const useSqlWs = (): [
       socketRef.current = new SqlWebSocket(socket);
     }
     return () => {
-      console.log("unmount", socket);
+      setSocketError(null);
+      socketRef.current = undefined;
+      setSocketReady(false);
       if (socket) {
-        console.log("socket.close()");
         socket.close();
-        socketRef.current = undefined;
-        setSocketReady(false);
       }
     };
   }, [currentEnvironment, user, user?.accessToken]);
 
-  return [socketReady, socketRef];
+  return { socketReady, socketRef, socketError };
 };
 
 export interface ReplicaUtilization {
@@ -131,7 +141,16 @@ export const useClusterUtilization = (
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
   const [minFrontier, setMinFrontier] = React.useState<number | undefined>();
-  const [socketReady, socketRef] = useSqlWs();
+  const { socketReady, socketRef, socketError } = useSqlWs();
+
+  React.useEffect(() => {
+    if (socketError) {
+      setErrors([socketError]);
+    }
+    return () => {
+      setErrors([]);
+    };
+  }, [socketError]);
 
   React.useEffect(() => {
     setQuerySent(false);

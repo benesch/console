@@ -9,8 +9,6 @@ import {
   ChevronUpIcon,
 } from "@chakra-ui/icons";
 import {
-  Alert,
-  AlertIcon,
   Box,
   BoxProps,
   Center,
@@ -21,9 +19,7 @@ import {
   HStack,
   Spinner,
   StackProps,
-  Text,
   useTheme,
-  VStack,
 } from "@chakra-ui/react";
 import * as CSS from "csstype";
 import * as React from "react";
@@ -31,7 +27,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
-import SupportLink from "~/components/SupportLink";
+import { GenericError } from "~/components/FullPageError";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
 
@@ -98,22 +94,6 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
         </Container>
         <PageFooter />
       </Flex>
-    </Flex>
-  );
-};
-
-export const GenericError = () => {
-  return (
-    <Flex h="100%" w="100%" alignItems="center" justifyContent="center">
-      <VStack spacing={2}>
-        <Alert status="error" rounded="md" p={4} marginTop={2}>
-          <AlertIcon />
-          An unexpected error has occured
-        </Alert>
-        <Text>
-          <SupportLink>Contact support</SupportLink> if the issue persists.
-        </Text>
-      </VStack>
     </Flex>
   );
 };

@@ -21,6 +21,7 @@ import {
   useClusterUtilization,
 } from "~/api/materialize/websocket";
 import { Cluster, Replica } from "~/api/materialized";
+import FullPageError from "~/components/FullPageError";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
@@ -49,7 +50,11 @@ const ClusterOverview = ({ cluster }: Props) => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
 
-  const { data } = useClusterUtilization(cluster?.id, startTime, endTime);
+  const { data, errors } = useClusterUtilization(
+    cluster?.id,
+    startTime,
+    endTime
+  );
 
   const bucketSizeMs = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60 * 1000;
@@ -125,6 +130,12 @@ const ClusterOverview = ({ cluster }: Props) => {
     return result;
   }, [bucketSizeMs, buckets, cluster?.replicas, data]);
 
+  if (errors.length === 1 && errors[0] === "Region unavailable") {
+    return <FullPageError message="This region is currently unavailable" />;
+  }
+  if (errors.length > 0) {
+    return <FullPageError />;
+  }
   return (
     <Box
       border={`solid 1px ${semanticColors.border.primary}`}
