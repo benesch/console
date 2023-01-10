@@ -65,6 +65,24 @@ export const useSqlWs = () => {
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
 
+  const handleMessage = React.useCallback((event: MessageEvent) => {
+    if (event.data.payload === "ReadyForQuery") {
+      setSocketReady(true);
+    }
+  }, []);
+  const handleClose = React.useCallback((event: CloseEvent) => {
+    if (event.wasClean) {
+      console.log(
+        `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
+      );
+    } else {
+      setSocketReady(false);
+      setSocketError("Connection error");
+      // this happens when the client closes the connection, which seems odd
+      // event.code is usually 1006 in this case
+      console.log("[close] Connection died", event);
+    }
+  }, []);
   React.useEffect(() => {
     let socket: WebSocket;
     if (
@@ -82,11 +100,8 @@ export const useSqlWs = () => {
       socket = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
-      socket.addEventListener("message", (event: MessageEvent) => {
-        if (event.data.payload === "ReadyForQuery") {
-          setSocketReady(true);
-        }
-      });
+      setSocketError(null);
+      socket.addEventListener("message", handleMessage);
       socket.onopen = function () {
         socket.send(
           JSON.stringify({
@@ -95,19 +110,7 @@ export const useSqlWs = () => {
         );
         setSocketReady(true);
       };
-      socket.onclose = function (event) {
-        if (event.wasClean) {
-          console.log(
-            `[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`
-          );
-        } else {
-          setSocketReady(false);
-          setSocketError("Connection error");
-          // this happens when the client closes the connection, which seems odd
-          // event.code is usually 1006 in this case
-          console.log("[close] Connection died", event);
-        }
-      };
+      socket.addEventListener("close", handleClose);
 
       socketRef.current = new SqlWebSocket(socket);
     }
@@ -117,9 +120,11 @@ export const useSqlWs = () => {
       setSocketReady(false);
       if (socket) {
         socket.close();
+        socket.removeEventListener("close", handleClose);
+        socket.removeEventListener("message", handleMessage);
       }
     };
-  }, [currentEnvironment, user, user?.accessToken]);
+  }, [currentEnvironment, handleClose, handleMessage, user, user?.accessToken]);
 
   return { socketReady, socketRef, socketError };
 };
