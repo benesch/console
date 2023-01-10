@@ -177,8 +177,8 @@ export interface Replica {
   replica: string;
   size?: string;
   cluster: string;
-  cpuPercent: number;
-  memoryPercent: number;
+  cpuPercent?: number;
+  memoryPercent?: number;
 }
 
 /**

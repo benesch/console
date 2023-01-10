@@ -178,25 +178,33 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               borderBottomWidth="1px"
               borderBottomColor={colors.semanticColors.border.primary}
             >
-              {r.memoryPercent.toFixed(1)}
-              <Text
-                as="span"
-                color={colors.semanticColors.foreground.secondary}
-              >
-                %
-              </Text>
+              {r.memoryPercent && (
+                <>
+                  {r.memoryPercent.toFixed(1)}
+                  <Text
+                    as="span"
+                    color={colors.semanticColors.foreground.secondary}
+                  >
+                    %
+                  </Text>
+                </>
+              )}
             </Td>
             <Td
               borderBottomWidth="1px"
               borderBottomColor={colors.semanticColors.border.primary}
             >
-              {r.cpuPercent.toFixed(1)}
-              <Text
-                as="span"
-                color={colors.semanticColors.foreground.secondary}
-              >
-                %
-              </Text>
+              {r.cpuPercent && (
+                <>
+                  {r.cpuPercent.toFixed(1)}
+                  <Text
+                    as="span"
+                    color={colors.semanticColors.foreground.secondary}
+                  >
+                    %
+                  </Text>
+                </>
+              )}
             </Td>
           </Tr>
         ))}
