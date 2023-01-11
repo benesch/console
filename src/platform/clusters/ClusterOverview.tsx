@@ -55,6 +55,7 @@ export interface DataPoint {
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
+  [key: string]: string | number;
 }
 
 const heightPx = 300;
@@ -87,9 +88,16 @@ const ClusterOverview = ({ cluster }: Props) => {
   const selectedReplicas = React.useMemo(() => {
     if (!cluster) return [];
 
-    return selectedReplica === "all"
-      ? cluster.replicas
-      : [cluster.replicas[parseInt(selectedReplica)]];
+    if (selectedReplica === "all") {
+      return cluster.replicas;
+    }
+    const replica = cluster.replicas.find(
+      (r) => r.id === parseInt(selectedReplica)
+    );
+    if (!replica) {
+      return cluster.replicas;
+    }
+    return [replica];
   }, [cluster, selectedReplica]);
   const replicaColorMap = React.useMemo(() => {
     return new Map(
@@ -307,6 +315,7 @@ export const UtilizationGraph = ({
           strokeDasharray="4"
         />
         <XAxis
+          allowDuplicatedCategory={false}
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
           axisLine={false}
@@ -363,6 +372,7 @@ export const UtilizationGraph = ({
               >
                 {payload.map((item, i) => {
                   const datapoint = item.payload as DataPoint;
+                  const key = item.dataKey as string;
                   return (
                     <Flex key={i} justifyContent="space-between" width="160px">
                       <div>
@@ -371,11 +381,7 @@ export const UtilizationGraph = ({
                           {` (${datapoint.size})`}
                         </Text>
                       </div>
-                      <div>
-                        {`${(item.payload[item.dataKey!] as number).toFixed(
-                          1
-                        )}%`}
-                      </div>
+                      <div>{`${(datapoint[key] as number).toFixed(1)}%`}</div>
                     </Flex>
                   );
                 })}
