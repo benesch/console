@@ -59,13 +59,6 @@ export interface DataPoint {
 }
 
 const heightPx = 300;
-const lineColors = [
-  colors.cobalt[700],
-  colors.turquoise[600],
-  colors.blue[700],
-  colors.yellow[700],
-  colors.green[500],
-];
 
 const ClusterOverview = ({ cluster }: Props) => {
   const {
@@ -103,10 +96,10 @@ const ClusterOverview = ({ cluster }: Props) => {
     return new Map(
       cluster?.replicas.map((r, i) => [
         r.id,
-        { name: r.name, color: lineColors[i] },
+        { name: r.name, color: semanticColors.lineGraph[i] },
       ])
     );
-  }, [cluster?.replicas]);
+  }, [cluster?.replicas, semanticColors.lineGraph]);
 
   const bucketSizeMs = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60 * 1000;

@@ -34,6 +34,13 @@ export const darkColors = {
     info: colors.blue[700],
     warn: colors.yellow[800],
   },
+  lineGraph: [
+    colors.cobalt[200],
+    colors.turquoise[400],
+    colors.blue[200],
+    colors.yellow[300],
+    colors.green[300],
+  ],
 };
 
 export const darkShadows = {
