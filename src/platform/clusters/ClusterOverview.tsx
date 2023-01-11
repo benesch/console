@@ -292,7 +292,11 @@ export const UtilizationGraph = ({
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
+      <LineChart
+        syncId="clusterUtilization"
+        barSize={4}
+        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
+      >
         <CartesianGrid
           vertical={false}
           stroke={semanticColors.border.primary}
@@ -350,7 +354,6 @@ export const UtilizationGraph = ({
             color: semanticColors.foreground.inverse,
           }}
           labelFormatter={() => ""}
-          cursor={false}
         />
         {data.map((replicaData) => {
           const replica = replicas.find((r) => r.id === replicaData.id);
