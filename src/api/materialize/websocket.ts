@@ -1,5 +1,5 @@
 import { useAuth } from "@frontegg/react";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { currentEnvironmentState } from "~/recoil/environments";
@@ -47,12 +47,18 @@ export type WebSocketResult =
 
 export class SqlWebSocket {
   socket: WebSocket;
+  setSocketReady: Dispatch<SetStateAction<boolean>>;
 
-  constructor(socket: WebSocket) {
+  constructor(
+    socket: WebSocket,
+    setSocketReady: Dispatch<SetStateAction<boolean>>
+  ) {
     this.socket = socket;
+    this.setSocketReady = setSocketReady;
   }
 
   send(request: SqlRequest) {
+    this.setSocketReady(false);
     this.socket.send(JSON.stringify(request));
   }
 
@@ -76,8 +82,11 @@ export const useSqlWs = () => {
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
 
+  const accessToken = user?.accessToken;
+
   const handleMessage = React.useCallback((event: MessageEvent) => {
-    if (event.data.payload === "ReadyForQuery") {
+    const data = JSON.parse(event.data);
+    if (data.type === "ReadyForQuery") {
       setSocketReady(true);
     }
   }, []);
@@ -88,14 +97,14 @@ export const useSqlWs = () => {
   React.useEffect(() => {
     let socket: WebSocket;
     if (
-      user &&
+      accessToken &&
       currentEnvironment?.state === "enabled" &&
       currentEnvironment.health === "crashed"
     ) {
       setSocketError("Region unavailable");
     }
     if (
-      user &&
+      accessToken &&
       currentEnvironment?.state === "enabled" &&
       currentEnvironment.health === "healthy"
     ) {
@@ -107,14 +116,13 @@ export const useSqlWs = () => {
       socket.onopen = function () {
         socket.send(
           JSON.stringify({
-            token: user?.accessToken,
+            token: accessToken,
           })
         );
-        setSocketReady(true);
       };
       socket.addEventListener("close", handleClose);
 
-      socketRef.current = new SqlWebSocket(socket);
+      socketRef.current = new SqlWebSocket(socket, setSocketReady);
     }
     return () => {
       setSocketError(null);
@@ -126,7 +134,7 @@ export const useSqlWs = () => {
         socket.removeEventListener("message", handleMessage);
       }
     };
-  }, [currentEnvironment, handleClose, handleMessage, user, user?.accessToken]);
+  }, [currentEnvironment, handleClose, handleMessage, accessToken]);
 
   return { socketReady, socketRef, socketError };
 };
@@ -193,7 +201,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
         start = frontier;
       }
       if (start > endTime) {
-        // We observed this at least once, not sure why it happens
+        // We observed this at least once when the compaction window was not set
         start = endTime;
       }
       ws.send({
@@ -202,6 +210,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
   UP TO TIMESTAMP '${endTime.toISOString()}';`,
       });
       setQuerySent(true);
+      setData(null);
     }
 
     ws.onResult((result) => {
@@ -209,12 +218,16 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
         setErrors((val) => [...val, result.payload]);
       }
       if (result.type === "Row") {
-        if (!minFrontier) {
-          const { determination } = JSON.parse(
-            result.payload[0] as string
-          ) as ExplainTimestampResult;
+        const { determination } = JSON.parse(
+          result.payload[0] as string
+        ) as ExplainTimestampResult;
+        // If we have sent the explain query, but don't yet have a minFrontier,
+        // we expect this to be the explain result
+        if (explainSent && !minFrontier && determination) {
           setMinFrontier(determination.since.elements[0]);
-        } else {
+        } else if (querySent) {
+          // If querySent is false, it means we are still getting results from a previous query,
+          // but we ignore them, since the user has already changed the time period
           const mzdiff = result.payload[1] as number;
           // ignore retractions
           if (mzdiff === 1) {
