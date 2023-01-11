@@ -95,7 +95,7 @@ const ClusterOverview = ({ cluster }: Props) => {
     return new Map(
       cluster?.replicas.map((r, i) => [
         r.id,
-        { name: r.replica, color: lineColors[i] },
+        { name: r.name, color: lineColors[i] },
       ])
     );
   }, [cluster?.replicas]);
@@ -169,7 +169,7 @@ const ClusterOverview = ({ cluster }: Props) => {
         }
         const bucketValue: DataPoint = {
           id: replica.id,
-          name: replica.replica,
+          name: replica.name,
           size: replica.size,
           timestamp: bucket,
           cpuPercent: maxCpu.cpuPercent,
@@ -211,7 +211,7 @@ const ClusterOverview = ({ cluster }: Props) => {
               <option value="all">All</option>
               {cluster.replicas.map((r) => (
                 <option key={r.id} value={r.id}>
-                  {r.replica}
+                  {r.name}
                 </option>
               ))}
             </LabeledSelect>
@@ -392,7 +392,7 @@ export const UtilizationGraph = ({
           if (!replica) return;
           return (
             <Line
-              name={replica.replica}
+              name={replica.name}
               key={replica.id}
               dataKey={dataKey}
               stroke={replicaColorMap.get(replica.id)?.color}

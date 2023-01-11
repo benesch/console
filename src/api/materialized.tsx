@@ -174,9 +174,9 @@ export interface Cluster {
 
 export interface Replica {
   id: number;
-  replica: string;
+  name: string;
   size: string;
-  cluster: string;
+  clusterName: string;
   cpuPercent?: number;
   memoryPercent?: number;
 }
@@ -206,9 +206,9 @@ export function useClusters() {
       const clusterName = row[4] as string;
       const replica: Replica = {
         id: row[0] as number,
-        replica: row[1] as string,
+        name: row[1] as string,
         size: row[3] as string,
-        cluster: clusterName,
+        clusterName: clusterName,
         cpuPercent: row[5] as number,
         memoryPercent: row[6] as number,
       };

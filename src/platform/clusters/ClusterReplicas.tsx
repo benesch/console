@@ -156,7 +156,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
       <Tbody>
         {props.replicas.map((r) => (
           <Tr
-            key={r.replica}
+            key={r.name}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,
@@ -166,7 +166,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               borderBottomWidth="1px"
               borderBottomColor={colors.semanticColors.border.primary}
             >
-              {r.replica}
+              {r.name}
             </Td>
             <Td
               borderBottomWidth="1px"
