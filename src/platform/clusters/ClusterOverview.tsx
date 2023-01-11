@@ -212,7 +212,7 @@ const ClusterOverview = ({ cluster }: Props) => {
         <HStack>
           {cluster && (
             <LabeledSelect
-              label="replicas"
+              label="Replicas"
               value={selectedReplica}
               onChange={(e) => setSelectedReplica(e.target.value)}
             >
