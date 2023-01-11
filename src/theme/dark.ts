@@ -4,9 +4,10 @@
  *
  */
 
+import { ThemeColors, ThemeShadows } from ".";
 import colors from "./colors";
 
-export const darkColors = {
+export const darkColors: ThemeColors = {
   accent: {
     purple: colors.purple[500],
     brightPurple: colors.purple[300],
@@ -43,7 +44,7 @@ export const darkColors = {
   ],
 };
 
-export const darkShadows = {
+export const darkShadows: ThemeShadows = {
   level1: `
       box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.24);
       box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.16);

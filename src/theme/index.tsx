@@ -23,6 +23,44 @@ import * as components from "~/theme/components";
 import { darkColors, darkShadows } from "./dark";
 import { lightColors, lightShadows } from "./light";
 
+export interface ThemeColors {
+  accent: {
+    purple: string;
+    brightPurple: string;
+    green: string;
+    red: string;
+  };
+  foreground: {
+    primary: string;
+    secondary: string;
+    inverse: string;
+  };
+  background: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    error: string;
+    info: string;
+    warn: string;
+    inverse: string;
+  };
+  border: {
+    primary: string;
+    secondary: string;
+    error: string;
+    info: string;
+    warn: string;
+  };
+  lineGraph: string[];
+}
+
+export interface ThemeShadows {
+  level1: string;
+  level2: string;
+  level3: string;
+  level4: string;
+}
+
 const fontDefault = "intervariable, Arial, sans-serif";
 
 export const initialColorMode = "system";
