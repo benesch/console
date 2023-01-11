@@ -28,6 +28,7 @@ import {
 import * as CSS from "csstype";
 import * as React from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import SupportLink from "~/components/SupportLink";
@@ -182,7 +183,7 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
             fontWeight={500}
           >
             <>
-              {crumb}
+              {isLast ? crumb : <Link to={`/${crumb}`}>{crumb}</Link>}
               {isLast ? null : <ChevronRightIcon />}
             </>
           </PageHeading>
