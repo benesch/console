@@ -6,11 +6,13 @@ import {
   Spinner,
   Text,
   useTheme,
+  VStack,
 } from "@chakra-ui/react";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
+  format,
   subMinutes,
 } from "date-fns";
 import React from "react";
@@ -47,6 +49,9 @@ export interface ReplicaData {
 }
 
 export interface DataPoint {
+  id: number;
+  name: string;
+  size: string;
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
@@ -163,6 +168,9 @@ const ClusterOverview = ({ cluster }: Props) => {
           }
         }
         const bucketValue: DataPoint = {
+          id: replica.id,
+          name: replica.replica,
+          size: replica.size,
           timestamp: bucket,
           cpuPercent: maxCpu.cpuPercent,
           memoryPercent: maxMemory.memoryPercent,
@@ -292,11 +300,7 @@ export const UtilizationGraph = ({
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <LineChart
-        syncId="clusterUtilization"
-        barSize={4}
-        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
-      >
+      <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <CartesianGrid
           vertical={false}
           stroke={semanticColors.border.primary}
@@ -339,21 +343,49 @@ export const UtilizationGraph = ({
           }}
         />
         <Tooltip
-          contentStyle={{
-            background: semanticColors.background.inverse,
-            border: 0,
-            borderRadius: "8px",
-            fontSize: "14px",
-            lineHeight: "16px",
-            padding: "4px 8px",
-          }}
+          animationDuration={200}
           wrapperStyle={{
             outline: "none",
           }}
-          itemStyle={{
-            color: semanticColors.foreground.inverse,
+          content={({ active, payload, label: timestamp }) => {
+            if (!active || !payload || payload.length === 0) return null;
+            return (
+              <VStack
+                spacing={2}
+                background={colors.gray[700]}
+                color={colors.gray[50]}
+                border={0}
+                borderRadius="md"
+                lineHeight="16px"
+                fontSize="sm"
+                paddingY="2"
+                paddingX="4"
+              >
+                {payload.map((item, i) => {
+                  const datapoint = item.payload as DataPoint;
+                  return (
+                    <Flex key={i} justifyContent="space-between" width="160px">
+                      <div>
+                        {datapoint.name}
+                        <Text as="span" color={colors.gray[400]}>
+                          {` (${datapoint.size})`}
+                        </Text>
+                      </div>
+                      <div>
+                        {`${(item.payload[item.dataKey!] as number).toFixed(
+                          1
+                        )}%`}
+                      </div>
+                    </Flex>
+                  );
+                })}
+                <Text color={colors.gray[400]}>{`${format(
+                  timestamp,
+                  "HH:mm:ss"
+                )} UTC`}</Text>
+              </VStack>
+            );
           }}
-          labelFormatter={() => ""}
         />
         {data.map((replicaData) => {
           const replica = replicas.find((r) => r.id === replicaData.id);
