@@ -48,6 +48,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
   const ownProps = useFormControl(otherProps);
 
   const rootStyles: SystemStyleObject = {
+    // custom display value
     display: "flex",
     height: "fit-content",
     position: "relative",
@@ -57,6 +58,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
   const fieldStyles: SystemStyleObject = {
     paddingEnd: "2rem",
     ...styles.field,
+    // custom styles
     height: "32px",
     borderRadius: `0 ${radii.md} ${radii.md} 0`,
     _focusVisible: {
@@ -69,6 +71,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       border: "none",
       outlineOffset: 0,
     },
+    // end custom styles
   };
 
   return (
@@ -79,6 +82,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       {...rootProps}
       justifyContent="center"
       alignItems="center"
+      // custom styles
       borderRadius={radii.md}
       border={`1px solid ${semanticColors.border.secondary}`}
       _focusWithin={{
@@ -86,7 +90,9 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
         boxShadow:
           "0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)" /* accent.brightPurple */,
       }}
+      // end custom styles
     >
+      {/* This is the custom label we add */}
       <chakra.label
         sx={{
           fontSize: "14px",
@@ -100,6 +106,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       >
         {props.label}
       </chakra.label>
+      {/* end custom label*/}
       <SelectField
         ref={ref}
         height={h ?? height}
