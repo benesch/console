@@ -183,7 +183,11 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
             fontWeight={500}
           >
             <>
-              {isLast ? crumb : <Link to={`/${crumb.toLowerCase()}`}>{crumb}</Link>}
+              {isLast ? (
+                crumb
+              ) : (
+                <Link to={`/${crumb.toLowerCase()}`}>{crumb}</Link>
+              )}
               {isLast ? null : <ChevronRightIcon />}
             </>
           </PageHeading>
