@@ -60,7 +60,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
     paddingEnd: "2rem",
     ...styles.field,
     // custom styles
-    borderRadius: `0 ${radii.md} ${radii.md} 0`,
+    borderRadius: `0 ${radii.lg} ${radii.lg} 0`,
     _focusVisible: {
       boxShadow: "none",
     },
@@ -83,7 +83,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       justifyContent="center"
       alignItems="center"
       // custom styles
-      borderRadius={radii.md}
+      borderRadius={radii.lg}
       border={`1px solid ${semanticColors.border.secondary}`}
       boxShadow="
         0px 1px 3px 0px hsla(0, 0%, 0%, 0.06), 
@@ -104,7 +104,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
           lineHeight: "16px",
           height: "100%",
           padding: "8px 12px",
-          borderRadius: `${radii.md} 0 0 ${radii.md}`,
+          borderRadius: `${radii.lg} 0 0 ${radii.lg}`,
           borderRight: `1px solid ${semanticColors.border.secondary}`,
           backgroundColor: semanticColors.background.secondary,
         }}
