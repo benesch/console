@@ -21,6 +21,7 @@ import AlertBox from "~/components/AlertBox";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
+import { MaterializeTheme } from "~/theme";
 
 import SinkErrorsGraph from "./SinkErrorsGraph";
 
@@ -45,7 +46,7 @@ const titleForTimePeriod = (timePeriodMinutes: number) => {
 };
 
 const SinkErrors = ({ sink }: SinkDetailProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 

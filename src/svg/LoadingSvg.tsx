@@ -1,6 +1,8 @@
 import { useTheme } from "@chakra-ui/react";
 import React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 const animationStyles = `@keyframes bigBar {
     0% {
       opacity: 1;
@@ -78,7 +80,7 @@ const animationStyles = `@keyframes bigBar {
 const LoadingSvg: React.FC<
   React.PropsWithChildren<{ fillColor?: string; width?: number }>
 > = ({ fillColor, width = 128 }) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <svg
       className="m-loading-mark"

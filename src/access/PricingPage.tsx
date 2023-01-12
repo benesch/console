@@ -20,6 +20,7 @@ import data from "~/access/pricing.json";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
+import { MaterializeTheme } from "~/theme";
 
 type StaticRegion = "AWS/us-east-1" | "AWS/eu-west-1";
 
@@ -29,7 +30,7 @@ const showFronteggSubscriptionPortal = () => {
 };
 
 const PricingPage = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const { pricingTerms, consumptionTables, regions, terms } = data;
   const [region, setRegion] = React.useState<StaticRegion>(
     regions[0] as StaticRegion

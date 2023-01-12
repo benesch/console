@@ -4,9 +4,10 @@ import { useRecoilValue } from "recoil";
 
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { currentEnvironmentIdState } from "~/recoil/environments";
+import { MaterializeTheme } from "~/theme";
 
 const Dashboard = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironmentId = useRecoilValue(currentEnvironmentIdState);
   return (
     <PageHeader>

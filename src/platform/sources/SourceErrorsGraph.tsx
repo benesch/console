@@ -18,6 +18,7 @@ import {
 } from "recharts";
 
 import { TimestampedCounts, useBucketedSourceErrors } from "~/api/materialized";
+import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 
 export interface Props {
@@ -31,7 +32,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const {
     colors: { semanticColors },
     fonts,
-  } = useTheme();
+  } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),

@@ -20,6 +20,7 @@ import TextLink from "~/components/TextLink";
 import { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
 import Missing from "~/svg/Missing";
 import Slash from "~/svg/Slash";
+import { MaterializeTheme } from "~/theme";
 
 type GenericListProps = {
   message: string;
@@ -40,7 +41,7 @@ export type SQLSuggestion = {
 };
 
 export const SQLSuggestionBox = ({ title, string }: SQLSuggestion) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <VStack spacing={1} alignItems="stretch">
@@ -93,7 +94,7 @@ type IconBoxProps = BoxProps & {
 };
 
 export const IconBox = ({ type, children }: IconBoxProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   let overlapIcon = (
     <Slash

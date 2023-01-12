@@ -33,6 +33,7 @@ import {
 import { CopyButton } from "~/components/copyableComponents";
 import { SubmitButton, TextField } from "~/components/formComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
+import { MaterializeTheme } from "~/theme";
 
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
@@ -154,7 +155,7 @@ const PasswordsTable = ({
   ...props
 }: APIKeysTableProps) => {
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Table variant="borderless">
@@ -232,7 +233,7 @@ type SecretBoxProps = {
 };
 
 const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Alert
       status="info"

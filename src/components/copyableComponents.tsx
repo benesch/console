@@ -18,6 +18,7 @@ import React from "react";
 
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
 import CopyIcon from "~/svg/CopyIcon";
+import { MaterializeTheme } from "~/theme";
 
 /** A hook that manage the copy mechanism and the icon state */
 export const useCopyableText = (text: string, delay?: number) => {
@@ -88,7 +89,7 @@ export const CopyButton: React.FC<
 export const CopyableBox: React.FC<
   React.PropsWithChildren<{ contents: string } & TextProps>
 > = ({ contents, p, ...props }) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <HStack
       alignItems="stretch"
@@ -147,7 +148,7 @@ export const TabbedCodeBlock: React.FC<
   wrap,
   ...props
 }: TabbedCodeBlockProps & BoxProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.title || "");
 
   if (tabs.length === 0) return null;
@@ -213,7 +214,7 @@ export const TabbedCodeBlock: React.FC<
                     : colors.semanticColors.foreground.secondary
                 }
                 _hover={{
-                  bg: colors.semanticColors.foreground.tertiary,
+                  bg: colors.semanticColors.background.tertiary,
                 }}
               >
                 <Box w="4" h="4">
@@ -288,7 +289,7 @@ interface LineProps {
 }
 
 const Line = (props: LineProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <chakra.span
       fontSize="sm"

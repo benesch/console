@@ -31,6 +31,7 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
+import { MaterializeTheme } from "~/theme";
 
 const createClusterSuggestion = {
   title: "Create a cluster",
@@ -59,7 +60,7 @@ type Props = {
 };
 
 const ClustersListPage = ({ clusterResponse }: Props) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -145,7 +146,7 @@ interface ClusterTableProps {
 const ClusterTable = (props: ClusterTableProps) => {
   const navigate = useNavigate();
 
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">

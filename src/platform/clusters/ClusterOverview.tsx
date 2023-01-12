@@ -37,6 +37,7 @@ import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
+import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 
 export interface Props {
@@ -64,7 +65,7 @@ const labelHeightPx = 18;
 const ClusterOverview = ({ cluster }: Props) => {
   const {
     colors: { semanticColors },
-  } = useTheme();
+  } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const [selectedReplica, setSelectedReplica] = React.useState("all");
@@ -300,7 +301,7 @@ export const UtilizationGraph = ({
   const {
     colors: { semanticColors },
     fonts,
-  } = useTheme();
+  } = useTheme<MaterializeTheme>();
   const startTimeMs = startTime.getTime();
   const duration = endTime.getTime() - startTimeMs;
   const tickSlots = Array.from({

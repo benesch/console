@@ -30,6 +30,7 @@ import { NavLink, NavLinkProps } from "react-router-dom";
 import { GenericError } from "~/components/FullPageError";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
+import { MaterializeTheme } from "~/theme";
 
 export interface BaseLayoutProps {
   children?: React.ReactNode;
@@ -147,7 +148,7 @@ export interface PageBreadcrumbsProps {
  * This goes inside a PageHeader for a header that is a series of paths.
  */
 export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   // Render a space if no children so that we take up the right amount of space
   // on pages that don't have breadcrumbs.
   return (
@@ -183,7 +184,7 @@ export interface PageTabStripProps {
 }
 
 export const PageTabStrip = ({ children }: PageTabStripProps) => {
-  const { space } = useTheme();
+  const { space } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARIGIN];
 
   return (
@@ -205,7 +206,7 @@ export type PageTabProps = NavLinkProps & {
   tabProps?: BoxProps;
 };
 export const PageTab = (props: PageTabProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const { children, tabProps, ...navLinkProps } = props;
 
   return (

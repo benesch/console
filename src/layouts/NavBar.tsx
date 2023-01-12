@@ -36,6 +36,7 @@ import ProfileDropdown, {
   AVATAR_WIDTH,
   ProfileMenuItems,
 } from "~/layouts/ProfileDropdown";
+import { MaterializeTheme } from "~/theme";
 
 export const NAV_HORIZONTAL_SPACING = 4;
 export const NAV_HOVER_STYLES = {
@@ -44,7 +45,7 @@ export const NAV_HOVER_STYLES = {
 export const NAV_LOGO_HEIGHT = "80px";
 
 const NavBar = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const { colorMode } = useColorMode();
 
   return (
@@ -218,7 +219,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
 };
 
 const NavItem = (props: NavItemType) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const location = useLocation();
   const href = props.href || "#";
   const active =
@@ -275,7 +276,7 @@ const NavItem = (props: NavItemType) => {
 };
 
 const HelpDropdown = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Menu>
       <MenuButton

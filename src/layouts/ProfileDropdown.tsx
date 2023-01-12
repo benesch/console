@@ -20,12 +20,13 @@ import { Link as RouterLink } from "react-router-dom";
 
 import { getCurrentTenant, useAuth } from "~/api/auth";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
+import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
 export const AVATAR_WIDTH = 8;
 
 const ProfileDropdown = (props: ButtonProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const { user, tenantsState } = useAuth();
   const { switchTenant } = useAuthActions();
 

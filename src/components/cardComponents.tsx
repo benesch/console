@@ -8,6 +8,8 @@ import { Box, Heading, HStack, Text, useTheme } from "@chakra-ui/react";
 import { Tab, TabList, TabListProps, TabProps, Tabs } from "@chakra-ui/tabs";
 import React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 export const CARD_PADDING = 4;
 
 /**
@@ -33,7 +35,7 @@ export const CARD_PADDING = 4;
  */
 export const Card = React.forwardRef(
   (props: BoxProps, ref: React.LegacyRef<HTMLDivElement> | undefined) => {
-    const { colors, shadows } = useTheme();
+    const { colors, shadows } = useTheme<MaterializeTheme>();
 
     return (
       <Box
@@ -63,7 +65,7 @@ export const CardTitle = (props: CardTitleProps) => {
 
 /** A header for a `Card`. */
 export const CardHeader = (props: CardTitleProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <CardTitle
       borderBottomWidth="1px"
@@ -103,7 +105,7 @@ export interface CardFooterProps {
 
 /** A footer for a `Card`. */
 export const CardFooter = (props: CardFooterProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <HStack
       display="flex"

@@ -1,9 +1,11 @@
 import { Box, BoxProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 export type AlertBoxProp = BoxProps;
 const AlertBox = (props: AlertBoxProp) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Box
       width="100%"

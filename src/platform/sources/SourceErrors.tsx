@@ -21,6 +21,7 @@ import AlertBox from "~/components/AlertBox";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
+import { MaterializeTheme } from "~/theme";
 
 import SourceErrorsGraph from "./SourceErrorsGraph";
 
@@ -45,7 +46,7 @@ const titleForTimePeriod = (timePeriodMinutes: number) => {
 };
 
 const SourceErrors = ({ source }: SourceDetailProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 

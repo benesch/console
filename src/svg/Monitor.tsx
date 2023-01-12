@@ -1,8 +1,10 @@
 import { useTheme } from "@chakra-ui/react";
 import React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 const MonitorIcon = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

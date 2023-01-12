@@ -16,6 +16,8 @@ import {
 import { dataAttr } from "@chakra-ui/utils";
 import * as React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 export type LabeledSelectProps = SelectProps & { label: string };
 
 // Much of this code was copied from
@@ -25,7 +27,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
   const {
     colors: { semanticColors },
     radii,
-  } = useTheme();
+  } = useTheme<MaterializeTheme>();
 
   const styles = useMultiStyleConfig("Select", props);
 

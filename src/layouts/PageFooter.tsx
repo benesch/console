@@ -9,6 +9,7 @@ import React from "react";
 
 import TextLink from "~/components/TextLink";
 import Org from "~/layouts/Org";
+import { MaterializeTheme } from "~/theme";
 import Version from "~/version/Version";
 
 /**
@@ -19,7 +20,7 @@ export const getCurrentYear = () => new Date().getFullYear();
 
 /** A footer component */
 const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <HStack

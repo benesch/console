@@ -31,6 +31,7 @@ import {
 import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
+import { MaterializeTheme } from "~/theme";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",
@@ -59,7 +60,7 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -142,7 +143,7 @@ interface ReplicaTableProps {
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
       <Thead>

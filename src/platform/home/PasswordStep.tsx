@@ -18,11 +18,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { CopyableBox } from "~/components/copyableComponents";
+import { MaterializeTheme } from "~/theme";
 
 const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
 
 const PasswordStep = (props: BoxProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const { user } = useAuth();
   const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =

@@ -12,9 +12,10 @@ import {
 import React from "react";
 
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
+import { MaterializeTheme } from "~/theme";
 
 const StepsWhileLoading = () => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const interimStepStyles = {
     borderRadius: "lg",

@@ -33,6 +33,7 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SourcesIcon from "~/svg/Sources";
+import { MaterializeTheme } from "~/theme";
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {
@@ -57,7 +58,7 @@ interface SourceListProps {
 }
 
 const SourcesListPage = ({ sources }: SourceListProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -142,7 +143,7 @@ interface SourceTableProps {
 }
 
 const SourceTable = (props: SourceTableProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
 
   return (

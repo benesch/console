@@ -32,6 +32,7 @@ import {
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
 import SinksIcon from "~/svg/Sinks";
+import { MaterializeTheme } from "~/theme";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   FROM <view_name>
@@ -60,7 +61,7 @@ interface SinkListProps {
 }
 
 const SinksListPage = ({ sinks }: SinkListProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -139,7 +140,7 @@ interface SinkTableProps {
 }
 
 const SinkTable = (props: SinkTableProps) => {
-  const { colors } = useTheme();
+  const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
 
   return (

@@ -1,12 +1,14 @@
 import { Select, SelectProps, useTheme } from "@chakra-ui/react";
 import * as React from "react";
 
+import { MaterializeTheme } from "~/theme";
+
 export type SimpleSelectProps = SelectProps;
 
 const SimpleSelect = (props: SimpleSelectProps) => {
   const {
     colors: { semanticColors },
-  } = useTheme();
+  } = useTheme<MaterializeTheme>();
   return (
     <Select
       fontSize="14px"
