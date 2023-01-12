@@ -16,7 +16,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
-import { Integrations } from "@sentry/tracing";
+import { BrowserTracing } from "@sentry/tracing";
 import { LDProvider } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { createRoot } from "react-dom/client";
@@ -42,7 +42,7 @@ if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
     dsn: config.sentryDsn,
     environment: config.sentryEnvironment,
     release: config.sentryRelease,
-    integrations: [new Integrations.BrowserTracing()],
+    integrations: [new BrowserTracing()],
   });
 }
 
