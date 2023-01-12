@@ -315,11 +315,17 @@ export const UtilizationGraph = ({
   return (
     <ResponsiveContainer width="100%" height={graphHeightPx}>
       <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
+        <CartesianGrid
+          vertical={false}
+          horizontal={data.length > 0}
+          stroke={semanticColors.border.primary}
+          strokeDasharray="4"
+        />
         <XAxis
           allowDuplicatedCategory={false}
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
-          axisLine={{ stroke: semanticColors.border.secondary }}
+          axisLine={{ stroke: semanticColors.border.secondary, strokeWidth: 2 }}
           tickLine={false}
           ticks={ticks}
           dataKey="timestamp"
@@ -355,12 +361,6 @@ export const UtilizationGraph = ({
             return `${value}%`;
           }}
           width={36}
-        />
-        <CartesianGrid
-          vertical={false}
-          horizontal={data.length > 0}
-          stroke={semanticColors.border.primary}
-          strokeDasharray="4"
         />
         <Tooltip
           animationDuration={200}

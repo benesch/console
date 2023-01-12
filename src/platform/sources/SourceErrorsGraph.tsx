@@ -69,13 +69,14 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
       <BarChart data={statuses} barSize={4}>
         <CartesianGrid
           vertical={false}
-          stroke={semanticColors.border.primary}
+          horizontal={statuses.length > 0}
+          stroke={semanticColors.border.secondary}
           strokeDasharray="4"
         />
         <XAxis
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
-          axisLine={false}
+          axisLine={{ stroke: semanticColors.border.secondary, strokeWidth: 2 }}
           tickLine={false}
           ticks={ticks}
           interval={0}
@@ -161,7 +162,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           cursor={false}
         />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
-        {statuses?.length === 0 && (
+        {statuses.length === 0 && (
           <text x="50%" y="50%" textAnchor="middle">
             No data
           </text>
