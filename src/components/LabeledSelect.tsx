@@ -48,9 +48,10 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
   const ownProps = useFormControl(otherProps);
 
   const rootStyles: SystemStyleObject = {
-    // custom display value
+    // custom styles
     display: "flex",
-    height: "fit-content",
+    height: "32px",
+    // end custom styles
     position: "relative",
     color,
   };
@@ -59,7 +60,6 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
     paddingEnd: "2rem",
     ...styles.field,
     // custom styles
-    height: "32px",
     borderRadius: `0 ${radii.md} ${radii.md} 0`,
     _focusVisible: {
       boxShadow: "none",
@@ -102,6 +102,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "16px",
+          height: "100%",
           padding: "8px 12px",
           borderRadius: `${radii.md} 0 0 ${radii.md}`,
           borderRight: `1px solid ${semanticColors.border.secondary}`,
