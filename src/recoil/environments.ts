@@ -82,6 +82,9 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
     result.set(regionId, { state: "disabled" });
 
     if (assignments.length === 0) {
+      result.set(regionId, {
+        state: "disabled",
+      });
       continue;
     }
     if (assignments.length > 1) {
