@@ -201,7 +201,9 @@ const ClusterOverview = ({ cluster }: Props) => {
       width="100%"
     >
       <Flex width="100%" justifyContent="space-between" mb="4">
-        <Text fontSize="md">Resource Usage</Text>
+        <Text fontSize="md" fontWeight={500}>
+          Resource Usage
+        </Text>
         <HStack>
           {cluster && (
             <LabeledSelect
@@ -225,7 +227,9 @@ const ClusterOverview = ({ cluster }: Props) => {
       </Flex>
       <HStack spacing={6}>
         <Box width="100%">
-          <Text fontSize="xs">CPU</Text>
+          <Text fontSize="xs" fontWeight={500}>
+            CPU
+          </Text>
           <UtilizationGraph
             dataKey="cpuPercent"
             data={graphData}
@@ -238,7 +242,9 @@ const ClusterOverview = ({ cluster }: Props) => {
           />
         </Box>
         <Box width="100%">
-          <Text fontSize="xs">Memory</Text>
+          <Text fontSize="xs" fontWeight={500}>
+            Memory
+          </Text>
           <UtilizationGraph
             dataKey="memoryPercent"
             data={graphData}
@@ -343,6 +349,10 @@ export const UtilizationGraph = ({
             fontSize: "12px",
             fontFamily: fonts.mono,
           }}
+          tickFormatter={(value) => {
+            return `${value}%`;
+          }}
+          width={36}
         />
         <Tooltip
           animationDuration={200}
@@ -405,7 +415,7 @@ export const UtilizationGraph = ({
           verticalAlign="bottom"
           height={36}
           content={() => (
-            <HStack spacing={4} as="ul" ml={16}>
+            <HStack spacing={4} as="ul" ml={8}>
               {legendData.map(([replicaId, { name, color }]) => (
                 <HStack as="li" alignItems="center" key={replicaId}>
                   <chakra.div
@@ -414,7 +424,7 @@ export const UtilizationGraph = ({
                     width="8px"
                     borderRadius="8px"
                   ></chakra.div>
-                  <div>{name}</div>
+                  <Text fontSize="xs">{name}</Text>
                 </HStack>
               ))}
             </HStack>

@@ -85,6 +85,10 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       // custom styles
       borderRadius={radii.md}
       border={`1px solid ${semanticColors.border.secondary}`}
+      boxShadow="
+        0px 1px 3px 0px hsla(0, 0%, 0%, 0.06), 
+        0px 1px 1px 0px hsla(0, 0%, 0%, 0.04),
+        0px 0px 0px 0px hsla(0, 0%, 0%, 0)"
       _focusWithin={{
         border: `1px solid ${semanticColors.accent.brightPurple}`,
         boxShadow:
