@@ -75,7 +75,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
   return (
     <>
       <PageHeader>
-        <PageBreadcrumbs crumbs={[clusterName!, "Replicas"]} />
+        <PageBreadcrumbs crumbs={["Clusters", clusterName!]} />
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
