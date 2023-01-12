@@ -58,7 +58,8 @@ export interface DataPoint {
   [key: string]: string | number;
 }
 
-const heightPx = 300;
+const graphHeightPx = 300;
+const labelHeightPx = 18;
 
 const ClusterOverview = ({ cluster }: Props) => {
   const {
@@ -192,6 +193,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   if (errors.length > 0) {
     return <FullPageError />;
   }
+  const loading = !cluster?.replicas || !graphData;
   return (
     <Box
       border={`solid 1px ${semanticColors.border.primary}`}
@@ -226,47 +228,60 @@ const ClusterOverview = ({ cluster }: Props) => {
         </HStack>
       </Flex>
       <HStack spacing={6}>
-        <Box width="100%">
-          <Text fontSize="xs" fontWeight={500}>
-            CPU
-          </Text>
-          <UtilizationGraph
-            dataKey="cpuPercent"
-            data={graphData}
-            startTime={startTime}
-            endTime={endTime}
-            timePeriodMinutes={timePeriodMinutes}
-            replicaColorMap={replicaColorMap}
-            replicas={selectedReplicas}
-            bucketSizeMs={bucketSizeMs}
-          />
-        </Box>
-        <Box width="100%">
-          <Text fontSize="xs" fontWeight={500}>
-            Memory
-          </Text>
-          <UtilizationGraph
-            dataKey="memoryPercent"
-            data={graphData}
-            startTime={startTime}
-            endTime={endTime}
-            timePeriodMinutes={timePeriodMinutes}
-            replicaColorMap={replicaColorMap}
-            replicas={selectedReplicas}
-            bucketSizeMs={bucketSizeMs}
-          />
-        </Box>
+        {loading ? (
+          <Flex
+            height={graphHeightPx + labelHeightPx}
+            width="100%"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Spinner />
+          </Flex>
+        ) : (
+          <>
+            <Box width="100%">
+              <Text fontSize="xs" fontWeight={500}>
+                CPU
+              </Text>
+              <UtilizationGraph
+                dataKey="cpuPercent"
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                replicaColorMap={replicaColorMap}
+                replicas={selectedReplicas}
+                bucketSizeMs={bucketSizeMs}
+              />
+            </Box>
+            <Box width="100%">
+              <Text fontSize="xs" fontWeight={500}>
+                Memory
+              </Text>
+              <UtilizationGraph
+                dataKey="memoryPercent"
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                replicaColorMap={replicaColorMap}
+                replicas={selectedReplicas}
+                bucketSizeMs={bucketSizeMs}
+              />
+            </Box>
+          </>
+        )}
       </HStack>
     </Box>
   );
 };
 
 interface UtilizationGraph {
-  data?: ReplicaData[];
+  data: ReplicaData[];
   dataKey: string;
   endTime: Date;
   replicaColorMap: Map<number, { name: string; color: string }>;
-  replicas?: Replica[];
+  replicas: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
   bucketSizeMs: number;
@@ -297,16 +312,8 @@ export const UtilizationGraph = ({
     [replicaColorMap]
   );
 
-  if (!replicas || !data) {
-    return (
-      <Flex height={heightPx} alignItems="center" justifyContent="center">
-        <Spinner />
-      </Flex>
-    );
-  }
-
   return (
-    <ResponsiveContainer width="100%" height={heightPx}>
+    <ResponsiveContainer width="100%" height={graphHeightPx}>
       <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <CartesianGrid
           vertical={false}
