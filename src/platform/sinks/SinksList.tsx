@@ -168,7 +168,20 @@ const SinkTable = (props: SinkTableProps) => {
               borderBottomWidth="1px"
               borderBottomColor={colors.semanticColors.border.primary}
             >
-              {s.name}
+              <Box
+                maxW={{
+                  base: "120px",
+                  xl: "200px",
+                  "2xl": "400px",
+                  "3xl": "800px",
+                  "4xl": "1200px",
+                }}
+                whiteSpace="nowrap"
+                overflow="hidden"
+                textOverflow="ellipsis"
+              >
+                {s.name}
+              </Box>
             </Td>
             <Td
               borderBottomWidth="1px"
