@@ -78,7 +78,7 @@ export const useSqlWs = () => {
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
-  const socketRef = React.useRef<SqlWebSocket>();
+  const [socket, setSocket] = React.useState<SqlWebSocket | null>(null);
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
 
@@ -95,7 +95,7 @@ export const useSqlWs = () => {
     setSocketError("Connection error");
   }, []);
   React.useEffect(() => {
-    let socket: WebSocket;
+    let ws: WebSocket;
     if (
       accessToken &&
       currentEnvironment?.state === "enabled" &&
@@ -108,41 +108,40 @@ export const useSqlWs = () => {
       currentEnvironment?.state === "enabled" &&
       currentEnvironment.health === "healthy"
     ) {
-      socket = new WebSocket(
+      ws = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
       setSocketError(null);
-      socket.addEventListener("message", handleMessage);
-      socket.onopen = function () {
-        socket.send(
+      ws.addEventListener("message", handleMessage);
+      ws.onopen = function () {
+        ws.send(
           JSON.stringify({
             token: accessToken,
           })
         );
       };
-      socket.addEventListener("close", handleClose);
+      ws.addEventListener("close", handleClose);
 
-      socketRef.current = new SqlWebSocket(socket, setSocketReady);
+      setSocket(new SqlWebSocket(ws, setSocketReady));
     }
     return () => {
       setSocketError(null);
-      socketRef.current = undefined;
+      setSocket(null);
       setSocketReady(false);
-      if (socket) {
-        socket.close();
-        socket.removeEventListener("close", handleClose);
-        socket.removeEventListener("message", handleMessage);
+      if (ws) {
+        ws.close();
+        ws.removeEventListener("close", handleClose);
+        ws.removeEventListener("message", handleMessage);
       }
     };
   }, [currentEnvironment, handleClose, handleMessage, accessToken]);
 
-  return { socketReady, socketRef, socketError };
+  return { socketReady, socket, socketError };
 };
 
 export interface ReplicaUtilization {
   id: number;
   timestamp: number;
-  cpuPercent: number;
   memoryPercent: number;
 }
 
@@ -157,7 +156,7 @@ export const useClusterUtilization = (
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
   const [minFrontier, setMinFrontier] = React.useState<number | undefined>();
-  const { socketReady, socketRef, socketError } = useSqlWs();
+  const { socketReady, socket, socketError } = useSqlWs();
 
   React.useEffect(() => {
     if (socketError) {
@@ -172,14 +171,12 @@ export const useClusterUtilization = (
     setQuerySent(false);
     setExplainSent(false);
     setMinFrontier(undefined);
-  }, [replicaId, clusterId, startTime, endTime]);
+  }, [socket, replicaId, clusterId, startTime, endTime]);
 
   React.useEffect(() => {
-    const ws = socketRef.current;
-    if (!ws || !clusterId) return;
+    if (!socket || !clusterId) return;
 
     const utilizationQuery = `SELECT r.id,
-  u.cpu_percent_normalized,
   u.memory_percent
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
@@ -188,7 +185,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
 
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
-      ws.send({
+      socket.send({
         query: `EXPLAIN TIMESTAMP AS JSON FOR ${utilizationQuery};`,
       });
       setExplainSent(true);
@@ -204,7 +201,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
         // We observed this at least once when the compaction window was not set
         start = endTime;
       }
-      ws.send({
+      socket.send({
         query: `SUBSCRIBE (${utilizationQuery})
   AS OF TIMESTAMP '${start.toISOString()}'
   UP TO TIMESTAMP '${endTime.toISOString()}';`,
@@ -213,7 +210,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
       setData(null);
     }
 
-    ws.onResult((result) => {
+    socket.onResult((result) => {
       if (result.type === "Error") {
         setErrors((val) => [...val, result.payload]);
       }
@@ -234,8 +231,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
             const utilization: ReplicaUtilization = {
               id: result.payload[2] as number,
               timestamp: parseInt(result.payload[0] as string),
-              cpuPercent: result.payload[3] as number,
-              memoryPercent: result.payload[4] as number,
+              memoryPercent: result.payload[3] as number,
             };
             setData((val) => (val ? [...val, utilization] : [utilization]));
           }
@@ -243,12 +239,11 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
       }
     });
 
-    ws.socket.onerror = function (event) {
+    socket.socket.onerror = function (event) {
       console.error("[websocket error]", event);
       setErrors((val) => [...val, "Unexpected error"]);
     };
   }, [
-    socketRef,
     clusterId,
     socketReady,
     querySent,
@@ -257,6 +252,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
     startTime,
     endTime,
     replicaId,
+    socket,
   ]);
 
   return { data, errors };

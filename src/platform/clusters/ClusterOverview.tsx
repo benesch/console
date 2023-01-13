@@ -54,7 +54,6 @@ export interface DataPoint {
   name: string;
   size: string;
   timestamp: number;
-  cpuPercent: number;
   memoryPercent: number;
   [key: string]: string | number;
 }
@@ -158,12 +157,6 @@ const ClusterOverview = ({ cluster }: Props) => {
         if (!utilizations) {
           continue;
         }
-        let maxCpu = utilizations[0];
-        for (const value of utilizations) {
-          if (value.cpuPercent > maxCpu.cpuPercent) {
-            maxCpu = value;
-          }
-        }
         let maxMemory = utilizations[0];
         for (const value of utilizations) {
           if (value.memoryPercent > maxMemory.memoryPercent) {
@@ -175,7 +168,6 @@ const ClusterOverview = ({ cluster }: Props) => {
           name: replica.name,
           size: replica.size,
           timestamp: bucket,
-          cpuPercent: maxCpu.cpuPercent,
           memoryPercent: maxMemory.memoryPercent,
         };
         lineData.push(bucketValue);
@@ -239,38 +231,21 @@ const ClusterOverview = ({ cluster }: Props) => {
             <Spinner />
           </Flex>
         ) : (
-          <>
-            <Box width="100%">
-              <Text fontSize="xs" fontWeight={500}>
-                CPU
-              </Text>
-              <UtilizationGraph
-                dataKey="cpuPercent"
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                replicaColorMap={replicaColorMap}
-                replicas={selectedReplicas}
-                bucketSizeMs={bucketSizeMs}
-              />
-            </Box>
-            <Box width="100%">
-              <Text fontSize="xs" fontWeight={500}>
-                Memory
-              </Text>
-              <UtilizationGraph
-                dataKey="memoryPercent"
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                replicaColorMap={replicaColorMap}
-                replicas={selectedReplicas}
-                bucketSizeMs={bucketSizeMs}
-              />
-            </Box>
-          </>
+          <Box width="100%">
+            <Text fontSize="xs" fontWeight={500}>
+              Memory
+            </Text>
+            <UtilizationGraph
+              dataKey="memoryPercent"
+              data={graphData}
+              startTime={startTime}
+              endTime={endTime}
+              timePeriodMinutes={timePeriodMinutes}
+              replicaColorMap={replicaColorMap}
+              replicas={selectedReplicas}
+              bucketSizeMs={bucketSizeMs}
+            />
+          </Box>
         )}
       </HStack>
     </Box>
