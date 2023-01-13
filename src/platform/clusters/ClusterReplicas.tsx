@@ -150,7 +150,6 @@ const ReplicaTable = (props: ReplicaTableProps) => {
           <Th>Name</Th>
           <Th>Size</Th>
           <Th>Memory</Th>
-          <Th>CPU</Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -181,22 +180,6 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               {r.memoryPercent && (
                 <>
                   {r.memoryPercent.toFixed(1)}
-                  <Text
-                    as="span"
-                    color={colors.semanticColors.foreground.secondary}
-                  >
-                    %
-                  </Text>
-                </>
-              )}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {r.cpuPercent && (
-                <>
-                  {r.cpuPercent.toFixed(1)}
                   <Text
                     as="span"
                     color={colors.semanticColors.foreground.secondary}

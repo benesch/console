@@ -177,7 +177,6 @@ export interface Replica {
   name: string;
   size: string;
   clusterName: string;
-  cpuPercent?: number;
   memoryPercent?: number;
 }
 
@@ -191,7 +190,6 @@ export function useClusters() {
     r.cluster_id,
     r.size,
     c.name as cluster_name,
-    u.cpu_percent_normalized,
     u.memory_percent
   FROM mz_cluster_replicas r
   JOIN mz_clusters c ON c.id = r.cluster_id
@@ -209,8 +207,7 @@ export function useClusters() {
         name: row[1] as string,
         size: row[3] as string,
         clusterName: clusterName,
-        cpuPercent: row[5] as number,
-        memoryPercent: row[6] as number,
+        memoryPercent: row[5] as number,
       };
       const cluster = clusterMap.get(clusterId);
       if (cluster) {
