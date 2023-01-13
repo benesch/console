@@ -51,6 +51,8 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
     // custom styles
     display: "flex",
     height: "32px",
+    overflow: "hidden",
+    borderRadius: radii.lg,
     // end custom styles
     position: "relative",
     color,
@@ -102,9 +104,7 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
           fontSize: "14px",
           fontWeight: 500,
           lineHeight: "16px",
-          height: "100%",
           padding: "8px 12px",
-          borderRadius: `${radii.lg} 0 0 ${radii.lg}`,
           borderRight: `1px solid ${semanticColors.border.secondary}`,
           backgroundColor: semanticColors.background.secondary,
         }}
