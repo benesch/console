@@ -6,7 +6,6 @@ import {
   Table,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
@@ -31,7 +30,7 @@ const showFronteggSubscriptionPortal = () => {
 
 const PricingPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
-  const { pricingTerms, consumptionTables, regions, terms } = data;
+  const { pricingTerms, consumptionTables, regions } = data;
   const [region, setRegion] = React.useState<StaticRegion>(
     regions[0] as StaticRegion
   );
@@ -119,10 +118,6 @@ const PricingPage = () => {
           </Table>
           <CardContent>
             <VStack spacing={4} alignItems="stretch" fontSize="sm">
-              <Text>
-                Free Network Egress up to 1TB for a limited time during Early
-                Access*
-              </Text>
               <HStack justifyContent="flex-start" pt={2}>
                 <Button
                   variant="gradient-1"
@@ -165,11 +160,6 @@ const PricingPage = () => {
                 </Table>
               ))}
             </VStack>
-          </CardContent>
-        </Card>
-        <Card minWidth="fit-content">
-          <CardContent>
-            <Text fontSize="xs">*{terms}</Text>
           </CardContent>
         </Card>
       </VStack>
