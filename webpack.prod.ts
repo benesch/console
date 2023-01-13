@@ -93,6 +93,8 @@ const cspPolicy = {
     `https://rc.eu-west-1.aws.${appHostname}`,
     `https://*.us-east-1.aws.${provisionHostname}`,
     `https://*.eu-west-1.aws.${provisionHostname}`,
+    `wss://*.us-east-1.aws.${provisionHostname}`,
+    `wss://*.eu-west-1.aws.${provisionHostname}`,
     fronteggUrl,
   ],
   "default-src": ["'self'"],
