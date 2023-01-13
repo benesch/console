@@ -493,15 +493,17 @@ WHERE s.id LIKE 'u%';
 `);
   let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
-    const { rows } = sinkResponse.data;
+    const { rows, getColumnByName } = sinkResponse.data;
+    assert(getColumnByName);
+
     sinks = rows.map((row) => ({
-      id: row[0],
-      oid: row[1],
-      name: row[2],
-      type: row[3],
-      size: row[4],
-      status: row[5],
-      error: row[6],
+      id: getColumnByName(row, "id"),
+      oid: getColumnByName(row, "oid"),
+      name: getColumnByName(row, "name"),
+      type: getColumnByName(row, "type"),
+      size: getColumnByName(row, "size"),
+      status: getColumnByName(row, "status"),
+      error: getColumnByName(row, "error"),
     }));
   }
 
