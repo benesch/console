@@ -1,7 +1,6 @@
 import "webpack-dev-server";
 
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import { DefinePlugin } from "webpack";
 import { merge } from "webpack-merge";
 
@@ -99,7 +98,6 @@ module.exports = merge(base, {
   target: "web",
   plugins: [
     new DefinePlugin(definePluginOptions),
-    new ForkTsCheckerWebpackPlugin(),
     new ReactRefreshWebpackPlugin({
       overlay: { sockPort: 3000 },
     }),
