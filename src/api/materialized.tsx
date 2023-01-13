@@ -18,6 +18,7 @@ import { assert } from "~/util";
 export interface Results {
   columns: Array<string>;
   rows: Array<any>;
+  getColumnByName?: <T>(row: any[], name: string) => T;
 }
 
 export interface ExplainTimestampResult {
@@ -152,6 +153,20 @@ export const executeSql = async (
     } = parsedResponse;
     // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
     const { error: resultsError, rows, col_names } = data || {};
+    let getColumnByName = undefined;
+    if (col_names) {
+      const columnMap = new Map(
+        (col_names as string[]).map((name, index) => [name, index])
+      );
+      getColumnByName = (row: any[], name: string) => {
+        const index = columnMap.get(name);
+        if (index === undefined) {
+          throw new Error(`Column named ${name} not found`);
+        }
+
+        return row[index];
+      };
+    }
 
     if (resultsError) {
       result.errorMessage = resultsError;
@@ -159,6 +174,7 @@ export const executeSql = async (
       result.results = {
         rows: rows,
         columns: col_names,
+        getColumnByName,
       };
       result.errorMessage = null;
     }
@@ -261,15 +277,17 @@ WHERE s.id LIKE 'u%';
 `);
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
-    const { rows } = sourceResponse.data;
+    const { rows, getColumnByName } = sourceResponse.data;
+    assert(getColumnByName);
+
     sources = rows.map((row) => ({
-      id: row[0],
-      oid: row[1],
-      name: row[2],
-      type: row[3],
-      size: row[4],
-      status: row[5],
-      error: row[6],
+      id: getColumnByName(row, "id"),
+      oid: getColumnByName(row, "oid"),
+      name: getColumnByName(row, "name"),
+      type: getColumnByName(row, "type"),
+      size: getColumnByName(row, "size"),
+      status: getColumnByName(row, "status"),
+      error: getColumnByName(row, "error"),
     }));
   }
 
