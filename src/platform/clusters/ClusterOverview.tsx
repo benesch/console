@@ -319,7 +319,11 @@ export const UtilizationGraph = ({
   // https://github.com/recharts/recharts/issues/1423#issuecomment-411098968
   return (
     <ResponsiveContainer width="99%" height={graphHeightPx}>
-      <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
+      <LineChart
+        syncId="clusterUtilization"
+        barSize={4}
+        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
+      >
         <CartesianGrid
           vertical={false}
           horizontal={data.length > 0}
