@@ -78,7 +78,7 @@ describe("SinkRoutes", () => {
     );
 
     expect(await screen.findByText("json_sink")).toBeVisible();
-    // expect(await screen.findByText("running")).toBeVisible();
+    expect(await screen.findByText("Running")).toBeVisible();
     expect(await screen.findByText("kafka")).toBeVisible();
     expect(await screen.findByText("xsmall")).toBeVisible();
   });

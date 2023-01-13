@@ -19,6 +19,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Sink } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -148,6 +149,7 @@ const SinkTable = (props: SinkTableProps) => {
       <Thead>
         <Tr>
           <Th>Name</Th>
+          <Th width="25%">Status</Th>
           <Th>Type</Th>
           <Th>Size</Th>
         </Tr>
@@ -167,6 +169,12 @@ const SinkTable = (props: SinkTableProps) => {
               borderBottomColor={colors.semanticColors.border.primary}
             >
               {s.name}
+            </Td>
+            <Td
+              borderBottomWidth="1px"
+              borderBottomColor={colors.semanticColors.border.primary}
+            >
+              {s.status ? <StatusPill status={s.status} /> : "-"}
             </Td>
             <Td
               borderBottomWidth="1px"
