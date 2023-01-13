@@ -1,8 +1,5 @@
 {
-  "regions": [
-    "AWS/us-east-1",
-    "AWS/eu-west-1"
-  ],
+  "regions": ["AWS/us-east-1", "AWS/eu-west-1"],
   "pricingTerms": {
     "rows": [
       "Credit price",
@@ -13,23 +10,15 @@
       {
         "title": "On demand",
         "values": {
-          "AWS/us-east-1": [
-            "$1.50",
-            "$0.00004110",
-            "$0.12"
-          ],
-          "AWS/eu-west-1": [
-            "$1.70",
-            "$0.00004110",
-            "$0.12"
-          ]
+          "AWS/us-east-1": ["$1.50", "$0.00004110", "$0.12"],
+          "AWS/eu-west-1": ["$1.70", "$0.00004110", "$0.12"]
         }
       }
     ]
   },
   "consumptionTables": [
     {
-      "title": "Compute (credits per hour)",
+      "title": "Cluster Replica (credits per hour)",
       "values": {
         "AWS/us-east-1": [
           { "title": "2xs", "value": "0.5" },
@@ -56,30 +45,8 @@
           { "title": "4xl", "value": "128" },
           { "title": "5xl", "value": "256" },
           { "title": "6xl", "value": "512" }
-        ]
-      }
-    },
-    {
-      "title": "Source/sink (credits per hour)",
-      "values": {
-        "AWS/us-east-1": [
-          { "title": "3xs", "value": "0.0533" },
-          { "title": "2xs", "value": "0.1067" },
-          { "title": "xs", "value": "0.2133" },
-          { "title": "s", "value": "0.4267" },
-          { "title": "m", "value": "0.8533" },
-          { "title": "l", "value": "1.7067" }
-        ],
-        "AWS/eu-west-1": [
-          { "title": "3xs", "value": "0.0523" },
-          { "title": "2xs", "value": "0.1046" },
-          { "title": "xs", "value": "0.2092" },
-          { "title": "s", "value": "0.4183" },
-          { "title": "m", "value": "0.8366" },
-          { "title": "l", "value": "1.6732" }
         ]
       }
     }
-  ],
-  "terms": "As an On-Demand customer entering into this subscription during Materialize’s Early Access period, during the Subscription Term only, Materialize may (but is not obligated to), in its sole discretion, waive Customer’s Fee for Network Egress of less than 1 terabyte for all or part of any monthly period. Customer acknowledges and agrees that it is responsible for, and shall pay, in accordance with this subscriptions page and the Materialize Cloud Terms and Conditions, among other Fees set forth herein: (a) for all monthly periods in which Materialize has elected to grant the waiver described in the foregoing sentence, any Fee for Network Egress not waived by Materialize, at the rate set forth in the Pricing table, and (b) for all monthly periods in which Materialize has not elected to grant such a waiver, a Fee on all Network Egress, at such rate. For the avoidance of doubt, Materialize reserves the right, in its sole discretion, to begin or resume charging Customer full monthly Fees for Network Egress at any time."
+  ]
 }
