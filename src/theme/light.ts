@@ -10,7 +10,7 @@ import colors from "./colors";
 export const lightColors: ThemeColors = {
   accent: {
     purple: colors.purple[600],
-    brightPurple: colors.purple[400],
+    brightPurple: colors.purple[500],
     green: colors.green[500],
     red: colors.red[500],
   },
