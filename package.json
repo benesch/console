@@ -93,7 +93,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/webpack-dev-server": "^4.7.2",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "@typescript-eslint/parser": "^5.46.1",
+    "@typescript-eslint/parser": "^5.48.1",
     "cacheable-lookup": "6.0.4",
     "concurrently": "7.0.0",
     "eslint": "^8.23.0",
