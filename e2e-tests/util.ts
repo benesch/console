@@ -81,6 +81,8 @@ interface FronteggAuthResponse {
   expiresIn: number;
 }
 
+export type Options = Parameters<APIRequestContext["fetch"]>[1];
+
 /** Manages an end-to-end test against Materialize Cloud. */
 export class TestContext {
   page: Page;
@@ -194,7 +196,7 @@ export class TestContext {
   /**
    * Make an authenticated API request.
    */
-  async apiRequest(url: string, request?: any) {
+  async apiRequest(url: string, request?: Partial<Options>) {
     await this.ensureAuthenticated();
     request = {
       ...request,
@@ -217,7 +219,7 @@ export class TestContext {
         // eslint-disable-next-line no-unsafe-finally
         throw new Error(
           `API Error ${response.status()}  ${url}, req: ${
-            request.body ?? "No request body"
+            request.data ?? "No request body"
           }, res: ${responsePayload ?? "No response body"}`
         );
     }
@@ -232,25 +234,45 @@ export class TestContext {
 
   /** Delete any existing EnvironmentAssignments. */
   async deleteAllEnvironmentAssignments() {
-    for (const region of PLATFORM_REGIONS) {
-      const regionControllerUrl = getRegionControllerUrl(region);
-      console.log(
-        `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
+    await Promise.all(
+      PLATFORM_REGIONS.map((region) =>
+        this.deleteRegionEnvironmentAssignment(region)
+      )
+    );
+  }
+
+  async deleteRegionEnvironmentAssignment(region: string): Promise<any> {
+    let attempts = 1;
+    const regionControllerUrl = getRegionControllerUrl(region);
+    console.log(
+      `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
+    );
+    try {
+      return await this.apiRequest(
+        `${regionControllerUrl}/api/environmentassignment`,
+        // The timeout on the ALB is 60 seconds, so this timeout doesn't matter much
+        { method: "DELETE", timeout: 5 * 60000 }
       );
-      try {
-        await this.apiRequest(
-          `${regionControllerUrl}/api/environmentassignment`,
-          { method: "DELETE", timeout: 5 * 60000 }
-        );
-      } catch (e: unknown) {
-        console.error(e);
-        // If the environment does not exist, it's okay to ignore the error.
+    } catch (e: unknown) {
+      console.error(e);
+      if (e instanceof Error) {
         if (e.message.includes("API Error 404")) {
+          // If the environment does not exist, it's okay to ignore the error.
           console.log("EnvironmentAssignment already deleted.");
-        } else {
-          throw e;
+          return;
+        } else if (e.message.includes("API Error 504")) {
+          // If we get a 504, the ALB most likely timed out
+          // we will try 3 times total
+          if (attempts < 5) {
+            attempts += 1;
+            console.log(
+              `Retrying delete environment assignment for ${region}, attempt ${attempts}`
+            );
+            return this.deleteRegionEnvironmentAssignment(region);
+          }
         }
       }
+      throw e;
     }
   }
 
@@ -276,7 +298,7 @@ export class TestContext {
     );
     const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
-      const age = new Date() - Date.parse(k.createdAt);
+      const age = new Date().getTime() - Date.parse(k.createdAt);
       if (age < hours * 60 * 60 * 1000) {
         continue;
       }
@@ -293,7 +315,8 @@ export class TestContext {
         );
       } catch (e: unknown) {
         // if the deployment does not exist, it's okay to ignore the error.
-        const keyDoesNotExist = e.message.includes("API Error 404");
+        const keyDoesNotExist =
+          e instanceof Error && e.message.includes("API Error 404");
         if (!keyDoesNotExist) {
           throw e;
         }
