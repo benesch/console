@@ -1,23 +1,10 @@
-import {
-  Box,
-  Flex,
-  HStack,
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useTheme,
-  VStack,
-} from "@chakra-ui/react";
-import { format, subMinutes } from "date-fns";
+import { Box, Flex, HStack, Text, useTheme, VStack } from "@chakra-ui/react";
+import { subMinutes } from "date-fns";
 import React from "react";
 
-import { GroupedError, Sink, useSinkErrors } from "~/api/materialized";
+import { Sink, useSinkErrors } from "~/api/materialized";
 import AlertBox from "~/components/AlertBox";
+import ConnectorErrorsTable from "~/components/ConnectorErrorsTable";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
 } from "~/components/TimePeriodSelect";
@@ -29,24 +16,10 @@ export interface SinkDetailProps {
   sink?: Sink;
 }
 
-const timePeriodOptions: Record<string, string> = {
-  "15": "Last 15 minutes",
-  "60": "Last hour",
-  "180": "Last 3 hours",
-  "360": "Last 6 hours",
-  "720": "Last 12 hours",
-  "1440": "Last 24 hours",
-  "4320": "Last 3 days",
-  "43200": "Last 30 days",
-};
-
-const titleForTimePeriod = (timePeriodMinutes: number) => {
-  const period = timePeriodOptions[timePeriodMinutes.toString()];
-  return `Errors over the ${period.toLowerCase()}`;
-};
-
 const SinkErrors = ({ sink }: SinkDetailProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 
@@ -66,16 +39,16 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
         <VStack width="100%" alignItems="flex-start" spacing={4}>
           {sink?.error && (
             <AlertBox>
-              <Text opacity="0.6" color="semanticColors.foreground.primary">
+              <Text opacity="0.6" color={semanticColors.foreground.primary}>
                 Sink error
               </Text>
-              <Text color="semanticColors.foregroun.primary">
+              <Text color={semanticColors.foreground.primary}>
                 {sink?.error}
               </Text>
             </AlertBox>
           )}
           <Box
-            border={`solid 1px ${colors.semanticColors.border.primary}`}
+            border={`solid 1px ${semanticColors.border.primary}`}
             borderRadius="8px"
             py={4}
             px={6}
@@ -100,7 +73,7 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
               timePeriodMinutes={timePeriodMinutes}
             />
           </Box>
-          <SinkErrorsTable
+          <ConnectorErrorsTable
             errors={errors}
             loading={loading}
             timePeriodMinutes={timePeriodMinutes}
@@ -108,98 +81,6 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
         </VStack>
       </VStack>
     </HStack>
-  );
-};
-
-interface SinkErrorsTableProps {
-  errors: GroupedError[] | null;
-  loading: boolean;
-  timePeriodMinutes: number;
-}
-
-const SinkErrorsTable = ({
-  errors,
-  loading,
-  timePeriodMinutes,
-}: SinkErrorsTableProps) => {
-  return (
-    <VStack spacing={6} width="100%" alignItems="flex-start">
-      <Text fontSize="16px" fontWeight={500}>
-        {titleForTimePeriod(timePeriodMinutes)}
-      </Text>
-      {!errors || loading ? (
-        <Flex justifyContent="center" width="100%">
-          <Spinner />
-        </Flex>
-      ) : (
-        <Table
-          variant="borderless"
-          data-testid="sink-errors-table"
-          borderRadius="xl"
-        >
-          <Thead>
-            <Tr>
-              <Th>Error</Th>
-              <Th>Count</Th>
-              <Th>Last encountered</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {errors.map((error) => (
-              <Tr
-                key={error.lastOccurred.getMilliseconds()}
-                sx={{
-                  _hover: {
-                    backgroundColor: "semanticColors.background.secondary",
-                  },
-                }}
-              >
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor="semanticColors.border.primary"
-                >
-                  {error.error}
-                </Td>
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor="semanticColors.border.primary"
-                >
-                  {error.count}
-                </Td>
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor="semanticColors.border.primary"
-                >
-                  <Text
-                    color="semanticColors.foreground.secondary"
-                    display="inline"
-                  >
-                    {format(error.lastOccurred, "MM-dd-yy")}
-                  </Text>
-                  <Text
-                    color="semanticColors.foreground.secondary"
-                    display="inline"
-                  >
-                    {" · "}
-                  </Text>
-                  <Text
-                    color="semanticColors.foreground.primary"
-                    display="inline"
-                  >
-                    {format(error.lastOccurred, "HH:mm:ss")} UTC
-                  </Text>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      )}
-      {errors?.length === 0 && (
-        <Flex width="100%" justifyContent="center">
-          No errors
-        </Flex>
-      )}
-    </VStack>
   );
 };
 
