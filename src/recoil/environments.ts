@@ -201,10 +201,15 @@ export const useEnvironmentsWithHealth = (
       setValue(newEnvMap);
       return;
     }
+    let mapChanged = false;
     for (const [key, newValue] of newEnvMap.entries()) {
       if (!deepEqual(environmentMap.get(key), newValue)) {
         environmentMap.set(key, newValue);
+        mapChanged = true;
       }
+    }
+    if (mapChanged) {
+      setValue(newEnvMap);
     }
     return environmentMap;
   };
