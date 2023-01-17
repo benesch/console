@@ -53,7 +53,7 @@ const SinkDetail = ({ sink }: SinkDetailProps) => {
                   >
                     The following statement was used to create this sink.
                   </Box>
-                  <CopyableBox mt={4} contents={ddl}>
+                  <CopyableBox mt={4} contents={ddl ?? ""}>
                     {ddl}
                   </CopyableBox>
                 </Box>

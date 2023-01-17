@@ -18,6 +18,7 @@ import { assert } from "~/util";
 export interface Results {
   columns: Array<string>;
   rows: Array<any>;
+  getColumnByName?: <R, V>(row: R[], name: string) => V;
 }
 
 export interface ExplainTimestampResult {
@@ -152,6 +153,20 @@ export const executeSql = async (
     } = parsedResponse;
     // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
     const { error: resultsError, rows, col_names } = data || {};
+    let getColumnByName = undefined;
+    if (col_names) {
+      const columnMap = new Map(
+        (col_names as string[]).map((name, index) => [name, index])
+      );
+      getColumnByName = (row: any[], name: string) => {
+        const index = columnMap.get(name);
+        if (index === undefined) {
+          throw new Error(`Column named ${name} not found`);
+        }
+
+        return row[index];
+      };
+    }
 
     if (resultsError) {
       result.errorMessage = resultsError;
@@ -159,6 +174,7 @@ export const executeSql = async (
       result.results = {
         rows: rows,
         columns: col_names,
+        getColumnByName,
       };
       result.errorMessage = null;
     }
@@ -199,15 +215,18 @@ export function useClusters() {
 
   const clusterMap: Map<string, Cluster> = new Map();
   if (response.data) {
-    response.data.rows.forEach((row: string | number[]) => {
-      const clusterId = row[2] as string;
-      const clusterName = row[4] as string;
+    const { getColumnByName } = response.data;
+    assert(getColumnByName);
+
+    response.data.rows.forEach((row) => {
+      const clusterId = getColumnByName(row, "cluster_id") as string;
+      const clusterName = getColumnByName(row, "cluster_name") as string;
       const replica: Replica = {
-        id: row[0] as number,
-        name: row[1] as string,
-        size: row[3] as string,
+        id: getColumnByName(row, "id") as number,
+        name: getColumnByName(row, "replica_name") as string,
+        size: getColumnByName(row, "size") as string,
         clusterName: clusterName,
-        memoryPercent: row[5] as number,
+        memoryPercent: getColumnByName(row, "memory_percent") as number,
       };
       const cluster = clusterMap.get(clusterId);
       if (cluster) {
@@ -261,15 +280,17 @@ WHERE s.id LIKE 'u%';
 `);
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
-    const { rows } = sourceResponse.data;
+    const { rows, getColumnByName } = sourceResponse.data;
+    assert(getColumnByName);
+
     sources = rows.map((row) => ({
-      id: row[0],
-      oid: row[1],
-      name: row[2],
-      type: row[3],
-      size: row[4],
-      status: row[5],
-      error: row[6],
+      id: getColumnByName(row, "id"),
+      oid: getColumnByName(row, "oid"),
+      name: getColumnByName(row, "name"),
+      type: getColumnByName(row, "type"),
+      size: getColumnByName(row, "size"),
+      status: getColumnByName(row, "status"),
+      error: getColumnByName(row, "error"),
     }));
   }
 
@@ -315,11 +336,13 @@ export function useSourceErrors({
   );
   let errors: GroupedError[] | null = null;
   if (result.data) {
-    const { rows } = result.data;
+    const { rows, getColumnByName } = result.data;
+    assert(getColumnByName);
+
     errors = rows.map((row) => ({
-      lastOccurred: new Date(parseInt(row[0])),
-      error: row[1],
-      count: row[2],
+      lastOccurred: new Date(parseInt(getColumnByName(row, "last_occurred"))),
+      error: getColumnByName(row, "error"),
+      count: getColumnByName(row, "count"),
     }));
   }
 
@@ -355,11 +378,13 @@ export function useSinkErrors({
   );
   let errors: GroupedError[] | null = null;
   if (result.data) {
-    const { rows } = result.data;
+    const { rows, getColumnByName } = result.data;
+    assert(getColumnByName);
+
     errors = rows.map((row) => ({
-      lastOccurred: new Date(parseInt(row[0])),
-      error: row[1],
-      count: row[2],
+      lastOccurred: new Date(parseInt(getColumnByName(row, "last_occurred"))),
+      error: getColumnByName(row, "error"),
+      count: getColumnByName(row, "count"),
     }));
   }
 
@@ -400,11 +425,13 @@ ORDER BY bin_start DESC;`
   );
   let statuses: TimestampedCounts[] | null = null;
   if (result.data) {
-    const { rows } = result.data;
+    const { rows, getColumnByName } = result.data;
+    assert(getColumnByName);
+
     statuses = rows.map((row) => {
       return {
-        count: row[0] as number,
-        timestamp: parseInt(row[1]) as number,
+        count: getColumnByName(row, "count") as number,
+        timestamp: parseInt(getColumnByName(row, "bin_start")) as number,
       };
     });
   }
@@ -441,11 +468,13 @@ ORDER BY bin_start DESC;`
   );
   let statuses: TimestampedCounts[] | null = null;
   if (result.data) {
-    const { rows } = result.data;
+    const { rows, getColumnByName } = result.data;
+    assert(getColumnByName);
+
     statuses = rows.map((row) => {
       return {
-        count: row[0] as number,
-        timestamp: parseInt(row[1]) as number,
+        count: getColumnByName(row, "count") as number,
+        timestamp: parseInt(getColumnByName(row, "bin_start")) as number,
       };
     });
   }
@@ -475,15 +504,17 @@ WHERE s.id LIKE 'u%';
 `);
   let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
-    const { rows } = sinkResponse.data;
+    const { rows, getColumnByName } = sinkResponse.data;
+    assert(getColumnByName);
+
     sinks = rows.map((row) => ({
-      id: row[0],
-      oid: row[1],
-      name: row[2],
-      type: row[3],
-      size: row[4],
-      status: row[5],
-      error: row[6],
+      id: getColumnByName(row, "id"),
+      oid: getColumnByName(row, "oid"),
+      name: getColumnByName(row, "name"),
+      type: getColumnByName(row, "type"),
+      size: getColumnByName(row, "size"),
+      status: getColumnByName(row, "status"),
+      error: getColumnByName(row, "error"),
     }));
   }
 
@@ -503,10 +534,12 @@ export function useDDL(noun: DDLNoun, sinkName?: string) {
   const { data, error, refetch } = useSql(
     sinkName ? `SHOW CREATE ${noun} "${sinkName}"` : undefined
   );
-  let ddl = null;
+  let ddl: string | null = null;
   if (sinkName && data) {
-    const { rows } = data;
-    ddl = rows[0][1];
+    const { rows, getColumnByName } = data;
+    assert(getColumnByName);
+
+    ddl = getColumnByName(rows[0], "create_sql");
   }
 
   return { ddl, error, refetch };
