@@ -1,4 +1,5 @@
 import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { ApiError } from "openapi-typescript-fetch";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
