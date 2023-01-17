@@ -18,11 +18,13 @@ const ConnectSteps = (): JSX.Element => {
 
   const environmentdAddress = currentEnvironment.environmentdPgwireAddress;
 
-  // switch is pretty overkill atm, but someday there'll be more
-  // pre-baked connection options
+  // NOTE(benesch): We'd like to use `sslmode=verify-full` to prevent MITM
+  // attacks, but that mode requires specifying `sslrootcert=/path/to/cabundle`,
+  // and that path varies by platform. So instead we use `require`, which is
+  // at least better than the default of `prefer`.
   const psqlCopyString = `psql "postgres://${encodeURIComponent(
     user.email
-  )}@${environmentdAddress}/materialize"`;
+  )}@${environmentdAddress}/materialize?sslmode=require"`;
 
   return (
     <TabbedCodeBlock
