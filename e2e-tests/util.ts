@@ -245,7 +245,7 @@ export class TestContext {
       } catch (e: unknown) {
         console.error(e);
         // If the environment does not exist, it's okay to ignore the error.
-        if (e.message.includes("API Error 404")) {
+        if (e instanceof Error && e.message.includes("API Error 404")) {
           console.log("EnvironmentAssignment already deleted.");
         } else {
           throw e;
@@ -276,7 +276,7 @@ export class TestContext {
     );
     const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
-      const age = new Date() - Date.parse(k.createdAt);
+      const age = new Date().getTime() - Date.parse(k.createdAt);
       if (age < hours * 60 * 60 * 1000) {
         continue;
       }
@@ -293,7 +293,8 @@ export class TestContext {
         );
       } catch (e: unknown) {
         // if the deployment does not exist, it's okay to ignore the error.
-        const keyDoesNotExist = e.message.includes("API Error 404");
+        const keyDoesNotExist =
+          e instanceof Error && e.message.includes("API Error 404");
         if (!keyDoesNotExist) {
           throw e;
         }
