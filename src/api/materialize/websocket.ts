@@ -186,7 +186,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
       socket.send({
-        query: `EXPLAIN TIMESTAMP AS JSON FOR ${utilizationQuery};`,
+        query: `SET CLUSTER = mz_introspection; EXPLAIN TIMESTAMP AS JSON FOR ${utilizationQuery};`,
       });
       setExplainSent(true);
     }
