@@ -15,6 +15,7 @@ import {
   format,
   subMinutes,
 } from "date-fns";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import {
   CartesianGrid,
@@ -66,6 +67,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const flags = useFlags();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const [selectedReplica, setSelectedReplica] = React.useState("all");
@@ -241,21 +243,23 @@ const ClusterOverview = ({ cluster }: Props) => {
           </Flex>
         ) : (
           <>
-            <Box width="100%">
-              <Text fontSize="xs" fontWeight={500}>
-                CPU
-              </Text>
-              <UtilizationGraph
-                dataKey="cpuPercent"
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                replicaColorMap={replicaColorMap}
-                replicas={selectedReplicas}
-                bucketSizeMs={bucketSizeMs}
-              />
-            </Box>
+            {flags["cluster-cpu-utilization-5188"] && (
+              <Box width="100%">
+                <Text fontSize="xs" fontWeight={500}>
+                  CPU
+                </Text>
+                <UtilizationGraph
+                  dataKey="cpuPercent"
+                  data={graphData}
+                  startTime={startTime}
+                  endTime={endTime}
+                  timePeriodMinutes={timePeriodMinutes}
+                  replicaColorMap={replicaColorMap}
+                  replicas={selectedReplicas}
+                  bucketSizeMs={bucketSizeMs}
+                />
+              </Box>
+            )}
             <Box width="100%">
               <Text fontSize="xs" fontWeight={500}>
                 Memory
