@@ -21,7 +21,8 @@ const RegionCrashed = ({ environment }: RegionCrashedProps) => {
           <Text>Double check that your internet connection is healthy.</Text>
         )}
         <Text>
-          <SupportLink>Contact support</SupportLink> if the issue persists.
+          Visit our <SupportLink>help center</SupportLink> if the issue
+          persists.
         </Text>
       </VStack>
     </Flex>

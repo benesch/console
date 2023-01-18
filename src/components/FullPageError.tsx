@@ -12,7 +12,8 @@ const FullPageError = ({ message }: { message?: string }) => {
           {message ?? "An unexpected error has occured"}
         </Alert>
         <Text>
-          <SupportLink>Contact support</SupportLink> if the issue persists.
+          Visit our <SupportLink>help center</SupportLink> if the issue
+          persists.
         </Text>
       </VStack>
     </Flex>
