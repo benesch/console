@@ -40,7 +40,10 @@ describe("recoil/environments", () => {
       expect(result.health).toEqual("crashed");
       expect(result.errors).toEqual([
         {
-          message: "bad request",
+          message: "Environmentd health check failed",
+        },
+        {
+          message: "HTTP Error 400: bad request",
         },
       ]);
     });
@@ -83,7 +86,9 @@ describe("recoil/environments", () => {
             name: "AbortError",
             message: "The user aborted a request.",
           }),
-          message: "Environment is unresponsive for unknown reason",
+          message: expect.stringMatching(
+            "Environment not healthy for more than .* after creation"
+          ),
         },
       ]);
     });

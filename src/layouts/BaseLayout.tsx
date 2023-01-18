@@ -27,7 +27,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
-import EnvironmentErrorDetails from "~/components/EnvironmentErrorDetails";
+import ContentOrEnvironmentErrors from "~/components/ContentOrEnvironmentErrors";
 import { GenericError } from "~/components/FullPageError";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
@@ -89,8 +89,9 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
                   </Center>
                 }
               >
-                {children}
-                <EnvironmentErrorDetails />
+                <ContentOrEnvironmentErrors>
+                  {children}
+                </ContentOrEnvironmentErrors>
               </React.Suspense>
             </ErrorBoundary>
           </Flex>

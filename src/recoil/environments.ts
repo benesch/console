@@ -1,5 +1,5 @@
 import { useInterval } from "@chakra-ui/react";
-import { add } from "date-fns";
+import { add, formatDuration } from "date-fns";
 import deepEqual from "fast-deep-equal";
 import { ApiError } from "openapi-typescript-fetch";
 import React from "react";
@@ -90,7 +90,7 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
     } catch (error) {
       assignmentMap.set(getRegionId(region), {
         error: {
-          message: `Failed to fetch environmentAssignmentList for ${region.region}`,
+          message: "Listing environment assignments failed",
           details: error as Error,
         },
       });
@@ -280,6 +280,9 @@ export const fetchEnvironmentHealth = async (
     );
     if (errorMessage !== null) {
       errors.push({
+        message: "Environmentd health check failed",
+      });
+      errors.push({
         message: errorMessage,
       });
       health = "crashed";
@@ -291,7 +294,9 @@ export const fetchEnvironmentHealth = async (
     const cutoff = add(new Date(environment.creationTimestamp), maxBoot);
     if (new Date() > cutoff) {
       errors.push({
-        message: "Environment is unresponsive for unknown reason",
+        message: `Environment not healthy for more than ${formatDuration(
+          maxBoot
+        )} after creation`,
         details: e as Error,
       });
       health = "crashed";

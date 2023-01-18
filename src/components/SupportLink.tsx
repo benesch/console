@@ -3,15 +3,25 @@
  * Call to action (CTA) components.
  */
 
-import { LinkProps } from "@chakra-ui/react";
+import { LinkProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import TextLink from "~/components/TextLink";
+import { MaterializeTheme } from "~/theme";
 
 export const SUPPORT_HREF = `https://support.materialize.com/`;
 
 const SupportLink = (props: LinkProps) => {
-  return <TextLink href={SUPPORT_HREF} {...props} />;
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <TextLink
+      color={semanticColors.foreground.primary}
+      href={SUPPORT_HREF}
+      {...props}
+    />
+  );
 };
 
 export default SupportLink;

@@ -1,5 +1,4 @@
 import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
-import { ApiError } from "openapi-typescript-fetch";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
@@ -7,7 +6,6 @@ import { useAuth } from "~/api/auth";
 import ConnectSteps from "~/platform/home/ConnectSteps";
 import GetStartedDocs from "~/platform/home/GetStartedDocs";
 import PasswordStep from "~/platform/home/PasswordStep";
-import RegionCrashed from "~/platform/home/RegionCrashed";
 import StepsWhileLoading from "~/platform/home/StepsWhileLoading";
 import CreateEnvironmentButton from "~/platform/tutorial/CreateEnvironmentButton";
 import EnvironmentList from "~/platform/tutorial/EnvironmentList";
@@ -81,9 +79,6 @@ const Home = () => {
                 </VStack>
               </VStack>
             );
-            break;
-          case "crashed":
-            content = <RegionCrashed environment={currentEnvironment} />;
             break;
         }
         break;
