@@ -178,7 +178,7 @@ export const useClusterUtilization = (
     if (!socket || !clusterId) return;
 
     const utilizationQuery = `SELECT r.id,
-  u.cpu_percent_normalized,
+  u.cpu_percent,
   u.memory_percent
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
