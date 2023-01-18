@@ -202,6 +202,7 @@ const ClusterOverview = ({ cluster }: Props) => {
       py={4}
       px={6}
       width="100%"
+      minW="460px"
     >
       <Flex width="100%" justifyContent="space-between" mb="4">
         <Text fontSize="md" fontWeight={500}>
@@ -313,8 +314,10 @@ export const UtilizationGraph = ({
     [replicaColorMap]
   );
 
+  // ResponsiveContainer in a flex container doesn't work correctly with width 100%, but does at 99%
+  // https://github.com/recharts/recharts/issues/1423#issuecomment-411098968
   return (
-    <ResponsiveContainer width="100%" height={graphHeightPx}>
+    <ResponsiveContainer width="99%" height={graphHeightPx}>
       <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <CartesianGrid
           vertical={false}
