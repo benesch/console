@@ -190,9 +190,6 @@ const ClusterOverview = ({ cluster }: Props) => {
     return chartData;
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
-  if (errors.length === 1 && errors[0] === "Region unavailable") {
-    return <FullPageError message="This region is currently unavailable" />;
-  }
   if (errors.length > 0) {
     return <FullPageError />;
   }

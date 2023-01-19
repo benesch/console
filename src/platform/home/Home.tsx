@@ -6,7 +6,6 @@ import { useAuth } from "~/api/auth";
 import ConnectSteps from "~/platform/home/ConnectSteps";
 import GetStartedDocs from "~/platform/home/GetStartedDocs";
 import PasswordStep from "~/platform/home/PasswordStep";
-import RegionCrashed from "~/platform/home/RegionCrashed";
 import StepsWhileLoading from "~/platform/home/StepsWhileLoading";
 import CreateEnvironmentButton from "~/platform/tutorial/CreateEnvironmentButton";
 import EnvironmentList from "~/platform/tutorial/EnvironmentList";
@@ -80,9 +79,6 @@ const Home = () => {
                 </VStack>
               </VStack>
             );
-            break;
-          case "crashed":
-            content = <RegionCrashed environment={currentEnvironment} />;
             break;
         }
         break;

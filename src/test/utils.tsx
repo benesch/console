@@ -20,6 +20,7 @@ export const healthyEnvironment: LoadedEnvironment = {
   creationTimestamp: "2023-01-10T01:59:37Z",
   state: "enabled",
   health: "healthy",
+  errors: [],
 };
 
 export const setFakeEnvironment = (

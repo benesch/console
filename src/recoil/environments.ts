@@ -1,6 +1,7 @@
 import { useInterval } from "@chakra-ui/react";
-import { add } from "date-fns";
+import { add, formatDuration } from "date-fns";
 import deepEqual from "fast-deep-equal";
+import { ApiError } from "openapi-typescript-fetch";
 import React from "react";
 import {
   atom,
@@ -24,6 +25,12 @@ import { getRegionId } from "../types";
 import storageAvailable from "../utils/storageAvailable";
 import keys from "./keyConstants";
 
+/** Details about errors fetching environment health. */
+export interface EnvironmentError {
+  message: string;
+  details?: ApiError | Error;
+}
+
 /** The health of an environment. */
 export type EnvironmentHealth = "pending" | "booting" | "healthy" | "crashed";
 
@@ -35,12 +42,14 @@ export interface LoadingEnvironment {
 /** Represents an environment that is known to be disabled. */
 export interface DisabledEnvironment {
   state: "disabled";
+  errors: EnvironmentError[];
 }
 
 /** Represents an environment that is known to exist. */
 export interface EnabledEnvironment extends ApiEnvironment {
   state: "enabled";
   health: EnvironmentHealth;
+  errors: EnvironmentError[];
 }
 
 export type Environment =
@@ -67,53 +76,100 @@ export const maybeEnvironmentForRegion = selectorFamily({
 
 export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
   const result = new Map<string, LoadedEnvironment>();
-  const assignmentMap = new Map<string, EnvironmentAssignment[]>();
+  const assignmentMap = new Map<
+    string,
+    { assignments?: EnvironmentAssignment[]; error?: EnvironmentError }
+  >();
   for (const region of config.cloudRegions.values()) {
-    const response = await environmentAssignmentList(
-      region.regionControllerUrl,
-      accessToken
-    );
-    assignmentMap.set(getRegionId(region), response.data);
+    try {
+      const response = await environmentAssignmentList(
+        region.regionControllerUrl,
+        accessToken
+      );
+      assignmentMap.set(getRegionId(region), { assignments: response.data });
+    } catch (error) {
+      assignmentMap.set(getRegionId(region), {
+        error: {
+          message: "Listing environment assignments failed",
+          details: error as Error,
+        },
+      });
+    }
   }
-  for (const [regionId, assignments] of assignmentMap.entries()) {
+  for (const [regionId, assignmentResult] of assignmentMap.entries()) {
     // Default to disabled state
     // There is a brief time when a region is enabled where we have an assignment,
     // but the environmentList call still returns nothing
-    result.set(regionId, { state: "disabled" });
+    result.set(regionId, { state: "disabled", errors: [] });
 
-    if (assignments.length === 0) {
+    if (assignmentResult.error) {
+      result.set(regionId, {
+        state: "disabled",
+        errors: [assignmentResult.error],
+      });
       continue;
     }
-    if (assignments.length > 1) {
+    if (
+      !assignmentResult?.assignments ||
+      assignmentResult.assignments.length === 0
+    ) {
+      result.set(regionId, {
+        state: "disabled",
+        errors: [],
+      });
+      continue;
+    }
+    if (assignmentResult?.assignments.length > 1) {
       throw new Error(
-        `region ${regionId} unexpectedly had ${assignments.length} environment assignments`
+        `region ${regionId} unexpectedly had ${assignmentResult.assignments.length} environment assignments`
       );
     }
-    const assignment = assignments[0];
+    const assignment = assignmentResult.assignments[0];
 
-    const { data: envs } = await environmentList(
-      assignment.environmentControllerUrl,
-      accessToken
-    );
-    if (envs.length === 0) {
+    let envs: ApiEnvironment[] | undefined = undefined;
+    const errors: EnvironmentError[] = [];
+    try {
+      const { data } = await environmentList(
+        assignment.environmentControllerUrl,
+        accessToken
+      );
+      if (data.length === 0) {
+        continue;
+      }
+      envs = data;
+    } catch (e) {
+      errors.push({
+        message: "Listing environments failed",
+        details: e as Error,
+      });
+    }
+    if (!envs) {
+      result.set(regionId, {
+        state: "disabled",
+        errors,
+      });
       continue;
     }
     if (envs.length > 1) {
-      throw new Error(
-        `environment assignment for ${assignment.cluster} unexpectedly had ${envs.length} environments`
-      );
+      errors.push({
+        message: `Unexpected error: environment assignment for ${assignment.cluster} unexpectedly had ${envs.length} environments`,
+      });
     }
 
-    const env = envs[0];
-    const enabledEnv: EnabledEnvironment = {
-      ...env,
+    const envResult = {
+      ...envs[0],
       state: "enabled",
       health: "pending",
-    };
-    const health = await fetchEnvironmentHealth(enabledEnv, accessToken);
+      errors: [],
+    } as EnabledEnvironment;
+    const { health, errors: healthErrors } = await fetchEnvironmentHealth(
+      envResult,
+      accessToken
+    );
     result.set(regionId, {
-      ...enabledEnv,
+      ...envResult,
       health,
+      errors: errors.concat(healthErrors),
     });
   }
   return result;
@@ -145,10 +201,15 @@ export const useEnvironmentsWithHealth = (
       setValue(newEnvMap);
       return;
     }
+    let mapChanged = false;
     for (const [key, newValue] of newEnvMap.entries()) {
       if (!deepEqual(environmentMap.get(key), newValue)) {
         environmentMap.set(key, newValue);
+        mapChanged = true;
       }
+    }
+    if (mapChanged) {
+      setValue(newEnvMap);
     }
     return environmentMap;
   };
@@ -206,6 +267,7 @@ export const fetchEnvironmentHealth = async (
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   let health: EnvironmentHealth = "pending";
+  const errors: EnvironmentError[] = [];
   try {
     if (!environment.resolvable) {
       throw new Error(`environment unresolvable`);
@@ -217,7 +279,12 @@ export const fetchEnvironmentHealth = async (
       { signal: controller.signal }
     );
     if (errorMessage !== null) {
-      console.warn(`environment unhealthy: ${errorMessage}`);
+      errors.push({
+        message: "Environmentd health check failed",
+      });
+      errors.push({
+        message: errorMessage,
+      });
       health = "crashed";
     } else {
       health = "healthy";
@@ -226,13 +293,19 @@ export const fetchEnvironmentHealth = async (
     // Threshold for considering an environment to be stuck / crashed
     const cutoff = add(new Date(environment.creationTimestamp), maxBoot);
     if (new Date() > cutoff) {
+      errors.push({
+        message: `Environment not healthy for more than ${formatDuration(
+          maxBoot
+        )} after creation`,
+        details: e as Error,
+      });
       health = "crashed";
     } else {
       health = "booting";
     }
   }
   clearTimeout(timeout);
-  return health;
+  return { health, errors };
 };
 
 /** The ID of the currently selected environment. */

@@ -145,7 +145,9 @@ export const executeSql = async (
   const responseText = await response.text();
 
   if (!response.ok) {
-    result.errorMessage = responseText || defaultError;
+    result.errorMessage = `HTTP Error ${response.status}: ${
+      responseText ?? defaultError
+    }`;
   } else {
     const parsedResponse = JSON.parse(responseText);
     const {
