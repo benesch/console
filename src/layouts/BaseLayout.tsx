@@ -28,7 +28,7 @@ import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import ContentOrEnvironmentErrors from "~/components/ContentOrEnvironmentErrors";
-import { GenericError } from "~/components/FullPageError";
+import ErrorBox from "~/components/ErrorBox";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
 import { MaterializeTheme } from "~/theme";
@@ -76,7 +76,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           pb={4}
         >
           <Flex flexDir="column" w="full" h="full">
-            <ErrorBoundary fallback={<GenericError />}>
+            <ErrorBoundary fallback={<ErrorBox />}>
               <React.Suspense
                 fallback={
                   <Center css={{ height: "100%" }}>
