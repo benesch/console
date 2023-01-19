@@ -19,6 +19,8 @@ const SupportLink = (props: LinkProps) => {
     <TextLink
       color={semanticColors.foreground.primary}
       href={SUPPORT_HREF}
+      target="_blank"
+      rel="noopener"
       {...props}
     />
   );
