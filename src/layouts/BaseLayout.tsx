@@ -21,9 +21,9 @@ import {
   StackProps,
   useTheme,
 } from "@chakra-ui/react";
+import { ErrorBoundary } from "@sentry/react";
 import * as CSS from "csstype";
 import * as React from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
@@ -76,12 +76,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           pb={4}
         >
           <Flex flexDir="column" w="full" h="full">
-            <ErrorBoundary
-              FallbackComponent={GenericError}
-              onReset={() => {
-                // reset the state of your app so the error doesn't happen again
-              }}
-            >
+            <ErrorBoundary fallback={<GenericError />}>
               <React.Suspense
                 fallback={
                   <Center css={{ height: "100%" }}>
