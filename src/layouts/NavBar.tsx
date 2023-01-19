@@ -24,7 +24,6 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
@@ -135,33 +134,20 @@ type NavItemType = {
   href: string;
   isInternal?: boolean;
 };
-const getNavItems = (areObjectPagesEnabled: boolean): NavItemType[] => {
-  const gatedItems: NavItemType[] = areObjectPagesEnabled
-    ? [
-        { label: "Clusters", href: "/clusters" },
-        { label: "Sources", href: "/sources" },
-        { label: "Sinks", href: "/sinks" },
-        // { label: "Editor", href: "/editor" },
-      ]
-    : [];
-  return [
-    { label: "Connect", href: "/" },
-    ...gatedItems,
-    {
-      label: "Docs",
-      href: "//materialize.com/docs/get-started/",
-    },
-  ];
-};
+
+const navItems: NavItemType[] = [
+  { label: "Connect", href: "/" },
+  { label: "Clusters", href: "/clusters" },
+  { label: "Sources", href: "/sources" },
+  { label: "Sinks", href: "/sinks" },
+  // { label: "Editor", href: "/editor" },
+  {
+    label: "Docs",
+    href: "//materialize.com/docs/get-started/",
+  },
+];
 
 const NavMenu = (props: BoxProps) => {
-  const flags = useFlags();
-  const areObjectPagesEnabled = flags["4254-object-pages"];
-  const navItems = React.useMemo(
-    () => getNavItems(areObjectPagesEnabled),
-    [areObjectPagesEnabled]
-  );
-
   return (
     <VStack
       data-test-id="nav-lg"
@@ -183,13 +169,6 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
-  const flags = useFlags();
-  const areObjectPagesEnabled = flags["4254-object-pages"];
-  const navItems = React.useMemo(
-    () => getNavItems(areObjectPagesEnabled),
-    [areObjectPagesEnabled]
-  );
-
   return (
     <Menu data-test-id="nav-sm">
       <MenuButton
