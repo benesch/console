@@ -59,9 +59,8 @@ const validSourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
 
 describe("SourceRoutes", () => {
   it("shows a spinner initially", async () => {
-    renderComponent(
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      <SourceRoutes />
+    renderComponent(<SourceRoutes />, ({ set }) =>
+      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
     );
 
     expect(await screen.findByText("Sources")).toBeVisible();
@@ -70,9 +69,8 @@ describe("SourceRoutes", () => {
 
   it("shows the empty state when there are no results", async () => {
     server.use(emptySourcesResponse);
-    renderComponent(
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      <SourceRoutes />
+    renderComponent(<SourceRoutes />, ({ set }) =>
+      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
     );
 
     expect(await screen.findByText("No available sources")).toBeVisible();
@@ -80,9 +78,8 @@ describe("SourceRoutes", () => {
 
   it("renders the source list", async () => {
     server.use(validSourcesResponse);
-    renderComponent(
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      <SourceRoutes />
+    renderComponent(<SourceRoutes />, ({ set }) =>
+      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
     );
 
     expect(await screen.findByText("companies")).toBeVisible();

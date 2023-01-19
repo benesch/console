@@ -5,10 +5,12 @@ import { Navigate, Route, useParams } from "react-router-dom";
 import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
+import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {
+  regionId: string;
   clusterName: string;
 };
 
@@ -33,10 +35,11 @@ const ClusterRoutes = () => {
 const ClusterOrRedirect: React.FC<{ clusters: Cluster[] | null }> = ({
   clusters,
 }) => {
+  const regionSlug = useRegionSlug();
   const params = useParams();
   const cluster = clusters?.find((c) => c.name === params.clusterName);
   if (clusters && !cluster) {
-    return <Navigate to="/clusters" replace />;
+    return <Navigate to={`/${regionSlug}/clusters`} replace />;
   } else {
     return <ClusterDetailPage cluster={cluster} />;
   }

@@ -3,15 +3,25 @@
  * URL routing.
  */
 
-import { useAuth, useAuth as useFronteggAuth } from "@frontegg/react";
+import { useAuth as useFronteggAuth } from "@frontegg/react";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Navigate, Route, RoutesProps, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  RoutesProps,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
 import PricingPage from "~/access/PricingPage";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
 import config from "~/config";
 import { BaseLayout } from "~/layouts/BaseLayout";
@@ -25,12 +35,18 @@ import { SentryRoutes } from "~/sentry";
 import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
 
+import {
+  currentEnvironmentIdState,
+  useEnvironmentsWithHealth,
+} from "./recoil/environments";
+import { regionIdToSlug, regionNameMap, useRegionSlug } from "./region";
+
 /** The root router for the application. */
 const Router = () => {
   useSetEnvironment();
 
   const ldClient = useLDClient();
-  const { user } = useAuth();
+  const { user } = useFronteggAuth();
 
   React.useEffect(() => {
     if (!ldClient || !user) return;
@@ -47,12 +63,10 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
+        <Route path="/:regionId/*" element={<RegionRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/clusters/*" element={<ClusterRoutes />} />
-        <Route path="/sources/*" element={<SourceRoutes />} />
-        <Route path="/sinks/*" element={<SinkRoutes />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="*" element={<RedirectToHome />} />
         <Route element={<Navigate to="/" replace />} />
@@ -62,9 +76,56 @@ const Router = () => {
   );
 };
 
+const defaultRegion = config.cloudRegions.keys().next().value as string;
+
+type RegionParams = "regionId";
+
+// naming... we use environment everywhere else, we should probably be consistent here too?
+// or rename all the environment stuff to region...
+const RegionRoutes = () => {
+  const { user } = useAuth();
+  const params = useParams<RegionParams>();
+  const navigate = useNavigate();
+  const [currentEnvironmentId, setCurrentEnvironmentId] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentEnvironmentIdState);
+  const environments = useEnvironmentsWithHealth(user.accessToken);
+  assert(params.regionId);
+  const regionId = regionNameMap.get(params.regionId);
+
+  React.useEffect(() => {
+    if (regionId && currentEnvironmentId !== regionId) {
+      setCurrentEnvironmentId(regionId);
+      if (environments.get(regionId)?.state !== "enabled") {
+        navigate(`/${params.regionId}`, { replace: true });
+      }
+    }
+  }, [
+    currentEnvironmentId,
+    environments,
+    navigate,
+    params.regionId,
+    regionId,
+    setCurrentEnvironmentId,
+  ]);
+
+  if (!regionId) {
+    navigate(`/${regionIdToSlug(defaultRegion)}`);
+    return null;
+  }
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/clusters/*" element={<ClusterRoutes />} />
+      <Route path="/sources/*" element={<SourceRoutes />} />
+      <Route path="/sinks/*" element={<SinkRoutes />} />
+    </Routes>
+  );
+};
+
 const RedirectToHome = () => {
   const location = useLocation();
   const { routes: authRoutes } = useFronteggAuth((state) => state);
+  const regionSlug = useRegionSlug();
   if (
     location.pathname !== authRoutes.authenticatedUrl &&
     Object.values(authRoutes).includes(location.pathname)
@@ -74,7 +135,7 @@ const RedirectToHome = () => {
     // notice it.
     return null;
   } else {
-    return <Home />;
+    return <Navigate to={`${regionSlug}/`} replace />;
   }
 };
 

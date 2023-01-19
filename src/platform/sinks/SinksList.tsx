@@ -32,6 +32,7 @@ import {
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
+import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
 
@@ -143,6 +144,7 @@ interface SinkTableProps {
 const SinkTable = (props: SinkTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
+  const regionSlug = useRegionSlug();
 
   return (
     <Table variant="standalone" data-testid="sink-table" borderRadius="xl">
@@ -158,7 +160,7 @@ const SinkTable = (props: SinkTableProps) => {
         {props.sinks.map((s) => (
           <Tr
             key={s.id}
-            onClick={() => navigate(`/sinks/${s.name}/errors`)}
+            onClick={() => navigate(`/${regionSlug}/sinks/${s.name}/errors`)}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,

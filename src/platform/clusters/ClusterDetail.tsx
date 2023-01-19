@@ -20,7 +20,7 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
-  const { clusterName } = useParams<ClusterDetailParams>();
+  const { regionId, clusterName } = useParams<ClusterDetailParams>();
 
   return (
     <>
@@ -28,10 +28,12 @@ const ClusterDetailPage = ({ cluster }: Props) => {
         <VStack spacing={6} alignItems="start" width="100%">
           <PageBreadcrumbs crumbs={["Clusters", clusterName!]} />
           <PageTabStrip>
-            <PageTab to={`/clusters/${clusterName}`} end>
+            <PageTab to={`/${regionId}/clusters/${clusterName}`} end>
               Overview
             </PageTab>
-            <PageTab to={`/clusters/${clusterName}/replicas`}>Replicas</PageTab>
+            <PageTab to={`/${regionId}/clusters/${clusterName}/replicas`}>
+              Replicas
+            </PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>

@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { AdminPortal, useAuthActions } from "@frontegg/react";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 
 import { getCurrentTenant, useAuth } from "~/api/auth";
@@ -132,7 +131,6 @@ const ProfileDropdown = (props: ButtonProps) => {
 };
 
 export const ProfileMenuItems = () => {
-  const navigate = useNavigate();
   const { routes: authRoutes } = useAuth();
   return (
     <>
@@ -146,10 +144,7 @@ export const ProfileMenuItems = () => {
         Pricing
       </MenuItem>
       <MenuDivider />
-      <MenuItem
-        fontWeight="medium"
-        onClick={() => navigate(authRoutes.logoutUrl)}
-      >
+      <MenuItem fontWeight="medium" as="a" href={authRoutes.logoutUrl}>
         Sign out
       </MenuItem>
     </>

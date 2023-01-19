@@ -162,7 +162,7 @@ const ClusterTable = (props: ClusterTableProps) => {
         {props.clusters.map((c) => (
           <Tr
             key={c.id}
-            onClick={() => navigate(`/clusters/${c.name}`)}
+            onClick={() => navigate(`${c.name}`)}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,

@@ -6,6 +6,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ReactSelect, {
   MultiValue,
   OptionProps,
@@ -20,10 +21,11 @@ import {
   currentEnvironmentIdState,
   LoadedEnvironment,
   useEnvironmentsWithHealth,
-  useSetCurrentEnvironment,
 } from "~/recoil/environments";
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
+
+const environmentSlugRegex = new RegExp("^\\/([\\w-]*)\\/?", "gm");
 
 const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
@@ -32,16 +34,23 @@ const EnvironmentSelectField = () => {
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: isPollingDisabled() ? undefined : 5000,
   });
-  const setCurrentEnvironmentId = useSetCurrentEnvironment();
+  const navigate = useNavigate();
   const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentIdState
   );
 
   const selectHandler = React.useCallback(
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
-      setCurrentEnvironmentId((option as EnvOptionType).id);
+      const regionId = (option as EnvOptionType).id
+        .replace("/", "-")
+        .toLowerCase();
+      const matches = environmentSlugRegex.exec(location.pathname);
+      if (matches) {
+        const newPath = location.pathname.replace(matches[1], `${regionId}`);
+        navigate(newPath + location.search + location.hash);
+      }
     },
-    [setCurrentEnvironmentId]
+    [navigate]
   );
 
   const colorStyles = React.useMemo(

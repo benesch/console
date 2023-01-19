@@ -39,8 +39,8 @@ export const setFakeEnvironment = (
 export type InitializeStateFn = (mutableSnapshot: MutableSnapshot) => void;
 
 export const renderComponent = (
-  initializeState: InitializeStateFn,
-  element: ReactElement
+  element: ReactElement,
+  initializeState?: InitializeStateFn
 ) => {
   return render(
     <RecoilRoot initializeState={initializeState}>
