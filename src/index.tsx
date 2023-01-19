@@ -34,6 +34,8 @@ import {
   lightTheme,
 } from "~/theme";
 
+import { GenericError } from "./components/FullPageError";
+
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
 // Configure Sentry error reporting.
@@ -65,24 +67,26 @@ const ChakraProviderWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 root.render(
-  <LDProvider
-    clientSideID={config.launchDarklyKey}
-    reactOptions={{
-      useCamelCaseFlagKeys: false,
-    }}
-  >
-    <ColorModeScript initialColorMode={initialColorMode} />
-    <BrowserRouter>
-      <ColorModeProvider options={themeConfig}>
-        <ChakraProviderWrapper>
-          <FronteggProviderWrapper baseUrl={config.fronteggUrl}>
-            <RecoilRoot>
-              <Router />
-            </RecoilRoot>
-          </FronteggProviderWrapper>
-        </ChakraProviderWrapper>
-      </ColorModeProvider>
-    </BrowserRouter>
-    <StatusPageWidget id={config.statuspageId} />
-  </LDProvider>
+  <Sentry.ErrorBoundary fallback={<GenericError />}>
+    <LDProvider
+      clientSideID={config.launchDarklyKey}
+      reactOptions={{
+        useCamelCaseFlagKeys: false,
+      }}
+    >
+      <ColorModeScript initialColorMode={initialColorMode} />
+      <BrowserRouter>
+        <ColorModeProvider options={themeConfig}>
+          <ChakraProviderWrapper>
+            <FronteggProviderWrapper baseUrl={config.fronteggUrl}>
+              <RecoilRoot>
+                <Router />
+              </RecoilRoot>
+            </FronteggProviderWrapper>
+          </ChakraProviderWrapper>
+        </ColorModeProvider>
+      </BrowserRouter>
+      <StatusPageWidget id={config.statuspageId} />
+    </LDProvider>
+  </Sentry.ErrorBoundary>
 );
