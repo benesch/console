@@ -15,6 +15,7 @@ import {
   format,
   subMinutes,
 } from "date-fns";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import {
   CartesianGrid,
@@ -54,6 +55,7 @@ export interface DataPoint {
   name: string;
   size: string;
   timestamp: number;
+  cpuPercent: number;
   memoryPercent: number;
   [key: string]: string | number;
 }
@@ -65,6 +67,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const flags = useFlags();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const [selectedReplica, setSelectedReplica] = React.useState("all");
@@ -157,6 +160,12 @@ const ClusterOverview = ({ cluster }: Props) => {
         if (!utilizations) {
           continue;
         }
+        let maxCpu = utilizations[0];
+        for (const value of utilizations) {
+          if (value.cpuPercent > maxCpu.cpuPercent) {
+            maxCpu = value;
+          }
+        }
         let maxMemory = utilizations[0];
         for (const value of utilizations) {
           if (value.memoryPercent > maxMemory.memoryPercent) {
@@ -168,6 +177,7 @@ const ClusterOverview = ({ cluster }: Props) => {
           name: replica.name,
           size: replica.size,
           timestamp: bucket,
+          cpuPercent: maxCpu.cpuPercent,
           memoryPercent: maxMemory.memoryPercent,
         };
         lineData.push(bucketValue);
@@ -194,6 +204,7 @@ const ClusterOverview = ({ cluster }: Props) => {
       py={4}
       px={6}
       width="100%"
+      minW="460px"
     >
       <Flex width="100%" justifyContent="space-between" mb="4">
         <Text fontSize="md" fontWeight={500}>
@@ -231,21 +242,40 @@ const ClusterOverview = ({ cluster }: Props) => {
             <Spinner />
           </Flex>
         ) : (
-          <Box width="100%">
-            <Text fontSize="xs" fontWeight={500}>
-              Memory
-            </Text>
-            <UtilizationGraph
-              dataKey="memoryPercent"
-              data={graphData}
-              startTime={startTime}
-              endTime={endTime}
-              timePeriodMinutes={timePeriodMinutes}
-              replicaColorMap={replicaColorMap}
-              replicas={selectedReplicas}
-              bucketSizeMs={bucketSizeMs}
-            />
-          </Box>
+          <>
+            {flags["cluster-cpu-utilization-5188"] && (
+              <Box width="100%">
+                <Text fontSize="xs" fontWeight={500}>
+                  CPU
+                </Text>
+                <UtilizationGraph
+                  dataKey="cpuPercent"
+                  data={graphData}
+                  startTime={startTime}
+                  endTime={endTime}
+                  timePeriodMinutes={timePeriodMinutes}
+                  replicaColorMap={replicaColorMap}
+                  replicas={selectedReplicas}
+                  bucketSizeMs={bucketSizeMs}
+                />
+              </Box>
+            )}
+            <Box width="100%">
+              <Text fontSize="xs" fontWeight={500}>
+                Memory
+              </Text>
+              <UtilizationGraph
+                dataKey="memoryPercent"
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                replicaColorMap={replicaColorMap}
+                replicas={selectedReplicas}
+                bucketSizeMs={bucketSizeMs}
+              />
+            </Box>
+          </>
         )}
       </HStack>
     </Box>
@@ -288,8 +318,10 @@ export const UtilizationGraph = ({
     [replicaColorMap]
   );
 
+  // ResponsiveContainer in a flex container doesn't work correctly with width 100%, but does at 99%
+  // https://github.com/recharts/recharts/issues/1423#issuecomment-411098968
   return (
-    <ResponsiveContainer width="100%" height={graphHeightPx}>
+    <ResponsiveContainer width="99%" height={graphHeightPx}>
       <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
         <CartesianGrid
           vertical={false}

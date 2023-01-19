@@ -142,6 +142,7 @@ export const useSqlWs = () => {
 export interface ReplicaUtilization {
   id: number;
   timestamp: number;
+  cpuPercent: number;
   memoryPercent: number;
 }
 
@@ -177,6 +178,7 @@ export const useClusterUtilization = (
     if (!socket || !clusterId) return;
 
     const utilizationQuery = `SELECT r.id,
+  u.cpu_percent,
   u.memory_percent
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
@@ -186,7 +188,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
       socket.send({
-        query: `EXPLAIN TIMESTAMP AS JSON FOR ${utilizationQuery};`,
+        query: `SET CLUSTER = mz_introspection; EXPLAIN TIMESTAMP AS JSON FOR ${utilizationQuery};`,
       });
       setExplainSent(true);
     }
@@ -231,7 +233,8 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
             const utilization: ReplicaUtilization = {
               id: result.payload[2] as number,
               timestamp: parseInt(result.payload[0] as string),
-              memoryPercent: result.payload[3] as number,
+              cpuPercent: result.payload[3] as number,
+              memoryPercent: result.payload[4] as number,
             };
             setData((val) => (val ? [...val, utilization] : [utilization]));
           }
