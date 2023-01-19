@@ -1,7 +1,8 @@
 import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
+import { SentryRoutes } from "~/.";
 import { Source, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
@@ -69,10 +70,10 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
           </PageTabStrip>
         </VStack>
       </PageHeader>
-      <Routes>
+      <SentryRoutes>
         <Route path="/" element={<div>overview</div>} />
         <Route path="errors" element={<SourceErrors source={source} />} />
-      </Routes>
+      </SentryRoutes>
     </>
   );
 };

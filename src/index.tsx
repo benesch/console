@@ -20,7 +20,14 @@ import { BrowserTracing } from "@sentry/tracing";
 import { LDProvider } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import {
+  BrowserRouter,
+  createRoutesFromChildren,
+  matchRoutes,
+  Routes,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 import { RecoilEnv, RecoilRoot } from "recoil";
 
 import StatusPageWidget from "~/components/StatusPageWidget";
@@ -44,9 +51,22 @@ if (config.sentryDsn && config.sentryEnvironment && config.sentryRelease) {
     dsn: config.sentryDsn,
     environment: config.sentryEnvironment,
     release: config.sentryRelease,
-    integrations: [new BrowserTracing()],
+    integrations: [
+      new BrowserTracing({
+        routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+          React.useEffect,
+          useLocation,
+          useNavigationType,
+          createRoutesFromChildren,
+          matchRoutes
+        ),
+      }),
+    ],
+    tracesSampleRate: 1.0,
   });
 }
+
+export const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 const rootEl = document.createElement("div");
 document.body.appendChild(rootEl);

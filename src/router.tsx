@@ -6,13 +6,7 @@
 import { useAuth, useAuth as useFronteggAuth } from "@frontegg/react";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import React from "react";
-import {
-  Navigate,
-  Route,
-  Routes,
-  RoutesProps,
-  useLocation,
-} from "react-router-dom";
+import { Navigate, Route, RoutesProps, useLocation } from "react-router-dom";
 
 import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
@@ -29,6 +23,8 @@ import SinkRoutes from "~/platform/sinks/SinkRoutes";
 import SourceRoutes from "~/platform/sources/SourceRoutes";
 import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
+
+import { SentryRoutes } from ".";
 
 /** The root router for the application. */
 const Router = () => {
@@ -126,7 +122,7 @@ const ProtectedRoutes = (props: RoutesProps) => {
     <AuthProvider user={user}>
       <React.Suspense fallback={<LoadingScreen />}>
         <BaseLayout overflowY={layoutOverflow}>
-          <Routes {...props} />
+          <SentryRoutes {...props} />
         </BaseLayout>
       </React.Suspense>
     </AuthProvider>

@@ -1,9 +1,10 @@
 import { ThemeProvider } from "@emotion/react";
 import { render } from "@testing-library/react";
 import React, { ReactElement } from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route } from "react-router-dom";
 import { MutableSnapshot, RecoilRoot, SetRecoilState } from "recoil";
 
+import { SentryRoutes } from "~/.";
 import {
   currentEnvironmentIdState,
   environmentsWithHealth,
@@ -46,9 +47,9 @@ export const renderComponent = (
       <ThemeProvider theme={lightTheme}>
         <React.Suspense fallback="suspense-fallback">
           <MemoryRouter>
-            <Routes>
+            <SentryRoutes>
               <Route path="/*" element={element} />
-            </Routes>
+            </SentryRoutes>
           </MemoryRouter>
         </React.Suspense>
       </ThemeProvider>
