@@ -445,7 +445,12 @@ export const UtilizationGraph = ({
           )}
         />
         {data?.length === 0 && (
-          <text x="50%" y="50%" textAnchor="middle">
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            fill={semanticColors.foreground.primary}
+          >
             No data
           </text>
         )}
