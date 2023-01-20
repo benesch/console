@@ -2,7 +2,6 @@ import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { SentryRoutes } from "~/.";
 import { Sink, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
@@ -13,6 +12,7 @@ import {
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
+import { SentryRoutes } from "~/sentry";
 
 import SinkErrors from "./SinkErrors";
 

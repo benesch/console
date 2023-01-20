@@ -4,12 +4,12 @@ import React, { ReactElement } from "react";
 import { MemoryRouter, Route } from "react-router-dom";
 import { MutableSnapshot, RecoilRoot, SetRecoilState } from "recoil";
 
-import { SentryRoutes } from "~/.";
 import {
   currentEnvironmentIdState,
   environmentsWithHealth,
   LoadedEnvironment,
 } from "~/recoil/environments";
+import { SentryRoutes } from "~/sentry";
 import { lightTheme } from "~/theme";
 
 export const healthyEnvironment: LoadedEnvironment = {

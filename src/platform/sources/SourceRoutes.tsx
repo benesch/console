@@ -2,9 +2,9 @@ import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { SentryRoutes } from "~/.";
 import { Source, useSources } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
+import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
 import SourceDetail from "./SourceDetail";

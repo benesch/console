@@ -2,10 +2,10 @@ import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { SentryRoutes } from "~/.";
 import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
+import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {

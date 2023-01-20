@@ -2,7 +2,6 @@ import { VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { SentryRoutes } from "~/.";
 import { Cluster } from "~/api/materialized";
 import {
   PageBreadcrumbs,
@@ -11,6 +10,7 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";
 import ClusterReplicas from "./ClusterReplicas";

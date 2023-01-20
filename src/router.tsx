@@ -21,10 +21,9 @@ import Editor from "~/platform/editor/Editor";
 import Home from "~/platform/home/Home";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";
 import SourceRoutes from "~/platform/sources/SourceRoutes";
+import { SentryRoutes } from "~/sentry";
 import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
-
-import { SentryRoutes } from ".";
 
 /** The root router for the application. */
 const Router = () => {
