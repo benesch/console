@@ -1,10 +1,11 @@
 import { useInterval } from "@chakra-ui/react";
 import React from "react";
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, useParams } from "react-router-dom";
 
 import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
+import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {
@@ -16,7 +17,7 @@ const ClusterRoutes = () => {
   useInterval(clusterResponse.refetch, isPollingDisabled() ? null : 5000);
 
   return (
-    <Routes>
+    <SentryRoutes>
       <Route
         path="/"
         element={<ClustersListPage clusterResponse={clusterResponse} />}
@@ -25,7 +26,7 @@ const ClusterRoutes = () => {
         path=":clusterName/*"
         element={<ClusterOrRedirect clusters={clusterResponse.data} />}
       />
-    </Routes>
+    </SentryRoutes>
   );
 };
 

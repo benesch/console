@@ -33,7 +33,7 @@ import {
   useClusterUtilization,
 } from "~/api/materialize/websocket";
 import { Cluster, Replica } from "~/api/materialized";
-import FullPageError from "~/components/FullPageError";
+import ErrorBox from "~/components/ErrorBox";
 import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
   useTimePeriodMinutes,
@@ -191,7 +191,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
   if (errors.length > 0) {
-    return <FullPageError />;
+    return <ErrorBox />;
   }
   const loading = !cluster?.replicas || !graphData;
   return (

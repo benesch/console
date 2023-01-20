@@ -1,6 +1,6 @@
 import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
 import { Sink, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
@@ -12,6 +12,7 @@ import {
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
+import { SentryRoutes } from "~/sentry";
 
 import SinkErrors from "./SinkErrors";
 
@@ -69,10 +70,10 @@ const SinkDetail = ({ sink }: SinkDetailProps) => {
           </PageTabStrip>
         </VStack>
       </PageHeader>
-      <Routes>
+      <SentryRoutes>
         <Route path="/" element={<div>overview</div>} />
         <Route path="errors" element={<SinkErrors sink={sink} />} />
-      </Routes>
+      </SentryRoutes>
     </>
   );
 };

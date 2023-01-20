@@ -1,6 +1,6 @@
 import { VStack } from "@chakra-ui/react";
 import React from "react";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
 import { Cluster } from "~/api/materialized";
 import {
@@ -10,6 +10,7 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";
 import ClusterReplicas from "./ClusterReplicas";
@@ -34,13 +35,13 @@ const ClusterDetailPage = ({ cluster }: Props) => {
           </PageTabStrip>
         </VStack>
       </PageHeader>
-      <Routes>
+      <SentryRoutes>
         <Route path="/" element={<ClusterOverview cluster={cluster} />} />
         <Route
           path="replicas"
           element={<ClusterReplicas cluster={cluster} />}
         />
-      </Routes>
+      </SentryRoutes>
     </>
   );
 };
