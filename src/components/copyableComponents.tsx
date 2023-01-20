@@ -67,7 +67,7 @@ export const CopyButton: React.FC<
       }}
       onClick={() => !copied && onCopy()}
       flex={0}
-      p={3}
+      px={3}
       {...props}
     >
       <Tooltip
@@ -117,6 +117,7 @@ export const CopyableBox: React.FC<
         fontSize="md"
         contents={contents}
         w={CopyButtonWidth}
+        py="3"
         minH="full"
       />
     </HStack>
