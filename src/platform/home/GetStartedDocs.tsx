@@ -1,6 +1,7 @@
 import { Box, useTheme, VStack } from "@chakra-ui/react";
 import React from "react";
 
+import { SUPPORT_HREF } from "~/components/SupportLink";
 import TextLink from "~/components/TextLink";
 import { MaterializeTheme } from "~/theme";
 
@@ -30,9 +31,9 @@ const GetStartedDocs = () => {
         >
           Check out our community slack
         </TextLink>{" "}
-        or{" "}
-        <TextLink href="mailto:support@materialize.com">
-          email support.
+        or visit our{" "}
+        <TextLink href={SUPPORT_HREF} target="_blank">
+          help center.
         </TextLink>
       </Box>
     </VStack>
