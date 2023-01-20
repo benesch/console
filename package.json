@@ -29,7 +29,7 @@
     "@emotion/styled": "^11.8.1",
     "@fontsource/inter": "^4.5.14",
     "@fontsource/roboto-mono": "^4.5.8",
-    "@frontegg/react": "^5.0.9",
+    "@frontegg/react": "^5.0.18",
     "@melloware/csp-webpack-plugin": "^6.0.4",
     "@segment/analytics-next": "^1.48.0",
     "@sentry/react": "^7.30.0",
