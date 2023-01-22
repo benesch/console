@@ -40,7 +40,7 @@
     "@types/react-table": "^7.7.12",
     "@types/semver": "^7.3.13",
     "@types/webpack-bundle-analyzer": "^4.6.0",
-    "codemirror": "^5.65.10",
+    "codemirror": "^5.65.11",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "d3-scale-chromatic": "^3.0.0",
