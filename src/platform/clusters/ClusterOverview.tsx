@@ -191,7 +191,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
   if (errors.length > 0) {
-    return <ErrorBox />;
+    return <ErrorBox message="An error occurred loading cluster data" />;
   }
   const loading = !cluster?.replicas || !graphData;
   return (
