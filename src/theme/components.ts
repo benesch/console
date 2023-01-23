@@ -114,7 +114,7 @@ const tableBorderStyle = `solid 1px ${`semanticColors.border.secondary`}`;
 export const Table = defineMultiStyleConfig({
   baseStyle: {},
   variants: {
-    borderless: {
+    standalone: {
       table: {
         borderCollapse: "separate",
         borderSpacing: 0,
@@ -142,6 +142,11 @@ export const Table = defineMultiStyleConfig({
           borderRightStyle: "solid",
           borderRightColor: "semanticColors.border.secondary",
         },
+      },
+      td: {
+        borderBottom: tableBorderStyle,
+        borderBottomWidth: "1px",
+        borderBottomColor: "semanticColors.border.primary",
       },
     },
   },

@@ -151,7 +151,7 @@ const ClusterTable = (props: ClusterTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
-    <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
+    <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
         <Tr>
           <Th>Name</Th>
@@ -168,18 +168,8 @@ const ClusterTable = (props: ClusterTableProps) => {
               bg: colors.semanticColors.background.secondary,
             }}
           >
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {c.name}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {c.replicas.length}
-            </Td>
+            <Td>{c.name}</Td>
+            <Td>{c.replicas.length}</Td>
           </Tr>
         ))}
       </Tbody>

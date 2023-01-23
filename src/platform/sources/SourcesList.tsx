@@ -147,7 +147,7 @@ const SourceTable = (props: SourceTableProps) => {
   const navigate = useNavigate();
 
   return (
-    <Table variant="borderless" data-testid="source-table" borderRadius="xl">
+    <Table variant="standalone" data-testid="source-table" borderRadius="xl">
       <Thead>
         <Tr>
           <Th>Name</Th>
@@ -166,10 +166,7 @@ const SourceTable = (props: SourceTableProps) => {
               bg: colors.semanticColors.background.secondary,
             }}
           >
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
+            <Td>
               <Box
                 maxW={{
                   base: "120px",
@@ -185,24 +182,9 @@ const SourceTable = (props: SourceTableProps) => {
                 {s.name}
               </Box>
             </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {s.status ? <StatusPill status={s.status} /> : "-"}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {s.type}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {s.size || "-"}
-            </Td>
+            <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
+            <Td>{s.type}</Td>
+            <Td>{s.size || "-"}</Td>
           </Tr>
         ))}
       </Tbody>
