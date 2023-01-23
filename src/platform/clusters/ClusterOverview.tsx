@@ -68,12 +68,13 @@ const ClusterOverview = ({ cluster }: Props) => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const flags = useFlags();
-  const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
+  const [endTime, setEndTime] = React.useState(new Date());
   const [selectedReplica, setSelectedReplica] = React.useState("all");
   const startTime = React.useMemo(() => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
+  React.useEffect(() => setEndTime(new Date()), [timePeriodMinutes]);
 
   const { data, errors } = useClusterUtilization(
     cluster?.id,
