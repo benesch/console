@@ -1,4 +1,5 @@
 import {
+  Heading,
   Table,
   TableCellProps,
   Tbody,
@@ -20,6 +21,7 @@ import { MaterializeTheme } from "~/theme";
 const PricingPage = () => {
   const {
     colors: { semanticColors },
+    shadows,
   } = useTheme<MaterializeTheme>();
   const { pricingTerms, consumptionTable } = data;
 
@@ -45,7 +47,6 @@ const PricingPage = () => {
   const cellStyle = (firstCell: boolean): Partial<TableCellProps> => {
     if (firstCell) {
       return {
-        textTransform: "uppercase",
         color: semanticColors.foreground.secondary,
         fontWeight: 500,
         fontSize: "sm",
@@ -60,12 +61,13 @@ const PricingPage = () => {
         <PageHeading>Pricing</PageHeading>
       </PageHeader>
       <VStack alignItems="flex-start" spacing={8} mb={8}>
-        <Table variant="rounded" width="100%">
+        <Table variant="rounded" width="100%" shadow={shadows.level2}>
           <Thead>
             <Tr>
               <Th colSpan={4}>
                 <Text
                   fontWeight={500}
+                  fontSize="md"
                   lineHeight="20px"
                   py={4}
                   textTransform="none"
@@ -82,6 +84,7 @@ const PricingPage = () => {
                   key={region}
                   textAlign="left"
                   width="25%"
+                  fontSize="sm"
                   fontWeight={500}
                   textTransform="lowercase"
                   color={semanticColors.foreground.secondary}
@@ -112,46 +115,55 @@ const PricingPage = () => {
             ))}
           </Tbody>
         </Table>
-        <Table variant="rounded" width="100%">
-          <Thead>
-            <Tr>
-              <Th colSpan={13} border="none">
-                <Text
+        <VStack width="100%" alignItems="flex-start" spacing={2}>
+          <Heading
+            as="h2"
+            fontSize="xl"
+            fontWeight={500}
+            lineHeight="24px"
+            color={semanticColors.foreground.primary}
+            mb={2}
+          >
+            Credit Consumption
+          </Heading>
+          <Table
+            variant="rounded"
+            width="100%"
+            marginTop={2}
+            shadow={shadows.level2}
+          >
+            <Thead>
+              <Tr>
+                <Th
+                  colSpan={13}
                   fontWeight={500}
+                  fontSize="md"
                   lineHeight="20px"
+                  py={4}
                   textTransform="none"
                   color={semanticColors.foreground.primary}
                 >
-                  Credit consumption
-                </Text>
-              </Th>
-            </Tr>
-            <Tr>
-              <Th
-                colSpan={13}
-                color={semanticColors.foreground.secondary}
-                fontWeight={500}
-                fontSize="sm"
-              >
-                {consumptionTable.title}
-              </Th>
-            </Tr>
-            <Tr>
-              {consumptionTable.values.map((val, i) => (
-                <Th key={i} {...cellStyle(true)}>
-                  {val.title}
+                  {consumptionTable.title}
                 </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              {consumptionTable.values.map((val, i) => (
-                <Td key={i}>{val.value}</Td>
-              ))}
-            </Tr>
-          </Tbody>
-        </Table>
+              </Tr>
+              <Tr></Tr>
+              <Tr>
+                {consumptionTable.values.map((val, i) => (
+                  <Th key={i} {...cellStyle(true)}>
+                    {val.title}
+                  </Th>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                {consumptionTable.values.map((val, i) => (
+                  <Td key={i}>{val.value}</Td>
+                ))}
+              </Tr>
+            </Tbody>
+          </Table>
+        </VStack>
       </VStack>
     </>
   );

@@ -35,7 +35,7 @@ const colors = {
     /**
      * Light / Text Secondary
      */
-    500: "#726E77",
+    500: "#66626A",
     /**
      * Dark / Border Secondary
      */
