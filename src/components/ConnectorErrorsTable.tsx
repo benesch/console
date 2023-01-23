@@ -50,7 +50,7 @@ const ConnectorErrorsTable = ({
         </Flex>
       ) : (
         <Table
-          variant="borderless"
+          variant="standalone"
           data-testid="connnector-errors-table"
           borderRadius="xl"
         >
