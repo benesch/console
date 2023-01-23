@@ -1,44 +1,39 @@
 import {
-  Heading,
-  HStack,
-  Select,
   Table,
+  TableCellProps,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import React, { ChangeEvent } from "react";
+import React from "react";
 
 import data from "~/access/pricing.json";
-import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
 
-type StaticRegion = "AWS/us-east-1" | "AWS/eu-west-1";
-
 const PricingPage = () => {
-  const { colors } = useTheme<MaterializeTheme>();
-  const { pricingTerms, consumptionTables, regions } = data;
-  const [region, setRegion] = React.useState<StaticRegion>(
-    regions[0] as StaticRegion
-  );
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  const { pricingTerms, consumptionTable } = data;
 
   const capacityPricingNotice = (
     <Td
       rowSpan={3}
       borderLeftStyle="solid"
       borderLeftWidth="1px"
-      borderLeftColor={colors.semanticColors.border.primary}
+      borderLeftColor={semanticColors.border.primary}
+      borderBottom="none"
       textAlign="center"
+      fontSize="xs"
     >
-      For information on
-      <br />
-      capacity pricing,
+      For information on capacity pricing,
       <br />
       contact{" "}
       <TextLink href="mailto:sales@materialize.com">
@@ -47,101 +42,116 @@ const PricingPage = () => {
     </Td>
   );
 
-  const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setRegion(e.target.value as StaticRegion);
-  };
+  const cellStyle = (firstCell: boolean): Partial<TableCellProps> => {
+    if (firstCell) {
+      return {
+        textTransform: "uppercase",
+        color: semanticColors.foreground.secondary,
+        fontWeight: 500,
+        fontSize: "sm",
+      };
+    }
 
+    return {};
+  };
   return (
     <>
       <PageHeader>
         <PageHeading>Pricing</PageHeading>
       </PageHeader>
-      <HStack mb={5}>
-        <Heading fontWeight="400" fontSize="lg">
-          Region:
-        </Heading>
-        <Select value={region} onChange={handleSelect} maxWidth="300px">
-          {regions.map((r) => (
-            <option key={`region-${r}`} value={r}>
-              {r}
-            </option>
-          ))}
-        </Select>
-      </HStack>
       <VStack alignItems="flex-start" spacing={8} mb={8}>
-        <Card px="0" pb="6" maxWidth="800px" minWidth="fit-content">
-          <CardHeader>Pricing terms: {region}</CardHeader>
-          <Table
-            borderRadius="xl"
-            sx={{
-              tableLayout: "fixed",
-            }}
-          >
-            <Thead>
-              <Tr>
-                <Th></Th>
-                {pricingTerms.cols.map((col) => (
-                  <Th
-                    key={`price-header-${col.title}`}
-                    textAlign="left"
-                    width="25%"
-                  >
-                    {col.title}
-                  </Th>
+        <Table variant="rounded" width="100%">
+          <Thead>
+            <Tr>
+              <Th colSpan={4}>
+                <Text
+                  fontWeight={500}
+                  lineHeight="20px"
+                  py={4}
+                  textTransform="none"
+                  color={semanticColors.foreground.primary}
+                >
+                  On Demand Terms
+                </Text>
+              </Th>
+            </Tr>
+            <Tr>
+              <Th></Th>
+              {pricingTerms.cols.map((region) => (
+                <Th
+                  key={region}
+                  textAlign="left"
+                  width="25%"
+                  fontWeight={500}
+                  textTransform="lowercase"
+                  color={semanticColors.foreground.secondary}
+                >
+                  {region}
+                </Th>
+              ))}
+              <Th
+                textAlign="center"
+                fontWeight={500}
+                color={semanticColors.foreground.secondary}
+                textTransform="none"
+              >
+                Capacity
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {pricingTerms.rows.map((row, i) => (
+              <Tr key={i}>
+                {row.map((val, j) => (
+                  <Td key={j} textAlign="left" {...cellStyle(j === 0)}>
+                    {val}
+                  </Td>
                 ))}
-                <Th textAlign="center">Capacity</Th>
+                {i === 0 && capacityPricingNotice}
               </Tr>
-            </Thead>
-            <Tbody>
-              {pricingTerms.rows.map((rowTitle, i) => (
-                <Tr key={`priceType-${rowTitle}`}>
-                  <Th>{rowTitle}</Th>
-                  {pricingTerms.cols.map((col, j) => (
-                    <Td
-                      key={`price-${region}-${rowTitle}-${j}}`}
-                      textAlign="left"
-                    >
-                      {col.values[region][i]}
-                    </Td>
-                  ))}
-                  {i === 0 && capacityPricingNotice}
-                </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        <Table variant="rounded" width="100%">
+          <Thead>
+            <Tr>
+              <Th colSpan={13} border="none">
+                <Text
+                  fontWeight={500}
+                  lineHeight="20px"
+                  textTransform="none"
+                  color={semanticColors.foreground.primary}
+                >
+                  Credit consumption
+                </Text>
+              </Th>
+            </Tr>
+            <Tr>
+              <Th
+                colSpan={13}
+                color={semanticColors.foreground.secondary}
+                fontWeight={500}
+                fontSize="sm"
+              >
+                {consumptionTable.title}
+              </Th>
+            </Tr>
+            <Tr>
+              {consumptionTable.values.map((val, i) => (
+                <Th key={i} {...cellStyle(true)}>
+                  {val.title}
+                </Th>
               ))}
-            </Tbody>
-          </Table>
-        </Card>
-        <Card minWidth="fit-content">
-          <CardHeader>Credit consumption tables: {region}</CardHeader>
-          <CardContent pt={1} px={0}>
-            <VStack spacing={6}>
-              {consumptionTables.map(({ title, values }) => (
-                <Table key={`consumption-table-${title}`}>
-                  <Thead>
-                    <Tr>
-                      <Th colSpan={values[region].length}>{title}</Th>
-                    </Tr>
-                    <Tr>
-                      {values[region].map((val) => (
-                        <Th key={`consumption-${title}-size-${val.title}`}>
-                          {val.title}
-                        </Th>
-                      ))}
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      {values[region].map((val) => (
-                        <Td key={`consumption-${title}-cost-${val.value}`}>
-                          {val.value}
-                        </Td>
-                      ))}
-                    </Tr>
-                  </Tbody>
-                </Table>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              {consumptionTable.values.map((val, i) => (
+                <Td key={i}>{val.value}</Td>
               ))}
-            </VStack>
-          </CardContent>
-        </Card>
+            </Tr>
+          </Tbody>
+        </Table>
       </VStack>
     </>
   );

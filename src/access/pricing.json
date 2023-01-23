@@ -1,54 +1,27 @@
 {
-  "regions": ["AWS/us-east-1", "AWS/eu-west-1"],
   "pricingTerms": {
     "rows": [
-      "Credit price",
-      "Storage per GB (hourly)",
-      "Network egress per GB"
+      ["Credit price", "$1.50", "$1.70"],
+      ["Storage per GB (hourly)", "$0.00004110", "$0.00004110"],
+      ["Network egress per GB", "$0.12", "$0.12"]
     ],
-    "cols": [
-      {
-        "title": "On demand",
-        "values": {
-          "AWS/us-east-1": ["$1.50", "$0.00004110", "$0.12"],
-          "AWS/eu-west-1": ["$1.70", "$0.00004110", "$0.12"]
-        }
-      }
-    ]
+    "cols": ["AWS/us-east-1", "AWS/eu-west-1"]
   },
-  "consumptionTables": [
-    {
-      "title": "Cluster Replica (credits per hour)",
-      "values": {
-        "AWS/us-east-1": [
-          { "title": "3xs", "value": "0.25" },
-          { "title": "2xs", "value": "0.5" },
-          { "title": "xs", "value": "1" },
-          { "title": "s", "value": "2" },
-          { "title": "m", "value": "4" },
-          { "title": "l", "value": "8" },
-          { "title": "xl", "value": "16" },
-          { "title": "2xl", "value": "32" },
-          { "title": "3xl", "value": "64" },
-          { "title": "4xl", "value": "128" },
-          { "title": "5xl", "value": "256" },
-          { "title": "6xl", "value": "512" }
-        ],
-        "AWS/eu-west-1": [
-          { "title": "3xs", "value": "0.25" },
-          { "title": "2xs", "value": "0.5" },
-          { "title": "xs", "value": "1" },
-          { "title": "s", "value": "2" },
-          { "title": "m", "value": "4" },
-          { "title": "l", "value": "8" },
-          { "title": "xl", "value": "16" },
-          { "title": "2xl", "value": "32" },
-          { "title": "3xl", "value": "64" },
-          { "title": "4xl", "value": "128" },
-          { "title": "5xl", "value": "256" },
-          { "title": "6xl", "value": "512" }
-        ]
-      }
-    }
-  ]
+  "consumptionTable": {
+    "title": "Cluster Replica (credits per hour)",
+    "values": [
+      { "title": "3xs", "value": "0.25" },
+      { "title": "2xs", "value": "0.5" },
+      { "title": "xs", "value": "1" },
+      { "title": "s", "value": "2" },
+      { "title": "m", "value": "4" },
+      { "title": "l", "value": "8" },
+      { "title": "xl", "value": "16" },
+      { "title": "2xl", "value": "32" },
+      { "title": "3xl", "value": "64" },
+      { "title": "4xl", "value": "128" },
+      { "title": "5xl", "value": "256" },
+      { "title": "6xl", "value": "512" }
+    ]
+  }
 }

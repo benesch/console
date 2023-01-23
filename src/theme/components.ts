@@ -114,6 +114,27 @@ const tableBorderStyle = `solid 1px ${`semanticColors.border.secondary`}`;
 export const Table = defineMultiStyleConfig({
   baseStyle: {},
   variants: {
+    rounded: {
+      table: {
+        borderCollapse: "separate",
+        borderSpacing: 0,
+        borderRadius: "xl",
+        borderWidth: "1px",
+      },
+      tr: {
+        "&:last-child": {
+          td: {
+            border: "none",
+          },
+        },
+      },
+      td: {
+        borderBottomWidth: "1px",
+      },
+      th: {
+        borderBottomWidth: "1px",
+      },
+    },
     standalone: {
       table: {
         borderCollapse: "separate",
