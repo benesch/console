@@ -1,5 +1,4 @@
 import {
-  Button,
   Heading,
   HStack,
   Select,
@@ -12,7 +11,6 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import { AdminPortal } from "@frontegg/react";
 import React, { ChangeEvent } from "react";
 
 import data from "~/access/pricing.json";
@@ -22,11 +20,6 @@ import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
 
 type StaticRegion = "AWS/us-east-1" | "AWS/eu-west-1";
-
-const showFronteggSubscriptionPortal = () => {
-  window.location.href = "#/admin-box/subscriptions";
-  AdminPortal.show();
-};
 
 const PricingPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
@@ -116,19 +109,6 @@ const PricingPage = () => {
               ))}
             </Tbody>
           </Table>
-          <CardContent>
-            <VStack spacing={4} alignItems="stretch" fontSize="sm">
-              <HStack justifyContent="flex-start" pt={2}>
-                <Button
-                  variant="gradient-1"
-                  size="lg"
-                  onClick={showFronteggSubscriptionPortal}
-                >
-                  Manage subscription
-                </Button>
-              </HStack>
-            </VStack>
-          </CardContent>
         </Card>
         <Card minWidth="fit-content">
           <CardHeader>Credit consumption tables: {region}</CardHeader>
