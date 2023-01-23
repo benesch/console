@@ -10,7 +10,7 @@
  * Frontegg.
  */
 
-import { ChakraTheme, extendTheme } from "@chakra-ui/react";
+import { ChakraTheme, extendTheme, Flex } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
@@ -209,7 +209,11 @@ const fronteggTheme: FronteggThemeOptions = {
       boxFooter: () => SignupFooter,
     },
     logo: {
-      image: () => <img src={logo} />,
+      image: () => (
+        <Flex w="100%" justifyContent="center">
+          <img src={logo} />
+        </Flex>
+      ),
       placement: "page",
     },
   },
