@@ -76,7 +76,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [timePeriodMinutes, endTime]);
   React.useEffect(() => setEndTime(new Date()), [timePeriodMinutes]);
 
-  const { data, errors } = useClusterUtilization(
+  const { data, errors, isStale } = useClusterUtilization(
     cluster?.id,
     startTime,
     endTime,
@@ -194,7 +194,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   if (errors.length > 0) {
     return <ErrorBox message="An error occurred loading cluster data" />;
   }
-  const loading = !cluster?.replicas || !graphData;
+  const loading = !cluster?.replicas || !graphData || isStale;
   return (
     <Box
       border={`solid 1px ${semanticColors.border.primary}`}

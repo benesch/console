@@ -153,6 +153,7 @@ export const useClusterUtilization = (
   replicaId?: number
 ) => {
   const [data, setData] = React.useState<ReplicaUtilization[] | null>(null);
+  const [isStale, setIsStale] = React.useState(false);
   const [errors, setErrors] = React.useState<string[]>([]);
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
@@ -172,6 +173,7 @@ export const useClusterUtilization = (
     setQuerySent(false);
     setExplainSent(false);
     setMinFrontier(undefined);
+    setIsStale(true);
   }, [socket, replicaId, clusterId, startTime, endTime]);
 
   React.useEffect(() => {
@@ -237,6 +239,7 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
               memoryPercent: result.payload[4] as number,
             };
             setData((val) => (val ? [...val, utilization] : [utilization]));
+            setIsStale(false);
           }
         }
       }
@@ -258,5 +261,5 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
     socket,
   ]);
 
-  return { data, errors };
+  return { data, errors, isStale };
 };
