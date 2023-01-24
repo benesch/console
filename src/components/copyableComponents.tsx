@@ -264,6 +264,7 @@ export const TabbedCodeBlock: React.FC<
         py={2}
         pl={4}
         pr={8}
+        fontFamily="mono"
         overflow="auto"
         sx={{ wordWrap: "normal" }}
         {...preProps}
