@@ -68,14 +68,15 @@ const ClusterOverview = ({ cluster }: Props) => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const flags = useFlags();
-  const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
+  const [endTime, setEndTime] = React.useState(new Date());
   const [selectedReplica, setSelectedReplica] = React.useState("all");
   const startTime = React.useMemo(() => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
+  React.useEffect(() => setEndTime(new Date()), [timePeriodMinutes]);
 
-  const { data, errors } = useClusterUtilization(
+  const { data, errors, isStale } = useClusterUtilization(
     cluster?.id,
     startTime,
     endTime,
@@ -106,7 +107,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [cluster?.replicas, semanticColors.lineGraph]);
 
   const bucketSizeMs = React.useMemo(() => {
-    return (timePeriodMinutes / 15) * 60 * 1000;
+    return timePeriodMinutes * 1000;
   }, [timePeriodMinutes]);
 
   const buckets = React.useMemo(() => {
@@ -191,9 +192,9 @@ const ClusterOverview = ({ cluster }: Props) => {
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
   if (errors.length > 0) {
-    return <ErrorBox />;
+    return <ErrorBox message="An error occurred loading cluster data" />;
   }
-  const loading = !cluster?.replicas || !graphData;
+  const loading = !cluster?.replicas || !graphData || isStale;
   return (
     <Box
       border={`solid 1px ${semanticColors.border.primary}`}
@@ -279,6 +280,8 @@ const ClusterOverview = ({ cluster }: Props) => {
   );
 };
 
+const ticketSizeDivisor = 8;
+
 interface UtilizationGraph {
   data: ReplicaData[];
   dataKey: string;
@@ -307,9 +310,11 @@ export const UtilizationGraph = ({
   const startTimeMs = startTime.getTime();
   const duration = endTime.getTime() - startTimeMs;
   const tickSlots = Array.from({
-    length: Math.round(duration / bucketSizeMs / 2),
+    length: Math.round(duration / bucketSizeMs / ticketSizeDivisor),
   }) as undefined[];
-  const ticks = tickSlots.map((_, i) => i * bucketSizeMs * 2 + startTimeMs);
+  const ticks = tickSlots.map(
+    (_, i) => i * bucketSizeMs * ticketSizeDivisor + startTimeMs
+  );
   const legendData = React.useMemo(
     () => Array.from(replicaColorMap.entries()),
     [replicaColorMap]
@@ -319,7 +324,11 @@ export const UtilizationGraph = ({
   // https://github.com/recharts/recharts/issues/1423#issuecomment-411098968
   return (
     <ResponsiveContainer width="99%" height={graphHeightPx}>
-      <LineChart barSize={4} margin={{ bottom: 0, left: 0, right: 0, top: 0 }}>
+      <LineChart
+        syncId="clusterUtilization"
+        barSize={4}
+        margin={{ bottom: 0, left: 0, right: 0, top: 0 }}
+      >
         <CartesianGrid
           vertical={false}
           horizontal={data.length > 0}
