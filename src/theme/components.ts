@@ -30,7 +30,7 @@ export const Badge = {
 
 export const Button = {
   baseStyle: {
-    borderRadius: "sm",
+    borderRadius: "lg",
     colorScheme: "purple",
   },
   variants: {
