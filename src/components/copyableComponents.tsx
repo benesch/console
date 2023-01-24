@@ -1,12 +1,5 @@
 import { IconProps } from "@chakra-ui/icons";
-import {
-  Box,
-  BoxProps,
-  Flex,
-  HStack,
-  Spacer,
-  TextProps,
-} from "@chakra-ui/layout";
+import { Box, BoxProps, Flex, HStack, Spacer } from "@chakra-ui/layout";
 import {
   chakra,
   HTMLChakraProps,
@@ -87,17 +80,29 @@ export const CopyButton: React.FC<
 
 const CopyButtonWidth = "40px";
 
+export interface CopyableBoxProps extends BoxProps {
+  contents: string;
+  variant?: "default" | "embedded";
+}
 /** Copyable component with a bg box but no line breaks  */
-export const CopyableBox: React.FC<
-  React.PropsWithChildren<{ contents: string } & TextProps>
-> = ({ contents, p, ...props }) => {
-  const { colors } = useTheme<MaterializeTheme>();
+export const CopyableBox: React.FC<CopyableBoxProps> = ({
+  contents,
+  variant = "default",
+  ...props
+}) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   return (
     <HStack
       alignItems="start"
       spacing={0}
-      borderRadius="lg"
-      bg={colors.semanticColors.background.secondary}
+      borderRadius={variant === "default" ? "lg" : "0"}
+      bg={
+        variant === "default"
+          ? semanticColors.background.secondary
+          : "transparent"
+      }
       w="full"
       fontSize="sm"
       {...props}
@@ -105,11 +110,14 @@ export const CopyableBox: React.FC<
       <Box
         as="pre"
         fontFamily="mono"
-        p={p ?? 2}
         pl={4}
         flex={1}
         whiteSpace="pre-wrap"
         width={`calc(100% - ${CopyButtonWidth})`}
+        {...(variant === "embedded" && {
+          py: "4",
+          pl: "6",
+        })}
       >
         {props.children}
       </Box>
@@ -118,6 +126,10 @@ export const CopyableBox: React.FC<
         contents={contents}
         w={CopyButtonWidth}
         py="3"
+        {...(variant === "embedded" && {
+          py: "2",
+          px: "2",
+        })}
         minH="full"
       />
     </HStack>
