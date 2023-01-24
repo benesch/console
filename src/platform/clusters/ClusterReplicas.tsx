@@ -144,7 +144,7 @@ interface ReplicaTableProps {
 const ReplicaTable = (props: ReplicaTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   return (
-    <Table variant="borderless" data-testid="cluster-table" borderRadius="xl">
+    <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
         <Tr>
           <Th>Name</Th>
