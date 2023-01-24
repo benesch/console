@@ -1,4 +1,3 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,6 +10,7 @@ import {
 import React from "react";
 
 import { CopyableBox } from "~/components/copyableComponents";
+import Chevron from "~/svg/Chevron";
 import { MaterializeTheme } from "~/theme";
 
 const secrets = `CREATE SECRET broker_url AS "http://broker.com";
@@ -23,7 +23,6 @@ const GettingStarted = () => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const [expanded, setExpanded] = React.useState(false);
-  const Icon = expanded ? ChevronUpIcon : ChevronDownIcon;
 
   return (
     <Box
@@ -54,7 +53,9 @@ const GettingStarted = () => {
               onClick={() => setExpanded((val) => !val)}
             >
               Demo credentials
-              <Icon display="block" ml={1} />
+              <Box ml={1}>
+                <Chevron direction={expanded ? "up" : "down"} />
+              </Box>
             </Button>
           </VStack>
           <Button
