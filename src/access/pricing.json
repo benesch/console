@@ -2,8 +2,8 @@
   "pricingTerms": {
     "rows": [
       ["Credit Price", "$1.50", "$1.70"],
-      ["Storage per GB (hourly)", "$0.00004110", "$0.00004110"],
-      ["Network Egress per GB", "$0.12", "$0.12"]
+      ["Storage/GB (hourly)", "$0.00004110", "$0.00004110"],
+      ["Network Egress/GB", "$0.12", "$0.12"]
     ],
     "cols": ["AWS/us-east-1", "AWS/eu-west-1"]
   },
