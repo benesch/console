@@ -36,7 +36,11 @@ const ContentOrEnvironmentErrors = (props: { children: React.ReactNode }) => {
           {showDetails &&
             environment.errors.map((error, i) => {
               return (
-                <Text color="semanticColors.foreground.primary" key={i}>
+                <Text
+                  as="div"
+                  color="semanticColors.foreground.primary"
+                  key={i}
+                >
                   {error.message}
                   {error.details && (
                     <>
