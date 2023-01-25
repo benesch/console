@@ -10,7 +10,6 @@ import {
 import React from "react";
 
 import { CopyableBox } from "~/components/copyableComponents";
-import Chevron from "~/svg/Chevron";
 import { MaterializeTheme } from "~/theme";
 
 const secrets = `CREATE SECRET broker_url AS "http://broker.com";
@@ -22,7 +21,7 @@ const GettingStarted = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
-  const [expanded, setExpanded] = React.useState(false);
+  const startExpanded = location.search.indexOf("showSourceCredentials") !== -1;
 
   return (
     <Box
@@ -41,22 +40,6 @@ const GettingStarted = () => {
               Learn the basics of Materialize by creating your first set of
               cluster, views, and sources.
             </Text>
-            <Button
-              color={semanticColors.foreground.primary}
-              fontSize="sm"
-              fontWeight="normal"
-              fontFamily="mono"
-              _hover={{
-                textDecoration: "none",
-              }}
-              variant="link"
-              onClick={() => setExpanded((val) => !val)}
-            >
-              Demo credentials
-              <Box ml={1}>
-                <Chevron direction={expanded ? "up" : "down"} />
-              </Box>
-            </Button>
           </VStack>
           <Button
             as="a"
@@ -71,7 +54,7 @@ const GettingStarted = () => {
           </Button>
         </HStack>
       </Box>
-      {expanded && (
+      {startExpanded && (
         <CopyableBox variant="embedded" contents={secrets}>
           {secrets}
         </CopyableBox>
