@@ -219,8 +219,9 @@ const fronteggTheme: FronteggThemeOptions = {
   },
 };
 
-export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
-  mode: frontEggMode,
+export const getFronteggTheme = (
+  _frontEggMode: "light" | "dark"
+): FronteggThemeOptions => ({
   ...fronteggTheme,
   /* TODO wait for full frontegg styleability before attempting dark mode there */
   .../*(mode === "light"
@@ -228,7 +229,6 @@ export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
     palette: {
       error: {
         main: colors.red[500],
-        active: colors.red[600],
       },
       primary: {
         main: colors.purple[600],
