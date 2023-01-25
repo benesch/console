@@ -95,7 +95,7 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
   } = useTheme<MaterializeTheme>();
   return (
     <HStack
-      alignItems="start"
+      alignItems="center"
       spacing={0}
       borderRadius={variant === "default" ? "lg" : "0"}
       bg={
