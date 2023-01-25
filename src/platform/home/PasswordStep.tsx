@@ -126,7 +126,9 @@ const PasswordStep = (props: BoxProps) => {
         </Text>
         <HStack spacing={2}>
           <Link to="/access" target="_blank">
-            <Button size="sm">Manage app passwords</Button>
+            <Button size="sm" variant="secondary">
+              Manage app passwords
+            </Button>
           </Link>
           <Button
             onClick={() =>
@@ -137,8 +139,8 @@ const PasswordStep = (props: BoxProps) => {
               })
             }
             disabled={!!(tokensState.successDialog.secret || createInProgress)}
-            colorScheme="purple"
             size="sm"
+            variant="primary"
           >
             Create new
           </Button>

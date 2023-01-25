@@ -34,6 +34,26 @@ export const Button = {
     colorScheme: "purple",
   },
   variants: {
+    secondary: {
+      color: "semanticColors.foreground.primary",
+      fontSize: "14px",
+      lineHeight: "16px",
+      fontWeight: 500,
+      backgroundColor: "semanticColors.background.primary",
+      borderWidth: "1px",
+      borderColor: "semanticColors.border.secondary",
+      shadow: shadows.light.level1,
+      _hover: {
+        backgroundColor: "semanticColors.background.secondary",
+      },
+    },
+    primary: {
+      color: "semanticColors.foreground.inverse",
+      fontSize: "14px",
+      lineHeight: "16px",
+      fontWeight: 500,
+      backgroundColor: "semanticColors.accent.purple",
+    },
     "gradient-1": {
       color: "offWhite",
       backgroundColor: gradients.accentDark1.fallback,

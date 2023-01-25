@@ -25,7 +25,7 @@ const GettingStarted = () => {
 
   return (
     <Box
-      borderRadius="md"
+      borderRadius="lg"
       borderColor={semanticColors.border.info}
       borderWidth="1px"
       overflow="hidden"
@@ -33,10 +33,14 @@ const GettingStarted = () => {
       <Box p="4" background={semanticColors.background.info}>
         <HStack spacing={10}>
           <VStack spacing="2" alignItems="start">
-            <Heading as="h6" fontSize="sm" fontWeight="500">
+            <Heading as="h6" fontSize="sm" lineHeight="16px" fontWeight="500">
               Get started with Materialize
             </Heading>
-            <Text fontSize="sm" color={semanticColors.foreground.secondary}>
+            <Text
+              fontSize="sm"
+              lineHeight="20px"
+              color={semanticColors.foreground.secondary}
+            >
               Learn the basics of Materialize by creating your first set of
               cluster, views, and sources.
             </Text>
@@ -46,7 +50,7 @@ const GettingStarted = () => {
             target="_blank"
             rel="noopener"
             href="//materialize.com/docs/get-started/"
-            variant="outline"
+            variant="secondary"
             size="sm"
             bg={semanticColors.background.primary}
           >
