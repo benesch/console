@@ -217,9 +217,6 @@ const fronteggTheme: FronteggThemeOptions = {
       placement: "page",
     },
   },
-  typographyStyleOptions: {
-    fontFamily: fontDefault,
-  },
 };
 
 export const getFronteggTheme = (frontEggMode: "light" | "dark") => ({
