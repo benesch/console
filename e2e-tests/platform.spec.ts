@@ -129,6 +129,13 @@ async function testPlatformEnvironment(
   request: APIRequestContext,
   password: string
 ) {
+  const testdbUser = process.env.PG_SOURCE_TEST_DB_USERNAME;
+  const testdbPass = process.env.PG_SOURCE_TEST_DB_PASSWORD;
+  const testdbDbName = process.env.PG_SOURCE_TEST_DB_DB_NAME;
+  const testdbHost = process.env.PG_SOURCE_TEST_DB_HOST;
+  const testdbPort = process.env.PG_SOURCE_TEST_DB_PORT;
+  assert(testdbUser && testdbPass && testdbDbName && testdbHost && testdbPort);
+
   /**
    * Currently tables and some sort of Materialized Views don't work (due to persistence?)
    * With this approach at least the critical platform test for deployments is checked.
@@ -152,7 +159,137 @@ async function testPlatformEnvironment(
     `);
 
   assert.equal(indexCount, 1);
+
+  console.log("Creating source.");
+  await client.query(`CREATE SECRET pgpass AS '${testdbPass}';`);
+  await client.query(`
+      CREATE CONNECTION pg_connection TO POSTGRES (
+          HOST '${testdbHost}',
+          PORT ${testdbPort},
+          USER '${testdbUser}',
+          PASSWORD SECRET pgpass,
+          SSL MODE 'require',
+          DATABASE '${testdbDbName}'
+      );
+    `);
+  await client.query(
+    `CREATE SOURCE mz_source FROM POSTGRES CONNECTION pg_connection (PUBLICATION 'mz_source') FOR ALL TABLES WITH (SIZE = '3xsmall');`
+  );
+
+  console.log("Waiting for source.");
+  const { rowCount: replicatedTableCount } = await client.query(`
+      SELECT a FROM t1;
+    `);
+  assert.equal(replicatedTableCount, 0);
+
+  if (!IS_KIND) {
+    await testEgress(
+      client,
+      page,
+      testdbUser,
+      testdbPass,
+      testdbDbName,
+      testdbHost,
+      testdbPort
+    );
+  }
+
+  console.log("Succeeded");
   return;
+}
+
+async function testEgress(
+  client: Client,
+  page: Page,
+  user: string,
+  pass: string,
+  dbName: string,
+  host: string,
+  port: string
+) {
+  console.log("Connecting to source test db");
+  const testdbClient = await connectPostgres(
+    page,
+    user,
+    pass,
+    dbName,
+    host,
+    port
+  );
+  console.log("Cleaning out old replication slots");
+  const { rows: inactiveReplicationSlots } = await testdbClient.query(`
+      SELECT slot_name FROM pg_replication_slots WHERE active = FALSE;
+    `);
+  for (const inactiveReplicationSlot of inactiveReplicationSlots) {
+    await testdbClient.query(`
+      SELECT pg_drop_replication_slot('${inactiveReplicationSlot.slot_name}');
+    `);
+  }
+
+  const { rows: replicationSlots } = await client.query(`
+      SELECT replication_slot FROM mz_internal.mz_postgres_sources;
+    `);
+  assert.equal(replicationSlots.length, 1);
+  const replicationSlot = replicationSlots[0].replication_slot;
+  console.log(`Using replication slot ${replicationSlot}`);
+
+  const { rows: egressAddressRows } = await client.query(`
+      SELECT egress_ip FROM mz_catalog.mz_egress_ips;
+    `);
+  assert(egressAddressRows.length > 0);
+  const egressAddresses = egressAddressRows.map((row) => row.egress_ip);
+
+  const { rows: clientAddrRows } = await testdbClient.query(
+    `SELECT client_addr FROM pg_stat_activity JOIN pg_replication_slots ON pg_replication_slots.active_pid = pg_stat_activity.pid WHERE slot_name = '${replicationSlot}';`
+  );
+  const clientAddrs = clientAddrRows.map((row) => row.client_addr);
+  assert(clientAddrs.length > 0);
+  for (const clientAddr of clientAddrs) {
+    assert(egressAddresses.includes(clientAddr));
+  }
+}
+
+async function connectPostgres(
+  page: Page,
+  username: string,
+  password: string,
+  dbName: string,
+  host: string,
+  port: string
+): Promise<Client> {
+  const url = new URL(host.startsWith("http") ? host : `http://${host}`);
+  const dns = new CacheableLookup({
+    maxTtl: 0, // always re-lookup
+    errorTtl: 0,
+  });
+
+  for (let i = 0; i < 60; i++) {
+    try {
+      const entry = await dns.lookupAsync(url.hostname);
+      const pgParams = {
+        user: username,
+        host: entry.address,
+        port: parseInt(port, 10),
+        database: dbName,
+        password,
+        ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
+        // 5 second connection timeout, because Frontegg authentication can be slow.
+        connectionTimeoutMillis: 50000,
+        // 10 minute query timeout, because spinning up a cluster can involve
+        // turning on new EC2 machines, which may take many minutes.
+        query_timeout: 600000,
+      };
+
+      const client = new Client(pgParams);
+      await client.connect();
+      return client;
+    } catch (error) {
+      console.log(error);
+      await page.waitForTimeout(1000);
+    }
+  }
+
+  throw new Error("unable to connect to region");
 }
 
 async function connectRegionPostgres(
@@ -168,43 +305,12 @@ async function connectRegionPostgres(
 
   assert(hostAddress && port && database);
 
-  if (hostAddress) {
-    const url = new URL(
-      hostAddress.startsWith("http") ? hostAddress : `http://${hostAddress}`
-    );
-    const dns = new CacheableLookup({
-      maxTtl: 0, // always re-lookup
-      errorTtl: 0,
-    });
-
-    for (let i = 0; i < 60; i++) {
-      try {
-        const entry = await dns.lookupAsync(url.hostname);
-        const pgParams = {
-          user: EMAIL,
-          host: entry.address,
-          port: parseInt(port, 10),
-          database: database,
-          password,
-          ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
-          // 5 second connection timeout, because Frontegg authentication can be slow.
-          connectionTimeoutMillis: 50000,
-          // 10 minute query timeout, because spinning up a cluster can involve
-          // turning on new EC2 machines, which may take many minutes.
-          query_timeout: 600000,
-        };
-
-        const client = new Client(pgParams);
-        await client.connect();
-        return client;
-      } catch (error) {
-        console.log(error);
-        await page.waitForTimeout(1000);
-      }
-    }
-
-    throw new Error("unable to connect to region");
-  } else {
-    throw new Error("unable to connect to region");
-  }
+  return await connectPostgres(
+    page,
+    EMAIL,
+    password,
+    database,
+    hostAddress,
+    port
+  );
 }
