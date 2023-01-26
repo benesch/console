@@ -43,7 +43,7 @@ const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   ENVELOPE <envelope>
   WITH (SIZE = 'xsmall');`;
 
-const sourcesSuggestions: SQLSuggestion[] = [
+const sinkSuggestions: SQLSuggestion[] = [
   {
     title: "View sinks",
     string: "SHOW SINKS;",
@@ -54,7 +54,7 @@ const sourcesSuggestions: SQLSuggestion[] = [
   },
   {
     title: "Drop a sink",
-    string: "DROP SINK <source_name>;",
+    string: "DROP SINK <sink_name>;",
   },
 ];
 
@@ -122,7 +122,7 @@ const SinksListPage = ({ sinks }: SinkListProps) => {
                     View the documentation.
                   </TextLink>
                 </Text>
-                {sourcesSuggestions.map((suggestion) => (
+                {sinkSuggestions.map((suggestion) => (
                   <SQLSuggestionBox
                     key={`suggestion-${suggestion.title}`}
                     {...suggestion}
