@@ -1,4 +1,5 @@
 import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
@@ -16,8 +17,11 @@ import {
 } from "~/recoil/environments";
 import { isPollingDisabled } from "~/util";
 
+import GettingStarted from "./GettingStarted";
+
 const Home = () => {
   const { user } = useAuth();
+  const flags = useFlags();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: isPollingDisabled() ? undefined : 5000,
   });
@@ -73,6 +77,9 @@ const Home = () => {
                   Connect to Materialize
                 </Heading>
                 <VStack spacing={6} alignItems="stretch" fontSize="sm" w="2xl">
+                  {flags["home-getting-started-banner-5241"] && (
+                    <GettingStarted />
+                  )}
                   <ConnectSteps />
                   <PasswordStep />
                   <GetStartedDocs />
