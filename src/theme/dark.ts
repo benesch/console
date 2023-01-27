@@ -9,7 +9,7 @@ import colors from "./colors";
 
 export const darkColors: ThemeColors = {
   accent: {
-    purple: colors.purple[500],
+    purple: colors.purple[400],
     brightPurple: colors.purple[300],
     green: colors.green[400],
     red: colors.red[400],

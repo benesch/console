@@ -31,7 +31,6 @@ export const Badge = {
 export const Button = {
   baseStyle: {
     borderRadius: "lg",
-    colorScheme: "purple",
   },
   variants: {
     secondary: {
@@ -43,7 +42,9 @@ export const Button = {
       borderWidth: "1px",
       borderColor: "semanticColors.border.secondary",
       shadow: shadows.light.level1,
+      transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
+        shadow: "none",
         backgroundColor: "semanticColors.background.secondary",
       },
     },
@@ -53,6 +54,11 @@ export const Button = {
       lineHeight: "16px",
       fontWeight: 500,
       backgroundColor: "semanticColors.accent.purple",
+      shadow: shadows.light.level1,
+      transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
+      _hover: {
+        shadow: "none",
+      },
     },
     "gradient-1": {
       color: "offWhite",

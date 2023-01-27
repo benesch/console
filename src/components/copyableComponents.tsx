@@ -324,8 +324,7 @@ const Line = (props: LineProps) => {
       fontSize="sm"
       _before={{
         content: "counter(line)",
-        color: colors.semanticColors.foreground.secondary,
-        opacity: 0.7,
+        color: colors.semanticColors.foreground.tertiary,
         position: "absolute",
         left: "0",
         px: 4,
