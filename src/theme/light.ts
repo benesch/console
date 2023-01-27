@@ -17,6 +17,7 @@ export const lightColors: ThemeColors = {
   foreground: {
     primary: colors.gray[900],
     secondary: colors.gray[500],
+    tertiary: "#949197",
     inverse: colors.gray[50],
   },
   background: {

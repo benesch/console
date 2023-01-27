@@ -17,6 +17,7 @@ export const darkColors: ThemeColors = {
   foreground: {
     primary: colors.gray[50],
     secondary: colors.gray[400],
+    tertiary: "#807B84",
     inverse: colors.gray[900],
   },
   background: {

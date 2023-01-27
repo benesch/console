@@ -33,6 +33,7 @@ export interface ThemeColors {
   foreground: {
     primary: string;
     secondary: string;
+    tertiary: string;
     inverse: string;
   };
   background: {
