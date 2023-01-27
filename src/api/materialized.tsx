@@ -261,8 +261,9 @@ export type ConnectorStatus =
 
 export interface Source {
   id: string;
-  oid: number;
   name: string;
+  schemaName: string;
+  databaseName: string;
   type: string;
   size?: string;
   status?: ConnectorStatus;
@@ -274,10 +275,11 @@ export interface Source {
  */
 export function useSources() {
   const sourceResponse =
-    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status, st.error
+    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sources s
-LEFT OUTER JOIN mz_internal.mz_source_statuses st
-ON st.id = s.id
+INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+INNER JOIN mz_databases d ON d.id = sc.id
+LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
 WHERE s.id LIKE 'u%';
 `);
   let sources: Source[] | null = null;
@@ -287,8 +289,9 @@ WHERE s.id LIKE 'u%';
 
     sources = rows.map((row) => ({
       id: getColumnByName(row, "id"),
-      oid: getColumnByName(row, "oid"),
       name: getColumnByName(row, "name"),
+      schemaName: getColumnByName(row, "schema_name"),
+      databaseName: getColumnByName(row, "database_name"),
       type: getColumnByName(row, "type"),
       size: getColumnByName(row, "size"),
       status: getColumnByName(row, "status"),
@@ -296,11 +299,7 @@ WHERE s.id LIKE 'u%';
     }));
   }
 
-  const refetch = React.useCallback(() => {
-    sourceResponse.refetch();
-  }, [sourceResponse]);
-
-  return { sources, refetch };
+  return { ...sourceResponse, data: sources };
 }
 
 export interface GroupedError {

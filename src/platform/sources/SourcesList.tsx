@@ -36,6 +36,8 @@ import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
 
+import { sourceErrorsPath } from "./SourceRoutes";
+
 const sourcesSuggestions: SQLSuggestion[] = [
   {
     title: "View sources",
@@ -161,8 +163,8 @@ const SourceTable = (props: SourceTableProps) => {
       <Tbody>
         {props.sources.map((s) => (
           <Tr
-            key={s.oid}
-            onClick={() => navigate(`/${regionSlug}/sources/${s.name}/errors`)}
+            key={s.id}
+            onClick={() => navigate(sourceErrorsPath(regionSlug, s))}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,

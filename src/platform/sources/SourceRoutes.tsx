@@ -14,24 +14,30 @@ export type ClusterDetailParams = {
 };
 
 const SourceRoutes = () => {
-  const { sources, refetch } = useSources();
+  const { data: sources, refetch } = useSources();
   useInterval(refetch, isPollingDisabled() ? null : 5000);
   return (
     <SentryRoutes>
       <Route path="/" element={<SourcesList sources={sources} />} />
       <Route
-        path=":sourceName/*"
+        path=":databaseName/:schemaName/:sourceName/*"
         element={<SourceOrRedirect sources={sources} />}
       />
     </SentryRoutes>
   );
 };
 
+export const sourceErrorsPath = (regionSlug: string, source: Source) => {
+  return `/${regionSlug}/sources/${source.databaseName}/${source.schemaName}/${source.name}/errors`;
+};
+
 const SourceOrRedirect: React.FC<{ sources: Source[] | null }> = ({
   sources,
 }) => {
   const params = useParams();
-  const source = sources?.find((c) => c.name === params.sourceName);
+  const source = sources?.find(
+    (c) => c.name === params.sourceName && c.schemaName === params.schemaName
+  );
   if (sources && !source) {
     return <Navigate to="/sources" replace />;
   } else {
