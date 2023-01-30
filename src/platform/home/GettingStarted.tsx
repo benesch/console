@@ -42,7 +42,7 @@ const GettingStarted = () => {
               color={semanticColors.foreground.secondary}
             >
               Learn the basics of Materialize by creating your first set of
-              cluster, views, and sources.
+              clusters, views, and sources.
             </Text>
           </VStack>
           <Button
