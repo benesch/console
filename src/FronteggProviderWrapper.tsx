@@ -1,5 +1,5 @@
 import { useColorMode } from "@chakra-ui/color-mode";
-import { FronteggProvider } from "@frontegg/react";
+import { FronteggProvider, LocalizationOverrides } from "@frontegg/react";
 import React from "react";
 
 import LoadingScreen from "~/loading";
@@ -16,11 +16,19 @@ const FronteggProviderWrapper: React.FC<Props> = ({ baseUrl, children }) => {
   const theme = React.useMemo(() => {
     return getFronteggTheme(colorMode);
   }, [colorMode]);
+  const localizations: LocalizationOverrides = {
+    loginBox: {
+      forgetPassword: {
+        submitButtonText: "Reset password",
+      },
+    },
+  };
 
   return (
     <>
       {loading && <LoadingScreen />}
       <FronteggProvider
+        localizations={{ en: localizations }}
         contextOptions={{ baseUrl }}
         backgroundImage={fronteggAuthPageBackground}
         themeOptions={theme}
