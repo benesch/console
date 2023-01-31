@@ -10,6 +10,7 @@ import { isPollingDisabled } from "~/util";
 import {
   objectOrRedirect,
   relativeObjectPath,
+  SchemaObjectRouteParams,
 } from "../schemaObjectRouteHelpers";
 import SinkDetail from "./SinkDetail";
 
@@ -40,7 +41,7 @@ const relativeSinkErrorsPath = (sink: SchemaObject) => {
 };
 
 const SinkOrRedirect: React.FC<{ sinks: Sink[] | null }> = ({ sinks }) => {
-  const params = useParams();
+  const params = useParams<SchemaObjectRouteParams>();
   const result = objectOrRedirect(params, sinks, relativeSinkErrorsPath);
   if (result.type === "redirect") {
     return result.redirect;

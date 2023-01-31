@@ -1,9 +1,16 @@
 import React from "react";
-import { Navigate, Params } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { SchemaObject } from "~/api/materialized";
 
 export type ObjectType = "Source" | "Sink";
+
+export type SchemaObjectRouteParams = {
+  id: string;
+  databaseName: string;
+  schemaName: string;
+  objectName: string;
+};
 
 export const objectPath = (
   regionSlug: string,
@@ -19,7 +26,7 @@ export const relativeObjectPath = (o: SchemaObject) => {
 
 export const handleRecreatedObject = <T extends SchemaObject>(
   objects: T[],
-  params: Readonly<Params<string>>,
+  params: Readonly<Partial<SchemaObjectRouteParams>>,
   relativePathFn: RelativePathFn
 ): ObjectOrRedirectResult<T> => {
   const schemaObject = objects.find(
@@ -45,7 +52,7 @@ export const handleRecreatedObject = <T extends SchemaObject>(
 
 export const handleRenamedObject = <T extends SchemaObject>(
   schemaObject: T,
-  params: Readonly<Params<string>>,
+  params: Readonly<Partial<SchemaObjectRouteParams>>,
   relativePathFn: RelativePathFn
 ): ObjectOrRedirectResult<T> => {
   // The schemaObject must have been renamed, redirect the user to the updated path
@@ -77,7 +84,7 @@ export type ObjectOrRedirectResult<T> = RedirectResult | ObjectResult<T>;
 export type RelativePathFn = (o: SchemaObject) => string;
 
 export const objectOrRedirect = <T extends SchemaObject>(
-  params: Readonly<Params<string>>,
+  params: Readonly<Partial<SchemaObjectRouteParams>>,
   objects: T[] | null,
   relativePathFn: RelativePathFn
 ): ObjectOrRedirectResult<T> => {
