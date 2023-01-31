@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
 
@@ -6,12 +6,18 @@ import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
   renderComponent,
+  RenderWithPathname,
   setFakeEnvironment,
 } from "~/test/utils";
 
 import SinkRoutes from "./SinkRoutes";
 
 jest.mock("~/api/auth");
+jest.mock("~/platform/sinks/SinkDetail", () => {
+  return function () {
+    return <div>SinkDetail component</div>;
+  };
+});
 
 const emptySinksResponse = rest.post("*/api/sql", (_req, res, ctx) => {
   return res(
@@ -108,5 +114,73 @@ describe("SinkRoutes", () => {
     expect(await screen.findByText("Running")).toBeVisible();
     expect(await screen.findByText("kafka")).toBeVisible();
     expect(await screen.findByText("xsmall")).toBeVisible();
+  });
+
+  it("redirects back to the list for invalid sinks", async () => {
+    server.use(validSinksResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SinkRoutes />
+      </RenderWithPathname>,
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u99/default/public/does_not_exist/errors`],
+      }
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("pathname")).toHaveTextContent(/^\/$/)
+    );
+    expect(screen.queryByText("SinkDetail component")).toBeNull();
+  });
+
+  it("shows sink details", async () => {
+    server.use(validSinksResponse);
+    renderComponent(<SinkRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: [`/u7/default/public/json_sink/errors`],
+    });
+
+    expect(screen.getByText("SinkDetail component")).toBeVisible();
+  });
+
+  it("updates the path when the name has changed", async () => {
+    server.use(validSinksResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SinkRoutes />
+      </RenderWithPathname>,
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u7/default/public/old_name/errors`],
+      }
+    );
+
+    expect(
+      await screen.findByText("/u7/default/public/json_sink/errors")
+    ).toBeVisible();
+    expect(screen.getByText("SinkDetail component")).toBeVisible();
+  });
+
+  it("updates the path when the id has changed", async () => {
+    server.use(validSinksResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SinkRoutes />
+      </RenderWithPathname>,
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u1/default/public/json_sink/errors`],
+      }
+    );
+
+    expect(
+      await screen.findByText("/u7/default/public/json_sink/errors")
+    ).toBeVisible();
+    expect(screen.getByText("SinkDetail component")).toBeVisible();
   });
 });

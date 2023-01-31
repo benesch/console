@@ -1,12 +1,12 @@
 import { screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
-import { useLocation } from "react-router-dom";
 
 import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
   renderComponent,
+  RenderWithPathname,
   setFakeEnvironment,
 } from "~/test/utils";
 
@@ -90,16 +90,6 @@ const validSourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
     })
   );
 });
-
-const RenderWithPathname = ({ children }: { children: React.ReactNode }) => {
-  const current = useLocation();
-  return (
-    <>
-      {children}
-      <div data-testid="pathname">{current.pathname}</div>
-    </>
-  );
-};
 
 describe("SourceRoutes", () => {
   it("shows a spinner initially", async () => {

@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import { render } from "@testing-library/react";
 import React, { ReactElement } from "react";
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, useLocation } from "react-router-dom";
 import { MutableSnapshot, RecoilRoot, SetRecoilState } from "recoil";
 
 import {
@@ -22,6 +22,20 @@ export const healthyEnvironment: LoadedEnvironment = {
   state: "enabled",
   health: "healthy",
   errors: [],
+};
+
+export const RenderWithPathname = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const current = useLocation();
+  return (
+    <>
+      {children}
+      <div data-testid="pathname">{current.pathname}</div>
+    </>
+  );
 };
 
 export const setFakeEnvironment = (
