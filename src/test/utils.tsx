@@ -40,13 +40,14 @@ export type InitializeStateFn = (mutableSnapshot: MutableSnapshot) => void;
 
 export const renderComponent = (
   element: ReactElement,
-  initializeState?: InitializeStateFn
+  initializeState?: InitializeStateFn,
+  initialRouterEntries?: string[]
 ) => {
   return render(
     <RecoilRoot initializeState={initializeState}>
       <ThemeProvider theme={lightTheme}>
         <React.Suspense fallback="suspense-fallback">
-          <MemoryRouter>
+          <MemoryRouter initialEntries={initialRouterEntries}>
             <SentryRoutes>
               <Route path="/*" element={element} />
             </SentryRoutes>

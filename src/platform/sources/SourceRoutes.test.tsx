@@ -1,6 +1,7 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 import server from "~/api/mocks/server";
 import {
@@ -12,6 +13,11 @@ import {
 import SourceRoutes from "./SourceRoutes";
 
 jest.mock("~/api/auth");
+jest.mock("~/platform/sources/SourceDetail", () => {
+  return function () {
+    return <div>SourceDetail component</div>;
+  };
+});
 
 const emptySourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
   return res(
@@ -85,6 +91,16 @@ const validSourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
   );
 });
 
+const RenderWithPathname = ({ children }: { children: React.ReactNode }) => {
+  const current = useLocation();
+  return (
+    <>
+      {children}
+      <div data-testid="pathname">{current.pathname}</div>
+    </>
+  );
+};
+
 describe("SourceRoutes", () => {
   it("shows a spinner initially", async () => {
     renderComponent(<SourceRoutes />, ({ set }) =>
@@ -117,5 +133,64 @@ describe("SourceRoutes", () => {
     expect(await screen.findByText("Stalled")).toBeVisible();
     expect(await screen.findByText("postgres")).toBeVisible();
     expect(await screen.findByText("xsmall")).toBeVisible();
+  });
+
+  it("redirects back to the list for invalid sources", async () => {
+    server.use(validSourcesResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SourceRoutes />
+      </RenderWithPathname>,
+      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      [`/u99/default/public/does_not_exist/errors`]
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("pathname")).toHaveTextContent(/^\/$/)
+    );
+    expect(screen.queryByText("SourceDetail component")).toBeNull();
+  });
+
+  it("shows source details", async () => {
+    server.use(validSourcesResponse);
+    renderComponent(
+      <SourceRoutes />,
+      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      [`/u4/default/public/test_source/errors`]
+    );
+
+    expect(screen.getByText("SourceDetail component")).toBeVisible();
+  });
+
+  it("updates the path when the name has changed", async () => {
+    server.use(validSourcesResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SourceRoutes />
+      </RenderWithPathname>,
+      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      [`/u4/default/public/old_name/errors`]
+    );
+
+    expect(
+      await screen.findByText("/u4/default/public/test_source/errors")
+    ).toBeVisible();
+    expect(screen.getByText("SourceDetail component")).toBeVisible();
+  });
+
+  it("updates the path when the id has changed", async () => {
+    server.use(validSourcesResponse);
+    renderComponent(
+      <RenderWithPathname>
+        <SourceRoutes />
+      </RenderWithPathname>,
+      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      [`/u1/default/public/test_source/errors`]
+    );
+
+    expect(
+      await screen.findByText("/u4/default/public/test_source/errors")
+    ).toBeVisible();
+    expect(screen.getByText("SourceDetail component")).toBeVisible();
   });
 });
