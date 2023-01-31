@@ -6,12 +6,15 @@ import { Source, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
+  Breadcrumb,
   ExpandablePanel,
   PageBreadcrumbs,
   PageHeader,
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
+import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
+import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 
 import SourceErrors from "./SourceErrors";
@@ -19,17 +22,25 @@ import SourceErrors from "./SourceErrors";
 export interface SourceDetailProps {
   source?: Source;
 }
-
 const SourceDetail = ({ source }: SourceDetailProps) => {
-  const params = useParams();
+  const params = useParams<SchemaObjectRouteParams>();
+  const regionSlug = useRegionSlug();
   const { ddl } = useDDL("SOURCE", source?.name);
+
+  const breadcrumbs: Breadcrumb[] = React.useMemo(
+    () => [
+      { title: "Sources", href: `${regionSlug}/sources` },
+      { title: params.objectName ?? "" },
+    ],
+    [params.objectName, regionSlug]
+  );
 
   return (
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start" width="100%">
-            <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
+            <PageBreadcrumbs crumbs={breadcrumbs}>
               {source?.status && (
                 <Box>
                   <StatusPill ml={2} status={source.status} />

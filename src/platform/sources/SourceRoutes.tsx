@@ -13,10 +13,6 @@ import {
 } from "../schemaObjectRouteHelpers";
 import SourceDetail from "./SourceDetail";
 
-export type ClusterDetailParams = {
-  clusterName: string;
-};
-
 const SourceRoutes = () => {
   const { data: sources, refetch } = useSources();
   useInterval(refetch, isPollingDisabled() ? null : 5000);

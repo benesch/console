@@ -136,8 +136,13 @@ export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
   );
 };
 
+export interface Breadcrumb {
+  title: string;
+  href?: string;
+}
+
 export interface PageBreadcrumbsProps {
-  crumbs: string[];
+  crumbs: Breadcrumb[];
   children?: React.ReactNode;
 }
 
@@ -155,17 +160,17 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
         const isLast = i === crumbs.length - 1;
         return (
           <PageHeading
-            key={`crumb-${crumb}-${i}`}
+            key={crumb.title}
             color={
               isLast ? "default" : colors.semanticColors.foreground.secondary
             }
             fontWeight={500}
           >
             <>
-              {isLast ? (
-                crumb
+              {crumb.href ? (
+                <Link to={`/${crumb.href}`}>{crumb.title}</Link>
               ) : (
-                <Link to={`/${crumb.toLowerCase()}`}>{crumb}</Link>
+                crumb.title
               )}
               {isLast ? null : <ChevronRightIcon />}
             </>
