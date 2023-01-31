@@ -26,7 +26,7 @@ import { AuthProvider } from "~/api/auth";
 import config from "~/config";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
-import ClusterRoutes from "~/platform/clusters/clusterRouter";
+import ClusterRoutes from "~/platform/clusters/ClusterRoutes";
 import Editor from "~/platform/editor/Editor";
 import Home from "~/platform/home/Home";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";

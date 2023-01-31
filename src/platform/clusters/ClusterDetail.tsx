@@ -9,7 +9,7 @@ import {
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
-import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
 import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";

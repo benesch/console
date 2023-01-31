@@ -32,7 +32,8 @@ import {
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
-import { relativeClusterPath } from "./clusterRouter";
+
+import { relativeClusterPath } from "./ClusterRoutes";
 
 const createClusterSuggestion = {
   title: "Create a cluster",
