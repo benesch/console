@@ -5,6 +5,7 @@ import { SchemaObject } from "~/api/materialized";
 
 export type ObjectType = "Source" | "Sink";
 
+/** Common route params used by any object detail page. */
 export type SchemaObjectRouteParams = {
   id: string;
   databaseName: string;
@@ -12,6 +13,7 @@ export type SchemaObjectRouteParams = {
   objectName: string;
 };
 
+/** Standard base path of all objects that are tied to a schema. */
 export const objectPath = (
   regionSlug: string,
   objectType: ObjectType,
@@ -20,6 +22,7 @@ export const objectPath = (
   return `/${regionSlug}/${objectType}/${relativeObjectPath(o)}`;
 };
 
+/** Standard path fragment of all objects that are tied to a schema. */
 export const relativeObjectPath = (o: SchemaObject) => {
   return `${o.id}/${o.databaseName}/${o.schemaName}/${o.name}`;
 };
@@ -80,9 +83,24 @@ export interface ObjectResult<T> {
   object?: T;
 }
 
+/**
+ * An object representing either a schema object to pass to an object detail page, or a react-router <Navigate /> element to render as a <Routes /> child.
+ *
+ * @typeParam T The type of the schema object.
+ */
 export type ObjectOrRedirectResult<T> = RedirectResult | ObjectResult<T>;
 export type RelativePathFn = (o: SchemaObject) => string;
 
+/**
+ * Determines if a path matches an schema object, or if a redirect is required.
+ *
+ * If the ID matches, but the name does not, a redirect is returned to update the name.
+ * Likewise if the name matches but the ID doesn't, a redirect is returned.
+ * If neither ID or name match, a route relative ".." redirect is returned.
+ * If both ID and fully qualified name match, the matching object is returned.
+ *
+ * @returns ObjectOrRedirectResult
+ * */
 export const objectOrRedirect = <T extends SchemaObject>(
   params: Readonly<Partial<SchemaObjectRouteParams>>,
   objects: T[] | null,
