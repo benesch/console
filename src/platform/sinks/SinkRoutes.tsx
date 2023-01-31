@@ -14,7 +14,7 @@ export type ClusterDetailParams = {
 };
 
 const SinkRoutes = () => {
-  const { sinks, refetch } = useSinks();
+  const { data: sinks, refetch } = useSinks();
   useInterval(refetch, isPollingDisabled() ? null : 5000);
   return (
     <SentryRoutes>
