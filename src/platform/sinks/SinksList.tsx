@@ -36,6 +36,8 @@ import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
 
+import { sinkErrorsPath } from "./SinkRoutes";
+
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   FROM <view_name>
   INTO <item_name>
@@ -160,7 +162,7 @@ const SinkTable = (props: SinkTableProps) => {
         {props.sinks.map((s) => (
           <Tr
             key={s.id}
-            onClick={() => navigate(`/${regionSlug}/sinks/${s.name}/errors`)}
+            onClick={() => navigate(sinkErrorsPath(regionSlug, s))}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,
