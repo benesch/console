@@ -51,9 +51,10 @@ const validSinksResponse = rest.post("*/api/sql", (_req, res, ctx) => {
 
 describe("SinkRoutes", () => {
   it("shows a spinner initially", async () => {
-    renderComponent(<SinkRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SinkRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("Sinks")).toBeVisible();
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
@@ -61,18 +62,20 @@ describe("SinkRoutes", () => {
 
   it("shows the empty state when there are no results", async () => {
     server.use(emptySinksResponse);
-    renderComponent(<SinkRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SinkRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("No available sinks")).toBeVisible();
   });
 
   it("renders the sink list", async () => {
     server.use(validSinksResponse);
-    renderComponent(<SinkRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SinkRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("json_sink")).toBeVisible();
     expect(await screen.findByText("Running")).toBeVisible();

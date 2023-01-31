@@ -103,9 +103,10 @@ const RenderWithPathname = ({ children }: { children: React.ReactNode }) => {
 
 describe("SourceRoutes", () => {
   it("shows a spinner initially", async () => {
-    renderComponent(<SourceRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SourceRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("Sources")).toBeVisible();
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
@@ -113,18 +114,20 @@ describe("SourceRoutes", () => {
 
   it("shows the empty state when there are no results", async () => {
     server.use(emptySourcesResponse);
-    renderComponent(<SourceRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SourceRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("No available sources")).toBeVisible();
   });
 
   it("renders the source list", async () => {
     server.use(validSourcesResponse);
-    renderComponent(<SourceRoutes />, ({ set }) =>
-      setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment)
-    );
+    renderComponent(<SourceRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
 
     expect(await screen.findByText("companies")).toBeVisible();
     expect(await screen.findByText("subsource")).toBeVisible();
@@ -141,8 +144,11 @@ describe("SourceRoutes", () => {
       <RenderWithPathname>
         <SourceRoutes />
       </RenderWithPathname>,
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      [`/u99/default/public/does_not_exist/errors`]
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u99/default/public/does_not_exist/errors`],
+      }
     );
 
     await waitFor(() =>
@@ -153,11 +159,11 @@ describe("SourceRoutes", () => {
 
   it("shows source details", async () => {
     server.use(validSourcesResponse);
-    renderComponent(
-      <SourceRoutes />,
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      [`/u4/default/public/test_source/errors`]
-    );
+    renderComponent(<SourceRoutes />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: [`/u4/default/public/test_source/errors`],
+    });
 
     expect(screen.getByText("SourceDetail component")).toBeVisible();
   });
@@ -168,8 +174,11 @@ describe("SourceRoutes", () => {
       <RenderWithPathname>
         <SourceRoutes />
       </RenderWithPathname>,
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      [`/u4/default/public/old_name/errors`]
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u4/default/public/old_name/errors`],
+      }
     );
 
     expect(
@@ -184,8 +193,11 @@ describe("SourceRoutes", () => {
       <RenderWithPathname>
         <SourceRoutes />
       </RenderWithPathname>,
-      ({ set }) => setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      [`/u1/default/public/test_source/errors`]
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u1/default/public/test_source/errors`],
+      }
     );
 
     expect(
