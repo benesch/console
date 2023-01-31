@@ -24,7 +24,10 @@ export const objectPath = (
 
 /** Standard path fragment of all objects that are tied to a schema. */
 export const relativeObjectPath = (o: SchemaObject) => {
-  return `${o.id}/${o.databaseName}/${o.schemaName}/${o.name}`;
+  const encodedDatabase = encodeURIComponent(o.databaseName);
+  const encodedSchema = encodeURIComponent(o.schemaName);
+  const encodedName = encodeURIComponent(o.name);
+  return `${o.id}/${encodedDatabase}/${encodedSchema}/${encodedName}`;
 };
 
 export const handleRecreatedObject = <T extends SchemaObject>(

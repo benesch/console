@@ -37,7 +37,7 @@ type ClusterParams = {
 };
 
 export const relativeClusterPath = (cluster: Cluster) =>
-  `${cluster.id}/${cluster.name}`;
+  `${cluster.id}/${encodeURIComponent(cluster.name)}`;
 
 const handleRenamedCluster = (
   cluster: Cluster,
