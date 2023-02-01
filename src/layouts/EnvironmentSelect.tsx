@@ -25,7 +25,7 @@ import {
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
-const environmentSlugRegex = new RegExp("^\\/([\\w-]*)\\/?", "gm");
+const environmentSlugRegex = new RegExp("^\\/([\\w-]*)\\/?");
 
 const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
