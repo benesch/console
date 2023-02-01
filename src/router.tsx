@@ -63,7 +63,7 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
-        <Route path="/:regionId/*" element={<RegionRoutes />} />
+        <Route path="/:regionId/*" element={<EnvironmentRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
@@ -80,9 +80,7 @@ const defaultRegion = config.cloudRegions.keys().next().value as string;
 
 type RegionParams = "regionId";
 
-// naming... we use environment everywhere else, we should probably be consistent here too?
-// or rename all the environment stuff to region...
-const RegionRoutes = () => {
+const EnvironmentRoutes = () => {
   const { user } = useAuth();
   const params = useParams<RegionParams>();
   const navigate = useNavigate();
