@@ -281,7 +281,7 @@ export function useSources() {
     useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sources s
 INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.id
+INNER JOIN mz_databases d ON d.id = sc.database_id
 LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
 WHERE s.id LIKE 'u%';
 `);
@@ -501,7 +501,7 @@ export function useSinks() {
     useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sinks s
 INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.id
+INNER JOIN mz_databases d ON d.id = sc.database_id
 LEFT OUTER JOIN mz_internal.mz_sink_statuses st
 ON st.id = s.id
 WHERE s.id LIKE 'u%';
