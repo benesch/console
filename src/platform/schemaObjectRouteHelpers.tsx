@@ -19,7 +19,7 @@ export const objectPath = (
   objectType: ObjectType,
   o: SchemaObject
 ) => {
-  return `/${regionSlug}/${objectType}/${relativeObjectPath(o)}`;
+  return `/regions/${regionSlug}/${objectType}/${relativeObjectPath(o)}`;
 };
 
 /** Standard path fragment of all objects that are tied to a schema. */

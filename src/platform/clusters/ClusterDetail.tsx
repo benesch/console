@@ -22,7 +22,7 @@ type Props = {
 };
 
 const ClusterDetailPage = ({ cluster }: Props) => {
-  const { regionId, clusterName } = useParams<ClusterDetailParams>();
+  const { clusterName } = useParams<ClusterDetailParams>();
   const regionSlug = useRegionSlug();
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
@@ -39,12 +39,10 @@ const ClusterDetailPage = ({ cluster }: Props) => {
         <VStack spacing={6} alignItems="start" width="100%">
           <PageBreadcrumbs crumbs={breadcrumbs} />
           <PageTabStrip>
-            <PageTab to={`/${regionId}/clusters/${clusterName}`} end>
+            <PageTab to="." end>
               Overview
             </PageTab>
-            <PageTab to={`/${regionId}/clusters/${clusterName}/replicas`}>
-              Replicas
-            </PageTab>
+            <PageTab to="replicas">Replicas</PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>

@@ -31,7 +31,7 @@ const SourceRoutes = () => {
 };
 
 export const sourceErrorsPath = (regionSlug: string, source: Source) => {
-  return `/${regionSlug}/sources/${relativeSourceErrorsPath(source)}`;
+  return `/regions/${regionSlug}/sources/${relativeSourceErrorsPath(source)}`;
 };
 
 const relativeSourceErrorsPath = (source: SchemaObject) => {

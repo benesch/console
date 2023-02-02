@@ -64,7 +64,7 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
-        <Route path="/:regionId/*" element={<EnvironmentRoutes />} />
+        <Route path="/regions/:regionId/*" element={<EnvironmentRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
@@ -90,11 +90,15 @@ const EnvironmentRoutes = () => {
   const regionId = regionNameMap.get(params.regionId);
 
   React.useEffect(() => {
-    if (regionId && currentEnvironmentId !== regionId) {
+    if (!regionId) return;
+
+    if (currentEnvironmentId !== regionId) {
+      // Syncronize the url with recoil, this happens on navigation to a link to another cluster or back navigation
       setCurrentEnvironmentId(regionId);
-      if (environments.get(regionId)?.state !== "enabled") {
-        navigate(`/${params.regionId}`, { replace: true });
-      }
+    }
+    // Redirect to the connect page if a region is not enabled
+    if (environments.get(regionId)?.state !== "enabled") {
+      navigate(`/regions/${params.regionId}`, { replace: true });
     }
   }, [
     currentEnvironmentId,
@@ -132,7 +136,7 @@ const RedirectToHome = () => {
     // notice it.
     return null;
   } else {
-    return <Navigate to={`${regionSlug}/`} replace />;
+    return <Navigate to={`/regions/${regionSlug}/`} replace />;
   }
 };
 

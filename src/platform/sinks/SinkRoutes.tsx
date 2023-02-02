@@ -33,7 +33,7 @@ const SinkRoutes = () => {
 };
 
 export const sinkErrorsPath = (regionSlug: string, sink: Sink) => {
-  return `/${regionSlug}/sinks/${relativeSinkErrorsPath(sink)}`;
+  return `/regions/${regionSlug}/sinks/${relativeSinkErrorsPath(sink)}`;
 };
 
 const relativeSinkErrorsPath = (sink: SchemaObject) => {

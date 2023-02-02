@@ -26,7 +26,7 @@ import {
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
-const environmentSlugRegex = new RegExp("^\\/([\\w-]*)\\/?");
+const environmentSlugRegex = /^\/regions\/([\w-]*)\/?/;
 
 const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
@@ -46,9 +46,9 @@ const EnvironmentSelectField = () => {
       const regionId = (option as EnvOptionType).id
         .replace("/", "-")
         .toLowerCase();
+      setCurrentEnvironment((option as EnvOptionType).id);
       const matches = environmentSlugRegex.exec(location.pathname);
       if (matches) {
-        setCurrentEnvironment((option as EnvOptionType).id);
         const newPath = location.pathname.replace(matches[1], `${regionId}`);
         navigate(newPath + location.search + location.hash);
       }

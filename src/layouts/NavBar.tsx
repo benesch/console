@@ -138,9 +138,9 @@ type NavItemType = {
 
 const getNavItems = (regionSlug: string): NavItemType[] => [
   { label: "Connect", href: "/" },
-  { label: "Clusters", href: `/${regionSlug}/clusters` },
-  { label: "Sources", href: `/${regionSlug}/sources` },
-  { label: "Sinks", href: `/${regionSlug}/sinks` },
+  { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
+  { label: "Sources", href: `/regions/${regionSlug}/sources` },
+  { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
   // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
