@@ -308,10 +308,18 @@ export const fetchEnvironmentHealth = async (
   return { health, errors };
 };
 
+export const defaultRegion = () => {
+  if (storageAvailable("localStorage")) {
+    const region = window.localStorage.getItem(SELECTED_REGION_KEY);
+    if (region) return region;
+  }
+  return config.cloudRegions.keys().next().value;
+};
+
 /** The ID of the currently selected environment. */
 export const currentEnvironmentIdState = atom<string>({
   key: keys.CURRENT_ENVIRONMENT_ID,
-  default: config.cloudRegions.keys().next().value,
+  default: defaultRegion(),
 });
 
 /** The state for the currently selected environment. */

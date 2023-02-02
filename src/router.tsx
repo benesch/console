@@ -37,6 +37,7 @@ import { assert } from "~/util";
 
 import {
   currentEnvironmentIdState,
+  defaultRegion,
   useEnvironmentsWithHealth,
 } from "./recoil/environments";
 import { regionIdToSlug, regionNameMap, useRegionSlug } from "./region";
@@ -76,8 +77,6 @@ const Router = () => {
   );
 };
 
-const defaultRegion = config.cloudRegions.keys().next().value as string;
-
 type RegionParams = "regionId";
 
 const EnvironmentRoutes = () => {
@@ -107,7 +106,7 @@ const EnvironmentRoutes = () => {
   ]);
 
   if (!regionId) {
-    navigate(`/${regionIdToSlug(defaultRegion)}`);
+    navigate(`/${regionIdToSlug(defaultRegion())}`);
     return null;
   }
   return (

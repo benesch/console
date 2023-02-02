@@ -21,6 +21,7 @@ import {
   currentEnvironmentIdState,
   LoadedEnvironment,
   useEnvironmentsWithHealth,
+  useSetCurrentEnvironment,
 } from "~/recoil/environments";
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
@@ -31,6 +32,7 @@ const EnvironmentSelectField = () => {
   const colorModeContext = useColorMode();
   const { user } = useAuth();
   const canReadEnvironments = hasEnvironmentReadPermission(user);
+  const setCurrentEnvironment = useSetCurrentEnvironment();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: isPollingDisabled() ? undefined : 5000,
   });
@@ -46,11 +48,12 @@ const EnvironmentSelectField = () => {
         .toLowerCase();
       const matches = environmentSlugRegex.exec(location.pathname);
       if (matches) {
+        setCurrentEnvironment((option as EnvOptionType).id);
         const newPath = location.pathname.replace(matches[1], `${regionId}`);
         navigate(newPath + location.search + location.hash);
       }
     },
-    [navigate]
+    [navigate, setCurrentEnvironment]
   );
 
   const colorStyles = React.useMemo(
