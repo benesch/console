@@ -7,9 +7,9 @@ import { currentEnvironmentIdState } from "./recoil/environments";
 export const regionIdToSlug = (region: string) =>
   region.replace("/", "-").toLowerCase();
 
-export const regionNameMap = new Map<string, string>();
+export const regionSlugToNameMap = new Map<string, string>();
 for (const name of config.cloudRegions.keys()) {
-  regionNameMap.set(regionIdToSlug(name), name);
+  regionSlugToNameMap.set(regionIdToSlug(name), name);
 }
 
 export const useRegionSlug = () => {

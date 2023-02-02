@@ -9,7 +9,7 @@ import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {
-  regionId: string;
+  regionSlug: string;
   clusterName: string;
 };
 

@@ -40,7 +40,7 @@ import {
   defaultRegion,
   useEnvironmentsWithHealth,
 } from "./recoil/environments";
-import { regionIdToSlug, regionNameMap, useRegionSlug } from "./region";
+import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 
 /** The root router for the application. */
 const Router = () => {
@@ -64,7 +64,7 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
-        <Route path="/regions/:regionId/*" element={<EnvironmentRoutes />} />
+        <Route path="/regions/:regionSlug/*" element={<EnvironmentRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
@@ -77,7 +77,7 @@ const Router = () => {
   );
 };
 
-type RegionParams = "regionId";
+type RegionParams = "regionSlug";
 
 const EnvironmentRoutes = () => {
   const { user } = useAuth();
@@ -86,8 +86,8 @@ const EnvironmentRoutes = () => {
   const [currentEnvironmentId, setCurrentEnvironmentId] =
     useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentEnvironmentIdState);
   const environments = useEnvironmentsWithHealth(user.accessToken);
-  assert(params.regionId);
-  const regionId = regionNameMap.get(params.regionId);
+  assert(params.regionSlug);
+  const regionId = regionSlugToNameMap.get(params.regionSlug);
 
   React.useEffect(() => {
     if (!regionId) return;
@@ -98,13 +98,13 @@ const EnvironmentRoutes = () => {
     }
     // Redirect to the connect page if a region is not enabled
     if (environments.get(regionId)?.state !== "enabled") {
-      navigate(`/regions/${params.regionId}`, { replace: true });
+      navigate(`/regions/${params.regionSlug}`, { replace: true });
     }
   }, [
     currentEnvironmentId,
     environments,
     navigate,
-    params.regionId,
+    params.regionSlug,
     regionId,
     setCurrentEnvironmentId,
   ]);

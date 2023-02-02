@@ -23,6 +23,7 @@ import {
   useEnvironmentsWithHealth,
   useSetCurrentEnvironment,
 } from "~/recoil/environments";
+import { regionIdToSlug } from "~/region";
 import colors from "~/theme/colors";
 import { isPollingDisabled } from "~/util";
 
@@ -43,13 +44,11 @@ const EnvironmentSelectField = () => {
 
   const selectHandler = React.useCallback(
     (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
-      const regionId = (option as EnvOptionType).id
-        .replace("/", "-")
-        .toLowerCase();
+      const regionSlug = regionIdToSlug((option as EnvOptionType).id);
       setCurrentEnvironment((option as EnvOptionType).id);
       const matches = environmentSlugRegex.exec(location.pathname);
       if (matches) {
-        const newPath = location.pathname.replace(matches[1], `${regionId}`);
+        const newPath = location.pathname.replace(matches[1], `${regionSlug}`);
         navigate(newPath + location.search + location.hash);
       }
     },
