@@ -110,7 +110,7 @@ const EnvironmentRoutes = () => {
   ]);
 
   if (!regionId) {
-    navigate(`/${regionIdToSlug(defaultRegion())}`);
+    navigate(`/regions/${regionIdToSlug(defaultRegion())}`);
     return null;
   }
   return (
