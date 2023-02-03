@@ -577,3 +577,39 @@ WHERE cluster_id = '${clusterId}';`
 
   return { ...response, data: views };
 }
+
+export interface Index {
+  id: string;
+  name: string;
+  relationName: string;
+  relationType: string;
+}
+
+/**
+ * Fetches all indexes for a given cluster
+ */
+export function useIndexes(clusterId?: string) {
+  const response = useSql(
+    clusterId
+      ? `SELECT i.id, i.name, r.name as relation_name, r.type
+FROM mz_indexes i
+INNER JOIN mz_relations r on r.id = i.on_id
+WHERE cluster_id = '${clusterId}'
+AND i.id LIKE 'u%';`
+      : undefined
+  );
+  let indexes: Index[] | null = null;
+  if (response.data) {
+    const { rows, getColumnByName } = response.data;
+    assert(getColumnByName);
+
+    indexes = rows.map((row) => ({
+      id: getColumnByName(row, "id"),
+      name: getColumnByName(row, "name"),
+      relationName: getColumnByName(row, "relation_name"),
+      relationType: getColumnByName(row, "type"),
+    }));
+  }
+
+  return { ...response, data: indexes };
+}

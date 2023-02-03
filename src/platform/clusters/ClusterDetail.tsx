@@ -15,6 +15,7 @@ import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";
 import ClusterReplicas from "./ClusterReplicas";
+import Indexes from "./Indexes";
 import MaterializedViews from "./MaterializedViews";
 
 type Props = {
@@ -40,6 +41,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
             </PageTab>
             <PageTab to="replicas">Replicas</PageTab>
             <PageTab to="materialized-views">Materialized Views</PageTab>
+            <PageTab to="indexes">Indexes</PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>
@@ -53,6 +55,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
           path="materialized-views"
           element={<MaterializedViews cluster={cluster} />}
         />
+        <Route path="indexes" element={<Indexes cluster={cluster} />} />
       </SentryRoutes>
     </>
   );
