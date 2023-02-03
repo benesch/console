@@ -1,13 +1,4 @@
-import {
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useTheme,
-} from "@chakra-ui/react";
+import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
 
 import { Cluster, Index, useIndexes } from "~/api/materialized";
@@ -20,7 +11,6 @@ import {
   SampleCodeBoxWrapper,
 } from "~/layouts/listPageComponents";
 import ClustersIcon from "~/svg/Clusters";
-import { MaterializeTheme } from "~/theme";
 
 type IndexesProps = {
   cluster?: Cluster;
@@ -69,7 +59,6 @@ interface IndexTableProps {
 }
 
 const IndexTable = (props: IndexTableProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Table variant="standalone" data-testid="index-table" borderRadius="xl">
       <Thead>
@@ -81,31 +70,10 @@ const IndexTable = (props: IndexTableProps) => {
       </Thead>
       <Tbody>
         {props.indexes.map((v) => (
-          <Tr
-            key={v.id}
-            cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
-          >
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {v.name}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {v.relationName}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {v.relationType}
-            </Td>
+          <Tr key={v.id}>
+            <Td>{v.name}</Td>
+            <Td>{v.relationName}</Td>
+            <Td>{v.relationType}</Td>
           </Tr>
         ))}
       </Tbody>

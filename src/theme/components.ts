@@ -190,6 +190,11 @@ export const Table = defineMultiStyleConfig({
           borderRightColor: "semanticColors.border.secondary",
         },
       },
+      tr: {
+        _hover: {
+          bg: "semanticColors.background.secondary",
+        },
+      },
       td: {
         borderBottom: tableBorderStyle,
         borderBottomWidth: "1px",

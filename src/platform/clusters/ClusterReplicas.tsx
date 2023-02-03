@@ -154,29 +154,10 @@ const ReplicaTable = (props: ReplicaTableProps) => {
       </Thead>
       <Tbody>
         {props.replicas.map((r) => (
-          <Tr
-            key={r.name}
-            cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
-          >
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {r.name}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {r.size}
-            </Td>
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
+          <Tr key={r.name}>
+            <Td>{r.name}</Td>
+            <Td>{r.size}</Td>
+            <Td>
               {r.memoryPercent && (
                 <>
                   {r.memoryPercent.toFixed(1)}

@@ -144,7 +144,6 @@ interface SinkTableProps {
 }
 
 const SinkTable = (props: SinkTableProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
   const regionSlug = useRegionSlug();
 
@@ -164,9 +163,6 @@ const SinkTable = (props: SinkTableProps) => {
             key={s.id}
             onClick={() => navigate(sinkErrorsPath(regionSlug, s))}
             cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
           >
             <Td>
               <Box

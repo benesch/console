@@ -1,13 +1,4 @@
-import {
-  Spinner,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useTheme,
-} from "@chakra-ui/react";
+import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
 
 import {
@@ -24,7 +15,6 @@ import {
   SampleCodeBoxWrapper,
 } from "~/layouts/listPageComponents";
 import ClustersIcon from "~/svg/Clusters";
-import { MaterializeTheme } from "~/theme";
 
 type MaterializedViewsProps = {
   cluster?: Cluster;
@@ -82,7 +72,6 @@ interface MaterializedViewTableProps {
 }
 
 const MaterializedViewTable = (props: MaterializedViewTableProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Table
       variant="standalone"
@@ -96,19 +85,8 @@ const MaterializedViewTable = (props: MaterializedViewTableProps) => {
       </Thead>
       <Tbody>
         {props.materializedViews.map((v) => (
-          <Tr
-            key={v.name}
-            cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
-          >
-            <Td
-              borderBottomWidth="1px"
-              borderBottomColor={colors.semanticColors.border.primary}
-            >
-              {v.name}
-            </Td>
+          <Tr key={v.name}>
+            <Td>{v.name}</Td>
           </Tr>
         ))}
       </Tbody>

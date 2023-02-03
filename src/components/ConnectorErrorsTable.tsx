@@ -63,30 +63,10 @@ const ConnectorErrorsTable = ({
           </Thead>
           <Tbody>
             {errors.map((error) => (
-              <Tr
-                key={error.lastOccurred.getMilliseconds()}
-                sx={{
-                  _hover: {
-                    backgroundColor: semanticColors.background.secondary,
-                  },
-                }}
-              >
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor={semanticColors.border.primary}
-                >
-                  {error.error}
-                </Td>
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor={semanticColors.border.primary}
-                >
-                  {error.count}
-                </Td>
-                <Td
-                  borderBottomWidth="1px"
-                  borderBottomColor={semanticColors.border.primary}
-                >
+              <Tr key={error.lastOccurred.getMilliseconds()}>
+                <Td>{error.error}</Td>
+                <Td>{error.count}</Td>
+                <Td>
                   <Text
                     color={semanticColors.foreground.secondary}
                     display="inline"
