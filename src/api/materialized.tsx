@@ -545,3 +545,35 @@ export function useDDL(noun: DDLNoun, sinkName?: string) {
 
   return { ddl, error, refetch };
 }
+
+export interface MaterializedView {
+  id: string;
+  name: string;
+  definition: string;
+}
+
+/**
+ * Fetches all materialized views for a given cluster
+ */
+export function useMaterializedViews(clusterId?: string) {
+  const response = useSql(
+    clusterId
+      ? `SELECT id, name, definition
+FROM mz_materialized_views
+WHERE cluster_id = '${clusterId}';`
+      : undefined
+  );
+  let views: MaterializedView[] | null = null;
+  if (response.data) {
+    const { rows, getColumnByName } = response.data;
+    assert(getColumnByName);
+
+    views = rows.map((row) => ({
+      id: getColumnByName(row, "id"),
+      name: getColumnByName(row, "name"),
+      definition: getColumnByName(row, "definition"),
+    }));
+  }
+
+  return { ...response, data: views };
+}
