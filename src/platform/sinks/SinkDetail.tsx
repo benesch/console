@@ -14,7 +14,6 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
-import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 
 import SinkErrors from "./SinkErrors";
@@ -25,15 +24,11 @@ export interface SinkDetailProps {
 
 const SinkDetail = ({ sink }: SinkDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const regionSlug = useRegionSlug();
   const { ddl } = useDDL("SINK", sink?.name);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
-    () => [
-      { title: "Sinks", href: `${regionSlug}/sinks` },
-      { title: params.objectName ?? "" },
-    ],
-    [params.objectName, regionSlug]
+    () => [{ title: "Sinks", href: ".." }, { title: params.objectName ?? "" }],
+    [params.objectName]
   );
 
   return (

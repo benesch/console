@@ -168,7 +168,7 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
           >
             <>
               {crumb.href ? (
-                <Link to={`/${crumb.href}`}>{crumb.title}</Link>
+                <Link to={crumb.href}>{crumb.title}</Link>
               ) : (
                 crumb.title
               )}

@@ -14,7 +14,6 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
-import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 
 import SourceErrors from "./SourceErrors";
@@ -24,15 +23,14 @@ export interface SourceDetailProps {
 }
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const regionSlug = useRegionSlug();
   const { ddl } = useDDL("SOURCE", source?.name);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
     () => [
-      { title: "Sources", href: `${regionSlug}/sources` },
+      { title: "Sources", href: ".." },
       { title: params.objectName ?? "" },
     ],
-    [params.objectName, regionSlug]
+    [params.objectName]
   );
 
   return (

@@ -11,7 +11,6 @@ import {
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
-import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";
@@ -23,14 +22,10 @@ type Props = {
 
 const ClusterDetailPage = ({ cluster }: Props) => {
   const { clusterName } = useParams<ClusterDetailParams>();
-  const regionSlug = useRegionSlug();
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
-    () => [
-      { title: "Clusters", href: `${regionSlug}/clusters` },
-      { title: clusterName ?? "" },
-    ],
-    [clusterName, regionSlug]
+    () => [{ title: "Clusters", href: ".." }, { title: clusterName ?? "" }],
+    [clusterName]
   );
 
   return (
