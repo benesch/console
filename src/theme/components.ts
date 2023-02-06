@@ -183,7 +183,13 @@ export const Table = defineMultiStyleConfig({
           borderLeftStyle: "solid",
           borderLeftColor: "semanticColors.border.secondary",
         },
-        "&:last-child": {
+        "&:only-child": {
+          borderRadius: "8px",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: "semanticColors.border.secondary",
+        },
+        "&:last-child:not(:only-child)": {
           borderRadius: "0 8px 8px 0",
           borderRightWidth: "1px",
           borderRightStyle: "solid",
