@@ -23,7 +23,6 @@ import PricingPage from "~/access/PricingPage";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
 import { useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
-import config from "~/config";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
 import ClusterRoutes from "~/platform/clusters/ClusterRoutes";
@@ -72,7 +71,7 @@ const Router = () => {
         <Route path="*" element={<RedirectToHome />} />
         <Route element={<Navigate to="/" replace />} />
       </ProtectedRoutes>
-      <AnalyticsOnEveryPage config={config} />
+      <AnalyticsOnEveryPage />
     </>
   );
 };

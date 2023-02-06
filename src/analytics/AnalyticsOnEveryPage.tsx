@@ -2,53 +2,29 @@ import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useLocation } from "react-router";
 
-import GAAnalyticsClient from "~/analytics/googleAnalytics";
-import SegmentAnalyticsClient from "~/analytics/segment";
-import { AnalyticsClient } from "~/analytics/types";
-import { GlobalConfig } from "~/config";
+import segment from "~/analytics/segment";
 
 /**
- * A react component that will emit analytics page event on location change
- * for all provided analytics clients.
- * @returns A react component.
+ * Component that will emit analytics page event on location change.
  */
-const AnalyticsOnEveryPage: React.FC<
-  React.PropsWithChildren<{
-    config: GlobalConfig;
-    clients?: AnalyticsClient[];
-  }>
-> = ({ config, clients }) => {
+const AnalyticsOnEveryPage = () => {
   const auth = useAuth((state) => state);
   const location = useLocation();
-  const allClients = React.useMemo(
-    () =>
-      clients ?? [
-        new GAAnalyticsClient(config),
-        new SegmentAnalyticsClient(config),
-      ],
-    [config, clients]
-  );
 
   React.useEffect(() => {
-    allClients.forEach((client) => {
-      client.page();
-    });
-  }, [allClients, location]);
+    segment.page();
+  }, [location]);
 
   // once we have valid auth, identify the further analytics events
   // otherwise, logout
   React.useEffect(() => {
     if (auth.user) {
       const u = auth.user;
-      allClients.forEach((client) => {
-        client.identify(u.id ?? "");
-      });
+      segment.identify(u.id);
     } else {
-      allClients.forEach((client) => {
-        client.reset();
-      });
+      segment.reset();
     }
-  }, [allClients, auth]);
+  }, [auth]);
   return null;
 };
 

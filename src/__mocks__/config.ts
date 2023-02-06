@@ -8,7 +8,6 @@ const globalConfigStub: GlobalConfig = {
   sentryEnvironment: "sentry-environment",
   sentryRelease: "sentry-release",
   statuspageId: "statuspage-dummy-id",
-  googleAnalyticsId: "google-analytics-id",
   environmentdScheme: "http",
   cloudRegions: new Map(),
   recoilDuplicateCheckingEnabled: false,
