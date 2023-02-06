@@ -13,7 +13,6 @@ window.__SENTRY_DSN__ = null;
 window.__SENTRY_ENVIRONMENT__ = "sentry-environment";
 window.__SENTRY_RELEASE__ = "sentry-release";
 window.__STATUSPAGE_ID__ = "statuspage-dummy-id";
-window.__GOOGLE_ANALYTICS_ID__ = "google-analytics-id";
 window.__RELEASE_NOTES_ROOT_URL__ = null;
 window.__LAST_RELEASE_NOTE_ID__ = null;
 window.__IS_DEVELOPMENT__ = false;

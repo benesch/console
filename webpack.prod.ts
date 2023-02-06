@@ -6,11 +6,7 @@ import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
 
-import base, {
-  googleAnalyticsId,
-  IDefinePluginOptions,
-  statuspageId,
-} from "./webpack.config";
+import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -44,7 +40,6 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __SENTRY_ENVIRONMENT__: JSON.stringify(sentryEnvironment),
   __SENTRY_RELEASE__: JSON.stringify(sentryRelease),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
-  __GOOGLE_ANALYTICS_ID__: JSON.stringify(googleAnalyticsId),
   __ENVIRONMENTD_SCHEME__: JSON.stringify("https"),
   __CLOUD_REGIONS__: requireEnv("CLOUD_REGIONS"),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
@@ -65,7 +60,6 @@ const scriptSrc = [
   "'self'",
   "https://js.stripe.com",
   "https://www.recaptcha.net/recaptcha/",
-  "https://www.google-analytics.com",
   "https://*.googletagmanager.com",
   "https://assets.frontegg.com",
   "https://cdn.segment.com",
@@ -81,9 +75,7 @@ const cspPolicy = {
     "https://api.segment.materialize.com",
     "https://cdn.segment.com",
     "https://assets.frontegg.com/",
-    "https://*.google-analytics.com",
     "https://*.g.doubleclick.net",
-    "https://*.analytics.google.com",
     "https://*.googletagmanager.com",
     "https://*.google.com",
     "https://*.launchdarkly.com",
@@ -125,8 +117,6 @@ const cspPolicy = {
     "https://fronteggprodeustorage.blob.core.windows.net",
     "https://avatars.githubusercontent.com",
     "https://lh3.googleusercontent.com",
-    "https://*.google-analytics.com",
-    "https://*.analytics.google.com",
     "https://*.googletagmanager.com",
     "https://*.g.doubleclick.net",
     "https://*.google.com",

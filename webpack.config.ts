@@ -4,7 +4,6 @@ import path from "path";
 import { Configuration } from "webpack";
 
 export const statuspageId = "qf52z1jnw4q8";
-export const googleAnalyticsId = "UA-138552650-1";
 
 const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
   favicon: "public/favicon.ico",
@@ -19,7 +18,6 @@ export interface IDefinePluginOptions extends Record<string, string> {
   __SENTRY_ENVIRONMENT__: string;
   __SENTRY_RELEASE__: string;
   __STATUSPAGE_ID__: string;
-  __GOOGLE_ANALYTICS_ID__: string;
   __ENVIRONMENTD_SCHEME__: string;
   __CLOUD_REGIONS__: string;
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: string;

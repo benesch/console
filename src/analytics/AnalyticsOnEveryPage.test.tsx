@@ -4,32 +4,13 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router-dom";
 
-import globalConfigStub from "~/__mocks__/config";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
-import { AnalyticsClient } from "~/analytics/types";
-import { GlobalConfig } from "~/config";
+import segment from "~/analytics/segment";
 
-export class ShimAnalyticsClient extends AnalyticsClient {
-  constructor(config: GlobalConfig) {
-    super(config);
-  }
-  page = jest.fn();
-  identify = jest.fn();
-  reset = jest.fn();
-}
-
-export const makeShimAnalyticsClient = () => {
-  const instance = new ShimAnalyticsClient(globalConfigStub);
-  instance.page.mockClear();
-  return instance;
-};
+jest.mock("~/config");
+jest.mock("~/analytics/segment");
 
 const setupRenderTree = () => {
-  const shimAnalyticsClients = [
-    makeShimAnalyticsClient(),
-    makeShimAnalyticsClient(),
-  ];
-
   const Home = () => {
     const navigate = useNavigate();
     return (
@@ -44,15 +25,11 @@ const setupRenderTree = () => {
         <Route path="/" element={<Home />} />
         <Route path="somewhere" element={<div>somewhere</div>} />
       </Routes>
-      <AnalyticsOnEveryPage
-        config={globalConfigStub}
-        clients={shimAnalyticsClients}
-      />
+      <AnalyticsOnEveryPage />
     </MemoryRouter>
   );
 
   return {
-    shimAnalyticsClients,
     renderResult,
   };
 };
@@ -63,11 +40,8 @@ jest.mock("@frontegg/react", () => ({
 }));
 
 describe("analytics/AnalyticsOnEveryPage", () => {
-  it("should emit an analytics `page` event when the router's location changes for every provided analytics client", async () => {
-    const {
-      shimAnalyticsClients: [client1, client2],
-      renderResult,
-    } = setupRenderTree();
+  it("should emit an analytics `page` event when the router's location changes", async () => {
+    const { renderResult } = setupRenderTree();
     // initial page
 
     const button = await renderResult.findByRole("button");
@@ -77,22 +51,17 @@ describe("analytics/AnalyticsOnEveryPage", () => {
     // so testing library is not helpful, as it cannot target a "visible element"
     // we use wait for as an escape hatch to "retry" the condition until it succeeds or a predefined timer expires
     // the page event is called twice, once at page load and once at page change
-    await waitFor(() => expect(client1.page).toHaveBeenCalledTimes(2));
-    await waitFor(() => expect(client2.page).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(segment.page).toHaveBeenCalledTimes(2));
   });
 
   it("should identify the user if valid auth is available", () => {
-    const {
-      shimAnalyticsClients: [client],
-    } = setupRenderTree();
-    expect(client.identify).toHaveBeenCalledWith("123");
+    setupRenderTree();
+    expect(segment.identify).toHaveBeenCalledWith("123");
   });
 
   it("should reset user tracking if authentication is not valid anymore", () => {
     (useAuth as jest.Mock).mockImplementationOnce(() => ({ user: null }));
-    const {
-      shimAnalyticsClients: [client],
-    } = setupRenderTree();
-    expect(client.reset).toHaveBeenCalledTimes(1);
+    setupRenderTree();
+    expect(segment.reset).toHaveBeenCalledTimes(1);
   });
 });

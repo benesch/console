@@ -58,7 +58,6 @@ const definePluginOptions: IDefinePluginOptions = {
   ),
   __SENTRY_RELEASE__: JSON.stringify(process.env.SENTRY_RELEASE || null),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
-  __GOOGLE_ANALYTICS_ID__: JSON.stringify(null),
   __ENVIRONMENTD_SCHEME__: JSON.stringify(environmentdScheme),
   __CLOUD_REGIONS__: JSON.stringify(cloudRegions),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(true),
