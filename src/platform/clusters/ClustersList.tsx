@@ -150,8 +150,6 @@ interface ClusterTableProps {
 const ClusterTable = (props: ClusterTableProps) => {
   const navigate = useNavigate();
 
-  const { colors } = useTheme<MaterializeTheme>();
-
   return (
     <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
@@ -166,9 +164,6 @@ const ClusterTable = (props: ClusterTableProps) => {
             key={c.id}
             onClick={() => navigate(relativeClusterPath(c))}
             cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
           >
             <Td>{c.name}</Td>
             <Td>{c.replicas.length}</Td>

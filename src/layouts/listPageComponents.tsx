@@ -17,7 +17,6 @@ import React from "react";
 
 import { CopyableBox } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
-import { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
 import Missing from "~/svg/Missing";
 import Slash from "~/svg/Slash";
 import { MaterializeTheme } from "~/theme";
@@ -70,8 +69,8 @@ export const EmptyListWrapper = (props: BoxProps) => (
     textAlign="center"
     flex={1}
     spacing={8}
-    mt={`-${NAV_LOGO_HEIGHT}`} // To truly center the contents in the container despite the header
-    h="full"
+    h="100%"
+    w="100%"
   >
     {props.children}
   </VStack>
@@ -81,8 +80,8 @@ export const EmptyListHeader = (props: BoxProps) => (
   <VStack
     alignItems="center"
     justifyContent="center"
-    spacing={4}
-    maxW="252px"
+    spacing={6}
+    maxW="460px"
     textAlign="center"
   >
     {props.children}
@@ -150,13 +149,28 @@ export const EmptyListHeaderContents = ({
   title,
   helpText,
 }: EmptyListHeaderContentsProps) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   return (
-    <>
-      <Heading fontSize="md">{title}</Heading>
-      <Heading fontSize="md" fontWeight={400}>
+    <VStack spacing={2}>
+      <Heading
+        fontSize="md"
+        fontWeight={500}
+        color={semanticColors.foreground.primary}
+      >
+        {title}
+      </Heading>
+      <Heading
+        fontSize="sm"
+        lineHeight="20px"
+        fontWeight={400}
+        color={semanticColors.foreground.secondary}
+        mt={2}
+      >
         {helpText}
       </Heading>
-    </>
+    </VStack>
   );
 };
 
@@ -166,7 +180,12 @@ type SampleCodeBoxWrapperProps = BoxProps & {
 
 export const SampleCodeBoxWrapper = (props: SampleCodeBoxWrapperProps) => {
   return (
-    <VStack alignItems="center" justifyContent="center" spacing={2} w="360px">
+    <VStack
+      alignItems="center"
+      justifyContent="center"
+      spacing={2}
+      maxW="460px"
+    >
       {props.children}
       <Text fontSize="xs" textAlign="left" width="full">
         Having trouble?{" "}

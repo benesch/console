@@ -146,7 +146,6 @@ interface SourceTableProps {
 }
 
 const SourceTable = (props: SourceTableProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
   const regionSlug = useRegionSlug();
 
@@ -166,9 +165,6 @@ const SourceTable = (props: SourceTableProps) => {
             key={s.id}
             onClick={() => navigate(sourceErrorsPath(regionSlug, s))}
             cursor="pointer"
-            _hover={{
-              bg: colors.semanticColors.background.secondary,
-            }}
           >
             <Td>
               <Box
