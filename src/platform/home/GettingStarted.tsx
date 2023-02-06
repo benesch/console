@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
+import segment from "~/analytics/segment";
 import { CopyableBox } from "~/components/copyableComponents";
 import { MaterializeTheme } from "~/theme";
 
@@ -16,6 +17,14 @@ const secrets = `CREATE SECRET broker_url AS "http://broker.com";
 CREATE SECRET username AS "usernamegoeshere";
 CREATE SECRET password AS "mypassword";
 `;
+
+const handleGettingStartedClick = () => {
+  segment.track("Get Started Clicked", {});
+};
+
+const handleCopyClick = () => {
+  segment.track("Demo Credentials Copied", {});
+};
 
 const GettingStarted = () => {
   const {
@@ -53,13 +62,18 @@ const GettingStarted = () => {
             variant="secondary"
             size="sm"
             bg={semanticColors.background.primary}
+            onClick={handleGettingStartedClick}
           >
             Get started
           </Button>
         </HStack>
       </Box>
       {startExpanded && (
-        <CopyableBox variant="embedded" contents={secrets}>
+        <CopyableBox
+          variant="embedded"
+          contents={secrets}
+          onClick={handleCopyClick}
+        >
           {secrets}
         </CopyableBox>
       )}
