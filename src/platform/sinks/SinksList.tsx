@@ -32,8 +32,11 @@ import {
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
+import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
+
+import { sinkErrorsPath } from "./SinkRoutes";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   FROM <view_name>
@@ -42,7 +45,7 @@ const SINK_CREATE_SQL = `CREATE SINK <sink_name>
   ENVELOPE <envelope>
   WITH (SIZE = 'xsmall');`;
 
-const sourcesSuggestions: SQLSuggestion[] = [
+const sinkSuggestions: SQLSuggestion[] = [
   {
     title: "View sinks",
     string: "SHOW SINKS;",
@@ -53,7 +56,7 @@ const sourcesSuggestions: SQLSuggestion[] = [
   },
   {
     title: "Drop a sink",
-    string: "DROP SINK <source_name>;",
+    string: "DROP SINK <sink_name>;",
   },
 ];
 
@@ -121,7 +124,7 @@ const SinksListPage = ({ sinks }: SinkListProps) => {
                     View the documentation.
                   </TextLink>
                 </Text>
-                {sourcesSuggestions.map((suggestion) => (
+                {sinkSuggestions.map((suggestion) => (
                   <SQLSuggestionBox
                     key={`suggestion-${suggestion.title}`}
                     {...suggestion}
@@ -143,6 +146,7 @@ interface SinkTableProps {
 const SinkTable = (props: SinkTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
+  const regionSlug = useRegionSlug();
 
   return (
     <Table variant="standalone" data-testid="sink-table" borderRadius="xl">
@@ -158,7 +162,7 @@ const SinkTable = (props: SinkTableProps) => {
         {props.sinks.map((s) => (
           <Tr
             key={s.id}
-            onClick={() => navigate(`/sinks/${s.name}/errors`)}
+            onClick={() => navigate(sinkErrorsPath(regionSlug, s))}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,

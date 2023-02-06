@@ -33,6 +33,8 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
 
+import { relativeClusterPath } from "./ClusterRoutes";
+
 const createClusterSuggestion = {
   title: "Create a cluster",
   string: `CREATE CLUSTER <cluster_name> 
@@ -162,7 +164,7 @@ const ClusterTable = (props: ClusterTableProps) => {
         {props.clusters.map((c) => (
           <Tr
             key={c.id}
-            onClick={() => navigate(`/clusters/${c.name}`)}
+            onClick={() => navigate(relativeClusterPath(c))}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,

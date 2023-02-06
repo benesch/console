@@ -28,7 +28,7 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
-import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";

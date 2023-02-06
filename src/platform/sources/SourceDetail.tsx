@@ -1,17 +1,19 @@
 import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
-import { Route, useParams } from "react-router-dom";
+import { Navigate, Route, useParams } from "react-router-dom";
 
 import { Source, useDDL } from "~/api/materialized";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
+  Breadcrumb,
   ExpandablePanel,
   PageBreadcrumbs,
   PageHeader,
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
+import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
 import { SentryRoutes } from "~/sentry";
 
 import SourceErrors from "./SourceErrors";
@@ -19,17 +21,24 @@ import SourceErrors from "./SourceErrors";
 export interface SourceDetailProps {
   source?: Source;
 }
-
 const SourceDetail = ({ source }: SourceDetailProps) => {
-  const params = useParams();
+  const params = useParams<SchemaObjectRouteParams>();
   const { ddl } = useDDL("SOURCE", source?.name);
+
+  const breadcrumbs: Breadcrumb[] = React.useMemo(
+    () => [
+      { title: "Sources", href: ".." },
+      { title: params.objectName ?? "" },
+    ],
+    [params.objectName]
+  );
 
   return (
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start" width="100%">
-            <PageBreadcrumbs crumbs={["Sources", params.sourceName ?? ""]}>
+            <PageBreadcrumbs crumbs={breadcrumbs}>
               {source?.status && (
                 <Box>
                   <StatusPill ml={2} status={source.status} />
@@ -71,7 +80,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
         </VStack>
       </PageHeader>
       <SentryRoutes>
-        <Route path="/" element={<div>overview</div>} />
+        <Route path="/" element={<Navigate to="errors" replace />} />
         <Route path="errors" element={<SourceErrors source={source} />} />
       </SentryRoutes>
     </>

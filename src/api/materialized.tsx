@@ -259,10 +259,14 @@ export type ConnectorStatus =
   | "failed"
   | "dropped";
 
-export interface Source {
+export interface SchemaObject {
   id: string;
-  oid: number;
   name: string;
+  schemaName: string;
+  databaseName: string;
+}
+
+export interface Source extends SchemaObject {
   type: string;
   size?: string;
   status?: ConnectorStatus;
@@ -274,10 +278,11 @@ export interface Source {
  */
 export function useSources() {
   const sourceResponse =
-    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status, st.error
+    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sources s
-LEFT OUTER JOIN mz_internal.mz_source_statuses st
-ON st.id = s.id
+INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+INNER JOIN mz_databases d ON d.id = sc.database_id
+LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
 WHERE s.id LIKE 'u%';
 `);
   let sources: Source[] | null = null;
@@ -287,8 +292,9 @@ WHERE s.id LIKE 'u%';
 
     sources = rows.map((row) => ({
       id: getColumnByName(row, "id"),
-      oid: getColumnByName(row, "oid"),
       name: getColumnByName(row, "name"),
+      schemaName: getColumnByName(row, "schema_name"),
+      databaseName: getColumnByName(row, "database_name"),
       type: getColumnByName(row, "type"),
       size: getColumnByName(row, "size"),
       status: getColumnByName(row, "status"),
@@ -296,11 +302,7 @@ WHERE s.id LIKE 'u%';
     }));
   }
 
-  const refetch = React.useCallback(() => {
-    sourceResponse.refetch();
-  }, [sourceResponse]);
-
-  return { sources, refetch };
+  return { ...sourceResponse, data: sources };
 }
 
 export interface GroupedError {
@@ -484,9 +486,7 @@ ORDER BY bin_start DESC;`
   return { ...result, data: statuses };
 }
 
-export interface Sink {
-  id: string;
-  name: string;
+export interface Sink extends SchemaObject {
   type: string;
   size?: string;
   status?: ConnectorStatus;
@@ -498,8 +498,10 @@ export interface Sink {
  */
 export function useSinks() {
   const sinkResponse =
-    useSql(`SELECT s.id, s.oid, s.name, s.type, s.size, st.status, st.error
+    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sinks s
+INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+INNER JOIN mz_databases d ON d.id = sc.database_id
 LEFT OUTER JOIN mz_internal.mz_sink_statuses st
 ON st.id = s.id
 WHERE s.id LIKE 'u%';
@@ -511,8 +513,9 @@ WHERE s.id LIKE 'u%';
 
     sinks = rows.map((row) => ({
       id: getColumnByName(row, "id"),
-      oid: getColumnByName(row, "oid"),
       name: getColumnByName(row, "name"),
+      schemaName: getColumnByName(row, "schema_name"),
+      databaseName: getColumnByName(row, "database_name"),
       type: getColumnByName(row, "type"),
       size: getColumnByName(row, "size"),
       status: getColumnByName(row, "status"),
@@ -520,11 +523,7 @@ WHERE s.id LIKE 'u%';
     }));
   }
 
-  const refetch = React.useCallback(() => {
-    sinkResponse.refetch();
-  }, [sinkResponse]);
-
-  return { sinks, refetch };
+  return { ...sinkResponse, data: sinks };
 }
 
 type DDLNoun = "SINK" | "SOURCE";

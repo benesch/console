@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import { render } from "@testing-library/react";
 import React, { ReactElement } from "react";
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route, useLocation } from "react-router-dom";
 import { MutableSnapshot, RecoilRoot, SetRecoilState } from "recoil";
 
 import {
@@ -24,6 +24,20 @@ export const healthyEnvironment: LoadedEnvironment = {
   errors: [],
 };
 
+export const RenderWithPathname = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const current = useLocation();
+  return (
+    <>
+      {children}
+      <div data-testid="pathname">{current.pathname}</div>
+    </>
+  );
+};
+
 export const setFakeEnvironment = (
   set: SetRecoilState,
   regionId: string,
@@ -39,14 +53,17 @@ export const setFakeEnvironment = (
 export type InitializeStateFn = (mutableSnapshot: MutableSnapshot) => void;
 
 export const renderComponent = (
-  initializeState: InitializeStateFn,
-  element: ReactElement
+  element: ReactElement,
+  options: {
+    initializeState?: InitializeStateFn;
+    initialRouterEntries?: string[];
+  } = {}
 ) => {
   return render(
-    <RecoilRoot initializeState={initializeState}>
+    <RecoilRoot initializeState={options.initializeState}>
       <ThemeProvider theme={lightTheme}>
         <React.Suspense fallback="suspense-fallback">
-          <MemoryRouter>
+          <MemoryRouter initialEntries={options.initialRouterEntries}>
             <SentryRoutes>
               <Route path="/*" element={element} />
             </SentryRoutes>

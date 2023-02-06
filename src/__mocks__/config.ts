@@ -4,7 +4,7 @@ const globalConfigStub: GlobalConfig = {
   fronteggUrl: "https://frontegg.com",
   launchDarklyKey: "launchdarkly-dummy-key",
   segmentApiKey: "segment-api-key",
-  sentryDsn: "https://sentry.io/sentry-key",
+  sentryDsn: null,
   sentryEnvironment: "sentry-environment",
   sentryRelease: "sentry-release",
   statuspageId: "statuspage-dummy-id",

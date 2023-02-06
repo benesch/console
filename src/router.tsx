@@ -3,20 +3,30 @@
  * URL routing.
  */
 
-import { useAuth, useAuth as useFronteggAuth } from "@frontegg/react";
+import { useAuth as useFronteggAuth } from "@frontegg/react";
 import { useLDClient } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Navigate, Route, RoutesProps, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  RoutesProps,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
 import PricingPage from "~/access/PricingPage";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
 import config from "~/config";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
-import ClusterRoutes from "~/platform/clusters/clusterRouter";
+import ClusterRoutes from "~/platform/clusters/ClusterRoutes";
 import Editor from "~/platform/editor/Editor";
 import Home from "~/platform/home/Home";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";
@@ -25,12 +35,19 @@ import { SentryRoutes } from "~/sentry";
 import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
 
+import {
+  currentEnvironmentIdState,
+  defaultRegion,
+  useEnvironmentsWithHealth,
+} from "./recoil/environments";
+import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
+
 /** The root router for the application. */
 const Router = () => {
   useSetEnvironment();
 
   const ldClient = useLDClient();
-  const { user } = useAuth();
+  const { user } = useFronteggAuth();
 
   React.useEffect(() => {
     if (!ldClient || !user) return;
@@ -47,12 +64,10 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
+        <Route path="/regions/:regionSlug/*" element={<EnvironmentRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/clusters/*" element={<ClusterRoutes />} />
-        <Route path="/sources/*" element={<SourceRoutes />} />
-        <Route path="/sinks/*" element={<SinkRoutes />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="*" element={<RedirectToHome />} />
         <Route element={<Navigate to="/" replace />} />
@@ -62,9 +77,56 @@ const Router = () => {
   );
 };
 
+type RegionParams = "regionSlug";
+
+const EnvironmentRoutes = () => {
+  const { user } = useAuth();
+  const params = useParams<RegionParams>();
+  const navigate = useNavigate();
+  const [currentEnvironmentId, setCurrentEnvironmentId] =
+    useRecoilState_TRANSITION_SUPPORT_UNSTABLE(currentEnvironmentIdState);
+  const environments = useEnvironmentsWithHealth(user.accessToken);
+  assert(params.regionSlug);
+  const regionId = regionSlugToNameMap.get(params.regionSlug);
+
+  React.useEffect(() => {
+    if (!regionId) return;
+
+    if (currentEnvironmentId !== regionId) {
+      // Syncronize the url with recoil, this happens on navigation to a link to another cluster or back navigation
+      setCurrentEnvironmentId(regionId);
+    }
+    // Redirect to the connect page if a region is not enabled
+    if (environments.get(regionId)?.state !== "enabled") {
+      navigate(`/regions/${params.regionSlug}`, { replace: true });
+    }
+  }, [
+    currentEnvironmentId,
+    environments,
+    navigate,
+    params.regionSlug,
+    regionId,
+    setCurrentEnvironmentId,
+  ]);
+
+  if (!regionId) {
+    navigate(`/regions/${regionIdToSlug(defaultRegion())}`);
+    return null;
+  }
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/clusters/*" element={<ClusterRoutes />} />
+      <Route path="/sources/*" element={<SourceRoutes />} />
+      <Route path="/sinks/*" element={<SinkRoutes />} />
+    </Routes>
+  );
+};
+
 const RedirectToHome = () => {
   const location = useLocation();
   const { routes: authRoutes } = useFronteggAuth((state) => state);
+  const regionSlug = useRegionSlug();
   if (
     location.pathname !== authRoutes.authenticatedUrl &&
     Object.values(authRoutes).includes(location.pathname)
@@ -74,7 +136,7 @@ const RedirectToHome = () => {
     // notice it.
     return null;
   } else {
-    return <Home />;
+    return <Navigate to={`/regions/${regionSlug}/`} replace />;
   }
 };
 

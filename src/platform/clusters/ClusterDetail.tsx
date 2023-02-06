@@ -4,12 +4,13 @@ import { Route, useParams } from "react-router-dom";
 
 import { Cluster } from "~/api/materialized";
 import {
+  Breadcrumb,
   PageBreadcrumbs,
   PageHeader,
   PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
-import { ClusterDetailParams } from "~/platform/clusters/clusterRouter";
+import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
 import { SentryRoutes } from "~/sentry";
 
 import ClusterOverview from "./ClusterOverview";
@@ -22,16 +23,21 @@ type Props = {
 const ClusterDetailPage = ({ cluster }: Props) => {
   const { clusterName } = useParams<ClusterDetailParams>();
 
+  const breadcrumbs: Breadcrumb[] = React.useMemo(
+    () => [{ title: "Clusters", href: ".." }, { title: clusterName ?? "" }],
+    [clusterName]
+  );
+
   return (
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
-          <PageBreadcrumbs crumbs={["Clusters", clusterName!]} />
+          <PageBreadcrumbs crumbs={breadcrumbs} />
           <PageTabStrip>
-            <PageTab to={`/clusters/${clusterName}`} end>
+            <PageTab to="." end>
               Overview
             </PageTab>
-            <PageTab to={`/clusters/${clusterName}/replicas`}>Replicas</PageTab>
+            <PageTab to="replicas">Replicas</PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>

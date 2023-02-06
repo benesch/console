@@ -1,12 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
-import { RecoilRoot } from "recoil";
 
 import globalConfigStub from "~/__mocks__/config";
 import { hasEnvironmentReadPermission } from "~/api/auth";
 import server from "~/api/mocks/server";
 import EnvironmentSelect from "~/layouts/EnvironmentSelect";
+import { renderComponent } from "~/test/utils";
 
 // mock this before the test so that the current region gets set in recoil
 jest.mock("../config", () => ({
@@ -25,15 +25,11 @@ jest.mock("../config", () => ({
 }));
 jest.mock("../api/auth");
 
-const renderComponent = () => {
-  return render(
-    <RecoilRoot>
-      <React.Suspense fallback="suspense-fallback">
-        <div data-testid="wrapper">
-          <EnvironmentSelect />
-        </div>
-      </React.Suspense>
-    </RecoilRoot>
+const renderEnvironmentSelect = () => {
+  return renderComponent(
+    <div data-testid="wrapper">
+      <EnvironmentSelect />
+    </div>
   );
 };
 
@@ -56,7 +52,7 @@ const validAssigmentResponse = rest.get(
 describe("EnvironmentSelect", () => {
   it("shows noting if you don't have environment permissions", async () => {
     (hasEnvironmentReadPermission as jest.Mock).mockReturnValue(false);
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeEmptyDOMElement();
   });
@@ -68,7 +64,7 @@ describe("EnvironmentSelect", () => {
         return res(ctx.status(200), ctx.json([]));
       })
     );
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeEmptyDOMElement();
   });
@@ -93,7 +89,7 @@ describe("EnvironmentSelect", () => {
         );
       })
     );
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeInTheDocument();
     expect(screen.getByText("AWS/us-east-1")).toBeVisible();
@@ -120,7 +116,7 @@ describe("EnvironmentSelect", () => {
         );
       })
     );
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeInTheDocument();
     expect(screen.getByTestId("health-booting")).toBeVisible();
@@ -147,7 +143,7 @@ describe("EnvironmentSelect", () => {
         );
       })
     );
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeInTheDocument();
     expect(screen.getByTestId("health-crashed")).toBeVisible();
@@ -176,7 +172,7 @@ describe("EnvironmentSelect", () => {
         return res(ctx.status(500));
       })
     );
-    renderComponent();
+    renderEnvironmentSelect();
 
     expect(await screen.findByTestId("wrapper")).toBeInTheDocument();
     expect(screen.getByTestId("health-crashed")).toBeVisible();

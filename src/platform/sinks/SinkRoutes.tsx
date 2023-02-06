@@ -1,12 +1,17 @@
 import { useInterval } from "@chakra-ui/react";
 import React from "react";
-import { Navigate, Route, useParams } from "react-router-dom";
+import { Route, useParams } from "react-router-dom";
 
-import { Sink, useSinks } from "~/api/materialized";
+import { SchemaObject, Sink, useSinks } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
 import { isPollingDisabled } from "~/util";
 
+import {
+  objectOrRedirect,
+  relativeObjectPath,
+  SchemaObjectRouteParams,
+} from "../schemaObjectRouteHelpers";
 import SinkDetail from "./SinkDetail";
 
 export type ClusterDetailParams = {
@@ -14,23 +19,34 @@ export type ClusterDetailParams = {
 };
 
 const SinkRoutes = () => {
-  const { sinks, refetch } = useSinks();
+  const { data: sinks, refetch } = useSinks();
   useInterval(refetch, isPollingDisabled() ? null : 5000);
   return (
     <SentryRoutes>
       <Route path="/" element={<SinksList sinks={sinks} />} />
-      <Route path=":sinkName/*" element={<SinkOrRedirect sinks={sinks} />} />
+      <Route
+        path=":id/:databaseName/:schemaName/:objectName/*"
+        element={<SinkOrRedirect sinks={sinks} />}
+      />
     </SentryRoutes>
   );
 };
 
+export const sinkErrorsPath = (regionSlug: string, sink: Sink) => {
+  return `/regions/${regionSlug}/sinks/${relativeSinkErrorsPath(sink)}`;
+};
+
+const relativeSinkErrorsPath = (sink: SchemaObject) => {
+  return `${relativeObjectPath(sink)}/errors`;
+};
+
 const SinkOrRedirect: React.FC<{ sinks: Sink[] | null }> = ({ sinks }) => {
-  const params = useParams();
-  const sink = sinks?.find((c) => c.name === params.sinkName);
-  if (sinks && !sink) {
-    return <Navigate to="/sinks" replace />;
+  const params = useParams<SchemaObjectRouteParams>();
+  const result = objectOrRedirect(params, sinks, relativeSinkErrorsPath);
+  if (result.type === "redirect") {
+    return result.redirect;
   } else {
-    return <SinkDetail sink={sink} />;
+    return <SinkDetail sink={result.object} />;
   }
 };
 

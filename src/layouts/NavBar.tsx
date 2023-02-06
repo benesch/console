@@ -35,6 +35,7 @@ import ProfileDropdown, {
   AVATAR_WIDTH,
   ProfileMenuItems,
 } from "~/layouts/ProfileDropdown";
+import { useRegionSlug } from "~/region";
 import { MaterializeTheme } from "~/theme";
 
 export const NAV_HORIZONTAL_SPACING = 4;
@@ -135,11 +136,11 @@ type NavItemType = {
   isInternal?: boolean;
 };
 
-const navItems: NavItemType[] = [
+const getNavItems = (regionSlug: string): NavItemType[] => [
   { label: "Connect", href: "/" },
-  { label: "Clusters", href: "/clusters" },
-  { label: "Sources", href: "/sources" },
-  { label: "Sinks", href: "/sinks" },
+  { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
+  { label: "Sources", href: `/regions/${regionSlug}/sources` },
+  { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
   // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
@@ -148,6 +149,8 @@ const navItems: NavItemType[] = [
 ];
 
 const NavMenu = (props: BoxProps) => {
+  const regionSlug = useRegionSlug();
+
   return (
     <VStack
       data-test-id="nav-lg"
@@ -159,8 +162,8 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {navItems.map((item) => (
-        <NavItem key={`nav-button-${item.label}`} {...item} />
+      {getNavItems(regionSlug).map(({ label, href }) => (
+        <NavItem key={label} label={label} href={href} />
       ))}
     </VStack>
   );
@@ -169,6 +172,8 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
+  const regionSlug = useRegionSlug();
+
   return (
     <Menu data-test-id="nav-sm">
       <MenuButton
@@ -182,12 +187,8 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         {...props}
       />
       <MenuList>
-        {navItems.map((item) => (
-          <MenuItem
-            as={RouterLink}
-            key={`menu-item-${item.label}`}
-            to={item.href}
-          >
+        {getNavItems(regionSlug).map((item) => (
+          <MenuItem as={RouterLink} key={item.label} to={item.href}>
             {`${item.label}${item.isInternal ? " (internal)" : ""}`}
           </MenuItem>
         ))}

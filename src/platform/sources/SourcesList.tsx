@@ -32,8 +32,11 @@ import {
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
 import { currentEnvironmentState } from "~/recoil/environments";
+import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
+
+import { sourceErrorsPath } from "./SourceRoutes";
 
 const sourcesSuggestions: SQLSuggestion[] = [
   {
@@ -145,6 +148,7 @@ interface SourceTableProps {
 const SourceTable = (props: SourceTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const navigate = useNavigate();
+  const regionSlug = useRegionSlug();
 
   return (
     <Table variant="standalone" data-testid="source-table" borderRadius="xl">
@@ -159,8 +163,8 @@ const SourceTable = (props: SourceTableProps) => {
       <Tbody>
         {props.sources.map((s) => (
           <Tr
-            key={s.oid}
-            onClick={() => navigate(`/sources/${s.name}/errors`)}
+            key={s.id}
+            onClick={() => navigate(sourceErrorsPath(regionSlug, s))}
             cursor="pointer"
             _hover={{
               bg: colors.semanticColors.background.secondary,
