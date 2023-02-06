@@ -17,7 +17,6 @@ import React from "react";
 
 import { CopyableBox } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
-import { NAV_LOGO_HEIGHT } from "~/layouts/NavBar";
 import Missing from "~/svg/Missing";
 import Slash from "~/svg/Slash";
 import { MaterializeTheme } from "~/theme";
@@ -70,8 +69,8 @@ export const EmptyListWrapper = (props: BoxProps) => (
     textAlign="center"
     flex={1}
     spacing={8}
-    mt={`-${NAV_LOGO_HEIGHT}`} // To truly center the contents in the container despite the header
-    h="full"
+    h="100%"
+    w="100%"
   >
     {props.children}
   </VStack>
