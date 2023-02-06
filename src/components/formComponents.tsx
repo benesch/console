@@ -38,11 +38,13 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
       label,
+      placeholder,
       size,
       disabled,
       type,
       autoComplete,
       autoCorrect,
+      autoFocus = false,
       maxLength,
       ...props
     },
@@ -51,18 +53,21 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     const [field, meta] = useField(props);
     return (
       <FormControl isInvalid={meta.touched && !!meta.error}>
-        <FormLabel htmlFor={props.id} fontSize={size}>
+        <FormLabel htmlFor={props.id} fontSize={size} mb={1}>
           {label}
         </FormLabel>
         <Input
+          variant="default"
           id={props.id}
           size={size}
           disabled={disabled}
           ref={ref}
           type={type}
+          autoFocus={autoFocus}
           autoComplete={autoComplete}
           autoCorrect={autoCorrect}
           maxLength={maxLength}
+          placeholder={placeholder}
           {...field}
         />
         <FormErrorMessage>{meta.error}</FormErrorMessage>

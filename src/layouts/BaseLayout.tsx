@@ -103,9 +103,9 @@ export const PageHeader = ({ children, ...props }: StackProps) => {
     <Flex
       my="6"
       {...props}
-      flexDirection="column"
-      alignItems="flex-start"
-      justifyContent="center"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
       width="100%"
     >
       {children}
@@ -123,11 +123,15 @@ export interface PageHeadingProps extends HeadingProps {
  * This component should be used inside of a `PageHeader`.
  */
 export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   return (
     <Heading
-      lineHeight="32px"
-      fontWeight="500"
       fontSize="2xl"
+      lineHeight="32px"
+      color={semanticColors.foreground.primary}
+      fontWeight="500"
       my={0}
       {...props}
     >

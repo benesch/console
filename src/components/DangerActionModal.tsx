@@ -83,13 +83,21 @@ const DangerActionModal = ({
           <ModalBody pt="3" pb="6">
             <VStack align="left" spacing="4">
               {children}
-              <Text fontSize="sm">
-                Enter <strong>{confirmText}</strong> to proceed:
-              </Text>
-              <Input
-                size="sm"
-                onChange={(e) => setConfirmation(e.target.value)}
-              />
+              <VStack align="left" spacing="1">
+                <Text fontSize="sm">
+                  Please type{" "}
+                  <Text as="span" fontWeight="600">
+                    {confirmText}
+                  </Text>{" "}
+                  to confirm.
+                </Text>
+                <Input
+                  m="0"
+                  variant="default"
+                  size="sm"
+                  onChange={(e) => setConfirmation(e.target.value)}
+                />
+              </VStack>
             </VStack>
           </ModalBody>
           <ModalFooter>

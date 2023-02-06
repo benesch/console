@@ -1,4 +1,4 @@
-import { selectAnatomy } from "@chakra-ui/anatomy";
+import { inputAnatomy, selectAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 import {
   mode,
@@ -49,7 +49,7 @@ export const Button = {
       },
     },
     primary: {
-      color: "semanticColors.foreground.inverse",
+      color: "#FFF", // we don't want this label color to be themeable
       fontSize: "14px",
       lineHeight: "16px",
       fontWeight: 500,
@@ -80,16 +80,72 @@ export const Button = {
   },
 };
 
+const {
+  definePartsStyle: defineInputPartsStyle,
+  defineMultiStyleConfig: defineInputStyleConfig,
+} = createMultiStyleConfigHelpers(inputAnatomy.keys);
+
+export const Input = defineInputStyleConfig({
+  baseStyle: defineInputPartsStyle({
+    field: {
+      height: "32px",
+      fontSize: "14px",
+      lineHeight: "16px",
+      width: "100%",
+      backgroundColor: "semanticColors.background.secondary",
+      borderWidth: "1px",
+      borderColor: "semanticColors.border.secondary",
+      boxShadow: "0px 0px 0px 0px hsla(0, 0%, 0%, 0)",
+      transition: "box-shadow 50ms ease-out",
+      _hover: {
+        cursor: "pointer",
+      },
+    },
+  }),
+  variants: {
+    default: defineInputPartsStyle({
+      field: {
+        borderRadius: "lg",
+        _focus: {
+          backgroundColor: "semanticColors.background.primary",
+          borderColor: "semanticColors.accent.brightPurple",
+          boxShadow: "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)", // accent.brightPurple,
+        },
+      },
+    }),
+    error: defineInputPartsStyle({
+      field: {
+        borderRadius: "lg",
+        borderColor: "semanticColors.accent.red",
+        boxShadow: "0px 0px 0px 2px hsla(343, 95%, 46%, 0.24)", // accent.red,
+        _focus: {
+          backgroundColor: "semanticColors.background.primary",
+        },
+      },
+    }),
+  },
+});
+
 export const Modal = {
   baseStyle: (props: StyleFunctionProps) => ({
+    overlay: {
+      background: "rgba(0, 0, 0, 0.5)",
+    },
     header: {
       border: "0",
-      borderBottom: "1px solid",
-      borderBottomColor: mode(colors.gray[100], colors.gray[700])(props),
-      fontWeight: "400",
+      fontSize: "md",
+      lineHeight: "16px",
+      fontWeight: "500",
+      pb: "0",
     },
     dialog: {
       borderRadius: "xl",
+      backgroundColor: "semanticColors.background.primary",
+      shadows: "shadows.level4",
+    },
+    body: {
+      px: "24px",
+      py: "16px",
     },
     footer: {
       border: "0",
@@ -99,16 +155,18 @@ export const Modal = {
     },
     closeButton: {
       right: "2",
+      color: "semanticColors.foreground.secondary",
     },
   }),
   defaultProps: {
-    size: "xl",
+    size: "md",
+    backgroundColor: "semanticColors.background.primary",
   },
   variants: {
     "2xl": {
       dialog: {
-        minWidth: "2xl",
-        maxWidth: "2xl",
+        minWidth: "400px",
+        maxWidth: "400px",
       },
     },
     "3xl": {

@@ -2,9 +2,16 @@ import {
   Alert,
   AlertDescription,
   BoxProps,
+  Button,
   CloseButton,
   HStack,
-  Spacer,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Table,
   Tbody,
@@ -13,6 +20,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
@@ -24,12 +32,6 @@ import React from "react";
 
 import DeleteKeyModal from "~/access/DeleteKeyModal";
 import { useAuth } from "~/api/auth";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "~/components/cardComponents";
 import { CopyButton } from "~/components/copyableComponents";
 import { SubmitButton, TextField } from "~/components/formComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -39,6 +41,7 @@ const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
   const [latestDeletionId, setLatestDeletionId] = React.useState("");
   const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   React.useEffect(() => {
     loadUserApiTokens();
   }, [loadUserApiTokens]);
@@ -76,6 +79,9 @@ const AppPasswordsPage = () => {
     <>
       <PageHeader>
         <PageHeading>App passwords</PageHeading>
+        <Button variant="primary" size="sm" onClick={onOpen}>
+          New app password
+        </Button>
       </PageHeader>
       {loadingInProgress ? (
         <Spinner data-testid="loading-spinner" />
@@ -88,52 +94,59 @@ const AppPasswordsPage = () => {
               onClose={closeSecretBox}
             />
           )}
-          <HStack spacing="5" alignItems="start" display="flex">
-            <PasswordsTable
-              tokens={tokensState.apiTokensDataUser}
-              latestDeletionId={latestDeletionId}
-              deleteCb={deleteCb}
-            />
-            <VStack width="400px">
-              <Card>
-                <Formik
-                  initialValues={{ name: "" }}
-                  onSubmit={(values, actions) => {
-                    setLatestPassName(values.name);
-                    addUserApiToken({ description: values.name });
-                    actions.resetForm();
-                  }}
-                >
-                  {(form) => (
-                    <Form>
-                      <CardHeader>Generate new password</CardHeader>
-                      <CardContent>
-                        <VStack pb={2}>
-                          <TextField
-                            name="name"
-                            label="Name"
-                            size="sm"
-                            autoCorrect="off"
-                          />
-                        </VStack>
-                      </CardContent>
-
-                      <CardFooter>
-                        <Spacer />
-                        <SubmitButton
-                          colorScheme="purple"
+          <PasswordsTable
+            tokens={tokensState.apiTokensDataUser}
+            latestDeletionId={latestDeletionId}
+            deleteCb={deleteCb}
+          />
+          <Formik
+            initialValues={{ name: "" }}
+            onSubmit={(values, actions) => {
+              setLatestPassName(values.name);
+              addUserApiToken({ description: values.name });
+              actions.resetForm();
+              onClose();
+            }}
+          >
+            {(form) => (
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <Form>
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>New app password</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      <VStack pb={6} spacing="4">
+                        <Text fontSize="sm">
+                          App passwords are used to authenticate connections to
+                          Materialize.
+                        </Text>
+                        <TextField
+                          name="name"
+                          label="Name"
+                          placeholder="e.g. Personal laptop"
                           size="sm"
-                          disabled={!!createInProgress || !form.values.name}
-                        >
-                          Submit
+                          autoCorrect="off"
+                          autoFocus={isOpen ? true : false}
+                        />
+                      </VStack>
+                    </ModalBody>
+
+                    <ModalFooter>
+                      <HStack spacing="2">
+                        <Button variant="secondary" size="sm" onClick={onClose}>
+                          Cancel
+                        </Button>
+                        <SubmitButton variant="primary" size="sm">
+                          Create password
                         </SubmitButton>
-                      </CardFooter>
-                    </Form>
-                  )}
-                </Formik>
-              </Card>
-            </VStack>
-          </HStack>
+                      </HStack>
+                    </ModalFooter>
+                  </ModalContent>
+                </Form>
+              </Modal>
+            )}
+          </Formik>
         </VStack>
       )}
     </>
