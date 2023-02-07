@@ -93,7 +93,6 @@ const DangerActionModal = ({
                 </Text>
                 <Input
                   m="0"
-                  variant="default"
                   size="sm"
                   onChange={(e) => setConfirmation(e.target.value)}
                 />

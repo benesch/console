@@ -57,7 +57,6 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
           {label}
         </FormLabel>
         <Input
-          variant="default"
           id={props.id}
           size={size}
           disabled={disabled}

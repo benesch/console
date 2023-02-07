@@ -102,6 +102,9 @@ export const Input = defineInputStyleConfig({
       },
     },
   }),
+  defaultProps: {
+    variant: "default",
+  },
   variants: {
     default: defineInputPartsStyle({
       field: {
