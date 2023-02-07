@@ -8,9 +8,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { Navigate, Route } from "react-router-dom";
 
 import segment from "~/analytics/segment";
 import { CopyableBox } from "~/components/copyableComponents";
+import { useRegionSlug } from "~/region";
+import { SentryRoutes } from "~/sentry";
 import { MaterializeTheme } from "~/theme";
 
 const secrets = `CREATE SECRET broker_url AS "http://broker.com";
@@ -30,7 +33,7 @@ const GettingStarted = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
-  const startExpanded = location.search.indexOf("showSourceCredentials") !== -1;
+  const regionSlug = useRegionSlug();
 
   return (
     <Box
@@ -68,16 +71,26 @@ const GettingStarted = () => {
           </Button>
         </HStack>
       </Box>
-      {startExpanded && (
-        <CopyableBox
-          variant="embedded"
-          contents={secrets}
-          onClick={handleCopyClick}
-        >
-          {secrets}
-        </CopyableBox>
-      )}
+      <SentryRoutes>
+        <Route path="showSourceCredentials" element={<CopyableCredentials />} />
+        <Route
+          path="*"
+          element={<Navigate to={`/regions/${regionSlug}/`} replace />}
+        />
+      </SentryRoutes>
     </Box>
+  );
+};
+
+const CopyableCredentials = () => {
+  return (
+    <CopyableBox
+      variant="embedded"
+      contents={secrets}
+      onClick={handleCopyClick}
+    >
+      {secrets}
+    </CopyableBox>
   );
 };
 

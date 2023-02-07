@@ -63,6 +63,10 @@ const Router = () => {
   return (
     <>
       <ProtectedRoutes>
+        <Route
+          path="/showSourceCredentials"
+          element={<RedirectToEnvironment />}
+        />
         <Route path="/regions/:regionSlug/*" element={<EnvironmentRoutes />} />
         <Route path="/access/cli" element={<CLI />} />
         <Route path="/access" element={<AppPasswordsPage />} />
@@ -77,6 +81,14 @@ const Router = () => {
 };
 
 type RegionParams = "regionSlug";
+
+const RedirectToEnvironment = () => {
+  return (
+    <Navigate
+      to={`/regions/${regionIdToSlug(defaultRegion())}/showSourceCredentials`}
+    />
+  );
+};
 
 const EnvironmentRoutes = () => {
   const { user } = useAuth();
@@ -114,7 +126,7 @@ const EnvironmentRoutes = () => {
   }
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/*" element={<Home />} />
       <Route path="/clusters/*" element={<ClusterRoutes />} />
       <Route path="/sources/*" element={<SourceRoutes />} />
       <Route path="/sinks/*" element={<SinkRoutes />} />
