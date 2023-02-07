@@ -58,6 +58,9 @@ export const Button = {
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
         shadow: "none",
+        _disabled: {
+          backgroundColor: "semanticColors.accent.purple",
+        },
       },
     },
     "gradient-1": {
