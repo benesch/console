@@ -137,7 +137,11 @@ const AppPasswordsPage = () => {
                         <Button variant="secondary" size="sm" onClick={onClose}>
                           Cancel
                         </Button>
-                        <SubmitButton variant="primary" size="sm">
+                        <SubmitButton
+                          variant="primary"
+                          size="sm"
+                          disabled={!!createInProgress || !form.values.name}
+                        >
                           Create password
                         </SubmitButton>
                       </HStack>
