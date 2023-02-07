@@ -173,7 +173,7 @@ async function testPlatformEnvironment(
       );
     `);
   await client.query(
-    `CREATE SOURCE mz_source FROM POSTGRES CONNECTION pg_connection (PUBLICATION 'mz_source') FOR ALL TABLES WITH (SIZE = '3xsmall');`
+    `CREATE SOURCE mz_source IN CLUSTER default FROM POSTGRES CONNECTION pg_connection (PUBLICATION 'mz_source') FOR ALL TABLES;`
   );
 
   console.log("Waiting for source.");
@@ -182,8 +182,7 @@ async function testPlatformEnvironment(
     `);
   assert.equal(replicatedTableCount, 0);
 
-  const skip = true;
-  if (!IS_KIND && !skip) {
+  if (!IS_KIND) {
     await testEgress(
       client,
       page,
@@ -237,17 +236,39 @@ async function testEgress(
   const { rows: egressAddressRows } = await client.query(`
       SELECT egress_ip FROM mz_catalog.mz_egress_ips;
     `);
-  assert(egressAddressRows.length > 0);
   const egressAddresses = egressAddressRows.map((row) => row.egress_ip);
+  console.log("egressAddresses: [" + egressAddresses.join() + "]");
+  assert(egressAddresses.length > 0);
 
-  const { rows: clientAddrRows } = await testdbClient.query(
-    `SELECT client_addr FROM pg_stat_activity JOIN pg_replication_slots ON pg_replication_slots.active_pid = pg_stat_activity.pid WHERE slot_name = '${replicationSlot}';`
-  );
-  const clientAddrs = clientAddrRows.map((row) => row.client_addr);
-  assert(clientAddrs.length > 0);
-  for (const clientAddr of clientAddrs) {
-    assert(egressAddresses.includes(clientAddr));
+  let clientAddresses = [];
+  for (let i = 0; i < 3; i++) {
+    const { rows: clientAddrRows } = await testdbClient.query(
+      `SELECT client_addr FROM pg_stat_activity JOIN pg_replication_slots ON pg_replication_slots.active_pid = pg_stat_activity.pid WHERE slot_name = '${replicationSlot}';`
+    );
+    clientAddresses = clientAddrRows.map((row) => row.client_addr);
+    console.log("clientAddresses: [" + clientAddresses.join() + "]");
+    if (clientAddressesValid(clientAddresses, egressAddresses)) {
+      break;
+    }
+    console.log("Couldn't find client_addr, retrying...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
+  assert(clientAddressesValid(clientAddresses, egressAddresses));
+}
+
+function clientAddressesValid(
+  clientAddresses: string[],
+  egressAddresses: string[]
+): boolean {
+  if (clientAddresses.length == 0) {
+    return false;
+  }
+  for (const clientAddress of clientAddresses) {
+    if (!egressAddresses.includes(clientAddress)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 async function connectPostgres(
