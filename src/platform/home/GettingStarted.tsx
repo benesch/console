@@ -73,6 +73,7 @@ const GettingStarted = () => {
       </Box>
       <SentryRoutes>
         <Route path="showSourceCredentials" element={<CopyableCredentials />} />
+        <Route path="" />
         <Route
           path="*"
           element={<Navigate to={`/regions/${regionSlug}/`} replace />}
