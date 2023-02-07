@@ -49,7 +49,7 @@ export const Button = {
       },
     },
     primary: {
-      color: "#FFF", // we don't want this label color to be themeable
+      color: "semanticColors.foreground.primaryButtonLabel",
       fontSize: "14px",
       lineHeight: "16px",
       fontWeight: 500,
