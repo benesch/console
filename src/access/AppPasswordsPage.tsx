@@ -4,7 +4,11 @@ import {
   BoxProps,
   Button,
   CloseButton,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   HStack,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -27,13 +31,12 @@ import {
 import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import { IApiTokensData } from "@frontegg/redux-store";
 import { format } from "date-fns";
-import { Form, Formik } from "formik";
 import React from "react";
+import { useForm } from "react-hook-form";
 
 import DeleteKeyModal from "~/access/DeleteKeyModal";
 import { useAuth } from "~/api/auth";
 import { CopyButton } from "~/components/copyableComponents";
-import { SubmitButton, TextField } from "~/components/formComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
 
@@ -48,6 +51,12 @@ const AppPasswordsPage = () => {
   const tokensState = useApiTokensState();
   const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
+
+  const { register, handleSubmit, formState, reset } = useForm<{
+    name: string;
+  }>({
+    mode: "onTouched",
+  });
 
   const newPassword = React.useMemo(() => {
     if (createInProgress) {
@@ -99,58 +108,63 @@ const AppPasswordsPage = () => {
             latestDeletionId={latestDeletionId}
             deleteCb={deleteCb}
           />
-          <Formik
-            initialValues={{ name: "" }}
-            onSubmit={(values, actions) => {
-              setLatestPassName(values.name);
-              addUserApiToken({ description: values.name });
-              actions.resetForm();
-              onClose();
-            }}
-          >
-            {(form) => (
-              <Modal isOpen={isOpen} onClose={onClose}>
-                <Form>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader>New app password</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      <VStack pb={6} spacing="4">
-                        <Text fontSize="sm">
-                          App passwords are used to authenticate connections to
-                          Materialize.
-                        </Text>
-                        <TextField
-                          name="name"
-                          label="Name"
-                          placeholder="e.g. Personal laptop"
-                          size="sm"
-                          autoCorrect="off"
-                          autoFocus={isOpen ? true : false}
-                        />
-                      </VStack>
-                    </ModalBody>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <form
+                onSubmit={handleSubmit((data) => {
+                  setLatestPassName(data.name);
+                  addUserApiToken({ description: data.name });
+                  reset();
+                  onClose();
+                })}
+              >
+                <ModalHeader>New app password</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <VStack pb={6} spacing="4">
+                    <Text fontSize="sm">
+                      App passwords are used to authenticate connections to
+                      Materialize.
+                    </Text>
+                    <FormControl isInvalid={!!formState.errors.name}>
+                      <FormLabel htmlFor="name" fontSize="sm">
+                        Name
+                      </FormLabel>
+                      <Input
+                        {...register("name", {
+                          required: "Name is required",
+                        })}
+                        placeholder="e.g. Personal laptop"
+                        autoFocus={isOpen}
+                        autoCorrect="off"
+                        size="sm"
+                      />
+                      <FormErrorMessage>
+                        {formState.errors.name?.message}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </VStack>
+                </ModalBody>
 
-                    <ModalFooter>
-                      <HStack spacing="2">
-                        <Button variant="secondary" size="sm" onClick={onClose}>
-                          Cancel
-                        </Button>
-                        <SubmitButton
-                          variant="primary"
-                          size="sm"
-                          disabled={!!createInProgress || !form.values.name}
-                        >
-                          Create password
-                        </SubmitButton>
-                      </HStack>
-                    </ModalFooter>
-                  </ModalContent>
-                </Form>
-              </Modal>
-            )}
-          </Formik>
+                <ModalFooter>
+                  <HStack spacing="2">
+                    <Button variant="secondary" size="sm" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="sm"
+                      disabled={!!createInProgress || !formState.isValid}
+                    >
+                      Create Password
+                    </Button>
+                  </HStack>
+                </ModalFooter>
+              </form>
+            </ModalContent>
+          </Modal>
         </VStack>
       )}
     </>
