@@ -19,6 +19,7 @@ export const lightColors: ThemeColors = {
     secondary: colors.gray[500],
     tertiary: "#949197",
     inverse: colors.gray[50],
+    primaryButtonLabel: colors.white,
   },
   background: {
     primary: colors.white,

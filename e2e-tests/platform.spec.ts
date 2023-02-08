@@ -44,9 +44,10 @@ for (const region of PLATFORM_REGIONS) {
     // Create api key
     await page.goto(`${CONSOLE_ADDR}/access`);
     console.log("Creating app password", apiKeyName);
-    await page.waitForSelector("text=Generate new password");
+    await page.click("button:text('New app password')");
+    await page.waitForSelector("text=New app password");
     await page.fill("form [name=name]", apiKeyName);
-    await page.click("form button:text('Submit')");
+    await page.click("form button:text('Create password')");
     await page.waitForSelector(`text=New password "${apiKeyName}"`);
     // TODO: test copy to clipboard button once playwright supports that
     const passwordField = await page.waitForSelector(

@@ -35,6 +35,7 @@ export interface ThemeColors {
     secondary: string;
     tertiary: string;
     inverse: string;
+    primaryButtonLabel: string;
   };
   background: {
     primary: string;

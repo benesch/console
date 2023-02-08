@@ -4,11 +4,12 @@
  */
 
 import { DeleteIcon } from "@chakra-ui/icons";
-import { ButtonProps, Text } from "@chakra-ui/react";
+import { ButtonProps, Text, useTheme } from "@chakra-ui/react";
 import { useApiTokensActions } from "@frontegg/react";
 import React from "react";
 
 import DangerActionModal from "~/components/DangerActionModal";
+import { MaterializeTheme } from "~/theme";
 
 interface Props extends ButtonProps {
   clientId: string;
@@ -24,6 +25,10 @@ const DeleteKeyModal = (props: Props) => {
     deleteUserApiToken(props.clientId);
   };
 
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+
   return (
     <DangerActionModal
       title="Delete password"
@@ -38,9 +43,9 @@ const DeleteKeyModal = (props: Props) => {
       size="sm"
       variant="outline"
     >
-      <Text fontSize="sm">
-        <strong>Are you sure?</strong> Deleting this app password is
-        irreversible.
+      <Text fontSize="sm" color={semanticColors.foreground.primary}>
+        Deleting this app password will revoke access to any devices or services
+        using it to connect to Materialize.
       </Text>
     </DangerActionModal>
   );
