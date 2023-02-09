@@ -17,6 +17,7 @@ import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
 import { SentryRoutes } from "~/sentry";
 
 import SourceErrors from "./SourceErrors";
+import Subsources from "./Subsources";
 
 export interface SourceDetailProps {
   source?: Source;
@@ -76,12 +77,17 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
             Overview
           </PageTab>*/}
             <PageTab to="errors">Errors</PageTab>
+            <PageTab to="subsources">Subsources</PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>
       <SentryRoutes>
         <Route path="/" element={<Navigate to="errors" replace />} />
         <Route path="errors" element={<SourceErrors source={source} />} />
+        <Route
+          path="subsources"
+          element={<Subsources sourceId={params.id} />}
+        />
       </SentryRoutes>
     </>
   );

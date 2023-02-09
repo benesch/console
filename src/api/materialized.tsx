@@ -283,7 +283,8 @@ FROM mz_sources s
 INNER JOIN mz_schemas sc ON sc.id = s.schema_id
 INNER JOIN mz_databases d ON d.id = sc.database_id
 LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
-WHERE s.id LIKE 'u%';
+WHERE s.id LIKE 'u%'
+AND s.type <> 'subsource';
 `);
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
