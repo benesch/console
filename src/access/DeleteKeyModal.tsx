@@ -37,7 +37,7 @@ const DeleteKeyModal = (props: Props) => {
       confirmIcon={<DeleteIcon />}
       actionText=""
       finalActionText="Delete"
-      disabled={props.disabled}
+      isDisabled={props.isDisabled}
       confirmText={props.description}
       onConfirm={handleDelete}
       size="sm"

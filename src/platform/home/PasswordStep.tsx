@@ -148,7 +148,9 @@ const PasswordStep = (props: BoxProps) => {
                 }`,
               })
             }
-            disabled={!!(tokensState.successDialog.secret || createInProgress)}
+            isDisabled={
+              !!(tokensState.successDialog.secret || createInProgress)
+            }
             size="sm"
             variant="primary"
           >

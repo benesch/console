@@ -156,7 +156,7 @@ const AppPasswordsPage = () => {
                       type="submit"
                       variant="primary"
                       size="sm"
-                      disabled={!!createInProgress || !formState.isValid}
+                      isDisabled={!!createInProgress}
                     >
                       Create Password
                     </Button>
@@ -240,7 +240,7 @@ const PasswordsTable = ({
                 <DeleteKeyModal
                   description={token.description}
                   clientId={token.clientId}
-                  disabled={isDeleting}
+                  isDisabled={isDeleting}
                   deleteCb={deleteCb}
                 />
               </Td>

@@ -47,7 +47,7 @@ const Pagination = ({
         <Button
           size="xs"
           onClick={() => gotoPage(0)}
-          disabled={loading || !canPreviousPage}
+          isDisabled={loading || !canPreviousPage}
           marginX={1}
         >
           {"<<"}
@@ -55,7 +55,7 @@ const Pagination = ({
         <Button
           size="xs"
           onClick={() => previousPage()}
-          disabled={loading || !canPreviousPage}
+          isDisabled={loading || !canPreviousPage}
           marginX={1}
         >
           {"<"}
@@ -63,7 +63,7 @@ const Pagination = ({
         <Button
           size="xs"
           onClick={() => nextPage()}
-          disabled={loading || !canNextPage}
+          isDisabled={loading || !canNextPage}
           marginX={1}
         >
           {">"}
@@ -71,7 +71,7 @@ const Pagination = ({
         <Button
           size="xs"
           onClick={() => gotoPage(pageCount - 1)}
-          disabled={loading || !canNextPage}
+          isDisabled={loading || !canNextPage}
           marginX={1}
         >
           {">>"}
@@ -92,7 +92,7 @@ const Pagination = ({
           onChange={handleGoToPage}
           width={100}
           marginLeft={2}
-          disabled={loading}
+          isDisabled={loading}
         />
       </Flex>{" "}
       <Select

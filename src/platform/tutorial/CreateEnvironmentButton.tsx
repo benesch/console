@@ -30,7 +30,7 @@ const CreateEnvironmentButton = (props: Props) => {
       size="sm"
       float="right"
       onClick={() => createRegion(regionId)}
-      disabled={!canWriteEnvironments || !!creatingThisRegion}
+      isDisabled={!canWriteEnvironments || !!creatingThisRegion}
       title={
         canWriteEnvironments
           ? `Enable ${regionId}`

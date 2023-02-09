@@ -83,7 +83,10 @@ const ProfileDropdown = (props: ButtonProps) => {
             .map((tenant) => (
               <MenuItem
                 key={`org-${tenant.tenantId}`}
-                isDisabled={!tenantSwitchingEnabled}
+                isDisabled={
+                  !tenantSwitchingEnabled ||
+                  currentTenant?.tenantId === tenant.tenantId
+                }
                 title={
                   tenantSwitchingEnabled &&
                   currentTenant?.tenantId !== tenant.tenantId
@@ -111,7 +114,6 @@ const ProfileDropdown = (props: ButtonProps) => {
                       ? "default"
                       : "pointer",
                 }}
-                disabled={currentTenant?.tenantId === tenant.tenantId}
                 onClick={() => handleTenantClick(tenant.tenantId)}
               >
                 {tenant.name}{" "}
