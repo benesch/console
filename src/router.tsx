@@ -179,7 +179,8 @@ const ProtectedRoutes = (props: RoutesProps) => {
   // If unauthenticated, redirect to login page, remembering what page the user
   // was trying to access.
   if (!isAuthenticated) {
-    const redirectUrl = encodeURIComponent(location.pathname);
+    const fullPath = location.pathname + location.search + location.hash;
+    const redirectUrl = encodeURIComponent(fullPath);
     const loginUrl = `${authRoutes.loginUrl}?redirectUrl=${redirectUrl}`;
     return <Navigate to={loginUrl} replace />;
   }
