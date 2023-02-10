@@ -176,7 +176,7 @@ const PasswordsTable = ({
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
-    <Table variant="standalone">
+    <Table variant="standalone" {...props}>
       <Thead>
         <Tr>
           <Th width="50%">Name</Th>
