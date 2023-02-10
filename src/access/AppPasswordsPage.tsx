@@ -28,7 +28,6 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import { useApiTokensActions, useApiTokensState } from "@frontegg/react";
 import { IApiTokensData } from "@frontegg/redux-store";
 import { format } from "date-fns";
 import React from "react";
@@ -39,37 +38,25 @@ import { useAuth } from "~/api/auth";
 import { CopyButton } from "~/components/copyableComponents";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
+import useAppPasswords from "~/useAppPasswords";
 
 const AppPasswordsPage = () => {
   const [latestPassName, setLatestPassName] = React.useState("");
   const [latestDeletionId, setLatestDeletionId] = React.useState("");
-  const { loadUserApiTokens, addUserApiToken } = useApiTokensActions();
+  const {
+    addUserApiToken,
+    loadingInProgress,
+    createInProgress,
+    tokensState,
+    newPassword,
+  } = useAppPasswords();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  React.useEffect(() => {
-    loadUserApiTokens();
-  }, [loadUserApiTokens]);
-  const tokensState = useApiTokensState();
-  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
-  const createInProgress = tokensState.loaders.ADD_API_TOKEN;
 
   const { register, handleSubmit, formState, reset } = useForm<{
     name: string;
   }>({
     mode: "onTouched",
   });
-
-  const newPassword = React.useMemo(() => {
-    if (createInProgress) {
-      return "";
-    }
-    if (tokensState.successDialog) {
-      const { clientId, secret } = tokensState.successDialog;
-      const formattedClientId = (clientId || "").replaceAll("-", "");
-      const formattedSecret = (secret || "").replaceAll("-", "");
-      return `mzp_${formattedClientId}${formattedSecret}`;
-    }
-    return "";
-  }, [createInProgress, tokensState]);
 
   const deleteCb = (clientId: string) => {
     setLatestDeletionId(clientId);

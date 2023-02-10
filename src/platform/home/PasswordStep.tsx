@@ -9,38 +9,28 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import {
-  useApiTokensActions,
-  useApiTokensState,
-  useAuth,
-} from "@frontegg/react";
 import React from "react";
 import { Link } from "react-router-dom";
 
 import { CopyableBox } from "~/components/copyableComponents";
 import { MaterializeTheme } from "~/theme";
-
-const NEW_USER_DEFAULT_PASSWORD_NAME = "App password";
+import useAppPasswords, {
+  NEW_USER_DEFAULT_PASSWORD_NAME,
+} from "~/useAppPasswords";
 
 const PasswordStep = (props: BoxProps) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
 
-  const { user } = useAuth();
-  const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =
-    useApiTokensActions();
-  const tokensState = useApiTokensState();
-  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
-  const createInProgress = tokensState.loaders.ADD_API_TOKEN;
+  const {
+    addUserApiToken,
+    loadingInProgress,
+    createInProgress,
+    tokensState,
+    newPassword,
+  } = useAppPasswords();
 
-  React.useEffect(() => {
-    loadUserApiTokens();
-  }, [loadUserApiTokens]);
-  React.useEffect(() => {
-    resetApiTokensState();
-    // Reset token state when switching orgs, otherwise we continue to display stale app passwords
-  }, [resetApiTokensState, user?.tenantId]);
   React.useEffect(() => {
     if (
       loadingInProgress === false &&
@@ -49,20 +39,6 @@ const PasswordStep = (props: BoxProps) => {
       addUserApiToken({ description: NEW_USER_DEFAULT_PASSWORD_NAME });
     }
   }, [tokensState.apiTokensDataUser, loadingInProgress, addUserApiToken]);
-  const newPassword = React.useMemo(() => {
-    if (createInProgress) {
-      return "";
-    }
-    if (tokensState.successDialog) {
-      const { clientId, secret } = tokensState.successDialog;
-      if (clientId && secret) {
-        const formattedClientId = clientId.replaceAll("-", "");
-        const formattedSecret = secret.replaceAll("-", "");
-        return `mzp_${formattedClientId}${formattedSecret}`;
-      }
-    }
-    return "";
-  }, [createInProgress, tokensState]);
 
   let boxContents = (
     <Text color={semanticColors.foreground.secondary}>
@@ -86,7 +62,7 @@ const PasswordStep = (props: BoxProps) => {
     );
   }
 
-  if (tokensState.successDialog.secret) {
+  if (newPassword) {
     boxContents = (
       <>
         <VStack alignItems="stretch">
