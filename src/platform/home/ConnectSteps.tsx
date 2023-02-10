@@ -1,4 +1,4 @@
-import { Spinner } from "@chakra-ui/react";
+import { BoxProps, Spinner } from "@chakra-ui/react";
 import { useAuth } from "@frontegg/react";
 import React from "react";
 import { useRecoilValue } from "recoil";
@@ -8,7 +8,7 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import MonitorIcon from "~/svg/Monitor";
 import TerminalIcon from "~/svg/Terminal";
 
-const ConnectSteps = (): JSX.Element => {
+const ConnectSteps = (props: BoxProps): JSX.Element => {
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
 
@@ -45,6 +45,7 @@ DATABASE=materialize`,
         },
       ]}
       minHeight="208px"
+      {...props}
     />
   );
 };

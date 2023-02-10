@@ -1,8 +1,9 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
 import { Sink, useDDL } from "~/api/materialized";
+import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
@@ -35,14 +36,17 @@ const SinkDetail = ({ sink }: SinkDetailProps) => {
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
-          <VStack spacing={2} alignItems="start">
-            <PageBreadcrumbs crumbs={breadcrumbs}>
-              {sink?.status && (
-                <Box>
-                  <StatusPill ml={2} status={sink.status} />
-                </Box>
-              )}
-            </PageBreadcrumbs>
+          <VStack spacing={2} alignItems="start" width="100%">
+            <HStack justifyContent="space-between" width="100%">
+              <PageBreadcrumbs crumbs={breadcrumbs}>
+                {sink?.status && (
+                  <Box>
+                    <StatusPill ml={2} status={sink.status} />
+                  </Box>
+                )}
+              </PageBreadcrumbs>
+              <ConnectModal />
+            </HStack>
             {sink && (
               <ExpandablePanel text="SHOW CREATE SINK">
                 <Box

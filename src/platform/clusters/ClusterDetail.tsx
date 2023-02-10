@@ -3,6 +3,7 @@ import React from "react";
 import { Route, useParams } from "react-router-dom";
 
 import { Cluster } from "~/api/materialized";
+import ConnectModal from "~/components/ConnectModal";
 import {
   Breadcrumb,
   PageBreadcrumbs,
@@ -44,6 +45,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
             <PageTab to="indexes">Indexes</PageTab>
           </PageTabStrip>
         </VStack>
+        <ConnectModal />
       </PageHeader>
       <SentryRoutes>
         <Route path="/" element={<ClusterOverview cluster={cluster} />} />

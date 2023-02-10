@@ -102,11 +102,11 @@ export const PageHeader = ({ children, ...props }: StackProps) => {
   return (
     <Flex
       my="6"
-      {...props}
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
       width="100%"
+      {...props}
     >
       {children}
     </Flex>

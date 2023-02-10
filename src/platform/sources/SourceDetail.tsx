@@ -1,9 +1,10 @@
-import { Box, VStack } from "@chakra-ui/react";
+import { Box, HStack, VStack } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
 import { Source, useDDL } from "~/api/materialized";
+import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
 import {
@@ -41,13 +42,16 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start" width="100%">
-            <PageBreadcrumbs crumbs={breadcrumbs}>
-              {source?.status && (
-                <Box>
-                  <StatusPill ml={2} status={source.status} />
-                </Box>
-              )}
-            </PageBreadcrumbs>
+            <HStack justifyContent="space-between" width="100%">
+              <PageBreadcrumbs crumbs={breadcrumbs}>
+                {source?.status && (
+                  <Box>
+                    <StatusPill ml={2} status={source.status} />
+                  </Box>
+                )}
+              </PageBreadcrumbs>
+              <ConnectModal />
+            </HStack>
             {source && (
               <ExpandablePanel text="SHOW CREATE SOURCE">
                 <Box
