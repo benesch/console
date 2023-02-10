@@ -242,7 +242,7 @@ async function testEgress(
   assert(egressAddresses.length > 0);
 
   let clientAddresses = [];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 30; i++) {
     const { rows: clientAddrRows } = await testdbClient.query(
       `SELECT client_addr FROM pg_stat_activity JOIN pg_replication_slots ON pg_replication_slots.active_pid = pg_stat_activity.pid WHERE slot_name = '${replicationSlot}';`
     );
