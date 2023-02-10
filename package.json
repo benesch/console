@@ -137,6 +137,11 @@
       "frontend/src/api/schemas",
       "vendor"
     ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
     "extends": [
       "eslint:recommended",
       "plugin:@typescript-eslint/recommended",
