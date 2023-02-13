@@ -42,13 +42,17 @@ const ConnectModal = () => {
         Connect
       </Button>
 
-      <Modal size="2xl" isOpen={isOpen} onClose={onClose}>
+      <Modal size="3xl" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontWeight="500">Connect To Materialize</ModalHeader>
           <ModalCloseButton />
           <ModalBody pt="2" pb="6" alignItems="stretch">
-            <Text fontSize="sm">
+            <Text
+              fontSize="sm"
+              whiteSpace="normal"
+              color={semanticColors.foreground.secondary}
+            >
               Below are the details to connect to this database. If you need
               more information you can{" "}
               <TextLink href="https://materialize.com/docs/" target="_blank">
@@ -68,7 +72,7 @@ const ConnectModal = () => {
               borderRadius="lg"
               background={semanticColors.background.secondary}
             >
-              <Text fontSize="xs">
+              <Text fontSize="sm" color={semanticColors.foreground.secondary}>
                 <TextLink
                   href="https://materialize.com/docs/get-started/"
                   target="_blank"
@@ -108,7 +112,8 @@ const CreateAppPassword = () => {
   if (createInProgress) {
     return (
       <Flex alignItems="center" color={semanticColors.foreground.secondary}>
-        <Spinner size="sm" mr={2} /> Generating new app password...
+        <Spinner size="sm" mr={2} />
+        <Text fontSize="sm">Generating new app password...</Text>
       </Flex>
     );
   }
@@ -124,18 +129,18 @@ const CreateAppPassword = () => {
             fontWeight={500}
             color={semanticColors.foreground.primary}
           >
-            New app password:
+            New app password
           </Text>
           <CopyableBox contents={newPassword}>{newPassword}</CopyableBox>
         </VStack>
         <Text
-          pt={3}
+          pt={1}
           fontSize="sm"
           lineHeight="20px"
           fontWeight={400}
-          color={semanticColors.foreground.primary}
+          color={semanticColors.foreground.secondary}
         >
-          Copy this app password somewhere safe. App passwords cannot be
+          Copy this app password to somewhere safe. App passwords cannot be
           displayed after initial creation.
         </Text>
       </>

@@ -103,7 +103,7 @@ export const PageHeader = ({ children, ...props }: StackProps) => {
     <Flex
       my="6"
       flexDirection="row"
-      alignItems="center"
+      alignItems="flex-start"
       justifyContent="space-between"
       width="100%"
       {...props}
@@ -196,7 +196,7 @@ export const PageTabStrip = ({ children }: PageTabStripProps) => {
 
   return (
     <HStack
-      width={`calc(100% + ${mainContentMargin} * 2)`}
+      width={`calc(100% + ${mainContentMargin} * 4)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
       px={mainContentMargin}
       borderBottom="solid 1px"
