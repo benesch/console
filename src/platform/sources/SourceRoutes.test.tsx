@@ -54,16 +54,6 @@ const validSourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
           tag: "SELECT 2",
           rows: [
             [
-              "u3",
-              "default",
-              "public",
-              "companies",
-              "subsource",
-              null,
-              null,
-              null,
-            ],
-            [
               "u4",
               "default",
               "public",
@@ -118,9 +108,6 @@ describe("SourceRoutes", () => {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
     });
-
-    expect(await screen.findByText("companies")).toBeVisible();
-    expect(await screen.findByText("subsource")).toBeVisible();
 
     expect(await screen.findByText("test_source")).toBeVisible();
     expect(await screen.findByText("Stalled")).toBeVisible();
