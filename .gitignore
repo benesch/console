@@ -1,1 +1,10 @@
-coverage
+/node_modules
+e2e-tests/state*.json
+e2e-tests/scratch/
+e2e-tests/test-results/
+# Playwright results
+/test-results
+
+# Allow people to set up their own shell-local environments:
+.direnv
+.envrc
