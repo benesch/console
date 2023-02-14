@@ -7,7 +7,7 @@
     "start": " webpack serve --config=webpack.dev.ts",
     "build": " NODE_ENV=production webpack --config=webpack.prod.ts",
     "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
-    "test:unit": " jest",
+    "test:unit": " jest 'test.ts?(x)'",
     "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",

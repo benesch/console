@@ -1,0 +1,20 @@
+name: PR
+on:
+  pull_request:
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Install dependencies
+        run: yarn install
+      - name: eslint
+        run: yarn eslint
+      - name: typecheck
+        run: yarn typecheck
+      - name: typecheck
+        run: yarn typecheck
+      - name: Jest tests
+        run: yarn test:unit
