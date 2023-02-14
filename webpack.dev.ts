@@ -28,7 +28,7 @@ module.exports = merge(base, {
     host: "0.0.0.0",
     port: 3000,
     hot: true,
-    allowedHosts: ["frontend", "localhost"],
+    allowedHosts: ["frontend", "localhost", "127.0.0.1"],
     historyApiFallback: true,
     proxy: {
       "/_metadata/cloud-regions.json": {

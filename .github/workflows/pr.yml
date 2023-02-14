@@ -18,3 +18,66 @@ jobs:
         run: yarn typecheck
       - name: Jest tests
         run: yarn test:unit
+
+  e2e-tests:
+    runs-on: ubuntu-20.04-16core
+    steps:
+      - uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: console checkout
+        uses: actions/checkout@v3
+      - name: cloud checkout
+        uses: actions/checkout@v3
+        with:
+          repository: MaterializeInc/cloud
+          ssh-key: ${{ secrets.CLOUD_DEPLOY_KEY }}
+          path: ./cloud
+          submodules: true
+      - uses: helm/kind-action@v1.4.0
+        with:
+          cluster_name: mzcloud
+          config: ./cloud/misc/kind/cluster.yaml
+          node_image: kindest/node:v1.24.7@sha256:5c015142d9b60a0f6c45573f809957076514e38ec973565e2b2fe828b91597f5
+      - run: cd ./cloud && docker compose pull cli -q
+      - name: Docker compose up
+        working-directory: ./cloud
+        run: |
+          bin/kind-install-all && \
+          docker compose up region-controller environment-controller -d --wait \
+      - run: yarn install
+      - name: Install playwright browsers
+        run: yarn playwright install --with-deps
+      - run: nohup yarn start &
+        env:
+          DEFAULT_STACK: local
+      - name: Run e2e tests
+        timeout-minutes: 50
+        env:
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_STAGING_PASSWORD }}
+        run: yarn test:e2e
+      - name: docker compose logs
+        working-directory: ./cloud
+        run: |
+          for svc in $(docker compose ps -a --services) ; do
+            echo "::group::$svc"
+            docker compose logs -t $svc
+            echo "::endgroup::"
+          done
+        if: always()
+      - name: kubernetes logs
+        run: |
+          echo "::group::cockroachdb"
+          kubectl --context kind-mzcloud logs -n cockroachdb --selector=app=cockroachdb --timestamps=true  --since=0s || true
+          echo "::endgroup::"
+        if: always()
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/
+        if: always()

@@ -75,8 +75,8 @@ const config: Configuration = {
   devtool:
     process.env.NODE_ENV === "production" ? "source-map" : "eval-source-map",
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "dist", "frontend"),
+    filename: "[name].[contenthash:8].js",
+    path: path.resolve(__dirname, "dist"),
     publicPath: "auto",
   },
 };
