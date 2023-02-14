@@ -16,10 +16,9 @@ import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 import { MaterializeTheme } from "~/theme";
 
-const secrets = `CREATE SECRET broker_url AS "http://broker.com";
-CREATE SECRET username AS "usernamegoeshere";
-CREATE SECRET password AS "mypassword";
-`;
+// These credentials are read only and not considered sensitive
+const secrets = `CREATE SECRET qck.kafka_user AS 'CL6M5VSYI32TVILA';
+CREATE SECRET qck.kafka_password AS 'swK5gpo9J3uJKaeeHjTkKXnU7qd5Gp90FDJq4CbHKvNnU4kl7uQ1jzVIGsvhHB0K';`;
 
 const handleGettingStartedClick = () => {
   segment.track("Get Started Clicked", {});
