@@ -107,7 +107,7 @@
     "jest": "^27.0.5",
     "miragejs": "^0.1.47",
     "msw": "^0.49.2",
-    "openapi-typescript": "^5.4.1",
+    "openapi-typescript": "^6.1.0",
     "pg": "^8.8.0",
     "prettier": "^2.8.3",
     "pyright": "1.1.278",
