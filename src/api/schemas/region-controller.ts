@@ -3,19 +3,20 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/api/environmentassignment": {
-    /** List the available environment assignments */
+    /** @description List the available environment assignments */
     get: operations["environmentAssignmentsList"];
-    /** Create a new environment assignment. */
+    /** @description Create a new environment assignment. */
     post: operations["environmentAssignmentsCreate"];
-    /** Destroy an environment assignment. */
+    /** @description Destroy an environment assignment. */
     delete: operations["environmentAssignmentsDestroy"];
   };
   "/api/health": {
     /**
-     * Basic health check endpoint.
-     *
+     * @description Basic health check endpoint.
+     * 
      * This endpoint always returns 200 OK. It is intended for use by load
      * balancers and such that need a basic indication as to whether the server is
      * live.
@@ -23,6 +24,8 @@ export interface paths {
     get: operations["healthRetrieve"];
   };
 }
+
+export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
@@ -35,24 +38,37 @@ export interface components {
       /** @default false */
       important?: boolean;
       /** Extra environmentd arguments */
-      environmentdExtraArgs?: string[];
+      environmentdExtraArgs?: (string)[];
     };
   };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 
+export type external = Record<string, never>;
+
 export interface operations {
-  /** List the available environment assignments */
+
   environmentAssignmentsList: {
+    /** @description List the available environment assignments */
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["EnvironmentAssignment"][];
+          "application/json": (components["schemas"]["EnvironmentAssignment"])[];
         };
       };
     };
   };
-  /** Create a new environment assignment. */
   environmentAssignmentsCreate: {
+    /** @description Create a new environment assignment. */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EnvironmentAssignmentRequest"];
+      };
+    };
     responses: {
       201: {
         content: {
@@ -60,32 +76,25 @@ export interface operations {
         };
       };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["EnvironmentAssignmentRequest"];
-      };
-    };
   };
-  /** Destroy an environment assignment. */
   environmentAssignmentsDestroy: {
+    /** @description Destroy an environment assignment. */
     responses: {
-      /** No response body */
-      202: unknown;
+      /** @description No response body */
+      202: never;
     };
   };
-  /**
-   * Basic health check endpoint.
-   *
-   * This endpoint always returns 200 OK. It is intended for use by load
-   * balancers and such that need a basic indication as to whether the server is
-   * live.
-   */
   healthRetrieve: {
+    /**
+     * @description Basic health check endpoint.
+     * 
+     * This endpoint always returns 200 OK. It is intended for use by load
+     * balancers and such that need a basic indication as to whether the server is
+     * live.
+     */
     responses: {
-      /** No response body */
-      200: unknown;
+      /** @description No response body */
+      200: never;
     };
   };
 }
-
-export interface external {}

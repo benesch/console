@@ -3,15 +3,16 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/api/environment": {
-    /** List the available environments */
+    /** @description List the available environments */
     get: operations["environmentsList"];
   };
   "/api/health": {
     /**
-     * Basic health check endpoint.
-     *
+     * @description Basic health check endpoint.
+     * 
      * This endpoint always returns 200 OK. It is intended for use by load
      * balancers and such that need a basic indication as to whether the server is
      * live.
@@ -19,6 +20,8 @@ export interface paths {
     get: operations["healthRetrieve"];
   };
 }
+
+export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
@@ -30,32 +33,38 @@ export interface components {
       creationTimestamp: string;
     };
   };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 
+export type external = Record<string, never>;
+
 export interface operations {
-  /** List the available environments */
+
   environmentsList: {
+    /** @description List the available environments */
     responses: {
       200: {
         content: {
-          "application/json": components["schemas"]["Environment"][];
+          "application/json": (components["schemas"]["Environment"])[];
         };
       };
     };
   };
-  /**
-   * Basic health check endpoint.
-   *
-   * This endpoint always returns 200 OK. It is intended for use by load
-   * balancers and such that need a basic indication as to whether the server is
-   * live.
-   */
   healthRetrieve: {
+    /**
+     * @description Basic health check endpoint.
+     * 
+     * This endpoint always returns 200 OK. It is intended for use by load
+     * balancers and such that need a basic indication as to whether the server is
+     * live.
+     */
     responses: {
-      /** No response body */
-      200: unknown;
+      /** @description No response body */
+      200: never;
     };
   };
 }
-
-export interface external {}
