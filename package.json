@@ -92,7 +92,7 @@
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.48.1",
     "cacheable-lookup": "6.0.4",
-    "concurrently": "7.0.0",
+    "concurrently": "7.6.0",
     "debug": "^4.3.4",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.6.0",
