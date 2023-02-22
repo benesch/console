@@ -26,7 +26,7 @@ export const PULUMI_STACK = (() => {
 export const PASSWORD = (() => {
   if (!process.env.E2E_TEST_PASSWORD) {
     throw new Error(
-      `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets e2e_test_user_password' to retrieve the value.`
+      `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets cloud_e2e_test_password' to retrieve the value.`
     );
   }
   return process.env.E2E_TEST_PASSWORD;
