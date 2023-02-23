@@ -31,15 +31,6 @@ const PasswordStep = (props: BoxProps) => {
     newPassword,
   } = useAppPasswords();
 
-  React.useEffect(() => {
-    if (
-      loadingInProgress === false &&
-      tokensState.apiTokensDataUser.length === 0
-    ) {
-      addUserApiToken({ description: NEW_USER_DEFAULT_PASSWORD_NAME });
-    }
-  }, [tokensState.apiTokensDataUser, loadingInProgress, addUserApiToken]);
-
   let boxContents = (
     <Text color={semanticColors.foreground.secondary}>
       App passwords cannot be displayed after initial creation.
