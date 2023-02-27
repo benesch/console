@@ -11,15 +11,13 @@ const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
 };
 
 export interface IDefinePluginOptions extends Record<string, string> {
-  __FRONTEGG_URL__: string;
   __LAUNCH_DARKLY_KEY__: string;
   __SEGMENT_API_KEY__: string;
   __SENTRY_DSN__: string;
   __SENTRY_ENVIRONMENT__: string;
   __SENTRY_RELEASE__: string;
   __STATUSPAGE_ID__: string;
-  __ENVIRONMENTD_SCHEME__: string;
-  __CLOUD_REGIONS__: string;
+  __DEFAULT_STACK__: string;
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: string;
 }
 

@@ -12,15 +12,15 @@ const TestComponent = () => {
 };
 
 describe("useSetEnvironment", () => {
-  it("should do nothing if there is no region set in local storage", async () => {
+  it("sets the default if there is no region set in local storage", async () => {
     render(
       <RecoilRoot>
         <TestComponent />
       </RecoilRoot>
     );
-    expect(
-      await screen.findByTestId("currentEnvironmentId")
-    ).toBeEmptyDOMElement();
+    expect(await screen.findByTestId("currentEnvironmentId")).toHaveTextContent(
+      "AWS/us-east-1"
+    );
   });
 
   it("should set the environment based on the value in local storage", async () => {

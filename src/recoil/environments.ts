@@ -11,6 +11,8 @@ import {
   useSetRecoilState,
 } from "recoil";
 
+import { getRegionId } from "~/cloudRegions";
+
 import {
   Environment as ApiEnvironment,
   environmentList,
@@ -21,7 +23,6 @@ import {
   environmentAssignmentList,
 } from "../api/regionController";
 import config from "../config";
-import { getRegionId } from "../types";
 import storageAvailable from "../utils/storageAvailable";
 import keys from "./keyConstants";
 

@@ -31,8 +31,9 @@ const gitSha = requireEnv("GIT_SHA");
 const publicPath = `/assets/${gitSha}/`;
 
 const DefinePluginOptions: IDefinePluginOptions = {
-  __FRONTEGG_URL__: JSON.stringify(fronteggUrl),
+  __DEFAULT_STACK__: JSON.stringify("production"),
   __LAUNCH_DARKLY_KEY__: JSON.stringify(launchDarklyKey),
+  __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
   __SEGMENT_API_KEY__: JSON.stringify(
     process.env.FRONTEND_SEGMENT_API_KEY || null
   ),
@@ -40,9 +41,6 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __SENTRY_ENVIRONMENT__: JSON.stringify(sentryEnvironment),
   __SENTRY_RELEASE__: JSON.stringify(sentryRelease),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
-  __ENVIRONMENTD_SCHEME__: JSON.stringify("https"),
-  __CLOUD_REGIONS__: requireEnv("CLOUD_REGIONS"),
-  __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
 };
 
 const metadataDir = `${__dirname}/public/_metadata`;
@@ -53,7 +51,7 @@ try {
 }
 fs.writeFileSync(
   `${metadataDir}/cloud-regions.json`,
-  DefinePluginOptions.__CLOUD_REGIONS__
+  requireEnv("CLOUD_REGIONS")
 );
 
 const scriptSrc = [

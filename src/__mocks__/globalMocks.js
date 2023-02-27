@@ -6,17 +6,12 @@ window.crypto = {};
 window.crypto.getRandomValues = () => new Uint32Array(1);
 
 /* eslint-disable no-undef */
-window.__FRONTEGG_URL__ = "http://frontegg.com";
+window.__DEFAULT_STACK__ = "staging";
 window.__LAUNCH_DARKLY_KEY__ = "launchdarkly-dummy-key";
+window.__RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__ = false;
 window.__SEGMENT_API_KEY__ = "segment-api-key";
 window.__SENTRY_DSN__ = null;
 window.__SENTRY_ENVIRONMENT__ = "sentry-environment";
 window.__SENTRY_RELEASE__ = "sentry-release";
 window.__STATUSPAGE_ID__ = "statuspage-dummy-id";
-window.__RELEASE_NOTES_ROOT_URL__ = null;
-window.__LAST_RELEASE_NOTE_ID__ = null;
-window.__IS_DEVELOPMENT__ = false;
-window.__ENVIRONMENTD_SCHEME__ = "http";
-window.__CLOUD_REGIONS__ = [];
-window.__RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__ = false;
 /* eslint-enable */

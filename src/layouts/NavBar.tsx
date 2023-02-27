@@ -28,6 +28,7 @@ import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import { SUPPORT_HREF } from "~/components/SupportLink";
+import SwitchStackModal from "~/components/SwitchStackModal";
 import blackLogo from "~/img/logo-black.svg";
 import whiteLogo from "~/img/logo-white.svg";
 import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
@@ -123,6 +124,7 @@ const NavBar = () => {
         align={{ base: "center", lg: "stretch" }}
         fontSize="sm"
       >
+        <SwitchStackModal />
         <HelpDropdown />
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
