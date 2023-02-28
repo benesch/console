@@ -88,10 +88,12 @@ const {
   defineMultiStyleConfig: defineInputStyleConfig,
 } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
+// TODO: The input doesn't seem to accept a lot of props. I'm not sure if this is a bug or if I'm doing something wrong.
 export const Input = defineInputStyleConfig({
   baseStyle: defineInputPartsStyle({
     field: {
-      height: "32px",
+      padding: "8px",
+      maxHeight: "32px",
       fontSize: "14px",
       lineHeight: "16px",
       width: "100%",
