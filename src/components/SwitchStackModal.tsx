@@ -14,6 +14,7 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -30,12 +31,15 @@ const setStack = (stackName: string) => {
  * A modal that allows switching which backend stack to use.
  */
 const SwitchStackModal = () => {
+  const flags = useFlags();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { register, handleSubmit, formState, reset } = useForm<{
     stackName: string;
   }>({
     mode: "onTouched",
   });
+
+  if (!flags["switch-stacks-modal"]) return null;
 
   return (
     <>
