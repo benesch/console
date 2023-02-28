@@ -12,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Tag,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
@@ -44,14 +45,28 @@ const SwitchStackModal = () => {
   return (
     <>
       <Button
-        variant="unstyled"
+        mx={NAV_HORIZONTAL_SPACING}
+        variant="secondary"
         size="sm"
-        onClick={onOpen}
+        fontWeight={500}
+        color="semanticColors.foreground.primary"
         _hover={NAV_HOVER_STYLES}
-        px={NAV_HORIZONTAL_SPACING}
+        gap={NAV_HORIZONTAL_SPACING}
+        height="auto"
+        px={1}
         py={2}
+        onClick={onOpen}
       >
-        Switch Stacks
+        Switch stack
+        <Tag
+          fontSize={12}
+          borderWidth="1px"
+          borderColor="semanticColors.border.info"
+          background="semanticColors.background.info"
+          color="semanticColors.foreground.secondary"
+        >
+          Internal
+        </Tag>
       </Button>
 
       <Modal
