@@ -6,7 +6,7 @@ window.crypto = {};
 window.crypto.getRandomValues = () => new Uint32Array(1);
 
 /* eslint-disable no-undef */
-window.__DEFAULT_STACK__ = "staging";
+window.__DEFAULT_STACK__ = "test";
 window.__LAUNCH_DARKLY_KEY__ = "launchdarkly-dummy-key";
 window.__RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__ = false;
 window.__SEGMENT_API_KEY__ = "segment-api-key";
