@@ -20,7 +20,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-import { getCurrentStack } from "~/config";
+import { getCurrentStack, getFronteggUrl } from "~/config";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
 import storageAvailable from "~/utils/storageAvailable";
 
@@ -36,7 +36,7 @@ const setStack = (stackName: string) => {
 const SwitchStackModal = () => {
   const flags = useFlags();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { register, handleSubmit, formState, reset } = useForm<{
+  const { register, handleSubmit, formState, reset, setError } = useForm<{
     stackName: string;
   }>({
     mode: "onTouched",
@@ -47,6 +47,18 @@ const SwitchStackModal = () => {
   const handleClose = () => {
     reset();
     onClose();
+  };
+
+  const isValidStack = async (stack: string) => {
+    const baseUrl = getFronteggUrl(stack);
+    try {
+      const response = await fetch(
+        baseUrl + "/frontegg/identity/resources/configurations/v1/public"
+      );
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   };
 
   return (
@@ -79,9 +91,17 @@ const SwitchStackModal = () => {
       <Modal size="3xl" isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <form
-          onSubmit={handleSubmit((data) => {
-            setStack(data.stackName);
-            location.reload();
+          onSubmit={handleSubmit(async (data) => {
+            const valid = await isValidStack(data.stackName);
+            if (valid) {
+              setStack(data.stackName);
+              location.reload();
+            } else {
+              setError("stackName", {
+                type: "custom",
+                message: "Not a valid stack name",
+              });
+            }
           })}
         >
           <ModalContent>
