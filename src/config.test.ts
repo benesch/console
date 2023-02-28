@@ -1,4 +1,4 @@
-import { getCurrentStack } from "./config";
+import { getCurrentStack, getFronteggUrl } from "./config";
 
 describe("getCurrentStack", () => {
   beforeEach(() => {
@@ -31,5 +31,31 @@ describe("getCurrentStack", () => {
     window.localStorage.setItem("mz-current-stack", "local");
     const stack = getCurrentStack();
     expect(stack).toEqual("local");
+  });
+});
+
+describe("getFronteggUrl", () => {
+  it("production stack should return the production url", () => {
+    expect(getFronteggUrl("production")).toEqual(
+      "https://admin.cloud.materialize.com"
+    );
+  });
+
+  it("staging stack should return the staging url", () => {
+    expect(getFronteggUrl("staging")).toEqual(
+      "https://admin.staging.cloud.materialize.com"
+    );
+  });
+
+  it("local stack should return the staging url", () => {
+    expect(getFronteggUrl("local")).toEqual(
+      "https://admin.staging.cloud.materialize.com"
+    );
+  });
+
+  it("personal stack should return the personal stack url", () => {
+    expect(getFronteggUrl("someuser.dev")).toEqual(
+      "https://admin.someuser.dev.cloud.materialize.com"
+    );
   });
 });

@@ -22,9 +22,10 @@ export const getFronteggUrl = (stack: string) => {
     return `https://admin.cloud.materialize.com`;
   }
   if (stack === "local") {
+    // local development again cloud services uses staging frontegg
     return `https://admin.staging.cloud.materialize.com`;
   }
-  return `https://admin.${currentStack}.cloud.materialize.com`;
+  return `https://admin.${stack}.cloud.materialize.com`;
 };
 
 const currentStack = getCurrentStack();
