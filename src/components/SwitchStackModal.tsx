@@ -13,12 +13,14 @@ import {
   ModalHeader,
   ModalOverlay,
   Tag,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useForm } from "react-hook-form";
 
+import { getCurrentStack } from "~/config";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
 import storageAvailable from "~/utils/storageAvailable";
 
@@ -41,6 +43,11 @@ const SwitchStackModal = () => {
   });
 
   if (!flags["switch-stacks-modal"]) return null;
+
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
   return (
     <>
@@ -69,14 +76,7 @@ const SwitchStackModal = () => {
         </Tag>
       </Button>
 
-      <Modal
-        size="3xl"
-        isOpen={isOpen}
-        onClose={() => {
-          reset();
-          onClose();
-        }}
-      >
+      <Modal size="3xl" isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <form
           onSubmit={handleSubmit((data) => {
@@ -89,8 +89,15 @@ const SwitchStackModal = () => {
             <ModalCloseButton />
             <ModalBody pt="2" pb="6" alignItems="stretch">
               <FormControl isInvalid={!!formState.errors.stackName}>
+                <Text
+                  color="semanticColors.foreground.secondary"
+                  fontSize="sm"
+                  my="4"
+                >
+                  Current Stack: {getCurrentStack()}
+                </Text>
                 <FormLabel htmlFor="stackName" fontSize="sm">
-                  Stack Origin
+                  Stack Name
                 </FormLabel>
                 <Input
                   {...register("stackName", {
@@ -109,7 +116,7 @@ const SwitchStackModal = () => {
 
             <ModalFooter>
               <HStack spacing="2">
-                <Button variant="secondary" size="sm" onClick={onClose}>
+                <Button variant="secondary" size="sm" onClick={handleClose}>
                   Cancel
                 </Button>
                 <Button type="submit" variant="primary" size="sm">
