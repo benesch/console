@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
@@ -12,13 +13,16 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Radio,
+  RadioGroup,
+  Stack,
   Tag,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useController, useForm } from "react-hook-form";
 
 import { getCurrentStack, getFronteggUrl } from "~/config";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
@@ -30,24 +34,58 @@ const setStack = (stackName: string) => {
   }
 };
 
+const getStackName = (data: {
+  stackName: string;
+  personalStackName: string;
+}) => {
+  if (data.stackName === "personal") {
+    return data.personalStackName;
+  }
+  return data.stackName;
+};
+
+const isLocalhost = Boolean(
+  window.location.hostname === "localhost" ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === "[::1]" ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    window.location.hostname.match(
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
+);
+
 /**
  * A modal that allows switching which backend stack to use.
  */
 const SwitchStackModal = () => {
   const flags = useFlags();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { register, handleSubmit, formState, reset, setError } = useForm<{
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    setValue,
+    setError,
+  } = useForm<{
     stackName: string;
+    personalStackName: string;
   }>({
     mode: "onTouched",
   });
+  // This is a work aroudn fro the Chakra RadioGroup onChange not providing an event parameter
+  const { field: personalStackField } = useController({
+    name: "stackName",
+    control,
+    rules: { required: "Please select a stack." },
+  });
+  const { isOpen, onOpen, onClose } = useDisclosure({
+    onClose: () => {
+      reset();
+    },
+  });
 
   if (!flags["switch-stacks-modal"]) return null;
-
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
 
   const isValidStack = async (stack: string) => {
     const baseUrl = getFronteggUrl(stack);
@@ -88,18 +126,30 @@ const SwitchStackModal = () => {
         </Tag>
       </Button>
 
-      <Modal size="3xl" isOpen={isOpen} onClose={handleClose}>
+      <Modal size="3xl" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <form
           onSubmit={handleSubmit(async (data) => {
-            const valid = await isValidStack(data.stackName);
+            console.log("handleSubmit");
+            const isPersonal = data.stackName === "personal";
+            if (isPersonal && !data.personalStackName) {
+              setError("personalStackName", {
+                type: "custom",
+                message: "Please enter a personal stack name.",
+              });
+              return;
+            }
+            const name = getStackName(data);
+            const valid = await isValidStack(name);
             if (valid) {
-              setStack(data.stackName);
+              setStack(name);
               location.reload();
             } else {
-              setError("stackName", {
+              setError(isPersonal ? "personalStackName" : "stackName", {
                 type: "custom",
-                message: "Not a valid stack name",
+                message: `${getFronteggUrl(
+                  name
+                )} is not reachable from this origin.`,
               });
             }
           })}
@@ -119,24 +169,40 @@ const SwitchStackModal = () => {
                 <FormLabel htmlFor="stackName" fontSize="sm">
                   Stack Name
                 </FormLabel>
-                <Input
-                  {...register("stackName", {
-                    required: "Stack is required",
-                  })}
-                  placeholder="e.g. staging or $USER.dev for personal stacks"
-                  autoFocus={isOpen}
-                  autoCorrect="off"
-                  size="sm"
-                />
+                <RadioGroup {...register("stackName")} {...personalStackField}>
+                  <Stack direction="column">
+                    {!isLocalhost && (
+                      <Radio value="production">Production</Radio>
+                    )}
+                    <Radio value="staging">Staging</Radio>
+                    <Radio value="local">Local</Radio>
+                    <Radio value="personal">Personal</Radio>
+                  </Stack>
+                </RadioGroup>
                 <FormErrorMessage>
                   {formState.errors.stackName?.message}
                 </FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!formState.errors.personalStackName}>
+                <Box ml="6" mt="2">
+                  <Input
+                    {...register("personalStackName")}
+                    onFocus={() => setValue("stackName", "personal")}
+                    placeholder="$USER.$ENV"
+                    autoFocus={isOpen}
+                    autoCorrect="off"
+                    size="sm"
+                  />
+                  <FormErrorMessage>
+                    {formState.errors.personalStackName?.message}
+                  </FormErrorMessage>
+                </Box>
               </FormControl>
             </ModalBody>
 
             <ModalFooter>
               <HStack spacing="2">
-                <Button variant="secondary" size="sm" onClick={handleClose}>
+                <Button variant="secondary" size="sm" onClick={onClose}>
                   Cancel
                 </Button>
                 <Button type="submit" variant="primary" size="sm">
