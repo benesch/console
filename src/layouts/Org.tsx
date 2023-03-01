@@ -3,10 +3,11 @@ import * as React from "react";
 
 import { useAuth } from "~/api/auth";
 import { CopyButton } from "~/components/copyableComponents";
+import { isMzInternalEmail } from "~/util";
 
 const Org = () => {
   const { user } = useAuth();
-  if (!user.email.endsWith("@materialize.com")) return null;
+  if (!isMzInternalEmail(user.email)) return null;
   return (
     <Tag
       size="sm"
