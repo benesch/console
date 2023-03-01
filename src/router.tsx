@@ -101,7 +101,10 @@ const EnvironmentRoutes = () => {
   const regionId = regionSlugToNameMap.get(params.regionSlug);
 
   React.useEffect(() => {
-    if (!regionId) return;
+    if (!regionId) {
+      navigate(`/regions/${regionIdToSlug(defaultRegion())}`);
+      return;
+    }
 
     if (currentEnvironmentId !== regionId) {
       // Syncronize the url with recoil, this happens on navigation to a link to another cluster or back navigation
@@ -121,7 +124,6 @@ const EnvironmentRoutes = () => {
   ]);
 
   if (!regionId) {
-    navigate(`/regions/${regionIdToSlug(defaultRegion())}`);
     return null;
   }
   return (

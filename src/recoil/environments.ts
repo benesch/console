@@ -312,7 +312,9 @@ export const fetchEnvironmentHealth = async (
 export const defaultRegion = () => {
   if (storageAvailable("localStorage")) {
     const region = window.localStorage.getItem(SELECTED_REGION_KEY);
-    if (region) return region;
+    if (region && config.cloudRegions.has(region)) {
+      return region;
+    }
   }
   return config.cloudRegions.keys().next().value;
 };
