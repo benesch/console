@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 
 import debug from "debug";
+import { mockFlags } from "jest-launchdarkly-mock";
 
 import server from "./api/mocks/server";
 
@@ -8,6 +9,8 @@ const debugMz = debug("mz");
 
 // Establish API mocking before all tests.
 beforeAll(() => {
+  mockFlags({});
+
   if (debugMz.enabled) {
     server.events.on("request:start", (req) => {
       debugMz(`[request] ${req.method}, ${req.url.href}`, req.body);

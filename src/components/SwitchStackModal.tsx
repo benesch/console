@@ -44,15 +44,16 @@ const getStackName = (data: {
   return data.stackName;
 };
 
-const isLocalhost = Boolean(
-  window.location.hostname === "localhost" ||
-    // [::1] is the IPv6 localhost address.
-    window.location.hostname === "[::1]" ||
-    // 127.0.0.1/8 is considered localhost for IPv4.
-    window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
-);
+const isLocalhost = () =>
+  Boolean(
+    window.location.hostname === "localhost" ||
+      // [::1] is the IPv6 localhost address.
+      window.location.hostname === "[::1]" ||
+      // 127.0.0.1/8 is considered localhost for IPv4.
+      window.location.hostname.match(
+        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+      )
+  );
 
 /**
  * A modal that allows switching which backend stack to use.
@@ -130,7 +131,6 @@ const SwitchStackModal = () => {
         <ModalOverlay />
         <form
           onSubmit={handleSubmit(async (data) => {
-            console.log("handleSubmit");
             const isPersonal = data.stackName === "personal";
             if (isPersonal && !data.personalStackName) {
               setError("personalStackName", {
@@ -171,7 +171,7 @@ const SwitchStackModal = () => {
                 </FormLabel>
                 <RadioGroup {...register("stackName")} {...personalStackField}>
                   <Stack direction="column">
-                    {!isLocalhost && (
+                    {!isLocalhost() && (
                       <Radio value="production">Production</Radio>
                     )}
                     <Radio value="staging">Staging</Radio>
