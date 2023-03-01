@@ -32,7 +32,7 @@ export const PASSWORD = (() => {
   return process.env.E2E_TEST_PASSWORD;
 })();
 
-export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-cloud-${process.env.TEST_PARALLEL_INDEX}@materialize.com`;
+export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-cloud-${process.env.TEST_PARALLEL_INDEX}@materialize.io`;
 
 export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
 
