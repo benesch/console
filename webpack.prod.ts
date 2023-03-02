@@ -31,7 +31,7 @@ const gitSha = requireEnv("GIT_SHA");
 const publicPath = `/assets/${gitSha}/`;
 
 const DefinePluginOptions: IDefinePluginOptions = {
-  __DEFAULT_STACK__: JSON.stringify("production"),
+  __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "production"),
   __LAUNCH_DARKLY_KEY__: JSON.stringify(launchDarklyKey),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
   __SEGMENT_API_KEY__: JSON.stringify(
