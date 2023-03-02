@@ -38,6 +38,26 @@ export interface ExplainTimestampResult {
 }
 
 /**
+ * Quotes a string to be used as a SQL identifier.
+ * It is an error to call this function with a string that contains the zero code point.
+ */
+export function quoteIdentifier(id: string) {
+  // According to https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS,
+  // any string may be used as an identifier, except those that contain the zero code point.
+  //
+  // In order to support special characters, quoted identifiers must be used.
+  // Within a quoted identifier, the literal double-quote character must be escaped
+  // by writing it twice.
+  // For example, the identifier foo" is represented as "foo""" (including the quotes).
+
+  // Materialize never allows any identifiers to be used whose name contains the null byte,
+  // so this assert should never fire unless this function is called with arbitrary user input.
+  assert(id.search("\0") === -1);
+
+  return `"${id.replace('"', '""')}"`;
+}
+
+/**
  * A React hook that runs a SQL query against the current environment.
  * @params {string} sql to execute in the environment coord or current global coord.
  * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
@@ -534,12 +554,14 @@ type DDLNoun = "SINK" | "SOURCE";
 /**
  * Fetches DDL for a noun
  */
-export function useDDL(noun: DDLNoun, sinkName?: string) {
+export function useDDL(noun: DDLNoun, objectName?: string) {
   const { data, error, refetch } = useSql(
-    sinkName ? `SHOW CREATE ${noun} "${sinkName}"` : undefined
+    objectName
+      ? `SHOW CREATE ${noun} ${quoteIdentifier(objectName)}`
+      : undefined
   );
   let ddl: string | null = null;
-  if (sinkName && data) {
+  if (objectName && data) {
     const { rows, getColumnByName } = data;
     assert(getColumnByName);
 
