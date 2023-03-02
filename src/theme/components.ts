@@ -93,7 +93,6 @@ export const Input = defineInputStyleConfig({
   baseStyle: defineInputPartsStyle({
     field: {
       padding: "8px",
-      maxHeight: "32px",
       fontSize: "14px",
       lineHeight: "16px",
       width: "100%",
@@ -109,6 +108,7 @@ export const Input = defineInputStyleConfig({
   }),
   defaultProps: {
     variant: "default",
+    size: "sm",
   },
   variants: {
     default: defineInputPartsStyle({
