@@ -16,9 +16,6 @@ function requireEnv(name: string) {
   return value;
 }
 
-const appHostname = requireEnv("APP_HOSTNAME");
-const provisionHostname = requireEnv("PROVISION_HOSTNAME");
-const fronteggUrl = requireEnv("FRONTEGG_URL");
 const launchDarklyKey = requireEnv("LAUNCH_DARKLY_KEY");
 
 const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
@@ -77,22 +74,10 @@ const cspPolicy = {
     "https://*.googletagmanager.com",
     "https://*.google.com",
     "https://*.launchdarkly.com",
-    `https://ec.0.us-east-1.aws.${appHostname}`,
-    `https://ec.0.eu-west-1.aws.${appHostname}`,
-    `https://rc.us-east-1.aws.${appHostname}`,
-    `https://rc.eu-west-1.aws.${appHostname}`,
-    `https://*.us-east-1.aws.${provisionHostname}`,
-    `https://*.eu-west-1.aws.${provisionHostname}`,
-    `wss://*.us-east-1.aws.${provisionHostname}`,
-    `wss://*.eu-west-1.aws.${provisionHostname}`,
-    fronteggUrl,
+    "https://*.cloud.materialize.com",
+    "https://*.materialize.cloud",
   ],
   "default-src": ["'self'"],
-  "form-action": [
-    "'self'",
-    // Allow Django admin forms to work.
-    appHostname,
-  ],
   "font-src": [
     "'self'",
     "data:",
@@ -122,10 +107,7 @@ const cspPolicy = {
   ],
   "object-src": ["'none'"],
   "script-src": scriptSrc,
-  "script-src-elem": [
-    ...scriptSrc,
-    `${appHostname}/static/admin/js/nav_sidebar.js`,
-  ],
+  "script-src-elem": scriptSrc,
   "style-src": [
     "'self'",
     "'unsafe-inline'",
