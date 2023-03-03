@@ -105,6 +105,7 @@
     "html-webpack-plugin": "^5.5.0",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.0.5",
+    "jest-launchdarkly-mock": "^2.0.3",
     "miragejs": "^0.1.47",
     "msw": "^1.0.1",
     "openapi-typescript": "^6.1.0",

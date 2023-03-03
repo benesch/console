@@ -11,6 +11,8 @@ import {
   useSetRecoilState,
 } from "recoil";
 
+import { getRegionId } from "~/cloudRegions";
+
 import {
   Environment as ApiEnvironment,
   environmentList,
@@ -21,7 +23,6 @@ import {
   environmentAssignmentList,
 } from "../api/regionController";
 import config from "../config";
-import { getRegionId } from "../types";
 import storageAvailable from "../utils/storageAvailable";
 import keys from "./keyConstants";
 
@@ -311,7 +312,9 @@ export const fetchEnvironmentHealth = async (
 export const defaultRegion = () => {
   if (storageAvailable("localStorage")) {
     const region = window.localStorage.getItem(SELECTED_REGION_KEY);
-    if (region) return region;
+    if (region && config.cloudRegions.has(region)) {
+      return region;
+    }
   }
   return config.cloudRegions.keys().next().value;
 };
