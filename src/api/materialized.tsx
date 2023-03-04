@@ -58,11 +58,31 @@ export function quoteIdentifier(id: string) {
 }
 
 /**
- * A React hook that runs a SQL query against the current environment.
- * @params {string} sql to execute in the environment coord or current global coord.
- * @params {object} extraParams in case a particular environment needs to be used rather than the global environment (global coord)
+ * A React hook that runs a SQL query against the current environment,
+ * in the `mz_introspection` cluster.
+ * @params {string[]} queries to execute in the environment.
  */
 export function useSql(sql: string | undefined) {
+  const inner = useSqlMany(
+    sql
+      ? // Run all queries on the `mz_introspection` cluster, as it's
+        // guaranteed to exist. (The `default` cluster may have been dropped
+        // by the user.)
+        ["SET cluster=mz_introspection", sql]
+      : undefined
+  );
+  // The first result is the empty "ok" for the `SET` command;
+  // we want the second.
+  const data = inner.data ? inner.data[1] : null;
+  return { ...inner, data };
+}
+
+/**
+ * A React hook that runs possibly several SQL queries
+ * (in one request) against the current environment.
+ * @params {string} sql to execute in the environment coord or current global coord.
+ */
+export function useSqlMany(queries: string[] | undefined) {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -70,12 +90,16 @@ export function useSql(sql: string | undefined) {
   const [loading, setLoading] = useState<boolean>(true);
   const requestIdRef = React.useRef(1);
   const controllerRef = React.useRef<AbortController>(new AbortController());
-  const [results, setResults] = useState<Results | null>(null);
+  const [results, setResults] = useState<Results[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
+  // React doesn't like arrays inside dependency arrays, so we need to
+  // make this a string before passing it to `useCallback`.
+  const queries_string = queries ? JSON.stringify(queries) : undefined;
   const runSql = React.useCallback(async () => {
-    if (environment?.state !== "enabled" || !sql) {
+    const q = JSON.parse(queries_string);
+    if (environment?.state !== "enabled" || !q) {
       setResults(null);
       return;
     }
@@ -87,7 +111,7 @@ export function useSql(sql: string | undefined) {
       setLoading(true);
       const { results: res, errorMessage } = await executeSql(
         environment,
-        sql,
+        q,
         user.accessToken,
         { signal: controllerRef.current.signal }
       );
@@ -109,7 +133,7 @@ export function useSql(sql: string | undefined) {
       clearTimeout(timeout);
       setLoading(false);
     }
-  }, [environment, sql, user.accessToken]);
+  }, [environment, queries_string, user.accessToken]);
 
   useEffect(() => {
     requestIdRef.current += 1;
@@ -121,13 +145,13 @@ export function useSql(sql: string | undefined) {
 }
 
 interface ExecuteSqlOutput {
-  results: Results | null;
+  results: Results[] | null;
   errorMessage: string | null;
 }
 
 export const executeSql = async (
   environment: EnabledEnvironment,
-  query: string,
+  queries: string[],
   accessToken: string,
   requestOpts?: RequestInit
 ): Promise<ExecuteSqlOutput> => {
@@ -135,12 +159,8 @@ export const executeSql = async (
 
   const address = environment.environmentdHttpsAddress;
   const defaultError = "Error running query.";
-  const result: ExecuteSqlOutput = {
-    results: null,
-    errorMessage: null,
-  };
-  if (!address || !query) {
-    return result;
+  if (!address) {
+    return { results: null, errorMessage: null };
   }
 
   const response = await fetch(
@@ -152,12 +172,7 @@ export const executeSql = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // Run all queries on the `mz_introspection` cluster, as it's
-        // guaranteed to exist. (The `default` cluster may have been dropped
-        // by the user.)
-        //
-        // TODO: allow the caller of `executeSql` to configure the cluster.
-        query: `SET cluster = mz_introspection; ${query}`,
+        query: queries.join(";"),
       }),
       ...requestOpts,
     }
@@ -166,43 +181,45 @@ export const executeSql = async (
   const responseText = await response.text();
 
   if (!response.ok) {
-    result.errorMessage = `HTTP Error ${response.status}: ${
-      responseText ?? defaultError
-    }`;
+    return {
+      errorMessage: `HTTP Error ${response.status}: ${
+        responseText ?? defaultError
+      }`,
+      results: null,
+    };
   } else {
     const parsedResponse = JSON.parse(responseText);
-    const {
-      results: [_, data],
-    } = parsedResponse;
-    // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-    const { error: resultsError, rows, col_names } = data || {};
-    let getColumnByName = undefined;
-    if (col_names) {
-      const columnMap = new Map(
-        (col_names as string[]).map((name, index) => [name, index])
-      );
-      getColumnByName = (row: any[], name: string) => {
-        const index = columnMap.get(name);
-        if (index === undefined) {
-          throw new Error(`Column named ${name} not found`);
-        }
+    const { results } = parsedResponse;
+    const outResults = [];
+    for (const oneResult of results) {
+      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
+      const { error: resultsError, rows, col_names } = oneResult || {};
+      let getColumnByName = undefined;
+      if (col_names) {
+        const columnMap = new Map(
+          (col_names as string[]).map((name, index) => [name, index])
+        );
+        getColumnByName = (row: any[], name: string) => {
+          const index = columnMap.get(name);
+          if (index === undefined) {
+            throw new Error(`Column named ${name} not found`);
+          }
 
-        return row[index];
-      };
+          return row[index];
+        };
+      }
+      if (resultsError) {
+        return { results: null, errorMessage: resultsError };
+      } else {
+        outResults.push({
+          rows: rows,
+          columns: col_names,
+          getColumnByName,
+        });
+      }
     }
-
-    if (resultsError) {
-      result.errorMessage = resultsError;
-    } else {
-      result.results = {
-        rows: rows,
-        columns: col_names,
-        getColumnByName,
-      };
-      result.errorMessage = null;
-    }
+    return { errorMessage: null, results: outResults };
   }
-  return result;
 };
 
 export interface Cluster {
