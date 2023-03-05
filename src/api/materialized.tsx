@@ -98,7 +98,7 @@ export function useSqlMany(queries: string[] | undefined) {
   // make this a string before passing it to `useCallback`.
   const queries_string = queries ? JSON.stringify(queries) : undefined;
   const runSql = React.useCallback(async () => {
-    const q = JSON.parse(queries_string);
+    const q = queries_string ? JSON.parse(queries_string) : undefined;
     if (environment?.state !== "enabled" || !q) {
       setResults(null);
       return;
