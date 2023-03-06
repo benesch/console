@@ -5,7 +5,7 @@
 
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
@@ -63,17 +63,20 @@ export function quoteIdentifier(id: string) {
  * @params {string[]} queries to execute in the environment.
  */
 export function useSql(sql: string | undefined) {
-  const inner = useSqlMany(
-    sql
-      ? // Run all queries on the `mz_introspection` cluster, as it's
-        // guaranteed to exist. (The `default` cluster may have been dropped
-        // by the user.)
-        {
-          queries: [{ query: sql, params: [] }],
-          cluster: "mz_introspection",
-        }
-      : undefined
+  const request = useMemo(
+    () =>
+      sql
+        ? // Run all queries on the `mz_introspection` cluster, as it's
+          // guaranteed to exist. (The `default` cluster may have been dropped
+          // by the user.)
+          {
+            queries: [{ query: sql, params: [] }],
+            cluster: "mz_introspection",
+          }
+        : undefined,
+    [sql]
   );
+  const inner = useSqlMany(request);
   // The first result is the empty "ok" for the `SET` command;
   // we want the second.
   const data = inner.data ? inner.data[1] : null;
@@ -108,12 +111,9 @@ export function useSqlMany(request: SqlRequest | undefined) {
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
-  // React doesn't like arrays inside dependency arrays, so we need to
-  // make this a string before passing it to `useCallback`.
-  const request_string = request ? JSON.stringify(request) : undefined;
   const runSql = React.useCallback(async () => {
-    const r = request_string ? JSON.parse(request_string) : undefined;
-    if (environment?.state !== "enabled" || !r) {
+    // const r = request_string ? JSON.parse(request_string) : undefined;
+    if (environment?.state !== "enabled" || !request) {
       setResults(null);
       return;
     }
@@ -125,7 +125,7 @@ export function useSqlMany(request: SqlRequest | undefined) {
       setLoading(true);
       const { results: res, errorMessage } = await executeSql(
         environment,
-        r,
+        request,
         user.accessToken,
         { signal: controllerRef.current.signal }
       );
@@ -147,7 +147,7 @@ export function useSqlMany(request: SqlRequest | undefined) {
       clearTimeout(timeout);
       setLoading(false);
     }
-  }, [environment, request_string, user.accessToken]);
+  }, [environment, request, user.accessToken]);
 
   useEffect(() => {
     requestIdRef.current += 1;
