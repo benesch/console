@@ -69,7 +69,7 @@ export function useSql(sql: string | undefined) {
         // guaranteed to exist. (The `default` cluster may have been dropped
         // by the user.)
         {
-          statements: [sql],
+          queries: [{ query: sql, params: [] }],
           cluster: "mz_introspection",
         }
       : undefined
@@ -80,8 +80,13 @@ export function useSql(sql: string | undefined) {
   return { ...inner, data };
 }
 
+export interface SqlStatement {
+  query: string;
+  params: (string | null)[];
+}
+
 export interface SqlRequest {
-  statements: string[];
+  queries: SqlStatement[];
   cluster: string;
   replica?: string;
 }
@@ -172,11 +177,16 @@ export const executeSql = async (
     return { results: null, errorMessage: null };
   }
 
-  const statements = [`SET cluster=${request.cluster}`];
+  const queries: SqlStatement[] = [
+    { query: `SET cluster=${request.cluster}`, params: [] },
+  ];
   if (request.replica) {
-    statements.push(`SET cluster_replica=${request.replica}`);
+    queries.push({
+      query: `SET cluster_replica=${request.replica}`,
+      params: [],
+    });
   }
-  statements.push(...request.statements);
+  queries.push(...request.queries);
 
   const response = await fetch(
     `${config.environmentdScheme}://${address}/api/sql`,
@@ -187,7 +197,7 @@ export const executeSql = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: statements.join(";"),
+        queries: queries,
       }),
       ...requestOpts,
     }
