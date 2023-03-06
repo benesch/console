@@ -275,7 +275,10 @@ export const fetchEnvironmentHealth = async (
     }
     const { errorMessage } = await executeSql(
       environment,
-      ["SET cluster=mz_introspection", "SELECT 1"],
+      {
+        statements: ["SELECT 1"],
+        cluster: "mz_introspection",
+      },
       accessToken,
       { signal: controller.signal }
     );

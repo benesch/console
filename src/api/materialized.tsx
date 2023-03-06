@@ -68,7 +68,10 @@ export function useSql(sql: string | undefined) {
       ? // Run all queries on the `mz_introspection` cluster, as it's
         // guaranteed to exist. (The `default` cluster may have been dropped
         // by the user.)
-        ["SET cluster=mz_introspection", sql]
+        {
+          statements: [sql],
+          cluster: "mz_introspection",
+        }
       : undefined
   );
   // The first result is the empty "ok" for the `SET` command;
@@ -77,12 +80,18 @@ export function useSql(sql: string | undefined) {
   return { ...inner, data };
 }
 
+export interface SqlRequest {
+  statements: string[];
+  cluster: string;
+  replica?: string;
+}
+
 /**
  * A React hook that runs possibly several SQL queries
  * (in one request) against the current environment.
  * @params {string} sql to execute in the environment coord or current global coord.
  */
-export function useSqlMany(queries: string[] | undefined) {
+export function useSqlMany(request: SqlRequest | undefined) {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -96,10 +105,10 @@ export function useSqlMany(queries: string[] | undefined) {
 
   // React doesn't like arrays inside dependency arrays, so we need to
   // make this a string before passing it to `useCallback`.
-  const queries_string = queries ? JSON.stringify(queries) : undefined;
+  const request_string = request ? JSON.stringify(request) : undefined;
   const runSql = React.useCallback(async () => {
-    const q = queries_string ? JSON.parse(queries_string) : undefined;
-    if (environment?.state !== "enabled" || !q) {
+    const r = request_string ? JSON.parse(request_string) : undefined;
+    if (environment?.state !== "enabled" || !r) {
       setResults(null);
       return;
     }
@@ -111,7 +120,7 @@ export function useSqlMany(queries: string[] | undefined) {
       setLoading(true);
       const { results: res, errorMessage } = await executeSql(
         environment,
-        q,
+        r,
         user.accessToken,
         { signal: controllerRef.current.signal }
       );
@@ -133,7 +142,7 @@ export function useSqlMany(queries: string[] | undefined) {
       clearTimeout(timeout);
       setLoading(false);
     }
-  }, [environment, queries_string, user.accessToken]);
+  }, [environment, request_string, user.accessToken]);
 
   useEffect(() => {
     requestIdRef.current += 1;
@@ -151,7 +160,7 @@ interface ExecuteSqlOutput {
 
 export const executeSql = async (
   environment: EnabledEnvironment,
-  queries: string[],
+  request: SqlRequest,
   accessToken: string,
   requestOpts?: RequestInit
 ): Promise<ExecuteSqlOutput> => {
@@ -163,6 +172,12 @@ export const executeSql = async (
     return { results: null, errorMessage: null };
   }
 
+  const statements = [`SET cluster=${request.cluster}`];
+  if (request.replica) {
+    statements.push(`SET cluster_replica=${request.replica}`);
+  }
+  statements.push(...request.statements);
+
   const response = await fetch(
     `${config.environmentdScheme}://${address}/api/sql`,
     {
@@ -172,7 +187,7 @@ export const executeSql = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: queries.join(";"),
+        query: statements.join(";"),
       }),
       ...requestOpts,
     }
