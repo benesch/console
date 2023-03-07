@@ -112,7 +112,6 @@ export function useSqlMany(request: SqlRequest | undefined) {
   const defaultError = "Error running query.";
 
   const runSql = React.useCallback(async () => {
-    // const r = request_string ? JSON.parse(request_string) : undefined;
     if (environment?.state !== "enabled" || !request) {
       setResults(null);
       return;
