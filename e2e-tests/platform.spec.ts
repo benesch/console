@@ -6,6 +6,7 @@ import { Client } from "pg";
 import {
   CONSOLE_ADDR,
   EMAIL,
+  getRegionControllerUrl,
   IS_KIND,
   PLATFORM_REGIONS,
   STATE_NAME,
@@ -59,6 +60,13 @@ for (const region of PLATFORM_REGIONS) {
     console.log("app passwords now", appPasswords);
 
     await page.click('data-test-id=nav-lg >> a:has-text("Connect")');
+
+    if (context.fronteggAPIEnabled) {
+      // Validate that blocked accounts cannot spin up environments. We only
+      // run this on staging for parity with the Console repo. Our API tests
+      // will ensure there's test coverage on both staging and prod.
+      await testAccountBlocking(context, region);
+    }
 
     // Activate the region in the onboarding table if we have no regions
     // active, otherwise pick one in the selector and use it.
@@ -123,6 +131,40 @@ for (const region of PLATFORM_REGIONS) {
     ]);
     await page.waitForSelector(`text=${apiKeyName}`, { state: "detached" });
   });
+}
+
+async function testAccountBlocking(context: TestContext, region: string) {
+  try {
+    // Set the blocked state
+    console.info("Marking tenant as blocked");
+    await context.setFronteggTenantBlockedStatus(true);
+    const regionUrl = getRegionControllerUrl(region);
+
+    try {
+      // Attempt to create an environment...
+      console.info("Attempting to create an environment");
+      await context.apiRequest(`${regionUrl}/api/environmentassignment`, {
+        method: "POST",
+        data: {},
+      });
+      throw new Error("Tenant was not blocked from creating an environment");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        // We anticipate getting a 403 error for blocked accounts. If that's not what we got, rethrow the error
+        if (!err.message.includes("API Error 403")) {
+          throw err;
+        }
+        console.info("Environment creation successfully blocked");
+      } else {
+        // Unrecognized error. Rethrow.
+        throw err;
+      }
+    }
+  } finally {
+    // Clean up after ourselves
+    console.info("Unblocking tenant");
+    await context.setFronteggTenantBlockedStatus(false);
+  }
 }
 
 async function testPlatformEnvironment(
