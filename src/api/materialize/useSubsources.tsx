@@ -13,9 +13,9 @@ export function useSubsources(sourceId?: string) {
   const response = useSql(
     sourceId
       ? `SELECT id, name
-FROM mz_sources
-WHERE id = '${sourceId}'
-AND type = 'subsource';`
+FROM mz_sources s
+JOIN mz_internal.mz_object_dependencies d ON s.id = d.referenced_object_id
+WHERE d.object_id = '${sourceId}';`
       : undefined
   );
   let sources: Subsource[] | null = null;
