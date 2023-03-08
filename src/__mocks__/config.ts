@@ -13,4 +13,8 @@ const globalConfigStub: GlobalConfig = {
   recoilDuplicateCheckingEnabled: false,
 };
 
+export const getCurrentStack = jest.fn(() => "test");
+export const setCurrentStack = jest.fn();
+export const getFronteggUrl = jest.fn();
+
 export default globalConfigStub;

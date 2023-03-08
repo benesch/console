@@ -4,17 +4,33 @@ import { buildCloudRegions, getRegionId } from "~/cloudRegions";
 
 import storageAvailable from "./utils/storageAvailable";
 
-export const getCurrentStack = () => {
+const currentStackKey = "mz-current-stack";
+
+export const getCurrentStack = (
+  hostname: string,
+  defaultStack: string = __DEFAULT_STACK__
+) => {
   if (storageAvailable("localStorage")) {
-    const stack = window.localStorage.getItem("mz-current-stack");
+    const stack = window.localStorage.getItem(currentStackKey);
     if (stack) {
       return stack;
     }
-    if (window.location.hostname === "staging.console.materialize.com") {
+    if (hostname.startsWith("staging")) {
       return "staging";
     }
+    const match = hostname.match(/^\w*\.(staging|dev)/);
+    if (match) {
+      // personal stack, return $USER.$ENV
+      return match[0];
+    }
   }
-  return __DEFAULT_STACK__;
+  return defaultStack;
+};
+
+export const setCurrentStack = (stackName: string) => {
+  if (storageAvailable("localStorage")) {
+    window.localStorage.setItem(currentStackKey, stackName);
+  }
 };
 
 export const getFronteggUrl = (stack: string) => {
@@ -28,7 +44,7 @@ export const getFronteggUrl = (stack: string) => {
   return `https://admin.${stack}.cloud.materialize.com`;
 };
 
-const currentStack = getCurrentStack();
+const currentStack = getCurrentStack(location.hostname);
 const cloudRegions = new Map(
   buildCloudRegions(currentStack).map((r) => [getRegionId(r), r])
 );
