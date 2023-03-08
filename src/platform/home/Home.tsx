@@ -3,7 +3,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { useAuth } from "~/api/auth";
+import { getCurrentTenant, getTenantMetadata, useAuth } from "~/api/auth";
 import ConnectSteps from "~/platform/home/ConnectSteps";
 import GetStartedDocs from "~/platform/home/GetStartedDocs";
 import PasswordStep from "~/platform/home/PasswordStep";
@@ -20,7 +20,7 @@ import { isPollingDisabled } from "~/util";
 import GettingStarted from "./GettingStarted";
 
 const Home = () => {
-  const { user } = useAuth();
+  const { user, tenantsState } = useAuth();
   const flags = useFlags();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: isPollingDisabled() ? undefined : 5000,
@@ -31,6 +31,10 @@ const Home = () => {
   const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentIdState
   );
+  const currentTenant = getCurrentTenant(user, tenantsState.tenants);
+  const tenantIsBlocked = currentTenant
+    ? getTenantMetadata(currentTenant).blocked
+    : false;
 
   let content = (
     <HStack justifyContent="flex-start" width="100%">
@@ -50,6 +54,7 @@ const Home = () => {
         <EnvironmentList
           createRegion={createRegion}
           creatingRegionId={creatingRegionId}
+          tenantIsBlocked={tenantIsBlocked}
         />
       </Box>
     );

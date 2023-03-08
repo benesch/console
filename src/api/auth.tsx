@@ -99,3 +99,33 @@ export function getCurrentTenant(
   // }
   return tenant;
 }
+
+type MzTenantMetadata = {
+  blocked: boolean;
+};
+
+export function getTenantMetadata(tenant: ITenantsResponse): MzTenantMetadata {
+  let parsedMetadata: any = {};
+  try {
+    parsedMetadata = JSON.parse(tenant.metadata);
+  } catch (e) {
+    // No-op
+    console.warn("Invalid tenant metadata value");
+  }
+
+  // TODO this complexity is temporary until the organization configuration
+  // service is deployed. That will ensure we get normalized metadata (at
+  // the cost of an additional network request).
+  let blocked = false;
+  if (typeof parsedMetadata["blocked"] === "boolean") {
+    blocked = parsedMetadata["blocked"];
+  } else {
+    console.warn(
+      "Inferring blocked status. Found:",
+      JSON.stringify(parsedMetadata["blocked"])
+    );
+  }
+  return {
+    blocked,
+  };
+}

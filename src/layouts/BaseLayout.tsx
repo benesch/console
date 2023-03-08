@@ -27,6 +27,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
+import AccountStatusAlert from "~/components/AccountStatusAlert";
 import ContentOrEnvironmentErrors from "~/components/ContentOrEnvironmentErrors";
 import ErrorBox from "~/components/ErrorBox";
 import NavBar from "~/layouts/NavBar";
@@ -60,38 +61,47 @@ export const MAIN_CONTENT_MARIGIN = 10;
 export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
   return (
     <Flex
-      direction={{ base: "column", lg: "row" }}
+      direction="column"
       maxHeight="100vh"
       minHeight="100vh"
       height="100vh"
       width="100vw"
     >
-      <NavBar />
-      <Flex direction="column" flex={1} overflowY={overflowY} w="full" h="full">
-        <Container
+      <AccountStatusAlert />
+      <Flex direction={{ base: "column", lg: "row" }} flexGrow="1">
+        <NavBar />
+        <Flex
+          direction="column"
           flex={1}
-          as="main"
-          maxW="100%"
-          px={MAIN_CONTENT_MARIGIN}
-          pb={4}
+          overflowY={overflowY}
+          w="full"
+          h="full"
         >
-          <Flex flexDir="column" w="full" h="full">
-            <ErrorBoundary fallback={<ErrorBox />}>
-              <React.Suspense
-                fallback={
-                  <Center css={{ height: "100%" }}>
-                    <Spinner />
-                  </Center>
-                }
-              >
-                <ContentOrEnvironmentErrors>
-                  {children}
-                </ContentOrEnvironmentErrors>
-              </React.Suspense>
-            </ErrorBoundary>
-          </Flex>
-        </Container>
-        <PageFooter />
+          <Container
+            flex={1}
+            as="main"
+            maxW="100%"
+            px={MAIN_CONTENT_MARIGIN}
+            pb={4}
+          >
+            <Flex flexDir="column" w="full" h="full">
+              <ErrorBoundary fallback={<ErrorBox />}>
+                <React.Suspense
+                  fallback={
+                    <Center css={{ height: "100%" }}>
+                      <Spinner />
+                    </Center>
+                  }
+                >
+                  <ContentOrEnvironmentErrors>
+                    {children}
+                  </ContentOrEnvironmentErrors>
+                </React.Suspense>
+              </ErrorBoundary>
+            </Flex>
+          </Container>
+          <PageFooter />
+        </Flex>
       </Flex>
     </Flex>
   );

@@ -9,6 +9,7 @@ interface Props extends ButtonProps {
   regionId: string;
   createRegion: CreateRegion;
   creatingRegionId?: string;
+  tenantIsBlocked?: boolean;
 }
 
 /*
@@ -20,7 +21,13 @@ interface Props extends ButtonProps {
 const CreateEnvironmentButton = (props: Props) => {
   const { user } = useAuth();
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
-  const { regionId, creatingRegionId, createRegion, ...buttonProps } = props;
+  const {
+    regionId,
+    creatingRegionId,
+    createRegion,
+    tenantIsBlocked,
+    ...buttonProps
+  } = props;
 
   const creatingThisRegion = creatingRegionId === regionId;
   return (
@@ -30,7 +37,9 @@ const CreateEnvironmentButton = (props: Props) => {
       size="sm"
       float="right"
       onClick={() => createRegion(regionId)}
-      isDisabled={!canWriteEnvironments || !!creatingThisRegion}
+      isDisabled={
+        !canWriteEnvironments || !!creatingThisRegion || !!tenantIsBlocked
+      }
       title={
         canWriteEnvironments
           ? `Enable ${regionId}`

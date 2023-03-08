@@ -8,8 +8,13 @@ import { CreateRegion } from "~/platform/tutorial/useCreateEnvironment";
 interface Props {
   createRegion: CreateRegion;
   creatingRegionId?: string;
+  tenantIsBlocked?: boolean;
 }
-const EnvironmentList = ({ creatingRegionId, createRegion }: Props) => {
+const EnvironmentList = ({
+  creatingRegionId,
+  createRegion,
+  tenantIsBlocked,
+}: Props) => {
   return (
     <VStack spacing={4} data-test-id="regions-list">
       {Array.from(config.cloudRegions.keys()).map((r) => (
@@ -18,6 +23,7 @@ const EnvironmentList = ({ creatingRegionId, createRegion }: Props) => {
           regionId={r}
           createRegion={createRegion}
           creatingRegionId={creatingRegionId}
+          tenantIsBlocked={tenantIsBlocked}
         />
       ))}
     </VStack>
@@ -28,6 +34,7 @@ interface RegionEnvironmentRowProps {
   regionId: string;
   createRegion: CreateRegion;
   creatingRegionId?: string;
+  tenantIsBlocked?: boolean;
 }
 
 const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
@@ -44,6 +51,7 @@ const RegionEnvironmentRow = (props: RegionEnvironmentRowProps) => {
           regionId={props.regionId}
           createRegion={props.createRegion}
           creatingRegionId={props.creatingRegionId}
+          tenantIsBlocked={props.tenantIsBlocked}
         />
       </Box>
     </HStack>

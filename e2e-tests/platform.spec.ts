@@ -65,7 +65,7 @@ for (const region of PLATFORM_REGIONS) {
       // Validate that blocked accounts cannot spin up environments. We only
       // run this on staging for parity with the Console repo. Our API tests
       // will ensure there's test coverage on both staging and prod.
-      await testAccountBlocking(context, region);
+      await testAccountBlocking(page, context, region);
     }
 
     // Activate the region in the onboarding table if we have no regions
@@ -133,12 +133,23 @@ for (const region of PLATFORM_REGIONS) {
   });
 }
 
-async function testAccountBlocking(context: TestContext, region: string) {
+async function testAccountBlocking(
+  page: Page,
+  context: TestContext,
+  region: string
+) {
   try {
     // Set the blocked state
     console.info("Marking tenant as blocked");
     await context.setFronteggTenantBlockedStatus(true);
     const regionUrl = getRegionControllerUrl(region);
+
+    // Validate the alert banner is visible, and the region button is disabled
+    await page.goto(CONSOLE_ADDR);
+    await page.waitForSelector("[data-test-id=account-status-alert]");
+    await page.waitForSelector(
+      `[data-test-id=regions-list] button[title="Enable ${region}"][disabled]`
+    );
 
     try {
       // Attempt to create an environment...
@@ -164,6 +175,8 @@ async function testAccountBlocking(context: TestContext, region: string) {
     // Clean up after ourselves
     console.info("Unblocking tenant");
     await context.setFronteggTenantBlockedStatus(false);
+    // Reload the page so the unblocked state is registered in the UI
+    await page.goto(CONSOLE_ADDR);
   }
 }
 
