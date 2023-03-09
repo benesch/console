@@ -1,4 +1,13 @@
+import { FronteggAuthenticator, HttpClient } from "@frontegg/client";
 import { APIRequestContext, Page } from "@playwright/test";
+
+function getEnvVarOrFail(varName: string, errorMessage: string): string {
+  const value = process.env[varName];
+  if (!value) {
+    throw new Error(errorMessage);
+  }
+  return value;
+}
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:3000";
 
@@ -17,24 +26,24 @@ export const PULUMI_STACK = (() => {
   if (IS_KIND) {
     return "staging";
   } else {
-    const hostnameRe = /^([^.]+)?\.?(staging)?\.?cloud.materialize.com$/;
+    const hostnameRe = /^([^.]+)?\.?(staging|dev)?\.?cloud.materialize.com$/;
     const matches = url.hostname.match(hostnameRe);
     return !matches ? "staging" : matches[1] || matches[2] || "production";
   }
 })();
 
-export const PASSWORD = (() => {
-  if (!process.env.E2E_TEST_PASSWORD) {
-    throw new Error(
-      `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets cloud_e2e_test_password' to retrieve the value.`
-    );
-  }
-  return process.env.E2E_TEST_PASSWORD;
-})();
+export const PASSWORD = getEnvVarOrFail(
+  "E2E_TEST_PASSWORD",
+  `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets cloud_e2e_test_password' to retrieve the value.`
+);
 
 export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-cloud-${process.env.TEST_PARALLEL_INDEX}@materialize.io`;
 
 export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
+
+export const FRONTEGG_CLIENT_ID = process.env["E2E_FRONTEGG_CLIENT_ID"];
+
+export const FRONTEGG_SECRET_KEY = process.env["E2E_FRONTEGG_SECRET_KEY"];
 
 export const ensureLoggedIn = async (page: Page) => {
   // Wait up to two minutes for the page to become available initially, as
@@ -61,7 +70,7 @@ const adminPortalHost = () => {
   }
 };
 
-const getRegionControllerUrl = (region: string) => {
+export const getRegionControllerUrl = (region: string) => {
   if (IS_KIND) {
     return "http://localhost:8002";
   } else {
@@ -90,6 +99,11 @@ export class TestContext {
   accessToken: string;
   refreshToken: string;
   refreshDeadline: Date;
+  private fronteggClient: HttpClient | undefined = undefined;
+
+  public get fronteggAPIEnabled(): boolean {
+    return this.fronteggClient !== undefined;
+  }
 
   constructor(page: Page, request: APIRequestContext) {
     this.page = page;
@@ -97,6 +111,17 @@ export class TestContext {
     this.accessToken = "";
     this.refreshToken = "";
     this.refreshDeadline = new Date(0);
+    if (FRONTEGG_CLIENT_ID && FRONTEGG_SECRET_KEY) {
+      const authenticator = new FronteggAuthenticator();
+      authenticator.init(FRONTEGG_CLIENT_ID, FRONTEGG_SECRET_KEY);
+      this.fronteggClient = new HttpClient(authenticator, {
+        baseURL: "https://api.frontegg.com",
+      });
+    } else {
+      console.info(
+        "No Frontegg API credentials found. Not initializing admin API client."
+      );
+    }
   }
 
   /** Start a new test. */
@@ -105,6 +130,9 @@ export class TestContext {
 
     await ensureLoggedIn(page);
     // Provide a clean slate for the test.
+    if (context.fronteggAPIEnabled) {
+      await context.setFronteggTenantBlockedStatus(false);
+    }
     await context.deleteAllEnvironmentAssignments();
 
     // Navigate to the home page && wait for that to load.
@@ -232,6 +260,20 @@ export class TestContext {
     }
   }
 
+  /** Block or unblock an organization **/
+  async setFronteggTenantBlockedStatus(blocked: boolean) {
+    if (!this.fronteggClient) {
+      throw new Error("No available Frontegg client");
+    }
+    const { tenantId } = await this.getCurrentUser();
+    await this.fronteggClient.post(
+      `tenants/resources/tenants/v1/${tenantId}/metadata`,
+      {
+        metadata: { blocked },
+      }
+    );
+  }
+
   /** Delete any existing EnvironmentAssignments. */
   async deleteAllEnvironmentAssignments() {
     await Promise.all(
@@ -276,11 +318,15 @@ export class TestContext {
     }
   }
 
-  async listAllKeys() {
+  async getCurrentUser(): Promise<{ id: string; tenantId: string }> {
     const { id, tenantId } = await this.fronteggRequest(
       `/identity/resources/users/v2/me`
     );
+    return { id, tenantId };
+  }
 
+  async listAllKeys() {
+    const { id, tenantId } = await this.getCurrentUser();
     return await this.fronteggRequest(
       `/identity/resources/users/api-tokens/v1`,
       {
@@ -293,9 +339,7 @@ export class TestContext {
   }
 
   async deleteAllKeysOlderThan(hours: number) {
-    const { id, tenantId } = await this.fronteggRequest(
-      `/identity/resources/users/v2/me`
-    );
+    const { id, tenantId } = await this.getCurrentUser();
     const userKeys = await this.listAllKeys();
     for (const k of userKeys) {
       const age = new Date().getTime() - Date.parse(k.createdAt);
