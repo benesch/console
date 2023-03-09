@@ -76,6 +76,7 @@ const cspPolicy = {
     "https://*.launchdarkly.com",
     "https://*.cloud.materialize.com",
     "https://*.materialize.cloud",
+    "wss://*.materialize.cloud",
   ],
   "default-src": ["'self'"],
   "font-src": [
