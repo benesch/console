@@ -62,7 +62,7 @@ describe("SwitchStackModal", () => {
       expect(screen.queryByText("Production")).not.toBeInTheDocument();
     });
 
-    it("shows the production stack on non-localhsot urls", async () => {
+    it("does not show production option on staging", async () => {
       window.location.hostname = "staging.console.materialize.com";
       const result = renderComponent(<SwitchStackModal />);
 
@@ -70,7 +70,19 @@ describe("SwitchStackModal", () => {
       await waitFor(() =>
         expect(screen.getByText("Current Stack: staging")).toBeVisible()
       );
-      expect(screen.getByText("Production")).toBeVisible();
+      expect(screen.getByLabelText("Staging")).toBeVisible();
+      expect(screen.queryByText("Production")).not.toBeInTheDocument();
+    });
+
+    it("shows the production stack on production urls", async () => {
+      window.location.hostname = "console.materialize.com";
+      const result = renderComponent(<SwitchStackModal />);
+
+      fireEvent.click(result.getByText("Switch stack"));
+      await waitFor(() =>
+        expect(screen.getByText("Current Stack: test")).toBeVisible()
+      );
+      expect(screen.getByLabelText("Production")).toBeVisible();
     });
 
     it("shows and error message for invalid personal stacks", async () => {

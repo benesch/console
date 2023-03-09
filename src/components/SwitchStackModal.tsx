@@ -24,15 +24,8 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useController, useForm } from "react-hook-form";
 
-import { getCurrentStack, getFronteggUrl } from "~/config";
+import { getCurrentStack, getFronteggUrl, setCurrentStack } from "~/config";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
-import storageAvailable from "~/utils/storageAvailable";
-
-const setStack = (stackName: string) => {
-  if (storageAvailable("localStorage")) {
-    window.localStorage.setItem("mz-current-stack", stackName);
-  }
-};
 
 const getStackName = (data: {
   stackName: string;
@@ -44,16 +37,9 @@ const getStackName = (data: {
   return data.stackName;
 };
 
-const isLocalhost = () =>
-  Boolean(
-    window.location.hostname === "localhost" ||
-      // [::1] is the IPv6 localhost address.
-      window.location.hostname === "[::1]" ||
-      // 127.0.0.1/8 is considered localhost for IPv4.
-      window.location.hostname.match(
-        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-      )
-  );
+const isProductionDomain = () =>
+  window.location.hostname === "cloud.materialize.com" ||
+  window.location.hostname === "console.materialize.com";
 
 /**
  * A modal that allows switching which backend stack to use.
@@ -142,7 +128,7 @@ const SwitchStackModal = () => {
             const name = getStackName(data);
             const valid = await isValidStack(name);
             if (valid) {
-              setStack(name);
+              setCurrentStack(name);
               location.reload();
             } else {
               setError(isPersonal ? "personalStackName" : "stackName", {
@@ -164,14 +150,14 @@ const SwitchStackModal = () => {
                   fontSize="sm"
                   my="4"
                 >
-                  Current Stack: {getCurrentStack()}
+                  Current Stack: {getCurrentStack(location.hostname)}
                 </Text>
                 <FormLabel htmlFor="stackName" fontSize="sm">
                   Stack Name
                 </FormLabel>
                 <RadioGroup {...register("stackName")} {...personalStackField}>
                   <Stack direction="column">
-                    {!isLocalhost() && (
+                    {isProductionDomain() && (
                       <Radio value="production">Production</Radio>
                     )}
                     <Radio value="staging">Staging</Radio>
