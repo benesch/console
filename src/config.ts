@@ -15,13 +15,14 @@ export const getCurrentStack = (
     if (stack) {
       return stack;
     }
-    if (hostname.startsWith("staging")) {
+    if (hostname.startsWith("staging") || hostname.match(/^.*\.preview/)) {
+      // matches staging.console.materialize.com or *.preview.console.materialize.com
       return "staging";
     }
-    const match = hostname.match(/^\w*\.(staging|dev)/);
-    if (match) {
+    const personalStackMatch = hostname.match(/^\w*\.(staging|dev)/);
+    if (personalStackMatch) {
       // personal stack, return $USER.$ENV
-      return match[0];
+      return personalStackMatch[0];
     }
   }
   return defaultStack;
