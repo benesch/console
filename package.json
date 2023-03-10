@@ -2,20 +2,23 @@
   "name": "cloud-frontend",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18.13.0"
+  },
   "scripts": {
-    "proxy": "cd frontend && PROXY_STACK=${PROXY_STACK:-staging} webpack serve --config=webpack.dev.ts",
-    "start": "cd frontend && webpack serve --config=webpack.dev.ts",
-    "build": "cd frontend && NODE_ENV=production webpack --config=webpack.prod.ts",
+    "proxy": " PROXY_STACK=${PROXY_STACK:-staging} webpack serve --config=webpack.dev.ts",
+    "start": " webpack serve --config=webpack.dev.ts",
+    "build": " NODE_ENV=production webpack --config=webpack.prod.ts",
     "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
-    "test:unit": "cd frontend && jest",
+    "test:unit": " jest 'test.ts?(x)'",
     "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",
     "pyright": "pyright",
-    "typecheck": "cd frontend && tsc",
+    "typecheck": " tsc",
     "gen:api": "cd api && openapi-typescript '*.yml' --output ../frontend/src/api/schemas/",
-    "gen:sourcemap": "cd frontend && NODE_ENV=production SOURCE_MAPS=true APP_HOSTNAME=materialize.example.com PROVISION_HOSTNAME=mzcloud.example.com FRONTEGG_URL=frontegg.example.com CLOUD_REGIONS=[] GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts",
+    "gen:sourcemap": " NODE_ENV=production SOURCE_MAPS=true GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts",
     "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
     "concurrently": "concurrently"
   },
@@ -75,7 +78,7 @@
   },
   "devDependencies": {
     "@frontegg/client": "^4.2.1",
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.31.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.9",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -136,7 +139,7 @@
       "react"
     ],
     "ignorePatterns": [
-      "frontend/src/api/schemas",
+      "src/api/schemas",
       "vendor"
     ],
     "settings": {
@@ -204,7 +207,7 @@
     ]
   },
   "volta": {
-    "node": "14.19.0",
+    "node": "18.15.0",
     "yarn": "1.22.17"
   }
 }

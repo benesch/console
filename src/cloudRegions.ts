@@ -33,7 +33,7 @@ export const buildCloudRegions = (stack: string): CloudRegion[] => {
       {
         provider: "local",
         region: "kind",
-        regionControllerUrl: "http://localhost:8002",
+        regionControllerUrl: "http://127.0.0.1:8002",
       },
     ];
   }

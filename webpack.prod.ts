@@ -1,6 +1,5 @@
 import CspWebpackPlugin from "@melloware/csp-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
-import fs from "fs";
 import path from "path";
 import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
@@ -8,48 +7,46 @@ import { merge } from "webpack-merge";
 
 import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
-function requireEnv(name: string) {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} environment variable must be defined`);
+function requireEnv(name: string | string[]) {
+  if (typeof name === "string") {
+    const value = process.env[name];
+    if (!value) {
+      throw new Error(`${name} environment variable must be defined`);
+    }
+    return value;
+  } else {
+    const values = name.map((n) => process.env[n]);
+    const defined = values.filter((v) => v) as string[];
+    if (defined.length === 0) {
+      throw new Error(`One of ${name} environment variables must be defined`);
+    }
+    return defined[0];
   }
-  return value;
 }
 
 const launchDarklyKey = requireEnv("LAUNCH_DARKLY_KEY");
 
-const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
+const sentryEnvironment = requireEnv([
+  "SENTRY_RELEASE",
+  "VERCEL_GIT_COMMIT_SHA",
+]);
 const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
   ? "https://13c8b3a8d1e547c9b9493de997b04337@o561021.ingest.sentry.io/5699757"
   : null;
-const sentryRelease = requireEnv("SENTRY_RELEASE");
+const sentryRelease = requireEnv(["SENTRY_RELEASE", "VERCEL_GIT_COMMIT_SHA"]);
 
-const gitSha = requireEnv("GIT_SHA");
-const publicPath = `/assets/${gitSha}/`;
+const publicPath = "/";
 
 const DefinePluginOptions: IDefinePluginOptions = {
   __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "production"),
   __LAUNCH_DARKLY_KEY__: JSON.stringify(launchDarklyKey),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
-  __SEGMENT_API_KEY__: JSON.stringify(
-    process.env.FRONTEND_SEGMENT_API_KEY || null
-  ),
+  __SEGMENT_API_KEY__: JSON.stringify(process.env.SEGMENT_API_KEY || null),
   __SENTRY_DSN__: JSON.stringify(sentryDsn),
   __SENTRY_ENVIRONMENT__: JSON.stringify(sentryEnvironment),
   __SENTRY_RELEASE__: JSON.stringify(sentryRelease),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
 };
-
-const metadataDir = `${__dirname}/public/_metadata`;
-try {
-  fs.accessSync(metadataDir, fs.constants.F_OK);
-} catch (err) {
-  fs.mkdirSync(metadataDir);
-}
-fs.writeFileSync(
-  `${metadataDir}/cloud-regions.json`,
-  requireEnv("CLOUD_REGIONS")
-);
 
 const scriptSrc = [
   "'self'",
@@ -139,8 +136,8 @@ const plugins = [
   new CopyPlugin({
     patterns: [
       {
-        from: "public/_metadata",
-        to: "_metadata",
+        from: "public/logo.png",
+        to: "logo.png",
       },
     ],
   }),
@@ -154,7 +151,7 @@ if (process.env.SOURCE_MAPS) {
       include: path.resolve(__dirname, "dist", "frontend"),
       org: "materializeinc",
       project: "cloud-frontend",
-      release: process.env.SENTRY_RELEASE,
+      release: sentryRelease,
       authToken: process.env.SENTRY_AUTH_TOKEN,
       urlPrefix: `~${publicPath}`,
       __SENTRY_DEBUG__: false,

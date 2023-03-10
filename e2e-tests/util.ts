@@ -11,7 +11,8 @@ function getEnvVarOrFail(varName: string, errorMessage: string): string {
 
 export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:3000";
 
-export const CONSOLE_URL = new URL(CONSOLE_ADDR);
+export const CLOUD_HOST =
+  process.env.CLOUD_HOST || "staging.cloud.materialize.com";
 
 export const IS_KIND =
   CONSOLE_ADDR === "http://localhost:3000" ||
@@ -21,23 +22,14 @@ export const PLATFORM_REGIONS = IS_KIND
   ? ["local/kind"]
   : ["AWS/us-east-1", "AWS/eu-west-1"];
 
-export const PULUMI_STACK = (() => {
-  const url = new URL(CONSOLE_ADDR);
-  if (IS_KIND) {
-    return "staging";
-  } else {
-    const hostnameRe = /^([^.]+)?\.?(staging|dev)?\.?cloud.materialize.com$/;
-    const matches = url.hostname.match(hostnameRe);
-    return !matches ? "staging" : matches[1] || matches[2] || "production";
-  }
-})();
+export const PULUMI_STACK = IS_KIND ? "staging" : "production";
 
 export const PASSWORD = getEnvVarOrFail(
   "E2E_TEST_PASSWORD",
-  `Please set $E2E_TEST_PASSWORD on the environment; use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets cloud_e2e_test_password' to retrieve the value.`
+  `Please set $E2E_TEST_PASSWORD on the environment; from the cloud repo, use 'pulumi stack output --stack materialize/${PULUMI_STACK} --show-secrets console_e2e_test_password' to retrieve the value.`
 );
 
-export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-cloud-${process.env.TEST_PARALLEL_INDEX}@materialize.io`;
+export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-console-${process.env.TEST_PARALLEL_INDEX}@materialize.io`;
 
 export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
 
@@ -66,16 +58,17 @@ const adminPortalHost = () => {
   if (IS_KIND) {
     return "admin.staging.cloud.materialize.com";
   } else {
-    return `admin.${CONSOLE_URL.host}`;
+    return `admin.${CLOUD_HOST}`;
   }
 };
 
 export const getRegionControllerUrl = (region: string) => {
   if (IS_KIND) {
-    return "http://localhost:8002";
+    // Use 127.0.0.1 instead of "localhost" to force IPv4.
+    return "http://127.0.0.1:8002";
   } else {
     const [provider, cloudRegion] = region.toLowerCase().split("/");
-    return `https://rc.${cloudRegion}.${provider}.${CONSOLE_URL.host}`;
+    return `https://rc.${cloudRegion}.${provider}.${CLOUD_HOST}`;
   }
 };
 

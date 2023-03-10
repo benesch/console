@@ -1,0 +1,50 @@
+name: Merge queue
+on:
+  merge_group:
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: yarn install
+      - run: yarn eslint
+      - run: yarn typecheck
+      - run: yarn test:unit
+
+  e2e-tests:
+    env:
+      VERCEL_ORG_ID: team_7XNUzNgdlu2VaDdyOgjNJQKk
+      VERCEL_PROJECT_ID: prj_d8fTqXqM9TELZgPDS6YbK8rvCwF9
+    runs-on: ubuntu-20.04-16core
+    steps:
+      - uses: actions/checkout@v3
+      - run: yarn install
+      - run: yarn playwright install --with-deps
+      - run: npm install --global vercel@latest
+      - name: Pull Vercel production environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Copy Vercel prod env to preview
+        run: mv .vercel/.env.production.local  .vercel/.env.preview.local
+      - name: Vercel build with production environment
+        env:
+          SENTRY_RELEASE: ${{ github.sha }}
+          SENTRY_ENVIRONMENT: staging
+          LAUNCH_DARKLY_KEY: 6388e8b9750ee71144183456
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel preview
+        run: echo CONSOLE_ADDR=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}) >> $GITHUB_ENV
+      - name: Run e2e tests
+        timeout-minutes: 50
+        env:
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PRODUCTION_PASSWORD   }}
+          CLOUD_HOST: cloud.materialize.com
+        run: yarn test:e2e
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/
+        if: always()
