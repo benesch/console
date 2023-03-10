@@ -1,4 +1,5 @@
 import CspWebpackPlugin from "@melloware/csp-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
 import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
@@ -132,6 +133,14 @@ const plugins = [
       primeReactEnabled: false,
     }
   ),
+  new CopyPlugin({
+    patterns: [
+      {
+        from: "public/logo.png",
+        to: "logo.png",
+      },
+    ],
+  }),
 ];
 
 if (process.env.SOURCE_MAPS) {
