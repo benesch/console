@@ -1,6 +1,4 @@
 import CspWebpackPlugin from "@melloware/csp-webpack-plugin";
-import CopyPlugin from "copy-webpack-plugin";
-import fs from "fs";
 import path from "path";
 import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
@@ -48,17 +46,6 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __SENTRY_RELEASE__: JSON.stringify(sentryRelease),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
 };
-
-const metadataDir = `${__dirname}/public/_metadata`;
-try {
-  fs.accessSync(metadataDir, fs.constants.F_OK);
-} catch (err) {
-  fs.mkdirSync(metadataDir);
-}
-fs.writeFileSync(
-  `${metadataDir}/cloud-regions.json`,
-  requireEnv("CLOUD_REGIONS")
-);
 
 const scriptSrc = [
   "'self'",
@@ -145,14 +132,6 @@ const plugins = [
       primeReactEnabled: false,
     }
   ),
-  new CopyPlugin({
-    patterns: [
-      {
-        from: "public/_metadata",
-        to: "_metadata",
-      },
-    ],
-  }),
 ];
 
 if (process.env.SOURCE_MAPS) {
