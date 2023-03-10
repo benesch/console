@@ -43,6 +43,9 @@ jobs:
       - run: cd ./cloud && docker compose pull cli -q
       - name: Docker compose up
         working-directory: ./cloud
+        env:
+          FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
+          FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: |
           bin/kind-install-all && \
           docker compose up region-controller environment-controller -d --wait \
@@ -56,6 +59,8 @@ jobs:
         timeout-minutes: 50
         env:
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_STAGING_PASSWORD }}
+          E2E_FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
+          E2E_FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: yarn test:e2e
       - name: docker compose logs
         working-directory: ./cloud
