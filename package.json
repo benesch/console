@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@frontegg/client": "^4.2.1",
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.31.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.9",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
