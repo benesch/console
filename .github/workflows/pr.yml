@@ -62,6 +62,10 @@ jobs:
           E2E_FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
           E2E_FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: yarn test:e2e
+      - name: docker compose ps
+        working-directory: ./cloud
+        run: docker compose ps
+        if: always()
       - name: docker compose logs
         working-directory: ./cloud
         run: |
