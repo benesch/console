@@ -2,6 +2,9 @@
   "name": "cloud-frontend",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18.13.0"
+  },
   "scripts": {
     "proxy": " PROXY_STACK=${PROXY_STACK:-staging} webpack serve --config=webpack.dev.ts",
     "start": " webpack serve --config=webpack.dev.ts",
@@ -204,7 +207,7 @@
     ]
   },
   "volta": {
-    "node": "14.19.0",
+    "node": "18.15.0",
     "yarn": "1.22.17"
   }
 }
