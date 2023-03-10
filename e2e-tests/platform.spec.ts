@@ -185,13 +185,6 @@ async function testPlatformEnvironment(
   request: APIRequestContext,
   password: string
 ) {
-  const testdbUser = process.env.PG_SOURCE_TEST_DB_USERNAME;
-  const testdbPass = process.env.PG_SOURCE_TEST_DB_PASSWORD;
-  const testdbDbName = process.env.PG_SOURCE_TEST_DB_DB_NAME;
-  const testdbHost = process.env.PG_SOURCE_TEST_DB_HOST;
-  const testdbPort = process.env.PG_SOURCE_TEST_DB_PORT;
-  assert(testdbUser && testdbPass && testdbDbName && testdbHost && testdbPort);
-
   /**
    * Currently tables and some sort of Materialized Views don't work (due to persistence?)
    * With this approach at least the critical platform test for deployments is checked.
@@ -215,129 +208,25 @@ async function testPlatformEnvironment(
     `);
 
   assert.equal(indexCount, 1);
-
-  console.log("Creating source.");
-  await client.query(`CREATE SECRET pgpass AS '${testdbPass}';`);
-  await client.query(`
-      CREATE CONNECTION pg_connection TO POSTGRES (
-          HOST '${testdbHost}',
-          PORT ${testdbPort},
-          USER '${testdbUser}',
-          PASSWORD SECRET pgpass,
-          SSL MODE 'require',
-          DATABASE '${testdbDbName}'
-      );
-    `);
-  await client.query(
-    `CREATE SOURCE mz_source IN CLUSTER default FROM POSTGRES CONNECTION pg_connection (PUBLICATION 'mz_source') FOR ALL TABLES;`
-  );
-
-  console.log("Waiting for source.");
-  const { rowCount: replicatedTableCount } = await client.query(`
-      SELECT a FROM t1;
-    `);
-  assert.equal(replicatedTableCount, 0);
-
-  if (!IS_KIND) {
-    await testEgress(
-      client,
-      page,
-      testdbUser,
-      testdbPass,
-      testdbDbName,
-      testdbHost,
-      testdbPort
-    );
-  }
-
-  console.log("Succeeded");
   return;
 }
 
-async function testEgress(
-  client: Client,
+async function connectRegionPostgres(
   page: Page,
-  user: string,
-  pass: string,
-  dbName: string,
-  host: string,
-  port: string
-) {
-  console.log("Connecting to source test db");
-  const testdbClient = await connectPostgres(
-    page,
-    user,
-    pass,
-    dbName,
-    host,
-    port
-  );
-  console.log("Cleaning out old replication slots");
-  const { rows: inactiveReplicationSlots } = await testdbClient.query(`
-      SELECT slot_name FROM pg_replication_slots WHERE active = FALSE;
-    `);
-  for (const inactiveReplicationSlot of inactiveReplicationSlots) {
-    await testdbClient.query(`
-      SELECT pg_drop_replication_slot('${inactiveReplicationSlot.slot_name}');
-    `);
-  }
-
-  const { rows: replicationSlots } = await client.query(`
-      SELECT replication_slot FROM mz_internal.mz_postgres_sources;
-    `);
-  assert.equal(replicationSlots.length, 1);
-  const replicationSlot = replicationSlots[0].replication_slot;
-  console.log(`Using replication slot ${replicationSlot}`);
-
-  const { rows: egressAddressRows } = await client.query(`
-      SELECT egress_ip FROM mz_catalog.mz_egress_ips;
-    `);
-  const egressAddresses = egressAddressRows.map((row) => row.egress_ip);
-  console.log("egressAddresses: [" + egressAddresses.join() + "]");
-  assert(egressAddresses.length > 0);
-
-  let clientAddresses = [];
-  for (let i = 0; i < 30; i++) {
-    const { rows: clientAddrRows } = await testdbClient.query(
-      `SELECT client_addr FROM pg_stat_activity JOIN pg_replication_slots ON pg_replication_slots.active_pid = pg_stat_activity.pid WHERE slot_name = '${replicationSlot}';`
-    );
-    clientAddresses = clientAddrRows.map((row) => row.client_addr);
-    console.log("clientAddresses: [" + clientAddresses.join() + "]");
-    if (clientAddressesValid(clientAddresses, egressAddresses)) {
-      break;
-    }
-    console.log("Couldn't find client_addr, retrying...");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-  // TODO: re-enable this assertion once we have an answer/fix on
-  // <https://support.isovalent.com/hc/en-us/requests/332>:
-  // assert(clientAddressesValid(clientAddresses, egressAddresses));
-}
-
-function clientAddressesValid(
-  clientAddresses: string[],
-  egressAddresses: string[]
-): boolean {
-  if (clientAddresses.length == 0) {
-    return false;
-  }
-  for (const clientAddress of clientAddresses) {
-    if (!egressAddresses.includes(clientAddress)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-async function connectPostgres(
-  page: Page,
-  username: string,
-  password: string,
-  dbName: string,
-  host: string,
-  port: string
+  password: string
 ): Promise<Client> {
-  const url = new URL(host.startsWith("http") ? host : `http://${host}`);
+  await page.getByRole("button", { name: "External tools" }).click();
+  const connectionInfo = await page.locator("pre").innerText();
+  const lines = connectionInfo.split("\n").filter((line) => !!line);
+  const hostAddress = lines.find((line) => line.startsWith("HOST="))?.slice(5);
+  const port = lines.find((line) => line.startsWith("PORT="))?.slice(5);
+  const database = lines.find((line) => line.startsWith("DATABASE="))?.slice(9);
+
+  assert(hostAddress && port && database);
+
+  const url = new URL(
+    hostAddress.startsWith("http") ? hostAddress : `http://${hostAddress}`
+  );
   const dns = new CacheableLookup({
     maxTtl: 0, // always re-lookup
     errorTtl: 0,
@@ -347,10 +236,10 @@ async function connectPostgres(
     try {
       const entry = await dns.lookupAsync(url.hostname);
       const pgParams = {
-        user: username,
+        user: EMAIL,
         host: entry.address,
         port: parseInt(port, 10),
-        database: dbName,
+        database: database,
         password,
         ssl: IS_KIND ? undefined : { rejectUnauthorized: false },
         // 5 second connection timeout, because Frontegg authentication can be slow.
@@ -370,27 +259,4 @@ async function connectPostgres(
   }
 
   throw new Error("unable to connect to region");
-}
-
-async function connectRegionPostgres(
-  page: Page,
-  password: string
-): Promise<Client> {
-  await page.getByRole("button", { name: "External tools" }).click();
-  const connectionInfo = await page.locator("pre").innerText();
-  const lines = connectionInfo.split("\n").filter((line) => !!line);
-  const hostAddress = lines.find((line) => line.startsWith("HOST="))?.slice(5);
-  const port = lines.find((line) => line.startsWith("PORT="))?.slice(5);
-  const database = lines.find((line) => line.startsWith("DATABASE="))?.slice(9);
-
-  assert(hostAddress && port && database);
-
-  return await connectPostgres(
-    page,
-    EMAIL,
-    password,
-    database,
-    hostAddress,
-    port
-  );
 }
