@@ -6,7 +6,7 @@ import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
-import { isPollingDisabled } from "~/util";
+import { useIsPollingDisabled } from "~/util";
 
 export type ClusterDetailParams = {
   regionSlug: string;
@@ -15,7 +15,8 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const clusterResponse = useClusters();
-  useInterval(clusterResponse.refetch, isPollingDisabled() ? null : 5000);
+  const isPollingDisabled = useIsPollingDisabled();
+  useInterval(clusterResponse.refetch, isPollingDisabled ? null : 5000);
 
   return (
     <SentryRoutes>

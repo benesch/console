@@ -5,7 +5,7 @@ import { Route, useParams } from "react-router-dom";
 import { SchemaObject, Source, useSources } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import { isPollingDisabled } from "~/util";
+import { useIsPollingDisabled } from "~/util";
 
 import {
   objectOrRedirect,
@@ -15,7 +15,8 @@ import SourceDetail from "./SourceDetail";
 
 const SourceRoutes = () => {
   const { data: sources, refetch } = useSources();
-  useInterval(refetch, isPollingDisabled() ? null : 5000);
+  const isPollingDisabled = useIsPollingDisabled();
+  useInterval(refetch, isPollingDisabled ? null : 5000);
 
   return (
     <>

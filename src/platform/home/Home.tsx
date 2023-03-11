@@ -15,15 +15,16 @@ import {
   currentEnvironmentIdState,
   useEnvironmentsWithHealth,
 } from "~/recoil/environments";
-import { isPollingDisabled } from "~/util";
+import { useIsPollingDisabled } from "~/util";
 
 import GettingStarted from "./GettingStarted";
 
 const Home = () => {
   const { user, tenantsState } = useAuth();
   const flags = useFlags();
+  const isPollingDisabled = useIsPollingDisabled();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
-    intervalMs: isPollingDisabled() ? undefined : 5000,
+    intervalMs: isPollingDisabled ? undefined : 5000,
   });
   const { creatingRegionId, createRegion } = useCreateEnvironment(
     user.accessToken

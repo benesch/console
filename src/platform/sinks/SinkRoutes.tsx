@@ -5,7 +5,7 @@ import { Route, useParams } from "react-router-dom";
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import { isPollingDisabled } from "~/util";
+import { useIsPollingDisabled } from "~/util";
 
 import {
   objectOrRedirect,
@@ -20,7 +20,8 @@ export type ClusterDetailParams = {
 
 const SinkRoutes = () => {
   const { data: sinks, refetch } = useSinks();
-  useInterval(refetch, isPollingDisabled() ? null : 5000);
+  const isPollingDisabled = useIsPollingDisabled();
+  useInterval(refetch, isPollingDisabled ? null : 5000);
   return (
     <SentryRoutes>
       <Route path="/" element={<SinksList sinks={sinks} />} />
