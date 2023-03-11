@@ -17,10 +17,10 @@ import { SentryRoutes } from "~/sentry";
 import { MaterializeTheme } from "~/theme";
 
 // These credentials are read only and not considered sensitive
-const secrets = `CREATE SECRET qck.kafka_user AS 'CL6M5VSYI32TVILA';
-CREATE SECRET qck.kafka_password AS 'swK5gpo9J3uJKaeeHjTkKXnU7qd5Gp90FDJq4CbHKvNnU4kl7uQ1jzVIGsvhHB0K';
-CREATE SECRET qck.csr_user AS 'DISCU3R3EBELNOZQ';
-CREATE SECRET qck.csr_password AS 'pQwNVqWdGs8P4VUpdYYoHfnpc0B1lqXTmZKD+U3O/yh+vMrAj4jDwTAbHuzSlkei';`;
+const secrets = `CREATE SECRET kafka_user AS 'CL6M5VSYI32TVILA';
+CREATE SECRET kafka_password AS 'swK5gpo9J3uJKaeeHjTkKXnU7qd5Gp90FDJq4CbHKvNnU4kl7uQ1jzVIGsvhHB0K';
+CREATE SECRET csr_user AS 'DISCU3R3EBELNOZQ';
+CREATE SECRET csr_password AS 'pQwNVqWdGs8P4VUpdYYoHfnpc0B1lqXTmZKD+U3O/yh+vMrAj4jDwTAbHuzSlkei';`;
 
 const handleGettingStartedClick = () => {
   segment.track("Get Started Clicked", {});
