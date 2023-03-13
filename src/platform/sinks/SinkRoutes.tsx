@@ -1,11 +1,10 @@
-import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import { useIsPollingDisabled } from "~/util";
+import useForegroundInterval from "~/useForegroundInterval";
 
 import {
   objectOrRedirect,
@@ -20,8 +19,7 @@ export type ClusterDetailParams = {
 
 const SinkRoutes = () => {
   const { data: sinks, refetch } = useSinks();
-  const isPollingDisabled = useIsPollingDisabled();
-  useInterval(refetch, isPollingDisabled ? null : 5000);
+  useForegroundInterval(refetch);
   return (
     <SentryRoutes>
       <Route path="/" element={<SinksList sinks={sinks} />} />

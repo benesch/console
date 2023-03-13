@@ -1,4 +1,3 @@
-import { useInterval } from "@chakra-ui/react";
 import { add, formatDuration } from "date-fns";
 import deepEqual from "fast-deep-equal";
 import { ApiError } from "openapi-typescript-fetch";
@@ -12,6 +11,7 @@ import {
 } from "recoil";
 
 import { getRegionId } from "~/cloudRegions";
+import useForegroundInterval from "~/useForegroundInterval";
 
 import {
   Environment as ApiEnvironment,
@@ -233,7 +233,7 @@ export const useEnvironmentsWithHealth = (
     };
   }, [options.intervalMs, pollingInterval]);
 
-  useInterval(async () => {
+  useForegroundInterval(async () => {
     updateValue(await fetchEnvironmentsWithHealth(accessToken));
   }, pollingInterval);
   if (environmentMap) {
