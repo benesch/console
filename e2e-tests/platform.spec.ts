@@ -117,6 +117,10 @@ for (const region of PLATFORM_REGIONS) {
       default:
         console.log("welp, this is broken!");
     }
+    // Wait for the region to be available
+    await page.waitForSelector('text="Connect to Materialize"', {
+      timeout: 5 * 60 * 1000,
+    });
     await testPlatformEnvironment(page, request, password);
 
     //// Delete api key
