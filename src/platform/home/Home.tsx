@@ -15,7 +15,6 @@ import {
   currentEnvironmentIdState,
   useEnvironmentsWithHealth,
 } from "~/recoil/environments";
-import { isPollingDisabled } from "~/util";
 
 import GettingStarted from "./GettingStarted";
 
@@ -23,7 +22,7 @@ const Home = () => {
   const { user, tenantsState } = useAuth();
   const flags = useFlags();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
-    intervalMs: isPollingDisabled() ? undefined : 5000,
+    intervalMs: 5000,
   });
   const { creatingRegionId, createRegion } = useCreateEnvironment(
     user.accessToken

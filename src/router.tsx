@@ -39,11 +39,13 @@ import {
   defaultRegion,
   useEnvironmentsWithHealth,
 } from "./recoil/environments";
+import { useTrackFocus } from "./recoil/focus";
 import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 
 /** The root router for the application. */
 const Router = () => {
   useSetEnvironment();
+  useTrackFocus();
 
   const ldClient = useLDClient();
   const { user } = useFronteggAuth();

@@ -42,15 +42,17 @@ jobs:
           cluster_name: mzcloud
           config: ./cloud/misc/kind/cluster.yaml
           node_image: kindest/node:v1.24.7@sha256:5c015142d9b60a0f6c45573f809957076514e38ec973565e2b2fe828b91597f5
-      - run: cd ./cloud && docker compose pull cli -q
+      - run: docker compose pull cli -q
+        working-directory: ./cloud
+      - name: Kind install
+        working-directory: ./cloud
+        run: bin/kind-install-all
       - name: Docker compose up
         working-directory: ./cloud
         env:
           FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
           FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
-        run: |
-          bin/kind-install-all && \
-          docker compose up region-controller environment-controller -d --wait \
+        run: docker compose up region-controller environment-controller -d --wait
       - run: yarn install --frozen-lockfile
       - name: Install playwright browsers
         run: yarn playwright install --with-deps
@@ -64,9 +66,9 @@ jobs:
           E2E_FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
           E2E_FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: yarn test:e2e
-      - name: docker compose ps
+      - name: docker ps -a
         working-directory: ./cloud
-        run: docker compose ps
+        run: docker ps -a
         if: always()
       - name: docker compose logs
         working-directory: ./cloud

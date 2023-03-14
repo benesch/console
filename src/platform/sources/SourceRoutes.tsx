@@ -1,11 +1,10 @@
-import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
 import { SchemaObject, Source, useSources } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import { isPollingDisabled } from "~/util";
+import useForegroundInterval from "~/useForegroundInterval";
 
 import {
   objectOrRedirect,
@@ -15,7 +14,7 @@ import SourceDetail from "./SourceDetail";
 
 const SourceRoutes = () => {
   const { data: sources, refetch } = useSources();
-  useInterval(refetch, isPollingDisabled() ? null : 5000);
+  useForegroundInterval(refetch);
 
   return (
     <>

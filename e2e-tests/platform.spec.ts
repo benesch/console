@@ -35,7 +35,8 @@ async function reactSelectOption(page: Page, elementId: string, value: string) {
 
 for (const region of PLATFORM_REGIONS) {
   test(`use region ${region}`, async ({ page, request }) => {
-    test.setTimeout(1000000); // spinning up a region can be slow.
+    // Region creation is slow, override the per test timeout
+    test.setTimeout(5 * 60 * 1000);
 
     const context = await TestContext.start(page, request);
     const now = new Date().getTime();
@@ -117,6 +118,10 @@ for (const region of PLATFORM_REGIONS) {
       default:
         console.log("welp, this is broken!");
     }
+    // Wait for the region to be available
+    await page.waitForSelector('text="Connect to Materialize"', {
+      timeout: 5 * 60 * 1000,
+    });
     await testPlatformEnvironment(page, request, password);
 
     //// Delete api key

@@ -25,7 +25,6 @@ import {
 } from "~/recoil/environments";
 import { regionIdToSlug } from "~/region";
 import colors from "~/theme/colors";
-import { isPollingDisabled } from "~/util";
 
 const environmentSlugRegex = /^\/regions\/([\w-]*)\/?/;
 
@@ -35,7 +34,7 @@ const EnvironmentSelectField = () => {
   const canReadEnvironments = hasEnvironmentReadPermission(user);
   const setCurrentEnvironment = useSetCurrentEnvironment();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
-    intervalMs: isPollingDisabled() ? undefined : 5000,
+    intervalMs: 5000,
   });
   const navigate = useNavigate();
   const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(

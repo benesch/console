@@ -1,9 +1,12 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
-  timeout: 900000, // 15 minutes
+  // Per test timeout
+  timeout: 30 * 1000, // 30 seconds
   use: {
     acceptDownloads: true,
+    // Actions such as clicks, also waitForSelector calls
+    actionTimeout: 3 * 1000, // 3 seconds
     trace: "retain-on-failure",
   },
   workers: 5,

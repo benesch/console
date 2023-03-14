@@ -1,4 +1,3 @@
-import { useInterval } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
@@ -6,7 +5,7 @@ import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
-import { isPollingDisabled } from "~/util";
+import useForegroundInterval from "~/useForegroundInterval";
 
 export type ClusterDetailParams = {
   regionSlug: string;
@@ -15,7 +14,7 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const clusterResponse = useClusters();
-  useInterval(clusterResponse.refetch, isPollingDisabled() ? null : 5000);
+  useForegroundInterval(clusterResponse.refetch);
 
   return (
     <SentryRoutes>
