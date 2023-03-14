@@ -9,6 +9,7 @@ import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
 
 const definePluginOptions: IDefinePluginOptions = {
   __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "staging"),
+  __FORCE_OVERRIDE_STACK__: JSON.stringify(process.env.FORCE_OVERRIDE_STACK),
   __LAUNCH_DARKLY_KEY__: JSON.stringify("6388e8b9750ee71144183456"),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(true),
   __SEGMENT_API_KEY__: JSON.stringify("dGeQYRjmGVsqDI0KIARrAhTvk1BdJJhk"),

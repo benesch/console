@@ -10,7 +10,8 @@ const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
   template: "public/index.html",
 };
 
-export interface IDefinePluginOptions extends Record<string, string> {
+export interface IDefinePluginOptions
+  extends Record<string, string | undefined> {
   __LAUNCH_DARKLY_KEY__: string;
   __SEGMENT_API_KEY__: string;
   __SENTRY_DSN__: string;
@@ -18,6 +19,7 @@ export interface IDefinePluginOptions extends Record<string, string> {
   __SENTRY_RELEASE__: string;
   __STATUSPAGE_ID__: string;
   __DEFAULT_STACK__: string;
+  __FORCE_OVERRIDE_STACK__: string | undefined;
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: string;
 }
 

@@ -4,6 +4,7 @@ export {};
 
 declare global {
   const __DEFAULT_STACK__: string;
+  const __FORCE_OVERRIDE_STACK__: string;
   const __LAUNCH_DARKLY_KEY__: string;
   const __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: boolean;
   const __SEGMENT_API_KEY__: string | null;

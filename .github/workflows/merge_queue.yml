@@ -34,6 +34,7 @@ jobs:
           SENTRY_RELEASE: ${{ github.sha }}
           SENTRY_ENVIRONMENT: staging
           LAUNCH_DARKLY_KEY: 6388e8b9750ee71144183456
+          FORCE_OVERRIDE_STACK: production
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy to Vercel preview
         run: echo CONSOLE_ADDR=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}) >> $GITHUB_ENV

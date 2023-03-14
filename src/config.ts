@@ -10,6 +10,9 @@ export const getCurrentStack = (
   hostname: string,
   defaultStack: string = __DEFAULT_STACK__
 ) => {
+  if (__FORCE_OVERRIDE_STACK__) {
+    return __FORCE_OVERRIDE_STACK__;
+  }
   if (storageAvailable("localStorage")) {
     const stack = window.localStorage.getItem(currentStackKey);
     if (stack) {
