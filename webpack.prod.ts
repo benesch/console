@@ -24,10 +24,7 @@ function requireEnv(name: string | string[]) {
   }
 }
 
-const sentryEnvironment = requireEnv([
-  "SENTRY_RELEASE",
-  "VERCEL_GIT_COMMIT_SHA",
-]);
+const sentryEnvironment = process.env.SENTRY_ENVIRONMENT;
 const sentryDsn = ["production", "staging"].includes(sentryEnvironment || "")
   ? "https://13c8b3a8d1e547c9b9493de997b04337@o561021.ingest.sentry.io/5699757"
   : null;
