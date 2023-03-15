@@ -31,7 +31,6 @@ import Home from "~/platform/home/Home";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";
 import SourceRoutes from "~/platform/sources/SourceRoutes";
 import { SentryRoutes } from "~/sentry";
-import useSetEnvironment from "~/useSetEnvironment";
 import { assert } from "~/util";
 
 import {
@@ -44,7 +43,6 @@ import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 
 /** The root router for the application. */
 const Router = () => {
-  useSetEnvironment();
   useTrackFocus();
 
   const ldClient = useLDClient();
