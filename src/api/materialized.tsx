@@ -271,7 +271,6 @@ export function useClusters() {
     c.name as cluster_name
   FROM mz_cluster_replicas r
   JOIN mz_clusters c ON c.id = r.cluster_id
-  JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
   ORDER BY r.id;`
   );
 
