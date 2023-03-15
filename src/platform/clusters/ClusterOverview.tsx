@@ -204,10 +204,16 @@ const ClusterOverview = ({ cluster }: Props) => {
       width="100%"
       minW="460px"
     >
-      <Flex width="100%" justifyContent="space-between" mb="4">
-        <Text fontSize="md" fontWeight={500}>
-          Resource Usage
-        </Text>
+      <Flex width="100%" justifyContent="space-between" mb="6">
+        <VStack alignItems="start" gap={0}>
+          <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
+            Resource Usage
+          </Text>
+          <Text fontSize="sm" lineHeight="16px">
+            Usage metrics are approximations, calculated as a percentage of each
+            replica's total resource allocation.
+          </Text>
+        </VStack>
         <HStack>
           {cluster && (
             <LabeledSelect
@@ -243,7 +249,7 @@ const ClusterOverview = ({ cluster }: Props) => {
           <>
             {flags["cluster-cpu-utilization-5188"] && (
               <Box width="100%">
-                <Text fontSize="xs" fontWeight={500}>
+                <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
                   CPU
                 </Text>
                 <UtilizationGraph
@@ -259,7 +265,7 @@ const ClusterOverview = ({ cluster }: Props) => {
               </Box>
             )}
             <Box width="100%">
-              <Text fontSize="xs" fontWeight={500}>
+              <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
                 Memory
               </Text>
               <UtilizationGraph
