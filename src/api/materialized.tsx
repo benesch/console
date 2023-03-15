@@ -257,7 +257,6 @@ export interface Replica {
   name: string;
   size: string;
   clusterName: string;
-  memoryPercent?: number;
 }
 
 /**
@@ -269,8 +268,7 @@ export function useClusters() {
     r.name as replica_name,
     r.cluster_id,
     r.size,
-    c.name as cluster_name,
-    u.memory_percent
+    c.name as cluster_name
   FROM mz_cluster_replicas r
   JOIN mz_clusters c ON c.id = r.cluster_id
   JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
@@ -290,7 +288,6 @@ export function useClusters() {
         name: getColumnByName(row, "replica_name") as string,
         size: getColumnByName(row, "size") as string,
         clusterName: clusterName,
-        memoryPercent: getColumnByName(row, "memory_percent") as number,
       };
       const cluster = clusterMap.get(clusterId);
       if (cluster) {
@@ -312,6 +309,50 @@ export function useClusters() {
 }
 
 export type ClusterResponse = ReturnType<typeof useClusters>;
+
+export interface ClusterReplicaWithUtilizaton {
+  id: number;
+  name: string;
+  size: string;
+  memoryPercent?: number;
+}
+
+export function useClusterReplicasWithUtilization(clusterId?: string) {
+  const response = useSql(
+    clusterId
+      ? `SELECT r.id,
+  r.name as replica_name,
+  r.cluster_id,
+  r.size,
+  u.memory_percent
+FROM mz_cluster_replicas r
+JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
+WHERE r.cluster_id = '${clusterId}'
+ORDER BY r.id;`
+      : undefined
+  );
+
+  let data: ClusterReplicaWithUtilizaton[] | null = null;
+  if (response.data) {
+    const { getColumnByName } = response.data;
+    assert(getColumnByName);
+
+    data = response.data.rows.map((row) => {
+      const replica: ClusterReplicaWithUtilizaton = {
+        id: getColumnByName(row, "id") as number,
+        name: getColumnByName(row, "replica_name") as string,
+        size: getColumnByName(row, "size") as string,
+        memoryPercent: getColumnByName(row, "memory_percent") as number,
+      };
+      return replica;
+    });
+  }
+
+  return {
+    ...response,
+    data: data,
+  };
+}
 
 export type ConnectorStatus =
   | "created"

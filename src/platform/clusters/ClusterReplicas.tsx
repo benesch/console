@@ -15,7 +15,11 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Cluster, Replica } from "~/api/materialized";
+import {
+  Cluster,
+  ClusterReplicaWithUtilizaton,
+  useClusterReplicasWithUtilization,
+} from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import TextLink from "~/components/TextLink";
@@ -32,6 +36,7 @@ import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
+import useForegroundInterval from "~/useForegroundInterval";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",
@@ -64,12 +69,15 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
-  const replicas = cluster?.replicas;
+  const { data: replicas, refetch } = useClusterReplicasWithUtilization(
+    cluster?.id
+  );
+  useForegroundInterval(refetch);
 
   const isDisabled =
     !currentEnvironmentState || currentEnvironment?.state !== "enabled";
-  const isLoading = !cluster;
-  const isEmpty = !isLoading && (!replicas || replicas.length === 0);
+  const isLoading = !replicas || !cluster;
+  const isEmpty = !isLoading && replicas && replicas.length === 0;
 
   return (
     <>
@@ -104,7 +112,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
       )}
       {!isLoading && !isEmpty && !isDisabled && (
         <HStack spacing={6} alignItems="flex-start">
-          <ReplicaTable replicas={replicas as Replica[]} />
+          <ReplicaTable replicas={replicas} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with cluster replicas</CardHeader>
             <CardContent pb={8}>
@@ -138,7 +146,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
 };
 
 interface ReplicaTableProps {
-  replicas: Replica[];
+  replicas: ClusterReplicaWithUtilizaton[];
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
