@@ -48,6 +48,39 @@ bin/mzadmin aws setup
 bin/mzadmin k8s setup
 ```
 
+### Running tests
+
+Run the jest test with `yarn test:unit` or `yarn test:unit --watch`.
+
+The playwright end-to-end tests require a cloud stack to run, generally using
+Kind is simplest locally.
+
+```shell
+cd ../cloud
+# Create and configure a k8s cluster
+bin/kind-delete && bin/kind-create
+# Run the controllers in the background
+docker compose up environment-controller region-controller -d --wait
+# Export the test user password
+export E2E_TEST_PASSWORD=$(pulumi stack output --stack materialize/staging --show-secrets console_e2e_test_password)
+cd ../console
+yarn test:e2e
+```
+
+You only have to do this once per shell where you want to run tests, you can
+now run the tests any time in that shell session. Setting `PWDEBUG=1` on the
+test command will cause playwright to run in debug mode, where you can see the
+test running live and step through the test code, as well as see a timeline of
+the test after it's finished.
+
+Tests save traces to the folder `test-results`, and you can use the following
+playwright command to view these traces after the fact (also very useful for CI
+failures).
+
+```shell
+yarn playwright show-trace test-results/platform-use-region-local-kind/trace-1.zip
+```
+
 ### Deleting environments
 
 There is no way to disable a region in the UI, so if you need to test the
