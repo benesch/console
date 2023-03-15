@@ -24,8 +24,6 @@ function requireEnv(name: string | string[]) {
   }
 }
 
-const launchDarklyKey = requireEnv("LAUNCH_DARKLY_KEY");
-
 const sentryEnvironment = requireEnv([
   "SENTRY_RELEASE",
   "VERCEL_GIT_COMMIT_SHA",
@@ -40,7 +38,6 @@ const publicPath = "/";
 const DefinePluginOptions: IDefinePluginOptions = {
   __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "production"),
   __FORCE_OVERRIDE_STACK__: JSON.stringify(process.env.FORCE_OVERRIDE_STACK),
-  __LAUNCH_DARKLY_KEY__: JSON.stringify(launchDarklyKey),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
   __SEGMENT_API_KEY__: JSON.stringify(process.env.SEGMENT_API_KEY || null),
   __SENTRY_DSN__: JSON.stringify(sentryDsn),

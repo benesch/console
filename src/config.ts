@@ -31,6 +31,21 @@ export const getCurrentStack = (
   return defaultStack;
 };
 
+export const getLaunchDarklyKey = (hostname: string) => {
+  if (hostname === "console.materialize.com") {
+    // Production key
+    return "63604cf8f9860a0c1f3c7099";
+  }
+  if (hostname.startsWith("staging") || hostname.match(/^.*\.preview/)) {
+    // matches staging.console.materialize.com or *.preview.console.materialize.com
+    // Staging key
+    return "6388e8a24ac9d112339757f3";
+  }
+
+  // Fall back to development key
+  return "6388e8b9750ee71144183456";
+};
+
 export const setCurrentStack = (stackName: string) => {
   if (storageAvailable("localStorage")) {
     window.localStorage.setItem(currentStackKey, stackName);
@@ -57,7 +72,7 @@ const config = {
   cloudRegions: cloudRegions,
   environmentdScheme: currentStack === "local" ? "http" : "https",
   fronteggUrl: getFronteggUrl(currentStack),
-  launchDarklyKey: __LAUNCH_DARKLY_KEY__,
+  launchDarklyKey: getLaunchDarklyKey(location.hostname),
   recoilDuplicateCheckingEnabled:
     __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__,
   segmentApiKey: __SEGMENT_API_KEY__,
