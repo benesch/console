@@ -9,13 +9,38 @@ Ensure you have node 16 and yarn 1.x
 ```bash
 yarn install
 yarn proxy
+open http://localhost:3000
 ```
 
 ### Cloud setup
 
-Clone the [Cloud repo](MaterializeInc/cloud).
+Clone the [Cloud repo](MaterializeInc/cloud) as a sibling to this repo. We rely
+on cloud for a few things:
+
+- The mzadmin tool for getting cli access to AWS and configuring our k8s
+  contexts.
+- Running our E2E tests against a cloud stack running in docker.
+- The gen:api script uses cloud openapi specifications to generate our API
+  clients.
+
+See their [Developer
+doc](https://github.com/MaterializeInc/cloud/blob/main/doc/developer.md) for
+the most up to date instructions on working with the cloud repo.
+
+Below is a quick start guide for our use of cloud.
+
+Install the [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+Install some k8s utils:
 
 ```shell
+brew install kubectl@1.24 k9s kind
+```
+
+Run the commands below to configure your aws account and k8s contexts
+
+```shell
+# Installs dependencies and configures your python venv
 bin/rev-env
 # Setup your aws config
 bin/mzadmin aws setup
@@ -23,10 +48,10 @@ bin/mzadmin aws setup
 bin/mzadmin k8s setup
 ```
 
-### Deleting regions
+### Deleting environments
 
-If you are running your dev environment against staging, you'll probably need
-to delete regions for testing purposes.
+There is no way to disable a region in the UI, so if you need to test the
+enable region flow, you will need to delete the environment via the api.
 
 From the cloud repo, run:
 
@@ -39,12 +64,11 @@ bin/mzadmin environment delete --cluster staging-us-east-1 --organization $ID
 
 ## Theming
 
-Materialize Cloud's theme has light and dark mode support! Some of the styling
+Materialize Console has light and dark mode support. Some of the styling
 for this is implicit (based on Chakra's defaults). Other parts were customized
-to match Materialize's styles and color scheme. So when styling, make sure that
-the styles work with both variants--the Chakra `useColorModeValue` hook will be
-your friend. On Mac OS, you can toggle your color mode with System Preferences
-\> General.
+to match Materialize's styles and color scheme. When styling, make sure that
+components look good in both modes. On Mac OS, you can toggle your color mode
+with System Preferences \> General.
 
 ### Customizing
 
