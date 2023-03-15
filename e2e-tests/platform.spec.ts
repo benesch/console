@@ -36,7 +36,7 @@ async function reactSelectOption(page: Page, elementId: string, value: string) {
 for (const region of PLATFORM_REGIONS) {
   test(`use region ${region}`, async ({ page, request }) => {
     // Region creation is slow, override the per test timeout
-    test.setTimeout(5 * 60 * 1000);
+    test.setTimeout(15 * 60 * 1000);
 
     const context = await TestContext.start(page, request);
     const now = new Date().getTime();
@@ -86,8 +86,6 @@ for (const region of PLATFORM_REGIONS) {
             return DashboardState.ThisRegionActive;
           })(),
           (async () => {
-            // TODO: Sleep 5s here, because there's a flash of incorrect state when selecting regions.
-            await new Promise((resolve) => setTimeout(resolve, 5000));
             await page.waitForSelector(
               `text="Region ${region} is not enabled"`
             );
@@ -120,7 +118,7 @@ for (const region of PLATFORM_REGIONS) {
     }
     // Wait for the region to be available
     await page.waitForSelector('text="Connect to Materialize"', {
-      timeout: 5 * 60 * 1000,
+      timeout: 15 * 60 * 1000,
     });
     await testPlatformEnvironment(page, request, password);
 

@@ -1,21 +1,19 @@
 import { useToast } from "@chakra-ui/toast";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { createEnvironmentAssignment } from "~/api/regionController";
 import config from "~/config";
-import {
-  maybeEnvironmentForRegion,
-  useSetCurrentEnvironment,
-} from "~/recoil/environments";
+import { maybeEnvironmentForRegion } from "~/recoil/environments";
+import { regionIdToSlug } from "~/region";
 
 export type CreateRegion = (regionId: string) => Promise<void>;
 
 // Relies on the environment health polling in EnvironmentSelector
 const useCreateEnvironment = (accessToken: string) => {
   const [creatingRegionId, setCreatingRegionId] = React.useState<string>();
-  const setCurrentEnvironmentId = useSetCurrentEnvironment();
-
+  const navigate = useNavigate();
   const toast = useToast({ position: "top" });
 
   const createRegion = React.useCallback(
@@ -28,6 +26,7 @@ const useCreateEnvironment = (accessToken: string) => {
           {},
           accessToken
         );
+        navigate(`/regions/${regionIdToSlug(regionId)}`);
       } catch (e: any) {
         console.log(e);
         setCreatingRegionId(undefined);
@@ -37,7 +36,7 @@ const useCreateEnvironment = (accessToken: string) => {
         });
       }
     },
-    [accessToken, toast]
+    [accessToken, navigate, toast]
   );
 
   const newEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
@@ -57,14 +56,13 @@ const useCreateEnvironment = (accessToken: string) => {
       newEnvironment &&
       newEnvironment.state !== "disabled"
     ) {
-      setCurrentEnvironmentId(creatingRegionId);
       setCreatingRegionId(undefined);
       toast({
         title: "Region enabled.",
         status: "success",
       });
     }
-  }, [creatingRegionId, newEnvironment, setCurrentEnvironmentId, toast]);
+  }, [creatingRegionId, navigate, newEnvironment, toast]);
 
   return {
     creatingRegionId,
