@@ -86,8 +86,6 @@ for (const region of PLATFORM_REGIONS) {
             return DashboardState.ThisRegionActive;
           })(),
           (async () => {
-            // TODO: Sleep 5s here, because there's a flash of incorrect state when selecting regions.
-            await new Promise((resolve) => setTimeout(resolve, 5000));
             await page.waitForSelector(
               `text="Region ${region} is not enabled"`
             );
