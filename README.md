@@ -52,7 +52,7 @@ Chakra's theme docs live
 [here](https://chakra-ui.com/docs/theming/customize-theme). There are two
 methods by which we can customize our application's look and feel using Chakra:
 
-#### App-wide styles and defaults in `frontend/src/theme/`
+#### App-wide styles and defaults in `src/theme/`
 
 If your styling should apply to all instances of a built-in Chakra component,
 across the board, it's best to modify the Chakra theme. Our custom color
@@ -86,10 +86,10 @@ it pretty easy to check how your new feature works in either style.
 
 ## Images
 
-Static images live in `frontend/img` and use imports to get added to their
+Static images live in `img` and use imports to get added to their
 parent component. For SVGs where one wants to customize attributes such as fill
 colors, however, importing will not work; in that case the SVG should get added
-to `frontend/src/svg` as a React component wherein that customization (for
+to `src/svg` as a React component wherein that customization (for
 light/dark mode, or for reuse) can happen.
 
 ## Code style
