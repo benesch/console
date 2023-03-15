@@ -94,22 +94,15 @@ light/dark mode, or for reuse) can happen.
 
 ## Code style
 
-As much as possible, we enforce consistent code style via our linter config.
-Helpful code editor plugins to this end include ESLint, TSLint (if not subsumed
-by ESLint in your editor ecosystem--note that it _is_ part of ESLint in VSCode),
-and Prettier. I also recommend Color Highlight if you'll be working with
-colors/styling.
-
-However, lint rules don't always cover everything, especially things that are
-more of a code smell or a judgment call.
+We use Prettier to format all files, enforced by eslint-plugin-prettier.
+Configure your editor to format files on save and you generally won't have to
+think much about formatting.
 
 ### Component files
 
 At Materialize is acceptable to put multiple components in the same file, when
 one is clearly consumed by another (and if, in your judgment, the file is not
-too ungainly or complex). However, only one component should be exported from a
-file _the vast majority of the time_. That primary component's name should also
-be the name of the file. It should also be the default export.
+too ungainly or complex).
 
 There are exceptions, such as the various pieces of our `<Card>`s, where a
 component must be in multiple "lego blocks" that fit together. When this happens
@@ -123,11 +116,5 @@ course).
 - This makes it easier to tell at a glance which component is which (if the
   title of every tab in your editor is index.tsx, that is really confusing!).
 
-Name the props for your primary exported component `Props` and put it as high in
-the file as you can. If for some reason you need to export those props, make the
-export under a different name (probably `{COMPONENT_NAME}Props`).
-
-In essence, the goal is that the primary exported component and its `Props` are
-the "API" of the file for whatever other components are consuming it. Having a
-consistent naming structure makes it just a bit easier to navigate wherever you
-are in the code base.
+Name the props for your each component `$ComponentProps`, export it and put it
+above the component that uses it.
