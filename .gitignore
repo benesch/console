@@ -1,10 +1,13 @@
 /node_modules
-e2e-tests/state*.json
-e2e-tests/scratch/
-e2e-tests/test-results/
-test-results
+
+# Playwrite E2E tests
+/e2e-tests/state*.json
+/test-results
+
+#Webpack
 /dist
-/public/_metadata
+
+#Vercel
 .vercel
 
 # Allow people to set up their own shell-local environments:

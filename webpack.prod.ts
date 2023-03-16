@@ -143,7 +143,7 @@ if (process.env.SOURCE_MAPS) {
   const SentryPlugin = require("@sentry/webpack-plugin");
   plugins.push(
     new SentryPlugin({
-      include: path.resolve(__dirname, "dist", "frontend"),
+      include: path.resolve(__dirname, "dist"),
       org: "materializeinc",
       project: "cloud-frontend",
       release: sentryRelease,

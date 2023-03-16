@@ -14,9 +14,7 @@ export const CONSOLE_ADDR = process.env.CONSOLE_ADDR || "http://localhost:3000";
 export const CLOUD_HOST =
   process.env.CLOUD_HOST || "staging.cloud.materialize.com";
 
-export const IS_KIND =
-  CONSOLE_ADDR === "http://localhost:3000" ||
-  CONSOLE_ADDR === "http://frontend:3000";
+export const IS_KIND = CONSOLE_ADDR === "http://localhost:3000";
 
 export const PLATFORM_REGIONS = IS_KIND
   ? ["local/kind"]
