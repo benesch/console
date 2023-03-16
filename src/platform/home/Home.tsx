@@ -104,6 +104,7 @@ const Home = () => {
                 regionId={currentEnvironmentId}
                 createRegion={createRegion}
                 creatingRegionId={creatingRegionId}
+                tenantIsBlocked={tenantIsBlocked}
                 size="lg"
                 variant="gradient-1"
               />
