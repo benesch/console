@@ -210,8 +210,8 @@ const ClusterOverview = ({ cluster }: Props) => {
             Resource Usage
           </Text>
           <Text fontSize="sm" lineHeight="16px">
-            Usage metrics are an approximations, calculated as a percentage of
-            each cluster&apos;s total resource allocation.
+            Resource usage metrics are an approximations, calculated as a
+            percentage of each replica&apos;s total resource allocation.
           </Text>
         </VStack>
         <HStack>
