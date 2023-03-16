@@ -4,7 +4,9 @@ This is the cloud console interface for Materialize.
 
 ## Running the app locally
 
-Ensure you have node 16 and yarn 1.x
+Ensure you have node 18.x and yarn 1.x. The specific versions of these tools
+are set for Volta in the package.json, if you have another preferred version
+manager, please match those versions.
 
 ```bash
 yarn install
