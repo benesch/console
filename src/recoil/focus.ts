@@ -1,5 +1,11 @@
 import React from "react";
-import { atom, useSetRecoilState } from "recoil";
+import {
+  atom,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
+  useSetRecoilState,
+} from "recoil";
+
+import { isPollingDisabled } from "~/util";
 
 export const useTrackFocus = () => {
   const setValue = useSetRecoilState(isFocusedState);
@@ -21,3 +27,11 @@ export const isFocusedState = atom<boolean>({
   key: "isFocused",
   default: document.hasFocus(),
 });
+
+/**
+ * Checks if polling should be disabled because of the noPoll query param or because the document is not currently focused
+ */
+export const useIsPollingDisabled = () => {
+  const isFocused = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(isFocusedState);
+  return isPollingDisabled() || !isFocused;
+};

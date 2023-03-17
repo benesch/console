@@ -3,10 +3,6 @@
  * Generic utility functions.
  */
 
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
-
-import { isFocusedState } from "./recoil/focus";
-
 /**
  * @description
  * Takes an Array<V>, and a grouping function,
@@ -71,11 +67,6 @@ export function isPollingDisabled() {
   const params = new URLSearchParams(location.search);
   return Array.from(params.keys()).includes("noPoll");
 }
-
-export const useIsPollingDisabled = () => {
-  const isFocused = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(isFocusedState);
-  return isPollingDisabled() || !isFocused;
-};
 
 /**
  * Determines if the user is an internal Materialize employee.

@@ -1,7 +1,7 @@
 import { useCallbackRef } from "@chakra-ui/react";
 import React from "react";
 
-import { useIsPollingDisabled } from "./util";
+import { useIsPollingDisabled } from "./recoil/focus";
 
 /**
  * Executes a callback at the specified interval while the document has focus.
