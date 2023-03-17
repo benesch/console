@@ -1,10 +1,9 @@
 import config from "../config";
-import { isValidString } from "../utils/validators";
 
 export const currentVersion = config?.sentryRelease;
 
 export const versionHeaders = (): Record<string, string> =>
-  isValidString(currentVersion)
+  currentVersion && currentVersion.length > 0
     ? {
         "X-MATERIALIZE-VERSION": currentVersion,
       }
