@@ -83,7 +83,7 @@ interface FronteggAuthResponse {
 
 export type Options = Parameters<APIRequestContext["fetch"]>[1];
 
-/** Manages an end-to-end test against Materialize Cloud. */
+/** Manages an end-to-end test against Materialize Console. */
 export class TestContext {
   page: Page;
   request: APIRequestContext;
