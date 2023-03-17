@@ -93,7 +93,7 @@ const ConnectorErrorsTable = ({
       )}
       {errors?.length === 0 && (
         <Flex width="100%" justifyContent="center">
-          No errors
+          No errors during this time period.
         </Flex>
       )}
     </VStack>

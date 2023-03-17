@@ -36,7 +36,7 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%" alignItems="flex-start" spacing={6}>
-        <VStack width="100%" alignItems="flex-start" spacing={4}>
+        <VStack width="100%" alignItems="flex-start" spacing={6}>
           {source?.error && (
             <AlertBox>
               <Text opacity="0.6" color={semanticColors.foreground.primary}>
