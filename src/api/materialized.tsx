@@ -104,7 +104,7 @@ export function useSqlMany(request: SqlRequest | undefined) {
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const requestIdRef = React.useRef(1);
   const controllerRef = React.useRef<AbortController>(new AbortController());
   const [results, setResults] = useState<Results[] | null>(null);
