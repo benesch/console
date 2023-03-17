@@ -209,7 +209,7 @@ const ClusterOverview = ({ cluster }: Props) => {
           <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
             Resource Usage
           </Text>
-          <Text fontSize="sm" lineHeight="16px">
+          <Text fontSize="sm" lineHeight="20px" maxW="60ch">
             Resource usage metrics are an approximations, calculated as a
             percentage of each replica&apos;s total resource allocation.
           </Text>
