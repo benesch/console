@@ -1,6 +1,6 @@
 # Materialize web console
 
-This is the cloud console interface for Materialize.
+This is the web console interface for Materialize.
 
 ## Running the app locally
 

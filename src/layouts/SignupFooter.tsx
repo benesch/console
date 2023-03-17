@@ -4,13 +4,13 @@ import React from "react";
 // dynamic elements (like chakra-ui's). Best stick to plain HTML here.
 const SignupFooter = (
   <p>
-    By signing up to Materialize Cloud, you agree to our{" "}
+    By signing up for Materialize, you agree to our{" "}
     <a
       target="_blank"
       rel="noreferrer"
       href="https://materialize.com/terms-and-conditions/"
     >
-      Cloud Terms and Conditions
+      Terms and Conditions
     </a>
     .
   </p>
