@@ -58,7 +58,7 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
               justifyContent="space-between"
               alignItems="center"
               width="100%"
-              mb={2}
+              mb={4}
             >
               <Text fontSize="16px" fontWeight="500">
                 Source Errors
