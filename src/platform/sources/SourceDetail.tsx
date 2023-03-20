@@ -1,5 +1,4 @@
 import { Box, HStack, VStack } from "@chakra-ui/react";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
@@ -26,7 +25,6 @@ export interface SourceDetailProps {
 }
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const flags = useFlags();
   const { ddl } = useDDL("SOURCE", source?.name);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
@@ -83,9 +81,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
             Overview
           </PageTab>*/}
             <PageTab to="errors">Errors</PageTab>
-            {flags["source-detail-subsources-5014"] && (
-              <PageTab to="subsources">Subsources</PageTab>
-            )}
+            <PageTab to="subsources">Subsources</PageTab>
           </PageTabStrip>
         </VStack>
       </PageHeader>
