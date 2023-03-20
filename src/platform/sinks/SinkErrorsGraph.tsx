@@ -170,7 +170,7 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
             textAnchor="middle"
             fill={semanticColors.foreground.primary}
           >
-            No data
+            No errors during this time period.
           </text>
         )}
       </BarChart>
