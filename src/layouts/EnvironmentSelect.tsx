@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import ReactSelect, {
   MultiValue,
   OptionProps,
-  SingleValue,
+  SingleValue as SingleValueType,
   SingleValueProps,
   StylesConfig,
 } from "react-select";
@@ -42,7 +42,9 @@ const EnvironmentSelectField = () => {
   );
 
   const selectHandler = React.useCallback(
-    (option: SingleValue<EnvOptionType> | MultiValue<EnvOptionType> | null) => {
+    (
+      option: SingleValueType<EnvOptionType> | MultiValue<EnvOptionType> | null
+    ) => {
       const regionSlug = regionIdToSlug((option as EnvOptionType).id);
       setCurrentEnvironment((option as EnvOptionType).id);
       const matches = environmentSlugRegex.exec(location.pathname);

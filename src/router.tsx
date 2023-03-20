@@ -26,7 +26,6 @@ import { AuthProvider } from "~/api/auth";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
 import ClusterRoutes from "~/platform/clusters/ClusterRoutes";
-import Editor from "~/platform/editor/Editor";
 import Home from "~/platform/home/Home";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";
 import SourceRoutes from "~/platform/sources/SourceRoutes";
@@ -40,6 +39,8 @@ import {
 } from "./recoil/environments";
 import { useTrackFocus } from "./recoil/focus";
 import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
+
+const Editor = React.lazy(() => import("~/platform/editor/Editor"));
 
 /** The root router for the application. */
 const Router = () => {

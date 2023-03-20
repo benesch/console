@@ -140,7 +140,11 @@ export const baseTheme: Partial<ChakraTheme> = {
     "3xl": "120em", // 1920px
     "4xl": "160em", // 2560px
   },
-  components,
+  components: {
+    // Something about the ESM module format breaks Chakra styles unless we use the spread operator here.
+    // The spread operator removes the __esModule property among other things, which makes this work.
+    ...components,
+  },
   colors: {
     ...colors,
     teal: colors.turquoise,
