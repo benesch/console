@@ -12,9 +12,15 @@ export const SecretOrKeyValueInput: React.FC<SecretOrKeyValueInputProps> = ({
   label,
   children,
 }) => {
-  const [isSecret, setIsSecret] = React.useState(true); // By default, we want to expose the secret selector
+  const [isSecret, setIsSecret] = React.useState(true);
+  const keyRef = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (keyRef.current) {
+      keyRef.current.focus();
+    }
+  }, [isSecret]);
   return (
-    <HStack align="start" justify="start" gap={6} width="460px">
+    <HStack align="start" justify="space-between" gap={6} width="460px">
       <Text as="label" py={2} fontSize="sm" fontWeight="500" lineHeight="16px">
         {label}
       </Text>
@@ -23,6 +29,7 @@ export const SecretOrKeyValueInput: React.FC<SecretOrKeyValueInputProps> = ({
         /* TODO: This should be the auto-complete component */
         <SimpleSelect
           width="100%"
+          maxW="320px"
           onChange={(e) => {
             if (e.target.value === "create-secret") {
               setIsSecret(false);
@@ -33,8 +40,13 @@ export const SecretOrKeyValueInput: React.FC<SecretOrKeyValueInputProps> = ({
           <option value="create-secret">Create new secret</option>
         </SimpleSelect>
       ) : (
-        <HStack width="100%" justify="start" gap={1}>
-          {/* TODO: Disable 1Password from this field */}
+        <HStack
+          width="100%"
+          maxW="320px"
+          justify="start"
+          gap={1}
+          position="relative"
+        >
           <Input
             name="secret-key"
             type="text"
@@ -44,6 +56,7 @@ export const SecretOrKeyValueInput: React.FC<SecretOrKeyValueInputProps> = ({
             variant="default"
             width="100%"
             placeholder="Key"
+            ref={keyRef}
           />
           <Input
             name="secret-value"
@@ -59,9 +72,10 @@ export const SecretOrKeyValueInput: React.FC<SecretOrKeyValueInputProps> = ({
             variant="ghost"
             padding={0}
             size="sm"
+            position="absolute"
+            right="-40px"
             onClick={() => setIsSecret(true)}
           >
-            {/* TODO: Replace with existing "X" icon */}
             <svg
               width="16"
               height="16"
