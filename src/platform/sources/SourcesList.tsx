@@ -19,6 +19,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Source } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -62,6 +63,7 @@ interface SourceListProps {
 
 const SourcesListPage = ({ sources }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
+  const databaseFilter = useDatabaseFilter();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -74,6 +76,9 @@ const SourcesListPage = ({ sources }: SourceListProps) => {
     <>
       <PageHeader>
         <PageHeading>Sources</PageHeading>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+        </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />

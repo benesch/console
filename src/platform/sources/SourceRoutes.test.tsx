@@ -2,6 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
 
+import { SqlRequest } from "~/api/materialized";
 import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
@@ -44,41 +45,62 @@ const emptySourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
     })
   );
 });
-const validSourcesResponse = rest.post("*/api/sql", (_req, res, ctx) => {
-  return res(
-    ctx.status(200),
-    ctx.json({
-      results: [
-        { ok: "SET", notices: [] },
-        {
-          tag: "SELECT 2",
-          rows: [
-            [
-              "u4",
-              "default",
-              "public",
-              "test_source",
-              "postgres",
-              "xsmall",
-              "stalled",
-              "reached maximum WAL lag",
+
+const validSourcesResponse = rest.post("*/api/sql", async (req, res, ctx) => {
+  const { queries } = (await req.json()) as SqlRequest;
+  if (queries.some((q) => q.query.includes("FROM mz_sources"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 2",
+            rows: [
+              [
+                "u4",
+                "default",
+                "public",
+                "test_source",
+                "postgres",
+                "xsmall",
+                "stalled",
+                "reached maximum WAL lag",
+              ],
             ],
-          ],
-          col_names: [
-            "id",
-            "database_name",
-            "schema_name",
-            "name",
-            "type",
-            "size",
-            "status",
-            "error",
-          ],
-          notices: [],
-        },
-      ],
-    })
-  );
+            col_names: [
+              "id",
+              "database_name",
+              "schema_name",
+              "name",
+              "type",
+              "size",
+              "status",
+              "error",
+            ],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
+  if (queries.some((q) => q.query.includes("FROM mz_databases"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 2",
+            rows: [[1, "materialize"]],
+            col_names: ["id", "name"],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
+  throw new Error("Query not matched");
 });
 
 describe("SourceRoutes", () => {
