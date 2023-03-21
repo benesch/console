@@ -139,7 +139,7 @@ type NavItemType = {
 };
 
 const getNavItems = (regionSlug: string): NavItemType[] => [
-  { label: "Connect", href: "/" },
+  { label: "Connect", href: `/regions/${regionSlug}/connect` },
   { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
   { label: "Sources", href: `/regions/${regionSlug}/sources` },
   { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
@@ -204,12 +204,7 @@ const NavItem = (props: NavItemType) => {
   const { colors } = useTheme<MaterializeTheme>();
   const location = useLocation();
   const href = props.href || "#";
-  const active =
-    // top level nav items show active on nested routes
-    // index must be exact match
-    href.length > 1
-      ? location.pathname.startsWith(href)
-      : location.pathname === href;
+  const active = location.pathname.startsWith(href);
 
   const linkContents = (
     <HStack
