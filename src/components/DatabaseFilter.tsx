@@ -1,9 +1,8 @@
+import { Select } from "@chakra-ui/react";
 import React from "react";
 
 import useDatabases, { Database } from "~/api/materialize/useDatabases";
 import { useQueryStringState } from "~/useQueryString";
-
-import SimpleSelect from "./SimpleSelect";
 
 export interface DatabaseFilterProps {
   databaseList: Database[] | null;
@@ -19,7 +18,8 @@ const DatabaseFilter = ({
   setSelectedDatabase,
 }: DatabaseFilterProps) => {
   return (
-    <SimpleSelect
+    <Select
+      variant="borderless"
       value={selectedDatabase?.id ?? "all"}
       onChange={(e) => {
         const id = parseInt(e.target.value);
@@ -33,7 +33,7 @@ const DatabaseFilter = ({
             {database.name}
           </option>
         ))}
-    </SimpleSelect>
+    </Select>
   );
 };
 

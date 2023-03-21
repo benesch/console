@@ -195,6 +195,23 @@ export const Select = defineSelectConfig({
       color: "semanticColors.foreground.secondary",
     },
   }),
+  variants: {
+    borderless: definePartsStyle({
+      field: {
+        color: "semanticColors.foreground.secondary",
+        fontSize: "14px",
+        height: "32px",
+        lineHeight: "16px",
+        rounded: "8px",
+        _hover: {
+          cursor: "pointer",
+        },
+        _focus: {
+          background: "semanticColors.background.secondary",
+        },
+      },
+    }),
+  },
 });
 
 const {
