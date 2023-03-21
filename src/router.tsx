@@ -74,7 +74,6 @@ const Router = () => {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="*" element={<RedirectToHome />} />
-        <Route element={<Navigate to="/" replace />} />
       </ProtectedRoutes>
       <AnalyticsOnEveryPage />
     </>
@@ -86,7 +85,9 @@ type RegionParams = "regionSlug";
 const RedirectToEnvironment = () => {
   return (
     <Navigate
-      to={`/regions/${regionIdToSlug(defaultRegion())}/showSourceCredentials`}
+      to={`/regions/${regionIdToSlug(
+        defaultRegion()
+      )}/connect/showSourceCredentials`}
     />
   );
 };
@@ -113,7 +114,7 @@ const EnvironmentRoutes = () => {
     }
     // Redirect to the connect page if a region is not enabled
     if (environments.get(regionId)?.state !== "enabled") {
-      navigate(`/regions/${params.regionSlug}`, { replace: true });
+      navigate(`/regions/${params.regionSlug}/connect`, { replace: true });
     }
   }, [
     currentEnvironmentId,
@@ -129,10 +130,16 @@ const EnvironmentRoutes = () => {
   }
   return (
     <Routes>
-      <Route path="/*" element={<Home />} />
+      <Route path="/connect/*" element={<Home />} />
       <Route path="/clusters/*" element={<ClusterRoutes />} />
       <Route path="/sources/*" element={<SourceRoutes />} />
       <Route path="/sinks/*" element={<SinkRoutes />} />
+      <Route
+        path="/*"
+        element={
+          <Navigate to={`/regions/${params.regionSlug}/connect`} replace />
+        }
+      />
     </Routes>
   );
 };
@@ -150,7 +157,7 @@ const RedirectToHome = () => {
     // notice it.
     return null;
   } else {
-    return <Navigate to={`/regions/${regionSlug}/`} replace />;
+    return <Navigate to={`/regions/${regionSlug}/connect`} replace />;
   }
 };
 
