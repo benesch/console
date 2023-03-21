@@ -1,7 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 import useDatabases, { Database } from "~/api/materialize/useDatabases";
+import { useQueryStringState } from "~/useQueryString";
 
 import SimpleSelect from "./SimpleSelect";
 
@@ -38,43 +38,31 @@ const DatabaseFilter = ({
 };
 
 export const useDatabaseFilter = () => {
-  const navigate = useNavigate();
-  const [selectedDatabase, setSelectedDatabase] = React.useState<
-    Database | undefined
-  >(undefined);
+  const [selectedDatabaseName, setSelectedDatabaseName] = useQueryStringState(
+    databaseQueryStringKey
+  );
   const { data: databaseList } = useDatabases();
-
-  const setDatabase = React.useCallback(
-    (id: number) => {
-      const url = new URL(window.location.toString());
-      if (id === 0) {
-        setSelectedDatabase(undefined);
-        url.searchParams.delete(databaseQueryStringKey);
-        navigate(url.pathname + url.search + url.hash, { replace: true });
-      }
-      const database = databaseList && databaseList.find((d) => d.id === id);
-      if (database) {
-        setSelectedDatabase(database);
-        url.searchParams.set(databaseQueryStringKey, database.name);
-        navigate(url.pathname + url.search + url.hash, { replace: true });
-      }
-    },
-    [databaseList, navigate]
+  const selectedDatabase = React.useMemo(
+    () =>
+      (databaseList &&
+        databaseList.find((d) => d.name === selectedDatabaseName)) ??
+      undefined,
+    [databaseList, selectedDatabaseName]
   );
 
-  React.useEffect(() => {
-    const url = new URL(window.location.toString());
-    const name = url.searchParams.get(databaseQueryStringKey);
-    const database = databaseList && databaseList.find((d) => d.name === name);
-    if (database) {
-      setSelectedDatabase(database);
-    }
-  }, [databaseList]);
+  const setSelectedDatabase = React.useCallback(
+    (id: number) => {
+      const selected = databaseList && databaseList.find((d) => d.id === id);
+
+      setSelectedDatabaseName(selected?.name ?? undefined);
+    },
+    [databaseList, setSelectedDatabaseName]
+  );
 
   return {
     databaseList,
     selectedDatabase,
-    setSelectedDatabase: setDatabase,
+    setSelectedDatabase: setSelectedDatabase,
   };
 };
 
