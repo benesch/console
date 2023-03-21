@@ -36,7 +36,7 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
   return (
     <HStack spacing={6} alignItems="flex-start">
       <VStack width="100%" alignItems="flex-start" spacing={6}>
-        <VStack width="100%" alignItems="flex-start" spacing={4}>
+        <VStack width="100%" alignItems="flex-start" spacing={6}>
           {sink?.error && (
             <AlertBox>
               <Text opacity="0.6" color={semanticColors.foreground.primary}>
@@ -58,7 +58,7 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
               justifyContent="space-between"
               alignItems="center"
               width="100%"
-              mb={2}
+              mb={4}
             >
               <Text fontSize="16px" fontWeight="500">
                 Sink Errors
