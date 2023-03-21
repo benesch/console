@@ -2,7 +2,8 @@ import { WarningIcon } from "@chakra-ui/icons";
 import { Box, BoxProps, Spinner } from "@chakra-ui/react";
 import React from "react";
 
-import { ConnectorStatus, Source } from "~/api/materialized";
+import { Source } from "~/api/materialize/useSources";
+import { ConnectorStatus } from "~/api/materialized";
 
 export type StatusPillProps = BoxProps & {
   status: ConnectorStatus;

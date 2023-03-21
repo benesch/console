@@ -424,13 +424,6 @@ export interface SchemaObject {
   databaseName: string;
 }
 
-export interface Source extends SchemaObject {
-  type: string;
-  size?: string;
-  status?: ConnectorStatus;
-  error?: string;
-}
-
 export function extractData<DataType>(
   data: Results,
   f: (extractor: (colName: string) => any) => DataType
@@ -438,36 +431,6 @@ export function extractData<DataType>(
   const { rows, getColumnByName } = data;
   assert(getColumnByName);
   return rows.map((row) => f((colName) => getColumnByName(row, colName)));
-}
-
-/**
- * Fetches all sources in the current environment
- */
-export function useSources() {
-  const sourceResponse =
-    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
-FROM mz_sources s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
-WHERE s.id LIKE 'u%'
-AND s.type <> 'subsource';`);
-
-  let sources: Source[] | null = null;
-  if (sourceResponse.data) {
-    sources = extractData(sourceResponse.data, (x) => ({
-      id: x("id"),
-      name: x("name"),
-      schemaName: x("schema_name"),
-      databaseName: x("database_name"),
-      type: x("type"),
-      size: x("size"),
-      status: x("status"),
-      error: x("error"),
-    }));
-  }
-
-  return { ...sourceResponse, data: sources };
 }
 
 export interface GroupedError {

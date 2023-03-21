@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { SchemaObject, Source, useSources } from "~/api/materialized";
+import useSources, { Source } from "~/api/materialize/useSources";
+import { SchemaObject } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
