@@ -58,12 +58,12 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 interface SourceListProps {
+  databaseFilter: ReturnType<typeof useDatabaseFilter>;
   sources: Source[] | null;
 }
 
-const SourcesListPage = ({ sources }: SourceListProps) => {
+const SourcesListPage = ({ databaseFilter, sources }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
-  const databaseFilter = useDatabaseFilter();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );

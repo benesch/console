@@ -28,4 +28,6 @@ FROM mz_databases;`
   return { ...response, data: databases };
 }
 
+export type UseDatabaseResponse = ReturnType<typeof useDatabases>;
+
 export default useDatabases;
