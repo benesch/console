@@ -1,4 +1,4 @@
-import { inputAnatomy, selectAnatomy } from "@chakra-ui/anatomy";
+import { inputAnatomy, selectAnatomy, switchAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 import {
   mode,
@@ -193,6 +193,44 @@ export const Select = defineSelectConfig({
   baseStyle: definePartsStyle({
     icon: {
       color: "semanticColors.foreground.secondary",
+    },
+  }),
+});
+
+const {
+  defineMultiStyleConfig: defineSwitchConfig,
+  definePartsStyle: defineSwitchPartsStyle,
+} = createMultiStyleConfigHelpers(switchAnatomy.keys);
+
+export const Switch = defineSwitchConfig({
+  defaultProps: {
+    size: "sm",
+  },
+  baseStyle: defineSwitchPartsStyle({
+    thumb: {
+      backgroundBlendMode: "multiply, normal",
+      background:
+        "radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0) 42.19%, rgba(0, 0, 0, 0.08) 100%), #FFFFFF",
+      shadow:
+        "0px 0px 0.5px rgba(0, 0, 0, 0.40), 0px 0.5px 2px rgba(0, 0, 0, 0.16)",
+      _checked: {
+        background:
+          "radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0) 42.19%, rgba(90, 52, 302, 0.24) 100%), #FFFFFF",
+      },
+    },
+    track: {
+      backgroundColor: "semanticColors.border.secondary",
+      shadow:
+        "inset 0px 0px 0.5px rgba(0, 0, 0, 0.16), inset 0px 0px 2px rgba(0, 0, 0, 0.08)",
+      _checked: {
+        backgroundColor: "semanticColors.accent.brightPurple",
+        shadow:
+          "inset 0px 0px 0.5px rgba(0, 0, 0, 0.16), inset 0px 0px 2px rgba(0, 0, 0, 0.12), 0 0 4px 0 rgba(90, 52, 302, 0.16)",
+      },
+      _focus: {
+        shadow:
+          "0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgba(90, 52, 203, 0.24)",
+      },
     },
   }),
 });
