@@ -11,9 +11,9 @@ const SimpleSelect = (props: SimpleSelectProps) => {
   } = useTheme<MaterializeTheme>();
   return (
     <Select
+      size="sm"
       fontSize="14px"
       lineHeight="16px"
-      height="32px"
       width="auto"
       rounded="8px"
       borderWidth="1px"
