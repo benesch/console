@@ -204,7 +204,12 @@ const ClusterOverview = ({ cluster }: Props) => {
       width="100%"
       minW="460px"
     >
-      <Flex width="100%" justifyContent="space-between" mb="6">
+      <Flex
+        width="100%"
+        alignItems="start"
+        justifyContent="space-between"
+        mb="6"
+      >
         <VStack alignItems="start" gap={0}>
           <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
             Resource Usage
