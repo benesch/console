@@ -20,6 +20,7 @@ import { Source } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
+import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -59,10 +60,15 @@ const sourcesSuggestions: SQLSuggestion[] = [
 
 interface SourceListProps {
   databaseFilter: ReturnType<typeof useDatabaseFilter>;
+  schemaFitler: ReturnType<typeof useSchemaFilter>;
   sources: Source[] | null;
 }
 
-const SourcesListPage = ({ databaseFilter, sources }: SourceListProps) => {
+const SourcesListPage = ({
+  databaseFilter,
+  schemaFitler,
+  sources,
+}: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -78,6 +84,7 @@ const SourcesListPage = ({ databaseFilter, sources }: SourceListProps) => {
         <PageHeading>Sources</PageHeading>
         <HStack>
           <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFitler} />
         </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (

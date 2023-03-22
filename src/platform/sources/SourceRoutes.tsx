@@ -4,6 +4,7 @@ import { Route, useParams } from "react-router-dom";
 import useSources, { Source } from "~/api/materialize/useSources";
 import { SchemaObject } from "~/api/materialized";
 import { useDatabaseFilter } from "~/components/DatabaseFilter";
+import { useSchemaFilter } from "~/components/SchemaFilter";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
@@ -16,6 +17,7 @@ import SourceDetail from "./SourceDetail";
 
 const SourceRoutes = () => {
   const databaseFilter = useDatabaseFilter();
+  const schemaFitler = useSchemaFilter(databaseFilter.selectedDatabase?.id);
   const {
     data: sources,
     loading,
@@ -31,7 +33,11 @@ const SourceRoutes = () => {
         <Route
           path="/"
           element={
-            <SourcesList databaseFilter={databaseFilter} sources={sources} />
+            <SourcesList
+              databaseFilter={databaseFilter}
+              schemaFitler={schemaFitler}
+              sources={sources}
+            />
           }
         />
         <Route

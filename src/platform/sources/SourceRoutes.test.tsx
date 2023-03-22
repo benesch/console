@@ -100,6 +100,22 @@ const validSourcesResponse = rest.post("*/api/sql", async (req, res, ctx) => {
       })
     );
   }
+  if (queries.some((q) => q.query.includes("FROM mz_schemas"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 3",
+            rows: [[1, "public", 1, "materialize"]],
+            col_names: ["id", "name", "database_id", "database_name"],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
   throw new Error("Query not matched");
 });
 
