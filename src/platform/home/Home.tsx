@@ -3,7 +3,7 @@ import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { getCurrentTenant, getTenantMetadata, useAuth } from "~/api/auth";
-import ConnectSteps from "~/platform/home/ConnectSteps";
+import ConnectInstructions from "~/components/ConnectInstructions";
 import GetStartedDocs from "~/platform/home/GetStartedDocs";
 import PasswordStep from "~/platform/home/PasswordStep";
 import StepsWhileLoading from "~/platform/home/StepsWhileLoading";
@@ -80,7 +80,7 @@ const Home = () => {
                 </Heading>
                 <VStack spacing={6} alignItems="stretch" fontSize="sm" w="2xl">
                   <GettingStarted />
-                  <ConnectSteps />
+                  <ConnectInstructions />
                   <PasswordStep />
                   <GetStartedDocs />
                 </VStack>

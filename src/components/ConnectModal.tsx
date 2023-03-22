@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import ConnectSteps from "~/platform/home/ConnectSteps";
+import ConnectInstructions from "~/components/ConnectInstructions";
 import { MaterializeTheme } from "~/theme";
 import useAppPasswords, {
   NEW_USER_DEFAULT_PASSWORD_NAME,
@@ -61,7 +61,7 @@ const ConnectModal = () => {
               or <SupportLink variant="brandColor">Contact Support</SupportLink>
               .
             </Text>
-            <ConnectSteps mt="4" />
+            <ConnectInstructions mt="4" />
             <Box mt="6">
               <CreateAppPassword />
             </Box>
