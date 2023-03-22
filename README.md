@@ -13,9 +13,11 @@ manager, please match those versions.
 
 ```bash
 yarn install
-yarn proxy
+yarn start
 open http://localhost:3000
 ```
+
+This will run Console locally, pointing at our staging cloud resources.
 
 ### Cloud setup
 
