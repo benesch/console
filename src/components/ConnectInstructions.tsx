@@ -10,7 +10,7 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import MonitorIcon from "~/svg/Monitor";
 import TerminalIcon from "~/svg/Terminal";
 
-const ConnectSteps = (props: BoxProps): JSX.Element => {
+const ConnectInstructions = (props: BoxProps): JSX.Element => {
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue(currentEnvironmentState);
   const { clusterName } = useParams<ClusterDetailParams>();
@@ -57,4 +57,4 @@ DATABASE=materialize`,
   );
 };
 
-export default ConnectSteps;
+export default ConnectInstructions;
