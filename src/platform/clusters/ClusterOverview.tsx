@@ -62,6 +62,8 @@ export interface DataPoint {
 
 const graphHeightPx = 300;
 const labelHeightPx = 18;
+// because the data is sampled on 60s intervals, we don't want to show more granular data than this.
+const minBucketSizeMs = 60 * 1000;
 
 const ClusterOverview = ({ cluster }: Props) => {
   const {
@@ -106,9 +108,10 @@ const ClusterOverview = ({ cluster }: Props) => {
     );
   }, [cluster?.replicas, semanticColors.lineGraph]);
 
-  const bucketSizeMs = React.useMemo(() => {
-    return timePeriodMinutes * 1000;
-  }, [timePeriodMinutes]);
+  const bucketSizeMs = React.useMemo(
+    () => Math.max(timePeriodMinutes * 1000, minBucketSizeMs),
+    [timePeriodMinutes]
+  );
 
   const buckets = React.useMemo(() => {
     const startTimestamp = startTime.getTime();
@@ -265,7 +268,6 @@ const ClusterOverview = ({ cluster }: Props) => {
                   timePeriodMinutes={timePeriodMinutes}
                   replicaColorMap={replicaColorMap}
                   replicas={selectedReplicas}
-                  bucketSizeMs={bucketSizeMs}
                 />
               </Box>
             )}
@@ -281,7 +283,6 @@ const ClusterOverview = ({ cluster }: Props) => {
                 timePeriodMinutes={timePeriodMinutes}
                 replicaColorMap={replicaColorMap}
                 replicas={selectedReplicas}
-                bucketSizeMs={bucketSizeMs}
               />
             </Box>
           </>
@@ -291,7 +292,8 @@ const ClusterOverview = ({ cluster }: Props) => {
   );
 };
 
-const ticketSizeDivisor = 8;
+// number of ticks we show on the graph
+const tickCount = 8;
 
 interface UtilizationGraph {
   data: ReplicaData[];
@@ -301,11 +303,9 @@ interface UtilizationGraph {
   replicas: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
-  bucketSizeMs: number;
 }
 
 export const UtilizationGraph = ({
-  bucketSizeMs,
   data,
   dataKey,
   endTime,
@@ -321,10 +321,10 @@ export const UtilizationGraph = ({
   const startTimeMs = startTime.getTime();
   const duration = endTime.getTime() - startTimeMs;
   const tickSlots = Array.from({
-    length: Math.round(duration / bucketSizeMs / ticketSizeDivisor),
+    length: tickCount,
   }) as undefined[];
   const ticks = tickSlots.map(
-    (_, i) => i * bucketSizeMs * ticketSizeDivisor + startTimeMs
+    (_, i) => i * (duration / tickCount) + startTimeMs
   );
   const legendData = React.useMemo(
     () => Array.from(replicaColorMap.entries()),
