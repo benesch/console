@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: 18
           cache: "yarn"
+      - run: docker network create kind
       - uses: helm/kind-action@v1.4.0
         with:
           cluster_name: mzcloud
