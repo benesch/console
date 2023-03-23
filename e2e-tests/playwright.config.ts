@@ -7,7 +7,7 @@ const config: PlaywrightTestConfig = {
     acceptDownloads: true,
     // Actions such as clicks, also waitForSelector calls
     actionTimeout: 5 * 1000, // 3 seconds
-    trace: "retain-on-failure",
+    trace: "on",
   },
   workers: 5,
   fullyParallel: true,

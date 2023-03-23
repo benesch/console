@@ -5,9 +5,6 @@ on:
 jobs:
   lint_and_test:
     runs-on: ubuntu-latest
-    concurrency:
-      group: merge_queue
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -19,6 +16,7 @@ jobs:
       - run: yarn test:unit
 
   e2e-tests:
+    concurrency: merge_queue
     env:
       VERCEL_ORG_ID: team_7XNUzNgdlu2VaDdyOgjNJQKk
       VERCEL_PROJECT_ID: prj_d8fTqXqM9TELZgPDS6YbK8rvCwF9

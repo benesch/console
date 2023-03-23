@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: 18
           cache: "yarn"
+      - run: docker network create kind
       - uses: helm/kind-action@v1.4.0
         with:
           cluster_name: mzcloud
@@ -47,12 +48,16 @@ jobs:
       - name: Kind install
         working-directory: ./cloud
         run: bin/kind-install-all
+      - run: kubectl get crd
       - name: Docker compose up
         working-directory: ./cloud
         env:
           FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
           FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: docker compose up region-controller environment-controller -d --wait
+      - run: docker compose run cli kubectl get crd
+        working-directory: ./cloud
+        if: always()
       - run: yarn install --frozen-lockfile
       - name: Install playwright browsers
         run: yarn playwright install --with-deps
@@ -66,9 +71,15 @@ jobs:
           E2E_FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
           E2E_FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
         run: yarn test:e2e
-      - name: docker ps -a
-        working-directory: ./cloud
-        run: docker ps -a
+      - run: docker ps -a
+        if: always()
+      - run: kubectl config get-contexts
+        if: always()
+      - run: kubectl config current-context
+        if: always()
+      - run: echo $KUBECONFIG
+        if: always()
+      - run: cat ~/.kube/config
         if: always()
       - name: docker compose logs
         working-directory: ./cloud

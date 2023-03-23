@@ -39,7 +39,7 @@ export const ensureLoggedIn = async (page: Page) => {
   // Wait up to two minutes for the page to become available initially, as
   // Webpack can take a while to compile in CI.
   await page.goto(CONSOLE_ADDR, { timeout: 1000 * 60 * 2 });
-  await page.type("[name=email]", EMAIL);
+  await page.type("[name=email]", EMAIL, { timeout: 10_000 }); // Sometimes frontegg is slow to load
   await page.press("[name=email]", "Enter");
   await page.waitForSelector("[name=password]"); // wait for animation
   await page.type("[name=password]", PASSWORD);
