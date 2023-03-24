@@ -635,9 +635,12 @@ WHERE s.id LIKE 'u%';
 type DDLNoun = "SINK" | "SOURCE";
 
 /**
- * Fetches DDL for a noun
+ * Fetches the DDL statement for creating a schema object
  */
-export function useDDL(noun: DDLNoun, objectName?: string) {
+export function useSchemaObjectDDLStatement(
+  noun: DDLNoun,
+  objectName?: string
+) {
   const { data, error, refetch } = useSql(
     objectName
       ? `SHOW CREATE ${noun} ${quoteIdentifier(objectName)}`
