@@ -4,7 +4,7 @@
  */
 
 import { useAuth as useFronteggAuth } from "@frontegg/react";
-import { useLDClient } from "launchdarkly-react-client-sdk";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import React from "react";
 import {
   Navigate,
@@ -27,6 +27,7 @@ import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
 import ClusterRoutes from "~/platform/clusters/ClusterRoutes";
 import Home from "~/platform/home/Home";
+import SecretsList from "~/platform/secrets/SecretsList";
 import SinkRoutes from "~/platform/sinks/SinkRoutes";
 import SourceRoutes from "~/platform/sources/SourceRoutes";
 import { SentryRoutes } from "~/sentry";
@@ -101,6 +102,7 @@ const EnvironmentRoutes = () => {
   const environments = useEnvironmentsWithHealth(user.accessToken);
   assert(params.regionSlug);
   const regionId = regionSlugToNameMap.get(params.regionSlug);
+  const flags = useFlags();
 
   React.useEffect(() => {
     if (!regionId) {
@@ -134,6 +136,10 @@ const EnvironmentRoutes = () => {
       <Route path="/clusters/*" element={<ClusterRoutes />} />
       <Route path="/sources/*" element={<SourceRoutes />} />
       <Route path="/sinks/*" element={<SinkRoutes />} />
+      {/* TODO: Connect Secrets page to route */}
+      {flags["secrets-list-flow-15"] && (
+        <Route path="/secrets" element={<SecretsList />} />
+      )}
       <Route
         path="/*"
         element={

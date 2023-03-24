@@ -717,3 +717,29 @@ AND i.id LIKE 'u%';`
 
   return { ...response, data: indexes };
 }
+
+export interface Secret {
+  id: string;
+  name: string;
+}
+
+/**
+ * Fetches all secrets in the current environment
+ */
+export function useSecrets() {
+  const secretResponse = useSql(`SELECT id, name 
+FROM mz_secrets;
+`);
+  let secrets: Secret[] | null = null;
+  if (secretResponse.data) {
+    const { rows, getColumnByName } = secretResponse.data;
+    assert(getColumnByName);
+
+    secrets = rows.map((row) => ({
+      id: getColumnByName(row, "id"),
+      name: getColumnByName(row, "name"),
+    }));
+  }
+
+  return { ...secretResponse, data: secrets };
+}

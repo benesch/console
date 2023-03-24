@@ -24,6 +24,7 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
@@ -143,6 +144,7 @@ const getNavItems = (regionSlug: string): NavItemType[] => [
   { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
   { label: "Sources", href: `/regions/${regionSlug}/sources` },
   { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
+  { label: "Secrets", href: `/regions/${regionSlug}/secrets` },
   // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
@@ -151,7 +153,14 @@ const getNavItems = (regionSlug: string): NavItemType[] => [
 ];
 
 const NavMenu = (props: BoxProps) => {
+  const flags = useFlags();
   const regionSlug = useRegionSlug();
+
+  let navItems = getNavItems(regionSlug);
+
+  if (!flags["secrets-list-flow-15"]) {
+    navItems = navItems.filter(({ label }) => label !== "Secrets");
+  }
 
   return (
     <VStack
@@ -164,7 +173,7 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {getNavItems(regionSlug).map(({ label, href }) => (
+      {navItems.map(({ label, href }) => (
         <NavItem key={label} label={label} href={href} />
       ))}
     </VStack>
@@ -174,7 +183,14 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
+  const flags = useFlags();
   const regionSlug = useRegionSlug();
+
+  let navItems = getNavItems(regionSlug);
+
+  if (!flags["secrets-list-flow-15"]) {
+    navItems = navItems.filter(({ label }) => label !== "Secrets");
+  }
 
   return (
     <Menu data-test-id="nav-sm">
@@ -189,7 +205,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         {...props}
       />
       <MenuList>
-        {getNavItems(regionSlug).map((item) => (
+        {navItems.map((item) => (
           <MenuItem as={RouterLink} key={item.label} to={item.href}>
             {`${item.label}${item.isInternal ? " (internal)" : ""}`}
           </MenuItem>
