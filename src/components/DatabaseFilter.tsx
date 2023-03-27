@@ -1,7 +1,10 @@
-import { Select } from "@chakra-ui/react";
+import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
+import ReactSelect, { OptionProps } from "react-select";
 
 import useDatabases, { Database } from "~/api/materialize/useDatabases";
+import CheckmarkIcon from "~/svg/CheckmarkIcon";
+import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 import { useQueryStringState } from "~/useQueryString";
 
 export interface DatabaseFilterProps {
@@ -17,23 +20,62 @@ const DatabaseFilter = ({
   selectedDatabase,
   setSelectedDatabase,
 }: DatabaseFilterProps) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  if (!databaseList) return null;
+
+  const options: Database[] = [
+    { id: 0, name: "All Databases" },
+    ...databaseList,
+  ];
   return (
-    <Select
-      variant="borderless"
-      value={selectedDatabase?.id ?? "all"}
-      onChange={(e) => {
-        const id = parseInt(e.target.value);
-        setSelectedDatabase(id);
+    <ReactSelect
+      aria-label="Database filter"
+      components={{ Option: Option }}
+      isMulti={false}
+      isSearchable={false}
+      onChange={(value) => {
+        value && setSelectedDatabase(value.id);
       }}
+      getOptionValue={(option) => option.id.toString()}
+      formatOptionLabel={(data) => data.name}
+      options={options}
+      value={selectedDatabase ?? options[0]}
+      styles={buildReactSelectStyles<Database, false>(semanticColors, {
+        control: (styles) => ({
+          ...styles,
+          width: "160px",
+        }),
+      })}
+    />
+  );
+};
+
+const Option: React.FunctionComponent<
+  React.PropsWithChildren<OptionProps<Database, false>>
+> = (props) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <Box
+      ref={props.innerRef}
+      {...props.innerProps}
+      _hover={{
+        backgroundColor: semanticColors.background.secondary,
+      }}
+      height="32px"
+      pr="4"
+      width="100%"
     >
-      <option value="0">All databases</option>
-      {databaseList &&
-        databaseList.map((database) => (
-          <option key={database.id} value={database.id}>
-            {database.name}
-          </option>
-        ))}
-    </Select>
+      <HStack spacing="0">
+        <Flex justifyContent="center" width="40px">
+          {props.isSelected && <CheckmarkIcon />}
+        </Flex>
+        <Text lineHeight="32px">{props.data.name}</Text>
+      </HStack>
+    </Box>
   );
 };
 
