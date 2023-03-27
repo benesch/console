@@ -8,6 +8,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
   VStack,
@@ -191,7 +192,14 @@ const SourceTable = (props: SourceTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {s.name}
+                <Tooltip
+                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {s.name}
+                </Tooltip>
               </Box>
             </Td>
             <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
