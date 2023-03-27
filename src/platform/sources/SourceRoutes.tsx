@@ -17,7 +17,10 @@ import SourceDetail from "./SourceDetail";
 
 const SourceRoutes = () => {
   const databaseFilter = useDatabaseFilter();
-  const schemaFitler = useSchemaFilter(databaseFilter.selectedDatabase?.id);
+  const schemaFitler = useSchemaFilter(
+    databaseFilter.setSelectedDatabase,
+    databaseFilter.selectedDatabase?.id
+  );
   const {
     data: sources,
     loading,

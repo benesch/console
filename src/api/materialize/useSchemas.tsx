@@ -4,6 +4,7 @@ import { assert } from "~/util";
 export interface Schema {
   id: number;
   name: string;
+  databaseId: number;
   databaseName: string;
 }
 
@@ -12,7 +13,7 @@ export interface Schema {
  */
 function useSchemas(databaseId?: number) {
   const response = useSql(
-    `SELECT s.id, s.name, d.name as database_name
+    `SELECT s.id, s.name, d.id as database_id, d.name as database_name
 FROM mz_schemas s
 JOIN mz_databases d
 ON s.database_id = d.id
@@ -27,6 +28,7 @@ ${databaseId ? `WHERE database_id = ${databaseId}` : ""}
     schemas = rows.map((row) => ({
       id: getColumnByName(row, "id"),
       name: getColumnByName(row, "name"),
+      databaseId: getColumnByName(row, "database_id"),
       databaseName: getColumnByName(row, "database_name"),
     }));
   }

@@ -14,6 +14,7 @@ import { ChakraTheme, extendTheme, Flex } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
+import { GroupBase, mergeStyles, StylesConfig } from "react-select";
 
 import logo from "~/img/wordmark.svg";
 import SignupFooter from "~/layouts/SignupFooter";
@@ -223,6 +224,56 @@ const fronteggTheme: FronteggThemeOptions = {
       placement: "page",
     },
   },
+};
+
+export const buildReactSelectStyles = <
+  Option = unknown,
+  IsMulti extends boolean = boolean,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>(
+  semanticColors: ThemeColors,
+  overrides: StylesConfig<Option, IsMulti, Group> = {}
+): StylesConfig<Option, IsMulti, Group> => {
+  return mergeStyles(
+    {
+      menu: (base) => ({
+        ...base,
+        width: "fit-content",
+        background: semanticColors.background.primary,
+        borderRadius: "8px",
+      }),
+      control: (base, state) => ({
+        ...base,
+        color: semanticColors.foreground.secondary,
+        fontSize: "14px",
+        height: "32px",
+        lineHeight: "16px",
+        borderRadius: "8px",
+        borderWidth: "0",
+        boxShadow: "none",
+        background: state.isFocused ? semanticColors.background.secondary : "",
+      }),
+      dropdownIndicator: (base) => ({
+        ...base,
+        color: semanticColors.foreground.secondary,
+        ":hover": {
+          color: semanticColors.foreground.secondary,
+        },
+      }),
+      input: (base) => ({
+        ...base,
+      }),
+      indicatorSeparator: (base) => ({
+        ...base,
+        display: "none",
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        paddingRight: "0",
+      }),
+    },
+    overrides
+  );
 };
 
 export const getFronteggTheme = (
