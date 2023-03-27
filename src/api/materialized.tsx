@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
@@ -20,6 +20,9 @@ export interface Results {
   rows: Array<any>;
   getColumnByName?: <R, V>(row: R[], name: string) => V;
 }
+
+export type onSuccess = (data?: Results[] | null) => void;
+export type onError = (error?: string) => void;
 
 export interface ExplainTimestampResult {
   determination: {
@@ -56,26 +59,27 @@ export function quoteIdentifier(id: string) {
   return `"${id.replace('"', '""')}"`;
 }
 
+export function genMzIntrospectionSqlRequest(sql?: string) {
+  return sql
+    ? // Run all queries on the `mz_introspection` cluster, as it's
+      // guaranteed to exist. (The `default` cluster may have been dropped
+      // by the user.)
+      {
+        queries: [{ query: sql, params: [] }],
+        cluster: "mz_introspection",
+      }
+    : undefined;
+}
+
 /**
- * A React hook that runs a SQL query against the current environment,
- * in the `mz_introspection` cluster.
- * @params {string[]} queries to execute in the environment.
+ * A React hook that runs a SQL query against the current environment.
+ * Runs all queries on the `mz_introspection` cluster.
+ * @param sql - SQL query string to execute in the environment.
  */
-export function useSql(sql: string | undefined) {
-  const request = useMemo(
-    () =>
-      sql
-        ? // Run all queries on the `mz_introspection` cluster, as it's
-          // guaranteed to exist. (The `default` cluster may have been dropped
-          // by the user.)
-          {
-            queries: [{ query: sql, params: [] }],
-            cluster: "mz_introspection",
-          }
-        : undefined,
-    [sql]
-  );
+export function useSql(sql?: string) {
+  const request = React.useMemo(() => genMzIntrospectionSqlRequest(sql), [sql]);
   const inner = useSqlMany(request);
+
   // The first result is the empty "ok" for the `SET` command;
   // we want the second.
   const data = inner.data ? inner.data[1] : null;
@@ -96,9 +100,27 @@ export interface SqlRequest {
 /**
  * A React hook that runs possibly several SQL queries
  * (in one request) against the current environment.
- * @params {string} sql to execute in the environment coord or current global coord.
+ * @param request - SQL request to execute in the environment coord or current global coord.
  */
-export function useSqlMany(request: SqlRequest | undefined) {
+export function useSqlMany(request?: SqlRequest) {
+  const { abortRequest, runSql, ...inner } = useSqlApiRequest();
+  // If the sql query changes, execute a new query and abort the previous query.
+  useEffect(() => {
+    runSql(request);
+
+    return () => {
+      abortRequest();
+    };
+  }, [request, runSql, abortRequest]);
+
+  return { ...inner, refetch: () => runSql(request) };
+}
+
+/**
+ * A React hook that connects SQL API requests to React's lifecycle.
+ * It keeps track of the state of the request and exposes a handler to execute a SQL query.
+ */
+export function useSqlApiRequest() {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -110,50 +132,54 @@ export function useSqlMany(request: SqlRequest | undefined) {
   const [error, setError] = useState<string | null>(null);
   const defaultError = "Error running query.";
 
-  const runSql = React.useCallback(async () => {
-    if (environment?.state !== "enabled" || !request) {
-      setResults(null);
-      return;
-    }
-
-    controllerRef.current = new AbortController();
-    const timeout = setTimeout(() => controllerRef.current.abort(), 5_000);
-    const requestId = requestIdRef.current;
-    try {
-      setLoading(true);
-      const { results: res, errorMessage } = await executeSql(
-        environment,
-        request,
-        user.accessToken,
-        { signal: controllerRef.current.signal }
-      );
-      if (requestIdRef.current > requestId) {
-        // a new query has been kicked off, ignore these results
+  const runSql = React.useCallback(
+    async (request?: SqlRequest, onSuccess?: onSuccess, onError?: onError) => {
+      if (environment?.state !== "enabled" || !request) {
+        setResults(null);
         return;
       }
-      if (errorMessage) {
-        setResults(null);
-        setError(errorMessage);
-      } else {
-        setResults(res);
-        setError(null);
-      }
-    } catch (err) {
-      console.error(err);
-      setError(defaultError);
-    } finally {
-      clearTimeout(timeout);
-      setLoading(false);
-    }
-  }, [environment, request, user.accessToken]);
 
-  useEffect(() => {
+      controllerRef.current = new AbortController();
+      const timeout = setTimeout(() => controllerRef.current.abort(), 5_000);
+      const requestId = requestIdRef.current;
+      try {
+        setLoading(true);
+        const { results: res, errorMessage } = await executeSql(
+          environment,
+          request,
+          user.accessToken,
+          { signal: controllerRef.current.signal }
+        );
+        if (requestIdRef.current > requestId) {
+          // a new query has been kicked off, ignore these results
+          return;
+        }
+        if (errorMessage) {
+          onError?.(errorMessage);
+          setResults(null);
+          setError(errorMessage);
+        } else {
+          onSuccess?.(res);
+          setResults(res);
+          setError(null);
+        }
+      } catch (err) {
+        console.error(err);
+        setError(defaultError);
+      } finally {
+        clearTimeout(timeout);
+        setLoading(false);
+      }
+    },
+    [environment, user.accessToken]
+  );
+
+  const abortRequest = React.useCallback(() => {
     requestIdRef.current += 1;
     controllerRef.current.abort();
-    runSql();
-  }, [runSql]);
+  }, []);
 
-  return { data: results, error, loading, refetch: runSql };
+  return { data: results, error, loading, runSql, abortRequest };
 }
 
 interface ExecuteSqlOutput {
