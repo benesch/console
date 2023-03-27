@@ -211,15 +211,9 @@ const ClusterOverview = ({ cluster }: Props) => {
         justifyContent="space-between"
         mb="6"
       >
-        <VStack alignItems="start" gap={0}>
-          <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
-            Resource Usage
-          </Text>
-          <Text fontSize="sm" lineHeight="20px" maxW="55ch">
-            Resource usage metrics are an approximations, calculated as a
-            percentage of each replica&apos;s total resource allocation.
-          </Text>
-        </VStack>
+        <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
+          Resource Usage
+        </Text>
         <HStack>
           {cluster && (
             <LabeledSelect
