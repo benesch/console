@@ -140,7 +140,7 @@ export const useSqlWs = () => {
 };
 
 export interface ReplicaUtilization {
-  id: number;
+  id: string;
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
@@ -150,7 +150,7 @@ export const useClusterUtilization = (
   clusterId: string | undefined,
   startTime: Date,
   endTime: Date,
-  replicaId?: number
+  replicaId?: string
 ) => {
   const [data, setData] = React.useState<ReplicaUtilization[] | null>(null);
   const [isStale, setIsStale] = React.useState(false);
@@ -230,10 +230,12 @@ ${replicaId ? `AND r.id = ${replicaId}` : ""}`;
           // If querySent is false, it means we are still getting results from a previous query,
           // but we ignore them, since the user has already changed the time period
           const mzdiff = result.payload[1] as number;
+          // TODO Make this just `string` once Materialize 0.49 is released.
+          const id = result.payload[2] as number | string;
           // ignore retractions
           if (mzdiff === 1) {
             const utilization: ReplicaUtilization = {
-              id: result.payload[2] as number,
+              id: id.toString(),
               timestamp: parseInt(result.payload[0] as string),
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,

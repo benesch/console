@@ -252,7 +252,7 @@ export interface Cluster {
 }
 
 export interface Replica {
-  id: number;
+  id: string;
   name: string;
   size: string;
   clusterName: string;
@@ -281,8 +281,10 @@ export function useClusters() {
     response.data.rows.forEach((row) => {
       const clusterId = getColumnByName(row, "cluster_id") as string;
       const clusterName = getColumnByName(row, "cluster_name") as string;
+      // TODO Make this just `string` once Materialize 0.49 is released.
+      const replicaId = getColumnByName(row, "id") as number | string;
       const replica: Replica = {
-        id: getColumnByName(row, "id") as number,
+        id: replicaId.toString(),
         name: getColumnByName(row, "replica_name") as string,
         size: getColumnByName(row, "size") as string,
         clusterName: clusterName,
@@ -309,7 +311,7 @@ export function useClusters() {
 export type ClusterResponse = ReturnType<typeof useClusters>;
 
 export interface ClusterReplicaWithUtilizaton {
-  id: number;
+  id: string;
   name: string;
   size: string;
   memoryPercent?: number;
@@ -336,8 +338,10 @@ ORDER BY r.id;`
     assert(getColumnByName);
 
     data = response.data.rows.map((row) => {
+      // TODO Make this just `string` once Materialize 0.49 is released.
+      const replica_id = getColumnByName(row, "id") as number | string;
       const replica: ClusterReplicaWithUtilizaton = {
-        id: getColumnByName(row, "id") as number,
+        id: replica_id.toString(),
         name: getColumnByName(row, "replica_name") as string,
         size: getColumnByName(row, "size") as string,
         memoryPercent: getColumnByName(row, "memory_percent") as number,

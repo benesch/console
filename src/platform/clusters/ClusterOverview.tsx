@@ -46,12 +46,12 @@ export interface Props {
 }
 
 export interface ReplicaData {
-  id: number;
+  id: string;
   data: DataPoint[];
 }
 
 export interface DataPoint {
-  id: number;
+  id: string;
   name: string;
   size: string;
   timestamp: number;
@@ -82,7 +82,7 @@ const ClusterOverview = ({ cluster }: Props) => {
     cluster?.id,
     startTime,
     endTime,
-    selectedReplica === "all" ? undefined : parseInt(selectedReplica)
+    selectedReplica === "all" ? undefined : selectedReplica
   );
 
   const selectedReplicas = React.useMemo(() => {
@@ -91,9 +91,7 @@ const ClusterOverview = ({ cluster }: Props) => {
     if (selectedReplica === "all") {
       return cluster.replicas;
     }
-    const replica = cluster.replicas.find(
-      (r) => r.id === parseInt(selectedReplica)
-    );
+    const replica = cluster.replicas.find((r) => r.id === selectedReplica);
     if (!replica) {
       return cluster.replicas;
     }
@@ -125,7 +123,7 @@ const ClusterOverview = ({ cluster }: Props) => {
     return result;
   }, [bucketSizeMs, endTime, startTime]);
 
-  type ReplicaId = number;
+  type ReplicaId = string;
   type Timestamp = number;
   type ReplicaMap = Map<ReplicaId, ReplicaUtilization[]>;
 
@@ -299,7 +297,7 @@ interface UtilizationGraph {
   data: ReplicaData[];
   dataKey: string;
   endTime: Date;
-  replicaColorMap: Map<number, { name: string; color: string }>;
+  replicaColorMap: Map<string, { name: string; color: string }>;
   replicas: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
