@@ -86,6 +86,33 @@ export function useSql(sql?: string) {
   return { ...inner, data };
 }
 
+/**
+ * A React hook that exposes a handler to run a SQL query against the current environment.
+ * @param queryBuilder - A function that takes variables and outputs an SQL query string
+ */
+export function useSqlLazy<TVariables>({
+  queryBuilder,
+  onSuccess,
+  onError,
+}: {
+  queryBuilder: (variables: TVariables) => string;
+  onSuccess?: onSuccess;
+  onError?: onError;
+}) {
+  const { runSql: runSqlInner, data, error, loading } = useSqlApiRequest();
+
+  const runSql = React.useCallback(
+    (variables: TVariables) => {
+      const sql = queryBuilder(variables);
+      const request = genMzIntrospectionSqlRequest(sql);
+      runSqlInner(request, onSuccess, onError);
+    },
+    [queryBuilder, runSqlInner, onSuccess, onError]
+  );
+
+  return { data, error, loading, runSql };
+}
+
 export interface SqlStatement {
   query: string;
   params: (string | null)[];
