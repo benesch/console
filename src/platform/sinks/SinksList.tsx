@@ -1,6 +1,7 @@
 import {
   Box,
   HStack,
+  Input,
   Spinner,
   Table,
   Tbody,
@@ -65,12 +66,17 @@ const sinkSuggestions: SQLSuggestion[] = [
 
 interface SinkListProps {
   databaseFilter: ReturnType<typeof useDatabaseFilter>;
+  nameFilter: {
+    sinkName: string | undefined;
+    setSinkName: (val: string | undefined) => void;
+  };
   schemaFitler: ReturnType<typeof useSchemaFilter>;
   sinks: Sink[] | null;
 }
 
 const SinksListPage = ({
   databaseFilter,
+  nameFilter,
   schemaFitler,
   sinks,
 }: SinkListProps) => {
@@ -90,6 +96,13 @@ const SinksListPage = ({
         <HStack>
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFitler} />
+          <Input
+            name="source"
+            value={nameFilter.sinkName}
+            onChange={(e) => {
+              nameFilter.setSinkName(e.target.value);
+            }}
+          />
         </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (

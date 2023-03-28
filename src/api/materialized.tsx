@@ -613,7 +613,8 @@ export interface Sink extends SchemaObject {
 export function useSinks({
   databaseId,
   schemaId,
-}: { databaseId?: number; schemaId?: number } = {}) {
+  nameFilter,
+}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
   const sinkResponse =
     useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sinks s
@@ -623,7 +624,8 @@ LEFT OUTER JOIN mz_internal.mz_sink_statuses st
 ON st.id = s.id
 WHERE s.id LIKE 'u%'
 ${databaseId ? `AND d.id = ${databaseId}` : ""}
-${schemaId ? `AND sc.id = ${schemaId}` : ""};`);
+${schemaId ? `AND sc.id = ${schemaId}` : ""}
+${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
   let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
     sinks = extractData(sinkResponse.data, (x) => ({

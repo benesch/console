@@ -7,6 +7,7 @@ import { useSchemaFilter } from "~/components/SchemaFilter";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
+import { useQueryStringState } from "~/useQueryString";
 
 import {
   objectOrRedirect,
@@ -19,11 +20,16 @@ export type ClusterDetailParams = {
   clusterName: string;
 };
 
+const sinkNameFilterQueryStringKey = "nameFilter";
+
 const SinkRoutes = () => {
   const databaseFilter = useDatabaseFilter();
   const schemaFitler = useSchemaFilter(
     databaseFilter.setSelectedDatabase,
     databaseFilter.selectedDatabase?.id
+  );
+  const [sinkName, setSinkName] = useQueryStringState(
+    sinkNameFilterQueryStringKey
   );
   const {
     data: sinks,
@@ -32,6 +38,7 @@ const SinkRoutes = () => {
   } = useSinks({
     databaseId: databaseFilter.selectedDatabase?.id,
     schemaId: schemaFitler.selectedSchema?.id,
+    nameFilter: sinkName,
   });
   useForegroundInterval(() => !loading && refetch());
   return (
@@ -42,6 +49,7 @@ const SinkRoutes = () => {
           <SinksList
             databaseFilter={databaseFilter}
             schemaFitler={schemaFitler}
+            nameFilter={{ sinkName, setSinkName }}
             sinks={sinks}
           />
         }
