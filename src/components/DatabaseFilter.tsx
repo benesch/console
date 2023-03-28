@@ -1,6 +1,11 @@
 import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, { OptionProps } from "react-select";
+import { HashRouter } from "react-router-dom";
+import ReactSelect, {
+  MenuListProps,
+  MenuProps,
+  OptionProps,
+} from "react-select";
 
 import useDatabases, { Database } from "~/api/materialize/useDatabases";
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
@@ -32,7 +37,7 @@ const DatabaseFilter = ({
   return (
     <ReactSelect
       aria-label="Database filter"
-      components={{ Option: Option }}
+      components={{ Option: Option, MenuList: MenuList }}
       isMulti={false}
       isSearchable={false}
       onChange={(value) => {
@@ -45,10 +50,33 @@ const DatabaseFilter = ({
       styles={buildReactSelectStyles<Database, false>(semanticColors, {
         control: (styles) => ({
           ...styles,
-          width: "160px",
         }),
       })}
     />
+  );
+};
+
+const MenuList: React.FunctionComponent<
+  React.PropsWithChildren<MenuListProps<Database, false>>
+> = (props) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <Box ref={props.innerRef} {...props.innerProps} py="4px">
+      <HStack px="16px" py="8px">
+        <Text
+          fontSize="14px"
+          lineHeight="16px"
+          fontWeight="500"
+          color={semanticColors.foreground.tertiary}
+          overflow="hidden"
+        >
+          Filter by database
+        </Text>
+      </HStack>
+      {props.children}
+    </Box>
   );
 };
 
@@ -65,15 +93,19 @@ const Option: React.FunctionComponent<
       _hover={{
         backgroundColor: semanticColors.background.secondary,
       }}
-      height="32px"
+      py="8px"
       pr="4"
       width="100%"
     >
-      <HStack spacing="0">
+      <HStack spacing="0" alignItems="center" justifyContent="start">
         <Flex justifyContent="center" width="40px">
-          {props.isSelected && <CheckmarkIcon />}
+          {props.isSelected && (
+            <CheckmarkIcon color={semanticColors.accent.brightPurple} />
+          )}
         </Flex>
-        <Text lineHeight="32px">{props.data.name}</Text>
+        <Text fontSize="14px" lineHeight="16px" userSelect="none">
+          {props.data.name}
+        </Text>
       </HStack>
     </Box>
   );

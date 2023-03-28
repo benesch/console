@@ -1,6 +1,6 @@
 import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, { OptionProps } from "react-select";
+import ReactSelect, { MenuListProps, OptionProps } from "react-select";
 
 import useSchemas, { Schema } from "~/api/materialize/useSchemas";
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
@@ -35,7 +35,7 @@ const SchemaFilter = ({
   return (
     <ReactSelect
       aria-label="Schema filter"
-      components={{ Option: Option }}
+      components={{ Option: Option, MenuList: MenuList }}
       isMulti={false}
       isSearchable={false}
       onChange={(value) => {
@@ -55,6 +55,29 @@ const SchemaFilter = ({
   );
 };
 
+const MenuList: React.FunctionComponent<
+  React.PropsWithChildren<MenuListProps<Schema, false>>
+> = (props) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <Box ref={props.innerRef} {...props.innerProps} py="4px">
+      <HStack px="16px" py="8px">
+        <Text
+          fontSize="14px"
+          lineHeight="16px"
+          fontWeight="500"
+          color={semanticColors.foreground.tertiary}
+        >
+          Filter by schema
+        </Text>
+      </HStack>
+      {props.children}
+    </Box>
+  );
+};
+
 const Option: React.FunctionComponent<
   React.PropsWithChildren<OptionProps<Schema, false>>
 > = (props) => {
@@ -68,21 +91,30 @@ const Option: React.FunctionComponent<
       _hover={{
         backgroundColor: semanticColors.background.secondary,
       }}
-      height="32px"
+      py="8px"
       pr="4"
       width="100%"
     >
-      <HStack spacing="0">
+      <HStack spacing="0" alignItems="center" justifyContent="start">
         <Flex justifyContent="center" width="40px">
-          {props.isSelected && <CheckmarkIcon />}
+          {props.isSelected && (
+            <CheckmarkIcon color={semanticColors.accent.brightPurple} />
+          )}
         </Flex>
         {props.data.databaseName && (
-          <Text color={semanticColors.foreground.secondary} as="span">
+          <Text
+            color={semanticColors.foreground.secondary}
+            fontSize="14px"
+            lineHeight="16px"
+            userSelect="none"
+            as="span"
+          >
             {props.data.databaseName}.
           </Text>
         )}
-
-        <Text as="span">{props.data.name}</Text>
+        <Text as="span" fontSize="14px" lineHeight="16px">
+          {props.data.name}
+        </Text>
       </HStack>
     </Box>
   );

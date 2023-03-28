@@ -242,15 +242,22 @@ export const buildReactSelectStyles = <
   Group extends GroupBase<Option> = GroupBase<Option>
 >(
   semanticColors: ThemeColors,
+  shadows: ThemeShadows,
   overrides: StylesConfig<Option, IsMulti, Group> = {}
 ): StylesConfig<Option, IsMulti, Group> => {
   return mergeStyles(
     {
       menu: (base) => ({
         ...base,
+        position: "absolute",
+        left: "-8px",
+        minWidth: "220px",
         width: "fit-content",
         background: semanticColors.background.primary,
+        border: "none",
+        shadow: shadows.level4,
         borderRadius: "8px",
+        overflow: "hidden",
       }),
       control: (base, state) => ({
         ...base,
@@ -269,6 +276,11 @@ export const buildReactSelectStyles = <
         ":hover": {
           color: semanticColors.foreground.secondary,
         },
+      }),
+      option: (base, state) => ({
+        ...base,
+        userSelect: "none",
+        cursor: "pointer",
       }),
       input: (base) => ({
         ...base,
