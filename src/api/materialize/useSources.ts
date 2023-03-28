@@ -14,7 +14,8 @@ export interface Source extends SchemaObject {
 function useSources({
   databaseId,
   schemaId,
-}: { databaseId?: number; schemaId?: number } = {}) {
+  nameFilter,
+}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
   const sourceResponse =
     useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sources s
@@ -24,7 +25,8 @@ LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
 WHERE s.id LIKE 'u%'
 AND s.type <> 'subsource'
 ${databaseId ? `AND d.id = ${databaseId}` : ""}
-${schemaId ? `AND sc.id = ${schemaId}` : ""};`);
+${schemaId ? `AND sc.id = ${schemaId}` : ""}
+${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
 
   let sources: Source[] | null = null;
   if (sourceResponse.data) {

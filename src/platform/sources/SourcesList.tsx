@@ -1,6 +1,7 @@
 import {
   Box,
   HStack,
+  Input,
   Spinner,
   Table,
   Tbody,
@@ -61,12 +62,17 @@ const sourcesSuggestions: SQLSuggestion[] = [
 
 interface SourceListProps {
   databaseFilter: ReturnType<typeof useDatabaseFilter>;
+  nameFilter: {
+    sourceName: string | undefined;
+    setSourceName: (val: string | undefined) => void;
+  };
   schemaFitler: ReturnType<typeof useSchemaFilter>;
   sources: Source[] | null;
 }
 
 const SourcesListPage = ({
   databaseFilter,
+  nameFilter,
   schemaFitler,
   sources,
 }: SourceListProps) => {
@@ -86,6 +92,13 @@ const SourcesListPage = ({
         <HStack>
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFitler} />
+          <Input
+            name="source"
+            value={nameFilter.sourceName}
+            onChange={(e) => {
+              nameFilter.setSourceName(e.target.value);
+            }}
+          />
         </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (

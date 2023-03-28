@@ -8,6 +8,7 @@ import { useSchemaFilter } from "~/components/SchemaFilter";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
+import { useQueryStringState } from "~/useQueryString";
 
 import {
   objectOrRedirect,
@@ -15,11 +16,16 @@ import {
 } from "../schemaObjectRouteHelpers";
 import SourceDetail from "./SourceDetail";
 
+const sourceNameFilterQueryStringKey = "nameFilter";
+
 const SourceRoutes = () => {
   const databaseFilter = useDatabaseFilter();
   const schemaFitler = useSchemaFilter(
     databaseFilter.setSelectedDatabase,
     databaseFilter.selectedDatabase?.id
+  );
+  const [sourceName, setSourceName] = useQueryStringState(
+    sourceNameFilterQueryStringKey
   );
   const {
     data: sources,
@@ -28,6 +34,7 @@ const SourceRoutes = () => {
   } = useSources({
     databaseId: databaseFilter.selectedDatabase?.id,
     schemaId: schemaFitler.selectedSchema?.id,
+    nameFilter: sourceName,
   });
   useForegroundInterval(() => !loading && refetch());
 
@@ -40,6 +47,7 @@ const SourceRoutes = () => {
             <SourcesList
               databaseFilter={databaseFilter}
               schemaFitler={schemaFitler}
+              nameFilter={{ sourceName, setSourceName }}
               sources={sources}
             />
           }
