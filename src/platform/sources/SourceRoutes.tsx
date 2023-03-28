@@ -27,6 +27,7 @@ const SourceRoutes = () => {
     refetch,
   } = useSources({
     databaseId: databaseFilter.selectedDatabase?.id,
+    schemaId: schemaFitler.selectedSchema?.id,
   });
   useForegroundInterval(() => !loading && refetch());
 
