@@ -1,7 +1,6 @@
 import {
   Box,
   HStack,
-  Input,
   Spinner,
   Table,
   Tbody,
@@ -23,6 +22,7 @@ import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
 import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -96,8 +96,8 @@ const SinksListPage = ({
         <HStack>
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFitler} />
-          <Input
-            name="source"
+          <SearchInput
+            name="sink"
             value={nameFilter.sinkName}
             onChange={(e) => {
               nameFilter.setSinkName(e.target.value);

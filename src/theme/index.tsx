@@ -192,12 +192,22 @@ export const darkTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: darkColors,
   },
+  semanticTokens: {
+    colors: {
+      "chakra-placeholder-color": darkColors.foreground.secondary,
+    },
+  },
   shadows: darkShadows,
 });
 
 export const lightTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: lightColors,
+  },
+  semanticTokens: {
+    colors: {
+      "chakra-placeholder-color": lightColors.foreground.secondary,
+    },
   },
   shadows: lightShadows,
 });
