@@ -111,12 +111,20 @@ export const useSqlWs = () => {
       ws = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
+      // Options to provide on startup of the WebSocket, each value will be applied as a session
+      // variable.
+      const options = {
+        // Note: this needs to be kept in sync with `ApplicationNameHint` in the materialize repo
+        application_name: "web_console",
+      };
+
       setSocketError(null);
       ws.addEventListener("message", handleMessage);
       ws.onopen = function () {
         ws.send(
           JSON.stringify({
             token: accessToken,
+            options,
           })
         );
       };
