@@ -2,7 +2,7 @@ import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { Sink, useDDL } from "~/api/materialized";
+import { Sink, useSchemaObjectDDLStatement } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
@@ -25,7 +25,7 @@ export interface SinkDetailProps {
 
 const SinkDetail = ({ sink }: SinkDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const { ddl } = useDDL("SINK", sink?.name);
+  const { ddl } = useSchemaObjectDDLStatement("SINK", sink?.name);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
     () => [{ title: "Sinks", href: ".." }, { title: params.objectName ?? "" }],
