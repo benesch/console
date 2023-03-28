@@ -2,6 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
 
+import { SqlRequest } from "~/api/materialized";
 import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
@@ -45,41 +46,77 @@ const emptySinksResponse = rest.post("*/api/sql", (_req, res, ctx) => {
   );
 });
 
-const validSinksResponse = rest.post("*/api/sql", (_req, res, ctx) => {
-  return res(
-    ctx.status(200),
-    ctx.json({
-      results: [
-        { ok: "SET", notices: [] },
-        {
-          tag: "SELECT 1",
-          rows: [
-            [
-              "u7",
-              "default",
-              "public",
-              "json_sink",
-              "kafka",
-              "xsmall",
-              "running",
-              null,
+const validSinksResponse = rest.post("*/api/sql", async (req, res, ctx) => {
+  const { queries } = (await req.json()) as SqlRequest;
+  if (queries.some((q) => q.query.includes("FROM mz_sinks"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 1",
+            rows: [
+              [
+                "u7",
+                "default",
+                "public",
+                "json_sink",
+                "kafka",
+                "xsmall",
+                "running",
+                null,
+              ],
             ],
-          ],
-          col_names: [
-            "id",
-            "database_name",
-            "schema_name",
-            "name",
-            "type",
-            "size",
-            "status",
-            "error",
-          ],
-          notices: [],
-        },
-      ],
-    })
-  );
+            col_names: [
+              "id",
+              "database_name",
+              "schema_name",
+              "name",
+              "type",
+              "size",
+              "status",
+              "error",
+            ],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
+  if (queries.some((q) => q.query.includes("FROM mz_databases"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 2",
+            rows: [[1, "materialize"]],
+            col_names: ["id", "name"],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
+  if (queries.some((q) => q.query.includes("FROM mz_schemas"))) {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        results: [
+          { ok: "SET", notices: [] },
+          {
+            tag: "SELECT 3",
+            rows: [[1, "public", 1, "materialize"]],
+            col_names: ["id", "name", "database_id", "database_name"],
+            notices: [],
+          },
+        ],
+      })
+    );
+  }
+  throw new Error("Query not matched");
 });
 
 describe("SinkRoutes", () => {

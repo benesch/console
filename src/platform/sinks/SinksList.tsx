@@ -20,6 +20,8 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Sink } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
+import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -62,10 +64,16 @@ const sinkSuggestions: SQLSuggestion[] = [
 ];
 
 interface SinkListProps {
+  databaseFilter: ReturnType<typeof useDatabaseFilter>;
+  schemaFitler: ReturnType<typeof useSchemaFilter>;
   sinks: Sink[] | null;
 }
 
-const SinksListPage = ({ sinks }: SinkListProps) => {
+const SinksListPage = ({
+  databaseFilter,
+  schemaFitler,
+  sinks,
+}: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -79,6 +87,10 @@ const SinksListPage = ({ sinks }: SinkListProps) => {
     <>
       <PageHeader>
         <PageHeading>Sinks</PageHeading>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFitler} />
+        </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />

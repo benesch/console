@@ -2,6 +2,8 @@ import React from "react";
 import { Route, useParams } from "react-router-dom";
 
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
+import { useDatabaseFilter } from "~/components/DatabaseFilter";
+import { useSchemaFilter } from "~/components/SchemaFilter";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
@@ -18,11 +20,32 @@ export type ClusterDetailParams = {
 };
 
 const SinkRoutes = () => {
-  const { data: sinks, loading, refetch } = useSinks();
+  const databaseFilter = useDatabaseFilter();
+  const schemaFitler = useSchemaFilter(
+    databaseFilter.setSelectedDatabase,
+    databaseFilter.selectedDatabase?.id
+  );
+  const {
+    data: sinks,
+    loading,
+    refetch,
+  } = useSinks({
+    databaseId: databaseFilter.selectedDatabase?.id,
+    schemaId: schemaFitler.selectedSchema?.id,
+  });
   useForegroundInterval(() => !loading && refetch());
   return (
     <SentryRoutes>
-      <Route path="/" element={<SinksList sinks={sinks} />} />
+      <Route
+        path="/"
+        element={
+          <SinksList
+            databaseFilter={databaseFilter}
+            schemaFitler={schemaFitler}
+            sinks={sinks}
+          />
+        }
+      />
       <Route
         path=":id/:databaseName/:schemaName/:objectName/*"
         element={<SinkOrRedirect sinks={sinks} />}
