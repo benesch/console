@@ -13,8 +13,8 @@ import {
 import SourceDetail from "./SourceDetail";
 
 const SourceRoutes = () => {
-  const { data: sources, refetch } = useSources();
-  useForegroundInterval(refetch);
+  const { data: sources, loading, refetch } = useSources();
+  useForegroundInterval(() => !loading && refetch());
 
   return (
     <>

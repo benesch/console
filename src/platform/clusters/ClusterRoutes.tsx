@@ -14,7 +14,9 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const clusterResponse = useClusters();
-  useForegroundInterval(clusterResponse.refetch);
+  useForegroundInterval(
+    () => !clusterResponse.loading && clusterResponse.refetch()
+  );
 
   return (
     <SentryRoutes>

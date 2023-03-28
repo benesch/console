@@ -186,6 +186,10 @@ export const environmentsWithHealth = atom<EnvironmentsWithHealth | undefined>({
 let pendingEnvironmentsWithHealth: Promise<EnvironmentsWithHealth> | undefined;
 // Ensure only a single instance of useEnvironmentsWithHealth will poll
 let isPollingEnvironmentHealth = false;
+/**
+ * True while requests for health are in flight
+ */
+let isUpdatingEnvironmentHealth = false;
 
 export const useEnvironmentsWithHealth = (
   accessToken: string,
@@ -234,7 +238,11 @@ export const useEnvironmentsWithHealth = (
   }, [options.intervalMs, pollingInterval]);
 
   useForegroundInterval(async () => {
-    updateValue(await fetchEnvironmentsWithHealth(accessToken));
+    if (!isUpdatingEnvironmentHealth) {
+      isUpdatingEnvironmentHealth = true;
+      updateValue(await fetchEnvironmentsWithHealth(accessToken));
+      isUpdatingEnvironmentHealth = false;
+    }
   }, pollingInterval);
   if (environmentMap) {
     return environmentMap;
