@@ -89,9 +89,11 @@ const SourcesListPage = ({
     <>
       <PageHeader>
         <PageHeading>Sources</PageHeading>
-        <HStack>
-          <DatabaseFilter {...databaseFilter} />
-          <SchemaFilter {...schemaFitler} />
+        <HStack gap="16px">
+          <HStack gap="0px">
+            <DatabaseFilter {...databaseFilter} />
+            <SchemaFilter {...schemaFitler} />
+          </HStack>
           <SearchInput
             name="source"
             value={nameFilter.sourceName}

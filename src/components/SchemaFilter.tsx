@@ -1,6 +1,10 @@
 import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, { MenuListProps, OptionProps } from "react-select";
+import ReactSelect, {
+  DropdownIndicatorProps,
+  MenuListProps,
+  OptionProps,
+} from "react-select";
 
 import useSchemas, { Schema } from "~/api/materialize/useSchemas";
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
@@ -24,6 +28,7 @@ const SchemaFilter = ({
 }: SchemaFilterProps) => {
   const {
     colors: { semanticColors },
+    shadows,
   } = useTheme<MaterializeTheme>();
   if (!schemaList) return null;
 
@@ -35,7 +40,11 @@ const SchemaFilter = ({
   return (
     <ReactSelect
       aria-label="Schema filter"
-      components={{ Option: Option, MenuList: MenuList }}
+      components={{
+        Option: Option,
+        MenuList: MenuList,
+        DropdownIndicator: DropdownIndicator,
+      }}
       isMulti={false}
       isSearchable={false}
       onChange={(value) => {
@@ -45,13 +54,36 @@ const SchemaFilter = ({
       formatOptionLabel={(data) => data.name}
       options={options}
       value={selectedSchema ?? options[0]}
-      styles={buildReactSelectStyles<Schema, false>(semanticColors, {
-        control: (styles) => ({
-          ...styles,
-          width: "130px",
-        }),
-      })}
+      styles={buildReactSelectStyles<Schema, false>(
+        semanticColors,
+        shadows,
+        {}
+      )}
     />
+  );
+};
+
+const DropdownIndicator: React.FunctionComponent<
+  React.PropsWithChildren<DropdownIndicatorProps<Schema, false>>
+> = (props) => {
+  return (
+    <Box pr="4px">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 6L8 10L12 6"
+          stroke="#66626A"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </Box>
   );
 };
 
@@ -96,7 +128,7 @@ const Option: React.FunctionComponent<
       width="100%"
     >
       <HStack spacing="0" alignItems="center" justifyContent="start">
-        <Flex justifyContent="center" width="40px">
+        <Flex justifyContent="center" alignItems="center" width="40px">
           {props.isSelected && (
             <CheckmarkIcon color={semanticColors.accent.brightPurple} />
           )}
