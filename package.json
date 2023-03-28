@@ -14,12 +14,9 @@
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",
-    "pyright": "pyright",
     "typecheck": " tsc",
     "gen:api": "cd ../cloud/api && openapi-typescript '*.yml' --output ../../src/api/schemas/",
-    "gen:sourcemap": " NODE_ENV=production SOURCE_MAPS=true GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts",
-    "dev:mock:prometheus": "python bin/prometheus-mock-server.py",
-    "concurrently": "concurrently"
+    "gen:sourcemap": " NODE_ENV=production SOURCE_MAPS=true GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.14",
@@ -102,7 +99,6 @@
     "@typescript-eslint/parser": "^5.48.1",
     "babel-loader": "^9.1.0",
     "cacheable-lookup": "6.0.4",
-    "concurrently": "7.6.0",
     "core-js": "^3.26.1",
     "debug": "^4.3.4",
     "eslint": "^8.23.0",
@@ -122,7 +118,6 @@
     "openapi-typescript": "^6.1.0",
     "pg": "^8.8.0",
     "prettier": "^2.8.3",
-    "pyright": "1.1.278",
     "react-refresh": "^0.11.0",
     "ts-jest": "^27.1.0",
     "typescript-eslint-language-service": "^5.0.0",
