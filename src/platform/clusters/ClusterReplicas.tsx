@@ -69,10 +69,12 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     currentEnvironmentState
   );
   const { clusterName } = useParams<ClusterDetailParams>();
-  const { data: replicas, refetch } = useClusterReplicasWithUtilization(
-    cluster?.id
-  );
-  useForegroundInterval(refetch);
+  const {
+    loading,
+    data: replicas,
+    refetch,
+  } = useClusterReplicasWithUtilization(cluster?.id);
+  useForegroundInterval(() => !loading && refetch());
 
   const isDisabled =
     !currentEnvironmentState || currentEnvironment?.state !== "enabled";

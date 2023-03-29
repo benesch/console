@@ -18,8 +18,8 @@ export type ClusterDetailParams = {
 };
 
 const SinkRoutes = () => {
-  const { data: sinks, refetch } = useSinks();
-  useForegroundInterval(refetch);
+  const { data: sinks, loading, refetch } = useSinks();
+  useForegroundInterval(() => !loading && refetch());
   return (
     <SentryRoutes>
       <Route path="/" element={<SinksList sinks={sinks} />} />
