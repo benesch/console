@@ -12,7 +12,8 @@ export interface Database {
 function useDatabases() {
   const response = useSql(
     `SELECT id, name
-FROM mz_databases;`
+FROM mz_databases
+ORDER BY name;`
   );
   let databases: Database[] | null = null;
   if (response.data) {

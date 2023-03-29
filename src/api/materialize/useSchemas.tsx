@@ -18,7 +18,7 @@ FROM mz_schemas s
 JOIN mz_databases d
 ON s.database_id = d.id
 ${databaseId ? `WHERE database_id = ${databaseId}` : ""}
-    ;`
+ORDER BY s.name;`
   );
   let schemas: Schema[] | null = null;
   if (response.data) {
