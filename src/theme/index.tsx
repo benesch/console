@@ -282,7 +282,17 @@ export const buildReactSelectStyles = <
           color: semanticColors.foreground.secondary,
         },
       }),
-      option: (base, state) => ({
+      groupHeading: (base) => ({
+        ...base,
+        color: semanticColors.foreground.tertiary,
+        fontSize: "14px",
+        fontWeight: "500",
+        lineHeight: "16px",
+        overflow: "hidden",
+        padding: "0 16px",
+        textTransform: "none",
+      }),
+      option: (base) => ({
         ...base,
         userSelect: "none",
         cursor: "pointer",

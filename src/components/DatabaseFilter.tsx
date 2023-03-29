@@ -1,13 +1,9 @@
-import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
+import { useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, {
-  DropdownIndicatorProps,
-  MenuListProps,
-  OptionProps,
-} from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
 
 import useDatabases, { Database } from "~/api/materialize/useDatabases";
-import CheckmarkIcon from "~/svg/CheckmarkIcon";
+import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 import { useQueryStringState } from "~/useQueryString";
 
@@ -30,17 +26,18 @@ const DatabaseFilter = ({
   } = useTheme<MaterializeTheme>();
   if (!databaseList) return null;
 
-  const options: Database[] = [
-    { id: 0, name: "All Databases" },
-    ...databaseList,
+  const options: GroupBase<Database>[] = [
+    {
+      label: "Filter by database",
+      options: [{ id: 0, name: "All Databases" }, ...databaseList],
+    },
   ];
   return (
-    <ReactSelect
+    <ReactSelect<Database, false, GroupBase<Database>>
       aria-label="Database filter"
       components={{
         Option: Option,
-        MenuList: MenuList,
-        DropdownIndicator: DropdownIndicator,
+        DropdownIndicator: DropdownIndicator<Database>,
       }}
       isMulti={false}
       isSearchable={false}
@@ -50,92 +47,13 @@ const DatabaseFilter = ({
       getOptionValue={(option) => option.id.toString()}
       formatOptionLabel={(data) => data.name}
       options={options}
-      value={selectedDatabase ?? options[0]}
+      value={selectedDatabase ?? options[0].options[0]}
       styles={buildReactSelectStyles<Database, false>(
         semanticColors,
         shadows,
         {}
       )}
     />
-  );
-};
-
-const DropdownIndicator: React.FunctionComponent<
-  React.PropsWithChildren<DropdownIndicatorProps<Database, false>>
-> = (props) => {
-  return (
-    <Box pr="8px">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4 6L8 10L12 6"
-          stroke="#66626A"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </Box>
-  );
-};
-
-const MenuList: React.FunctionComponent<
-  React.PropsWithChildren<MenuListProps<Database, false>>
-> = (props) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-  return (
-    <Box ref={props.innerRef} {...props.innerProps} py="4px">
-      <HStack px="16px" py="8px">
-        <Text
-          fontSize="14px"
-          lineHeight="16px"
-          fontWeight="500"
-          color={semanticColors.foreground.tertiary}
-          overflow="hidden"
-        >
-          Filter by database
-        </Text>
-      </HStack>
-      {props.children}
-    </Box>
-  );
-};
-
-const Option: React.FunctionComponent<
-  React.PropsWithChildren<OptionProps<Database, false>>
-> = (props) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-  return (
-    <Box
-      ref={props.innerRef}
-      {...props.innerProps}
-      _hover={{
-        backgroundColor: semanticColors.background.secondary,
-      }}
-      py="8px"
-      pr="4"
-      width="100%"
-    >
-      <HStack spacing="0" alignItems="center" justifyContent="start">
-        <Flex justifyContent="center" width="40px">
-          {props.isSelected && (
-            <CheckmarkIcon color={semanticColors.accent.brightPurple} />
-          )}
-        </Flex>
-        <Text fontSize="14px" lineHeight="16px" userSelect="none">
-          {props.data.name}
-        </Text>
-      </HStack>
-    </Box>
   );
 };
 

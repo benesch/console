@@ -1,17 +1,12 @@
-import { Box, Flex, HStack, Text, useTheme } from "@chakra-ui/react";
+import { Text, useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, {
-  DropdownIndicatorProps,
-  MenuListProps,
-  OptionProps,
-} from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
 
 import useSchemas, { Schema } from "~/api/materialize/useSchemas";
-import CheckmarkIcon from "~/svg/CheckmarkIcon";
+import { DatabaseFilterProps } from "~/components/DatabaseFilter";
+import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 import { useQueryStringState } from "~/useQueryString";
-
-import { DatabaseFilterProps } from "./DatabaseFilter";
 
 export interface SchemaFilterProps {
   schemaList: Schema[] | null;
@@ -32,17 +27,21 @@ const SchemaFilter = ({
   } = useTheme<MaterializeTheme>();
   if (!schemaList) return null;
 
-  const options: Schema[] = [
-    { id: 1234, name: "All Schemas", databaseId: 0, databaseName: "" },
-    ...schemaList,
+  const options: GroupBase<Schema>[] = [
+    {
+      label: "Filter by schmea",
+      options: [
+        { id: 0, name: "All Schemas", databaseId: 0, databaseName: "" },
+        ...schemaList,
+      ],
+    },
   ];
 
   return (
-    <ReactSelect
+    <ReactSelect<Schema, false, GroupBase<Schema>>
       aria-label="Schema filter"
       components={{
         Option: Option,
-        MenuList: MenuList,
         DropdownIndicator: DropdownIndicator,
       }}
       isMulti={false}
@@ -51,104 +50,32 @@ const SchemaFilter = ({
         value && setSelectedSchema(value.id);
       }}
       getOptionValue={(option) => option.id.toString()}
-      formatOptionLabel={(data) => data.name}
+      formatOptionLabel={(data) => (
+        <>
+          {data.databaseName && (
+            <Text
+              color={semanticColors.foreground.secondary}
+              fontSize="14px"
+              lineHeight="16px"
+              userSelect="none"
+              as="span"
+            >
+              {data.databaseName}.
+            </Text>
+          )}
+          <Text as="span" fontSize="14px" lineHeight="16px">
+            {data.name}
+          </Text>
+        </>
+      )}
       options={options}
-      value={selectedSchema ?? options[0]}
+      value={selectedSchema ?? options[0].options[0]}
       styles={buildReactSelectStyles<Schema, false>(
         semanticColors,
         shadows,
         {}
       )}
     />
-  );
-};
-
-const DropdownIndicator: React.FunctionComponent<
-  React.PropsWithChildren<DropdownIndicatorProps<Schema, false>>
-> = (props) => {
-  return (
-    <Box pr="4px">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4 6L8 10L12 6"
-          stroke="#66626A"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </Box>
-  );
-};
-
-const MenuList: React.FunctionComponent<
-  React.PropsWithChildren<MenuListProps<Schema, false>>
-> = (props) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-  return (
-    <Box ref={props.innerRef} {...props.innerProps} py="4px">
-      <HStack px="16px" py="8px">
-        <Text
-          fontSize="14px"
-          lineHeight="16px"
-          fontWeight="500"
-          color={semanticColors.foreground.tertiary}
-        >
-          Filter by schema
-        </Text>
-      </HStack>
-      {props.children}
-    </Box>
-  );
-};
-
-const Option: React.FunctionComponent<
-  React.PropsWithChildren<OptionProps<Schema, false>>
-> = (props) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-  return (
-    <Box
-      ref={props.innerRef}
-      {...props.innerProps}
-      _hover={{
-        backgroundColor: semanticColors.background.secondary,
-      }}
-      py="8px"
-      pr="4"
-      width="100%"
-    >
-      <HStack spacing="0" alignItems="center" justifyContent="start">
-        <Flex justifyContent="center" alignItems="center" width="40px">
-          {props.isSelected && (
-            <CheckmarkIcon color={semanticColors.accent.brightPurple} />
-          )}
-        </Flex>
-        {props.data.databaseName && (
-          <Text
-            color={semanticColors.foreground.secondary}
-            fontSize="14px"
-            lineHeight="16px"
-            userSelect="none"
-            as="span"
-          >
-            {props.data.databaseName}.
-          </Text>
-        )}
-        <Text as="span" fontSize="14px" lineHeight="16px">
-          {props.data.name}
-        </Text>
-      </HStack>
-    </Box>
   );
 };
 
