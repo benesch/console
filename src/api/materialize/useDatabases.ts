@@ -7,7 +7,7 @@ export interface Database {
 }
 
 /**
- * Fetches all databases
+ * Fetches all databases in the current environment
  */
 function useDatabases() {
   const response = useSql(

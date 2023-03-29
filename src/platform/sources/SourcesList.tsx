@@ -66,14 +66,14 @@ interface SourceListProps {
     sourceName: string | undefined;
     setSourceName: (val: string | undefined) => void;
   };
-  schemaFitler: ReturnType<typeof useSchemaFilter>;
+  schemaFilter: ReturnType<typeof useSchemaFilter>;
   sources: Source[] | null;
 }
 
 const SourcesListPage = ({
   databaseFilter,
   nameFilter,
-  schemaFitler,
+  schemaFilter,
   sources,
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
@@ -92,7 +92,7 @@ const SourcesListPage = ({
         <HStack gap="16px">
           <HStack gap="0px">
             <DatabaseFilter {...databaseFilter} />
-            <SchemaFilter {...schemaFitler} />
+            <SchemaFilter {...schemaFilter} />
           </HStack>
           <SearchInput
             name="source"

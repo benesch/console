@@ -48,10 +48,4 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
   return { ...sourceResponse, data: sources };
 }
 
-export interface GroupedError {
-  error: string;
-  lastOccurred: Date;
-  count: number;
-}
-
 export default useSources;

@@ -156,7 +156,7 @@ export const useDatabaseFilter = () => {
     (id: number) => {
       const selected = databaseList && databaseList.find((d) => d.id === id);
 
-      setSelectedDatabaseName(selected?.name ?? undefined);
+      setSelectedDatabaseName(selected?.name);
     },
     [databaseList, setSelectedDatabaseName]
   );
@@ -164,7 +164,7 @@ export const useDatabaseFilter = () => {
   return {
     databaseList,
     selectedDatabase,
-    setSelectedDatabase: setSelectedDatabase,
+    setSelectedDatabase,
   };
 };
 

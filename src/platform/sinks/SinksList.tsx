@@ -70,14 +70,14 @@ interface SinkListProps {
     sinkName: string | undefined;
     setSinkName: (val: string | undefined) => void;
   };
-  schemaFitler: ReturnType<typeof useSchemaFilter>;
+  schemaFilter: ReturnType<typeof useSchemaFilter>;
   sinks: Sink[] | null;
 }
 
 const SinksListPage = ({
   databaseFilter,
   nameFilter,
-  schemaFitler,
+  schemaFilter,
   sinks,
 }: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
@@ -95,7 +95,7 @@ const SinksListPage = ({
         <PageHeading>Sinks</PageHeading>
         <HStack>
           <DatabaseFilter {...databaseFilter} />
-          <SchemaFilter {...schemaFitler} />
+          <SchemaFilter {...schemaFilter} />
           <SearchInput
             name="sink"
             value={nameFilter.sinkName}

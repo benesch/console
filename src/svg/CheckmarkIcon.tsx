@@ -2,7 +2,7 @@ import React from "react";
 
 import colors from "~/theme/colors";
 
-const CheckmarkIcon = ({ color }: { color: any }) => {
+const CheckmarkIcon = ({ color }: { color: string }) => {
   return (
     <svg
       width="16"

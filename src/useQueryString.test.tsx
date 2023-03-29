@@ -8,7 +8,7 @@ describe("useQueryStringState", () => {
     history.pushState(undefined, "", "/");
   });
 
-  it("should not update query string when there is no value", async () => {
+  it("should not set a query string key when the state is falsey", async () => {
     const {
       result: {
         current: [val, _setVal],
@@ -17,11 +17,10 @@ describe("useQueryStringState", () => {
       wrapper: BrowserRouter,
     });
     expect(val).toBe(undefined);
-    expect(location.search).toBe("");
     await waitFor(() => expect(location.search).toBe(""));
   });
 
-  it("updates the value with the current query string value", async () => {
+  it("updates the state value with the current query string value", async () => {
     history.pushState(undefined, "", "/?key=startingValue");
     await waitFor(() => expect(location.search).toBe("?key=startingValue"));
     const { result } = renderHook(() => useQueryStringState("key"), {
@@ -40,5 +39,16 @@ describe("useQueryStringState", () => {
     [val, setVal] = result.current;
     expect(val).toBe("value");
     await waitFor(() => expect(location.search).toBe("?key=value"));
+  });
+
+  it("removes the query string key when the value is falsey", async () => {
+    const { result } = renderHook(() => useQueryStringState("key"), {
+      wrapper: BrowserRouter,
+    });
+    let [val, setVal] = result.current;
+    act(() => setVal(""));
+    [val, setVal] = result.current;
+    expect(val).toBe("");
+    await waitFor(() => expect(location.search).toBe(""));
   });
 });

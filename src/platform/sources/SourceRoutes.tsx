@@ -20,7 +20,7 @@ const sourceNameFilterQueryStringKey = "nameFilter";
 
 const SourceRoutes = () => {
   const databaseFilter = useDatabaseFilter();
-  const schemaFitler = useSchemaFilter(
+  const schemaFilter = useSchemaFilter(
     databaseFilter.setSelectedDatabase,
     databaseFilter.selectedDatabase?.id
   );
@@ -33,7 +33,7 @@ const SourceRoutes = () => {
     refetch,
   } = useSources({
     databaseId: databaseFilter.selectedDatabase?.id,
-    schemaId: schemaFitler.selectedSchema?.id,
+    schemaId: schemaFilter.selectedSchema?.id,
     nameFilter: sourceName,
   });
   useForegroundInterval(() => !loading && refetch());
@@ -46,7 +46,7 @@ const SourceRoutes = () => {
           element={
             <SourcesList
               databaseFilter={databaseFilter}
-              schemaFitler={schemaFitler}
+              schemaFilter={schemaFilter}
               nameFilter={{ sourceName, setSourceName }}
               sources={sources}
             />

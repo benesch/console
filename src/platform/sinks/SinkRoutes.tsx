@@ -24,7 +24,7 @@ const sinkNameFilterQueryStringKey = "nameFilter";
 
 const SinkRoutes = () => {
   const databaseFilter = useDatabaseFilter();
-  const schemaFitler = useSchemaFilter(
+  const schemaFilter = useSchemaFilter(
     databaseFilter.setSelectedDatabase,
     databaseFilter.selectedDatabase?.id
   );
@@ -37,7 +37,7 @@ const SinkRoutes = () => {
     refetch,
   } = useSinks({
     databaseId: databaseFilter.selectedDatabase?.id,
-    schemaId: schemaFitler.selectedSchema?.id,
+    schemaId: schemaFilter.selectedSchema?.id,
     nameFilter: sinkName,
   });
   useForegroundInterval(() => !loading && refetch());
@@ -48,7 +48,7 @@ const SinkRoutes = () => {
         element={
           <SinksList
             databaseFilter={databaseFilter}
-            schemaFitler={schemaFitler}
+            schemaFilter={schemaFilter}
             nameFilter={{ sinkName, setSinkName }}
             sinks={sinks}
           />
