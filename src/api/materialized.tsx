@@ -738,10 +738,18 @@ export interface Secret {
 /**
  * Fetches all secrets in the current environment
  */
-export function useSecrets() {
-  const secretResponse = useSql(`SELECT id, name 
-FROM mz_secrets;
-`);
+export function useSecrets({
+  databaseId,
+  schemaId,
+  nameFilter,
+}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
+  const secretResponse = useSql(`SELECT s.id, s.name
+FROM mz_secrets s
+INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+INNER JOIN mz_databases d ON d.id = sc.database_id
+${databaseId ? `AND d.id = ${databaseId}` : ""}
+${schemaId ? `AND sc.id = ${schemaId}` : ""}
+${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
   let secrets: Secret[] | null = null;
   if (secretResponse.data) {
     const { rows, getColumnByName } = secretResponse.data;

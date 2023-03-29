@@ -1,6 +1,7 @@
 import {
   Button,
   Circle,
+  HStack,
   Spinner,
   Table,
   Tbody,
@@ -14,6 +15,9 @@ import {
 import React from "react";
 
 import { Secret, useSecrets } from "~/api/materialized";
+import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
+import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -23,6 +27,9 @@ import {
 } from "~/layouts/listPageComponents";
 import LockIcon from "~/svg/Lock";
 import { MaterializeTheme } from "~/theme";
+import { useQueryStringState } from "~/useQueryString";
+
+const secretNameFilterQueryStringKey = "secret";
 
 const EmptyState = () => {
   const {
@@ -57,7 +64,19 @@ const EmptyState = () => {
 };
 
 const SecretsList = () => {
-  const { data: secrets } = useSecrets();
+  const databaseFilter = useDatabaseFilter();
+  const schemaFilter = useSchemaFilter(
+    databaseFilter.setSelectedDatabase,
+    databaseFilter.selectedDatabase?.id
+  );
+  const [secretName, setSecretName] = useQueryStringState(
+    secretNameFilterQueryStringKey
+  );
+  const { data: secrets } = useSecrets({
+    databaseId: databaseFilter.selectedDatabase?.id,
+    schemaId: schemaFilter.selectedSchema?.id,
+    nameFilter: secretName,
+  });
 
   const isLoading = secrets === null;
 
@@ -67,10 +86,21 @@ const SecretsList = () => {
     <>
       <PageHeader>
         <PageHeading>Secrets</PageHeading>
-        {/* TODO: Add handler for Secret creation flow(issue#17) */}
-        <Button variant="primary" size="sm">
-          New secret
-        </Button>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFilter} />
+          <SearchInput
+            name="sink"
+            value={secretName}
+            onChange={(e) => {
+              setSecretName(e.target.value);
+            }}
+          />
+          {/* TODO: Add handler for Secret creation flow(issue#17) */}
+          <Button variant="primary" size="sm">
+            New secret
+          </Button>
+        </HStack>
       </PageHeader>
       {isLoading ? (
         <Spinner data-testid="loading-spinner" />
