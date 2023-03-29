@@ -271,7 +271,9 @@ export const buildReactSelectStyles = <
         borderRadius: "8px",
         borderWidth: "0",
         boxShadow: "none",
-        background: state.isFocused ? semanticColors.background.secondary : "",
+        background: state.isFocused
+          ? semanticColors.background.secondary
+          : semanticColors.background.primary,
       }),
       dropdownIndicator: (base) => ({
         ...base,
