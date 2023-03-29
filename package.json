@@ -6,7 +6,7 @@
     "node": ">=18.13.0"
   },
   "scripts": {
-    "start": "webpack serve --config=webpack.dev.ts",
+    "start": "NODE_OPTIONS=--max-old-space-size=4096 webpack serve --config=webpack.dev.ts",
     "build": "NODE_ENV=production webpack --config=webpack.prod.ts",
     "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
     "test:unit": "jest 'test.ts?(x)'",
