@@ -733,6 +733,8 @@ AND i.id LIKE 'u%';`
 export interface Secret {
   id: string;
   name: string;
+  databaseName: string;
+  schemaName: string;
 }
 
 /**
@@ -743,7 +745,8 @@ export function useSecrets({
   schemaId,
   nameFilter,
 }: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
-  const secretResponse = useSql(`SELECT s.id, s.name
+  const secretResponse =
+    useSql(`SELECT s.id, s.name, d.name as database_name, sc.name as schema_name
 FROM mz_secrets s
 INNER JOIN mz_schemas sc ON sc.id = s.schema_id
 INNER JOIN mz_databases d ON d.id = sc.database_id
@@ -758,6 +761,8 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
     secrets = rows.map((row) => ({
       id: getColumnByName(row, "id"),
       name: getColumnByName(row, "name"),
+      databaseName: getColumnByName(row, "database_name"),
+      schemaName: getColumnByName(row, "schema_name"),
     }));
   }
 

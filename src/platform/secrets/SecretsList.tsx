@@ -9,6 +9,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
 } from "@chakra-ui/react";
@@ -133,7 +134,14 @@ const SecretsTable = ({ secrets }: SecretsTableProps) => {
                 borderBottomWidth="1px"
                 borderBottomColor={colors.semanticColors.border.primary}
               >
-                {secret.name}
+                <Tooltip
+                  label={`${secret.databaseName}.${secret.schemaName}.${secret.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {secret.name}
+                </Tooltip>
               </Td>
             </Tr>
           );
