@@ -20,8 +20,8 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Sink } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
-import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
-import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
@@ -39,6 +39,11 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
+import {
+  DatabaseFilterState,
+  NameFilterState,
+  SchemaFilterState,
+} from "~/useSchemaObjectFilters";
 
 import { sinkErrorsPath } from "./SinkRoutes";
 
@@ -65,12 +70,9 @@ const sinkSuggestions: SQLSuggestion[] = [
 ];
 
 interface SinkListProps {
-  databaseFilter: ReturnType<typeof useDatabaseFilter>;
-  nameFilter: {
-    sinkName: string | undefined;
-    setSinkName: (val: string | undefined) => void;
-  };
-  schemaFilter: ReturnType<typeof useSchemaFilter>;
+  databaseFilter: DatabaseFilterState;
+  nameFilter: NameFilterState;
+  schemaFilter: SchemaFilterState;
   sinks: Sink[] | null;
 }
 
@@ -98,9 +100,9 @@ const SinksListPage = ({
           <SchemaFilter {...schemaFilter} />
           <SearchInput
             name="sink"
-            value={nameFilter.sinkName}
+            value={nameFilter.name}
             onChange={(e) => {
-              nameFilter.setSinkName(e.target.value);
+              nameFilter.setName(e.target.value);
             }}
           />
         </HStack>

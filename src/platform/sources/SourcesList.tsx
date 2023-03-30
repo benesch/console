@@ -20,8 +20,8 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Source } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
-import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
-import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
@@ -39,6 +39,11 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
+import {
+  DatabaseFilterState,
+  NameFilterState,
+  SchemaFilterState,
+} from "~/useSchemaObjectFilters";
 
 import { sourceErrorsPath } from "./SourceRoutes";
 
@@ -61,12 +66,9 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 interface SourceListProps {
-  databaseFilter: ReturnType<typeof useDatabaseFilter>;
-  nameFilter: {
-    sourceName: string | undefined;
-    setSourceName: (val: string | undefined) => void;
-  };
-  schemaFilter: ReturnType<typeof useSchemaFilter>;
+  databaseFilter: DatabaseFilterState;
+  nameFilter: NameFilterState;
+  schemaFilter: SchemaFilterState;
   sources: Source[] | null;
 }
 
@@ -96,9 +98,9 @@ const SourcesListPage = ({
           </HStack>
           <SearchInput
             name="source"
-            value={nameFilter.sourceName}
+            value={nameFilter.name}
             onChange={(e) => {
-              nameFilter.setSourceName(e.target.value);
+              nameFilter.setName(e.target.value);
             }}
           />
         </HStack>

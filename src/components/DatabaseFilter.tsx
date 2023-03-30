@@ -2,22 +2,19 @@ import { useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, { GroupBase } from "react-select";
 
-import useDatabases, { Database } from "~/api/materialize/useDatabases";
+import { Database } from "~/api/materialize/useDatabases";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
-import { useQueryStringState } from "~/useQueryString";
 
 export interface DatabaseFilterProps {
   databaseList: Database[] | null;
-  selectedDatabase: Database | undefined;
+  selected: Database | undefined;
   setSelectedDatabase: (id: number) => void;
 }
 
-const databaseQueryStringKey = "database" as const;
-
 const DatabaseFilter = ({
   databaseList,
-  selectedDatabase,
+  selected,
   setSelectedDatabase,
 }: DatabaseFilterProps) => {
   const {
@@ -47,7 +44,7 @@ const DatabaseFilter = ({
       getOptionValue={(option) => option.id.toString()}
       formatOptionLabel={(data) => data.name}
       options={options}
-      value={selectedDatabase ?? options[0].options[0]}
+      value={selected ?? options[0].options[0]}
       styles={buildReactSelectStyles<Database, false>(
         semanticColors,
         shadows,
@@ -55,35 +52,6 @@ const DatabaseFilter = ({
       )}
     />
   );
-};
-
-export const useDatabaseFilter = () => {
-  const [selectedDatabaseName, setSelectedDatabaseName] = useQueryStringState(
-    databaseQueryStringKey
-  );
-  const { data: databaseList } = useDatabases();
-  const selectedDatabase = React.useMemo(
-    () =>
-      (databaseList &&
-        databaseList.find((d) => d.name === selectedDatabaseName)) ??
-      undefined,
-    [databaseList, selectedDatabaseName]
-  );
-
-  const setSelectedDatabase = React.useCallback(
-    (id: number) => {
-      const selected = databaseList && databaseList.find((d) => d.id === id);
-
-      setSelectedDatabaseName(selected?.name);
-    },
-    [databaseList, setSelectedDatabaseName]
-  );
-
-  return {
-    databaseList,
-    selectedDatabase,
-    setSelectedDatabase,
-  };
 };
 
 export default DatabaseFilter;

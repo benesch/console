@@ -3,12 +3,10 @@ import { Route, useParams } from "react-router-dom";
 
 import useSources, { Source } from "~/api/materialize/useSources";
 import { SchemaObject } from "~/api/materialized";
-import { useDatabaseFilter } from "~/components/DatabaseFilter";
-import { useSchemaFilter } from "~/components/SchemaFilter";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
-import { useQueryStringState } from "~/useQueryString";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
   objectOrRedirect,
@@ -16,25 +14,20 @@ import {
 } from "../schemaObjectRouteHelpers";
 import SourceDetail from "./SourceDetail";
 
-const sourceNameFilterQueryStringKey = "nameFilter";
+const NAME_FILTER_QUERY_STRING_KEY = "sourceName";
 
 const SourceRoutes = () => {
-  const databaseFilter = useDatabaseFilter();
-  const schemaFilter = useSchemaFilter(
-    databaseFilter.setSelectedDatabase,
-    databaseFilter.selectedDatabase?.id
-  );
-  const [sourceName, setSourceName] = useQueryStringState(
-    sourceNameFilterQueryStringKey
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
   );
   const {
     data: sources,
     loading,
     refetch,
   } = useSources({
-    databaseId: databaseFilter.selectedDatabase?.id,
-    schemaId: schemaFilter.selectedSchema?.id,
-    nameFilter: sourceName,
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
   });
   useForegroundInterval(() => !loading && refetch());
 
@@ -47,7 +40,7 @@ const SourceRoutes = () => {
             <SourcesList
               databaseFilter={databaseFilter}
               schemaFilter={schemaFilter}
-              nameFilter={{ sourceName, setSourceName }}
+              nameFilter={nameFilter}
               sources={sources}
             />
           }

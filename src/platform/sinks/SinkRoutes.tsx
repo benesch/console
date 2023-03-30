@@ -2,12 +2,10 @@ import React from "react";
 import { Route, useParams } from "react-router-dom";
 
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
-import { useDatabaseFilter } from "~/components/DatabaseFilter";
-import { useSchemaFilter } from "~/components/SchemaFilter";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
 import useForegroundInterval from "~/useForegroundInterval";
-import { useQueryStringState } from "~/useQueryString";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
   objectOrRedirect,
@@ -20,25 +18,20 @@ export type ClusterDetailParams = {
   clusterName: string;
 };
 
-const sinkNameFilterQueryStringKey = "nameFilter";
+const NAME_FILTER_QUERY_STRING_KEY = "sinkName";
 
 const SinkRoutes = () => {
-  const databaseFilter = useDatabaseFilter();
-  const schemaFilter = useSchemaFilter(
-    databaseFilter.setSelectedDatabase,
-    databaseFilter.selectedDatabase?.id
-  );
-  const [sinkName, setSinkName] = useQueryStringState(
-    sinkNameFilterQueryStringKey
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
   );
   const {
     data: sinks,
     loading,
     refetch,
   } = useSinks({
-    databaseId: databaseFilter.selectedDatabase?.id,
-    schemaId: schemaFilter.selectedSchema?.id,
-    nameFilter: sinkName,
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
   });
   useForegroundInterval(() => !loading && refetch());
   return (
@@ -49,7 +42,7 @@ const SinkRoutes = () => {
           <SinksList
             databaseFilter={databaseFilter}
             schemaFilter={schemaFilter}
-            nameFilter={{ sinkName, setSinkName }}
+            nameFilter={nameFilter}
             sinks={sinks}
           />
         }

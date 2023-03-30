@@ -15,8 +15,8 @@ import {
 import React from "react";
 
 import { Secret, useSecrets } from "~/api/materialized";
-import DatabaseFilter, { useDatabaseFilter } from "~/components/DatabaseFilter";
-import SchemaFilter, { useSchemaFilter } from "~/components/SchemaFilter";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -28,9 +28,9 @@ import {
 import LockIcon from "~/svg/Lock";
 import { MaterializeTheme } from "~/theme";
 import useDelayedLoading from "~/useDelayedLoading";
-import { useQueryStringState } from "~/useQueryString";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
-const secretNameFilterQueryStringKey = "secret";
+const NAME_FILTER_QUERY_STRING_KEY = "secretName";
 
 const EmptyState = () => {
   const {
@@ -65,18 +65,13 @@ const EmptyState = () => {
 };
 
 const SecretsList = () => {
-  const databaseFilter = useDatabaseFilter();
-  const schemaFilter = useSchemaFilter(
-    databaseFilter.setSelectedDatabase,
-    databaseFilter.selectedDatabase?.id
-  );
-  const [secretName, setSecretName] = useQueryStringState(
-    secretNameFilterQueryStringKey
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
   );
   const { data: secrets, loading } = useSecrets({
-    databaseId: databaseFilter.selectedDatabase?.id,
-    schemaId: schemaFilter.selectedSchema?.id,
-    nameFilter: secretName,
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
   });
 
   const showLoading = useDelayedLoading(loading);
@@ -94,9 +89,9 @@ const SecretsList = () => {
           <SchemaFilter {...schemaFilter} />
           <SearchInput
             name="sink"
-            value={secretName}
+            value={nameFilter.name}
             onChange={(e) => {
-              setSecretName(e.target.value);
+              nameFilter.setName(e.target.value);
             }}
           />
           {/* TODO: Add handler for Secret creation flow(issue#17) */}
@@ -110,7 +105,7 @@ const SecretsList = () => {
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <SecretsTable loading={loading} secrets={secrets} />
+        <SecretsTable secrets={secrets} />
       )}
     </>
   );
@@ -118,10 +113,9 @@ const SecretsList = () => {
 
 type SecretsTableProps = {
   secrets: Secret[];
-  loading: boolean;
 };
 
-const SecretsTable = ({ loading, secrets }: SecretsTableProps) => {
+const SecretsTable = ({ secrets }: SecretsTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (

@@ -2,23 +2,19 @@ import { Text, useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, { GroupBase } from "react-select";
 
-import useSchemas, { Schema } from "~/api/materialize/useSchemas";
-import { DatabaseFilterProps } from "~/components/DatabaseFilter";
+import { Schema } from "~/api/materialize/useSchemas";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
-import { useQueryStringState } from "~/useQueryString";
 
 export interface SchemaFilterProps {
   schemaList: Schema[] | null;
-  selectedSchema: Schema | undefined;
+  selected: Schema | undefined;
   setSelectedSchema: (id: number) => void;
 }
 
-const schemaQueryStringKey = "schema" as const;
-
 const SchemaFilter = ({
   schemaList,
-  selectedSchema,
+  selected,
   setSelectedSchema,
 }: SchemaFilterProps) => {
   const {
@@ -69,7 +65,7 @@ const SchemaFilter = ({
         </>
       )}
       options={options}
-      value={selectedSchema ?? options[0].options[0]}
+      value={selected ?? options[0].options[0]}
       styles={buildReactSelectStyles<Schema, false>(
         semanticColors,
         shadows,
@@ -77,37 +73,6 @@ const SchemaFilter = ({
       )}
     />
   );
-};
-
-export const useSchemaFilter = (
-  setSelectedDatabase: DatabaseFilterProps["setSelectedDatabase"],
-  selectedDatabaseId?: number
-) => {
-  const [selectedSchemaName, setSelectedSchemaName] =
-    useQueryStringState(schemaQueryStringKey);
-  const { data: schemaList } = useSchemas(selectedDatabaseId);
-  const selectedSchema = React.useMemo(
-    () =>
-      (schemaList && schemaList.find((d) => d.name === selectedSchemaName)) ??
-      undefined,
-    [schemaList, selectedSchemaName]
-  );
-
-  const setSelectedSchema = React.useCallback(
-    (id: number) => {
-      const selected = schemaList && schemaList.find((d) => d.id === id);
-
-      setSelectedDatabase(selected?.databaseId ?? 0);
-      setSelectedSchemaName(selected?.name ?? undefined);
-    },
-    [schemaList, setSelectedDatabase, setSelectedSchemaName]
-  );
-
-  return {
-    schemaList,
-    selectedSchema,
-    setSelectedSchema: setSelectedSchema,
-  };
 };
 
 export default SchemaFilter;
