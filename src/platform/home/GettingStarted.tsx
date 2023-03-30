@@ -1,20 +1,11 @@
-import {
-  Box,
-  Button,
-  Heading,
-  HStack,
-  Text,
-  useTheme,
-  VStack,
-} from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route } from "react-router-dom";
 
 import segment from "~/analytics/segment";
 import { CopyableBox } from "~/components/copyableComponents";
+import InlayBanner from "~/components/InlayBanner";
 import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
-import { MaterializeTheme } from "~/theme";
 
 // These credentials are read only and not considered sensitive
 const secrets = `CREATE SECRET kafka_user AS 'CL6M5VSYI32TVILA';
@@ -31,47 +22,24 @@ const handleCopyClick = () => {
 };
 
 const GettingStarted = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
   const regionSlug = useRegionSlug();
 
   return (
-    <Box
-      borderRadius="lg"
-      borderColor={semanticColors.border.info}
-      borderWidth="1px"
-      overflow="hidden"
+    <InlayBanner
+      variant="info"
+      label="Get started with Materialize"
+      message="Learn the basics of Materialize by creating your first set of
+              clusters, views, and sources."
+      buttonText="Get started"
+      buttonProps={{
+        as: "a",
+        target: "_blank",
+        rel: "noopener",
+        href: "//materialize.com/docs/get-started/",
+        onClick: handleGettingStartedClick,
+      }}
+      showButton
     >
-      <Box p="4" background={semanticColors.background.info}>
-        <HStack spacing={10}>
-          <VStack spacing="2" alignItems="start">
-            <Heading as="h6" fontSize="sm" lineHeight="16px" fontWeight="500">
-              Get started with Materialize
-            </Heading>
-            <Text
-              fontSize="sm"
-              lineHeight="20px"
-              color={semanticColors.foreground.secondary}
-            >
-              Learn the basics of Materialize by creating your first set of
-              clusters, views, and sources.
-            </Text>
-          </VStack>
-          <Button
-            as="a"
-            target="_blank"
-            rel="noopener"
-            href="//materialize.com/docs/get-started/"
-            variant="secondary"
-            size="sm"
-            bg={semanticColors.background.primary}
-            onClick={handleGettingStartedClick}
-          >
-            Get started
-          </Button>
-        </HStack>
-      </Box>
       <SentryRoutes>
         <Route path="showSourceCredentials" element={<CopyableCredentials />} />
         <Route path="" />
@@ -80,7 +48,7 @@ const GettingStarted = () => {
           element={<Navigate to={`/regions/${regionSlug}/`} replace />}
         />
       </SentryRoutes>
-    </Box>
+    </InlayBanner>
   );
 };
 
