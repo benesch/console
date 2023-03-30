@@ -27,6 +27,7 @@ import {
 } from "~/layouts/listPageComponents";
 import LockIcon from "~/svg/Lock";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
 import { useQueryStringState } from "~/useQueryString";
 
 const secretNameFilterQueryStringKey = "secret";
@@ -72,15 +73,17 @@ const SecretsList = () => {
   const [secretName, setSecretName] = useQueryStringState(
     secretNameFilterQueryStringKey
   );
-  const { data: secrets } = useSecrets({
+  const { data: secrets, loading } = useSecrets({
     databaseId: databaseFilter.selectedDatabase?.id,
     schemaId: schemaFilter.selectedSchema?.id,
     nameFilter: secretName,
   });
 
-  const isLoading = secrets === null;
+  const showLoading = useDelayedLoading(loading);
 
-  const isEmpty = !isLoading && secrets.length === 0;
+  const isInitialLoad = secrets === null;
+
+  const isEmpty = !isInitialLoad && secrets.length === 0;
 
   return (
     <>
@@ -102,12 +105,12 @@ const SecretsList = () => {
           </Button>
         </HStack>
       </PageHeader>
-      {isLoading ? (
+      {showLoading || isInitialLoad ? (
         <Spinner data-testid="loading-spinner" />
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <SecretsTable secrets={secrets} />
+        <SecretsTable loading={loading} secrets={secrets} />
       )}
     </>
   );
@@ -115,9 +118,10 @@ const SecretsList = () => {
 
 type SecretsTableProps = {
   secrets: Secret[];
+  loading: boolean;
 };
 
-const SecretsTable = ({ secrets }: SecretsTableProps) => {
+const SecretsTable = ({ loading, secrets }: SecretsTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
