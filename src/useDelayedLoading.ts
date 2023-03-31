@@ -4,7 +4,7 @@ import React from "react";
  * Delays loading for the specified timeout.
  * @returns boolean indicating whether or not to show a loading state
  */
-const useDelayedLoading = (loading: boolean, delayMs = 1_000) => {
+const useDelayedLoading = (loading: boolean, delayMs = 500) => {
   const [showLoading, setShowLoading] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout>();
 

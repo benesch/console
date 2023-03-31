@@ -42,6 +42,7 @@ const SourceRoutes = () => {
               schemaFilter={schemaFilter}
               nameFilter={nameFilter}
               sources={sources}
+              loading={loading}
             />
           }
         />

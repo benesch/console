@@ -39,6 +39,7 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
 import {
   DatabaseFilterState,
   NameFilterState,
@@ -74,6 +75,7 @@ interface SinkListProps {
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
   sinks: Sink[] | null;
+  loading: boolean;
 }
 
 const SinksListPage = ({
@@ -81,14 +83,18 @@ const SinksListPage = ({
   nameFilter,
   schemaFilter,
   sinks,
+  loading,
 }: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
 
+  const showLoading = useDelayedLoading(loading);
+
   const isDisabled = currentEnvironment?.state !== "enabled";
-  const isLoading = sinks === null;
+  const isInitialLoad = sinks === null;
+  const isLoading = isInitialLoad || showLoading;
   const isEmpty = !isLoading && sinks.length === 0;
 
   return (

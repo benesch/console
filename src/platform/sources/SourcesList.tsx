@@ -39,6 +39,7 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
 import {
   DatabaseFilterState,
   NameFilterState,
@@ -70,6 +71,7 @@ interface SourceListProps {
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
   sources: Source[] | null;
+  loading: boolean;
 }
 
 const SourcesListPage = ({
@@ -77,14 +79,17 @@ const SourcesListPage = ({
   nameFilter,
   schemaFilter,
   sources,
+  loading,
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
+  const showLoading = useDelayedLoading(loading);
 
   const isDisabled = currentEnvironment?.state !== "enabled";
-  const isLoading = sources === null;
+  const isInitialLoad = sources === null;
+  const isLoading = isInitialLoad || showLoading;
   const isEmpty = !isLoading && sources.length === 0;
 
   return (

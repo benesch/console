@@ -44,6 +44,7 @@ const SinkRoutes = () => {
             schemaFilter={schemaFilter}
             nameFilter={nameFilter}
             sinks={sinks}
+            loading={loading}
           />
         }
       />
