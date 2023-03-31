@@ -209,18 +209,17 @@ export const TabbedCodeBlock: React.FC<
       position="relative"
       border="1px"
       borderColor={colors.semanticColors.border.secondary}
-      borderRadius="md"
+      borderRadius="8px"
       w="full"
       textAlign="left"
       shadow={shadows.level1}
+      overflow="hidden"
       {...props}
     >
       <Flex
         borderBottom="1px"
         bg={colors.semanticColors.background.secondary}
         borderColor={colors.semanticColors.border.secondary}
-        borderTopLeftRadius="md"
-        borderTopRightRadius="md"
         w="full"
         alignItems="stretch"
         justifyContent="flex-start"
