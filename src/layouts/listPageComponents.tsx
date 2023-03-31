@@ -184,7 +184,7 @@ export const SampleCodeBoxWrapper = (props: SampleCodeBoxWrapperProps) => {
       alignItems="center"
       justifyContent="center"
       spacing={2}
-      maxW="460px"
+      width="460px"
     >
       {props.children}
       <Text fontSize="xs" textAlign="left" width="full">
