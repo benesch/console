@@ -1,7 +1,7 @@
 import { Alert, Text, useTheme } from "@chakra-ui/react";
 import * as React from "react";
 
-import { getCurrentTenant, getTenantMetadata, useAuth } from "~/api/auth";
+import { useCurrentOrganization } from "~/api/auth";
 import SupportLink from "~/components/SupportLink";
 import { MaterializeTheme } from "~/theme";
 
@@ -9,13 +9,11 @@ const AccountStatusAlert = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
-  const { user, tenantsState } = useAuth();
-  const currentTenant = getCurrentTenant(user, tenantsState.tenants);
-  if (!currentTenant) {
+  const { organization } = useCurrentOrganization();
+  if (!organization) {
     return null;
   }
-  const tenantMetadata = getTenantMetadata(currentTenant);
-  if (!tenantMetadata.blocked) {
+  if (!organization.blocked) {
     return null;
   }
   return (

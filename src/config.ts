@@ -63,6 +63,17 @@ export const getFronteggUrl = (stack: string) => {
   return `https://admin.${stack}.cloud.materialize.com`;
 };
 
+export const getSyncServerUrl = (stack: string) => {
+  if (stack === "production") {
+    return "https://sync.cloud.materialize.com";
+  }
+  if (stack === "local") {
+    // local development again cloud services uses staging frontegg
+    return "https://sync.staging.cloud.materialize.com";
+  }
+  return `https://sync.${stack}.cloud.materialize.com`;
+};
+
 const currentStack = getCurrentStack(location.hostname);
 const cloudRegions = new Map(
   buildCloudRegions(currentStack).map((r) => [getRegionId(r), r])
@@ -80,6 +91,7 @@ const config = {
   sentryEnvironment: __SENTRY_ENVIRONMENT__,
   sentryRelease: __SENTRY_RELEASE__,
   statuspageId: __STATUSPAGE_ID__,
+  syncServerUrl: getSyncServerUrl(currentStack),
 };
 
 export type GlobalConfig = typeof config;
