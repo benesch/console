@@ -269,6 +269,7 @@ export const ExpandablePanel = ({
         color="semanticColors.accent.brightPurple"
         fontSize="xs"
         cursor="pointer"
+        userSelect="none"
         onClick={() => setShow(!show)}
         {...boxProps}
       >
