@@ -3,6 +3,7 @@ import { Box, BoxProps, Flex, HStack, Spacer } from "@chakra-ui/layout";
 import {
   chakra,
   HTMLChakraProps,
+  Text,
   Tooltip,
   useClipboard,
   useTheme,
@@ -177,7 +178,7 @@ export const TabbedCodeBlock: React.FC<
   wrap,
   ...props
 }: TabbedCodeBlockProps & BoxProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const { colors, shadows } = useTheme<MaterializeTheme>();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.title || "");
 
   if (tabs.length === 0) return null;
@@ -207,16 +208,17 @@ export const TabbedCodeBlock: React.FC<
       role="group"
       position="relative"
       border="1px"
-      borderColor={colors.semanticColors.border.primary}
+      borderColor={colors.semanticColors.border.secondary}
       borderRadius="md"
       w="full"
       textAlign="left"
+      shadow={shadows.level1}
       {...props}
     >
       <Flex
         borderBottom="1px"
         bg={colors.semanticColors.background.secondary}
-        borderColor={colors.semanticColors.border.primary}
+        borderColor={colors.semanticColors.border.secondary}
         borderTopLeftRadius="md"
         borderTopRightRadius="md"
         w="full"
@@ -249,13 +251,17 @@ export const TabbedCodeBlock: React.FC<
                 <Box w="4" h="4">
                   {icon}
                 </Box>
-                <span>{title}</span>
+                <Text as="span" fontWeight="500">
+                  {title}
+                </Text>
               </CodeBlockHeading>
             ))}
           </>
         ) : (
           <CodeBlockHeading>
-            <span>{tabs[0].title}</span>
+            <Text as="span" fontWeight="500">
+              {tabs[0].title}
+            </Text>
           </CodeBlockHeading>
         )}
         <Spacer />

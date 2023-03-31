@@ -183,11 +183,11 @@ export const SampleCodeBoxWrapper = (props: SampleCodeBoxWrapperProps) => {
     <VStack
       alignItems="center"
       justifyContent="center"
-      spacing={2}
+      spacing={4}
       width="460px"
     >
       {props.children}
-      <Text fontSize="xs" textAlign="left" width="full">
+      <Text fontSize="sm" textAlign="left" width="full">
         Having trouble?{" "}
         <TextLink
           href={props.docsUrl || "//materialize.com/docs/"}
