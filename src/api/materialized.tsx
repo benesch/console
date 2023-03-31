@@ -191,7 +191,6 @@ export function useSqlApiRequest() {
           setError(null);
         }
       } catch (err) {
-        console.error(err);
         setError(defaultError);
       } finally {
         clearTimeout(timeout);
