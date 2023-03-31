@@ -49,19 +49,11 @@ const SchemaFilter = ({
       formatOptionLabel={(data) => (
         <>
           {data.databaseName && (
-            <Text
-              color={semanticColors.foreground.secondary}
-              fontSize="14px"
-              lineHeight="16px"
-              userSelect="none"
-              as="span"
-            >
+            <Text color={semanticColors.foreground.secondary} as="span">
               {data.databaseName}.
             </Text>
           )}
-          <Text as="span" fontSize="14px" lineHeight="16px">
-            {data.name}
-          </Text>
+          {data.name}
         </>
       )}
       options={options}
