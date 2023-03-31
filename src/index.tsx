@@ -16,6 +16,7 @@ import {
   EnvironmentProvider,
   GlobalStyle,
   ThemeProvider,
+  ToastProvider,
   useColorMode,
 } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
@@ -52,7 +53,10 @@ const ChakraProviderWrapper = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <CSSReset />
-      <EnvironmentProvider>{children}</EnvironmentProvider>
+      <EnvironmentProvider>
+        {children}
+        <ToastProvider />
+      </EnvironmentProvider>
     </ThemeProvider>
   );
 };

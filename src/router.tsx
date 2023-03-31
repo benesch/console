@@ -137,7 +137,7 @@ const EnvironmentRoutes = () => {
       <Route path="/sources/*" element={<SourceRoutes />} />
       <Route path="/sinks/*" element={<SinkRoutes />} />
       {/* TODO: Connect Secrets page to route */}
-      {flags["secrets-list-flow-15"] && (
+      {flags["source-creation-41"] && (
         <Route path="/secrets" element={<SecretsList />} />
       )}
       <Route

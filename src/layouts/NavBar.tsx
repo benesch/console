@@ -158,7 +158,7 @@ const NavMenu = (props: BoxProps) => {
 
   let navItems = getNavItems(regionSlug);
 
-  if (!flags["secrets-list-flow-15"]) {
+  if (!flags["source-creation-41"]) {
     navItems = navItems.filter(({ label }) => label !== "Secrets");
   }
 
@@ -188,7 +188,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
 
   let navItems = getNavItems(regionSlug);
 
-  if (!flags["secrets-list-flow-15"]) {
+  if (!flags["source-creation-41"]) {
     navItems = navItems.filter(({ label }) => label !== "Secrets");
   }
 
