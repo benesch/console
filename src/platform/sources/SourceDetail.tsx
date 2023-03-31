@@ -53,7 +53,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
             {source && (
               <ExpandablePanel text="SHOW CREATE SOURCE">
                 <Box
-                  mt={4}
+                  mt={2}
                   p={6}
                   border="solid 1px"
                   borderRadius="8px"

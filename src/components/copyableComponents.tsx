@@ -100,7 +100,7 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
       borderRadius={variant === "default" ? "lg" : "0"}
       bg={
         variant === "default"
-          ? semanticColors.background.secondary
+          ? semanticColors.background.tertiary
           : "transparent"
       }
       w="full"
@@ -111,6 +111,7 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
         as="pre"
         fontFamily="mono"
         pl={4}
+        py={2}
         flex={1}
         whiteSpace="pre-wrap"
         width={`calc(100% - ${CopyButtonWidth})`}

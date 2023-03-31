@@ -50,7 +50,7 @@ const SinkDetail = ({ sink }: SinkDetailProps) => {
             {sink && (
               <ExpandablePanel text="SHOW CREATE SINK">
                 <Box
-                  mt={4}
+                  mt={0}
                   p={6}
                   border="solid 1px"
                   borderRadius="8px"
