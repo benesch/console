@@ -8,6 +8,7 @@ const globalConfigStub: GlobalConfig = {
   sentryEnvironment: "sentry-environment",
   sentryRelease: "sentry-release",
   statuspageId: "statuspage-dummy-id",
+  syncServerUrl: "https://sync.example.com",
   environmentdScheme: "http",
   cloudRegions: new Map(),
   recoilDuplicateCheckingEnabled: false,

@@ -1,4 +1,4 @@
-import { getCurrentStack, getFronteggUrl } from "./config";
+import { getCurrentStack, getFronteggUrl, getSyncServerUrl } from "./config";
 
 describe("getCurrentStack", () => {
   beforeEach(() => {
@@ -57,6 +57,32 @@ describe("getFronteggUrl", () => {
   it("personal stack should return the personal stack url", () => {
     expect(getFronteggUrl("someuser.dev")).toEqual(
       "https://admin.someuser.dev.cloud.materialize.com"
+    );
+  });
+});
+
+describe("getSyncServerUrl", () => {
+  it("production stack should return the production url", () => {
+    expect(getSyncServerUrl("production")).toEqual(
+      "https://sync.cloud.materialize.com"
+    );
+  });
+
+  it("staging stack should return the staging url", () => {
+    expect(getSyncServerUrl("staging")).toEqual(
+      "https://sync.staging.cloud.materialize.com"
+    );
+  });
+
+  it("local stack should return the staging url", () => {
+    expect(getSyncServerUrl("local")).toEqual(
+      "https://sync.staging.cloud.materialize.com"
+    );
+  });
+
+  it("personal stack should return the personal stack url", () => {
+    expect(getSyncServerUrl("someuser.dev")).toEqual(
+      "https://sync.someuser.dev.cloud.materialize.com"
     );
   });
 });

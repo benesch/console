@@ -8,6 +8,10 @@ import { AuthState, User } from "@frontegg/redux-store";
 import type { ITenantsResponse } from "@frontegg/rest-api";
 import React from "react";
 
+import config from "~/config";
+
+import { currentOrganization, Organization } from "./syncServer";
+
 export type FetchAuthedType = (
   input: RequestInfo,
   init?: RequestInit
@@ -100,32 +104,39 @@ export function getCurrentTenant(
   return tenant;
 }
 
-type MzTenantMetadata = {
-  blocked: boolean;
-};
+export async function getCurrentOrganization(
+  user: User
+): Promise<Organization> {
+  const { data } = await currentOrganization(
+    config.syncServerUrl,
+    user.accessToken
+  );
+  return data;
+}
 
-export function getTenantMetadata(tenant: ITenantsResponse): MzTenantMetadata {
-  let parsedMetadata: any = {};
-  try {
-    parsedMetadata = JSON.parse(tenant.metadata);
-  } catch (e) {
-    // No-op
-    console.warn("Invalid tenant metadata value");
-  }
+export function useCurrentOrganization() {
+  const { user } = useAuth();
+  const [organization, setOrganization] = React.useState<Organization | null>(
+    null
+  );
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-  // TODO this complexity is temporary until the organization configuration
-  // service is deployed. That will ensure we get normalized metadata (at
-  // the cost of an additional network request).
-  let blocked = false;
-  if (typeof parsedMetadata["blocked"] === "boolean") {
-    blocked = parsedMetadata["blocked"];
-  } else {
-    console.warn(
-      "Inferring blocked status. Found:",
-      JSON.stringify(parsedMetadata["blocked"])
+  const fetchOrganization = React.useCallback(async () => {
+    const { data } = await currentOrganization(
+      config.syncServerUrl,
+      user.accessToken
     );
-  }
-  return {
-    blocked,
-  };
+    setOrganization(data);
+  }, [user]);
+
+  React.useEffect(() => {
+    try {
+      setLoading(true);
+      fetchOrganization();
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchOrganization]);
+
+  return { organization, loading };
 }

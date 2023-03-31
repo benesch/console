@@ -2,7 +2,7 @@ import { Box, Heading, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { getCurrentTenant, getTenantMetadata, useAuth } from "~/api/auth";
+import { useAuth, useCurrentOrganization } from "~/api/auth";
 import ConnectInstructions from "~/components/ConnectInstructions";
 import GetStartedDocs from "~/platform/home/GetStartedDocs";
 import PasswordStep from "~/platform/home/PasswordStep";
@@ -18,7 +18,7 @@ import {
 import GettingStarted from "./GettingStarted";
 
 const Home = () => {
-  const { user, tenantsState } = useAuth();
+  const { user } = useAuth();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
     intervalMs: 5000,
   });
@@ -28,10 +28,8 @@ const Home = () => {
   const currentEnvironmentId = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentIdState
   );
-  const currentTenant = getCurrentTenant(user, tenantsState.tenants);
-  const tenantIsBlocked = currentTenant
-    ? getTenantMetadata(currentTenant).blocked
-    : false;
+  const { organization } = useCurrentOrganization();
+  const tenantIsBlocked = organization ? organization.blocked : false;
 
   let content = (
     <HStack justifyContent="flex-start" width="100%">
