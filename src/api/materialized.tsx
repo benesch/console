@@ -431,6 +431,15 @@ export interface Source extends SchemaObject {
   error?: string;
 }
 
+export function extractData<DataType>(
+  data: Results,
+  f: (extractor: (colName: string) => any) => DataType
+): DataType[] {
+  const { rows, getColumnByName } = data;
+  assert(getColumnByName);
+  return rows.map((row) => f((colName) => getColumnByName(row, colName)));
+}
+
 /**
  * Fetches all sources in the current environment
  */
@@ -446,18 +455,15 @@ AND s.type <> 'subsource';`);
 
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
-    const { rows, getColumnByName } = sourceResponse.data;
-    assert(getColumnByName);
-
-    sources = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      schemaName: getColumnByName(row, "schema_name"),
-      databaseName: getColumnByName(row, "database_name"),
-      type: getColumnByName(row, "type"),
-      size: getColumnByName(row, "size"),
-      status: getColumnByName(row, "status"),
-      error: getColumnByName(row, "error"),
+    sources = extractData(sourceResponse.data, (x) => ({
+      id: x("id"),
+      name: x("name"),
+      schemaName: x("schema_name"),
+      databaseName: x("database_name"),
+      type: x("type"),
+      size: x("size"),
+      status: x("status"),
+      error: x("error"),
     }));
   }
 
@@ -499,13 +505,10 @@ export function useSourceErrors({
   );
   let errors: GroupedError[] | null = null;
   if (result.data) {
-    const { rows, getColumnByName } = result.data;
-    assert(getColumnByName);
-
-    errors = rows.map((row) => ({
-      lastOccurred: new Date(parseInt(getColumnByName(row, "last_occurred"))),
-      error: getColumnByName(row, "error"),
-      count: getColumnByName(row, "count"),
+    errors = extractData(result.data, (x) => ({
+      lastOccurred: new Date(parseInt(x("last_occurred"))),
+      error: x("error"),
+      count: x("count"),
     }));
   }
 
@@ -541,13 +544,10 @@ export function useSinkErrors({
   );
   let errors: GroupedError[] | null = null;
   if (result.data) {
-    const { rows, getColumnByName } = result.data;
-    assert(getColumnByName);
-
-    errors = rows.map((row) => ({
-      lastOccurred: new Date(parseInt(getColumnByName(row, "last_occurred"))),
-      error: getColumnByName(row, "error"),
-      count: getColumnByName(row, "count"),
+    errors = extractData(result.data, (x) => ({
+      lastOccurred: new Date(parseInt(x("last_occurred"))),
+      error: x("error"),
+      count: x("count"),
     }));
   }
 
@@ -588,13 +588,10 @@ ORDER BY bin_start DESC;`
   );
   let statuses: TimestampedCounts[] | null = null;
   if (result.data) {
-    const { rows, getColumnByName } = result.data;
-    assert(getColumnByName);
-
-    statuses = rows.map((row) => {
+    statuses = extractData(result.data, (x) => {
       return {
-        count: getColumnByName(row, "count") as number,
-        timestamp: parseInt(getColumnByName(row, "bin_start")) as number,
+        count: x("count") as number,
+        timestamp: parseInt(x("bin_start")) as number,
       };
     });
   }
@@ -631,15 +628,10 @@ ORDER BY bin_start DESC;`
   );
   let statuses: TimestampedCounts[] | null = null;
   if (result.data) {
-    const { rows, getColumnByName } = result.data;
-    assert(getColumnByName);
-
-    statuses = rows.map((row) => {
-      return {
-        count: getColumnByName(row, "count") as number,
-        timestamp: parseInt(getColumnByName(row, "bin_start")) as number,
-      };
-    });
+    statuses = extractData(result.data, (x) => ({
+      count: x("count") as number,
+      timestamp: x("bin_start") as number,
+    }));
   }
 
   return { ...result, data: statuses };
@@ -667,18 +659,15 @@ WHERE s.id LIKE 'u%';
 `);
   let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
-    const { rows, getColumnByName } = sinkResponse.data;
-    assert(getColumnByName);
-
-    sinks = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      schemaName: getColumnByName(row, "schema_name"),
-      databaseName: getColumnByName(row, "database_name"),
-      type: getColumnByName(row, "type"),
-      size: getColumnByName(row, "size"),
-      status: getColumnByName(row, "status"),
-      error: getColumnByName(row, "error"),
+    sinks = extractData(sinkResponse.data, (x) => ({
+      id: x("id"),
+      name: x("name"),
+      schemaName: x("schema_name"),
+      databaseName: x("database_name"),
+      type: x("type"),
+      size: x("size"),
+      status: x("status"),
+      error: x("error"),
     }));
   }
 
@@ -729,13 +718,10 @@ WHERE cluster_id = '${clusterId}';`
   );
   let views: MaterializedView[] | null = null;
   if (response.data) {
-    const { rows, getColumnByName } = response.data;
-    assert(getColumnByName);
-
-    views = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      definition: getColumnByName(row, "definition"),
+    views = extractData(response.data, (x) => ({
+      id: x("id"),
+      name: x("name"),
+      definition: x("definition"),
     }));
   }
 
@@ -764,14 +750,11 @@ AND i.id LIKE 'u%';`
   );
   let indexes: Index[] | null = null;
   if (response.data) {
-    const { rows, getColumnByName } = response.data;
-    assert(getColumnByName);
-
-    indexes = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      relationName: getColumnByName(row, "relation_name"),
-      relationType: getColumnByName(row, "type"),
+    indexes = extractData(response.data, (x) => ({
+      id: x("id"),
+      name: x("name"),
+      relationName: x("relation_name"),
+      relationType: x("type"),
     }));
   }
 

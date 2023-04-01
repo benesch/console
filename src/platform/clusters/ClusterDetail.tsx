@@ -57,7 +57,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
           path="materialized-views"
           element={<MaterializedViews cluster={cluster} />}
         />
-        <Route path="indexes" element={<Indexes cluster={cluster} />} />
+        <Route path="indexes/*" element={<Indexes cluster={cluster} />} />
       </SentryRoutes>
     </>
   );
