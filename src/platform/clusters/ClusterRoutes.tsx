@@ -5,7 +5,7 @@ import { Cluster, useClusters } from "~/api/materialized";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 
 export type ClusterDetailParams = {
   regionSlug: string;
@@ -14,9 +14,7 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const clusterResponse = useClusters();
-  useForegroundInterval(
-    () => !clusterResponse.loading && clusterResponse.refetch()
-  );
+  usePoll(clusterResponse.loading, clusterResponse.refetch);
 
   return (
     <SentryRoutes>

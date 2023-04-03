@@ -76,6 +76,7 @@ interface SinkListProps {
   schemaFilter: SchemaFilterState;
   sinks: Sink[] | null;
   loading: boolean;
+  isPolling: boolean;
 }
 
 const SinksListPage = ({
@@ -84,13 +85,14 @@ const SinksListPage = ({
   schemaFilter,
   sinks,
   loading,
+  isPolling,
 }: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
 
-  const showLoading = useDelayedLoading(loading);
+  const showLoading = useDelayedLoading(!isPolling && loading);
 
   const isDisabled = currentEnvironment?.state !== "enabled";
   const isInitialLoad = sinks === null;

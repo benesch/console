@@ -4,7 +4,7 @@ import { Route, useParams } from "react-router-dom";
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -33,7 +33,8 @@ const SinkRoutes = () => {
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
-  useForegroundInterval(() => !loading && refetch());
+  const isPolling = usePoll(loading, refetch);
+
   return (
     <SentryRoutes>
       <Route
@@ -45,6 +46,7 @@ const SinkRoutes = () => {
             nameFilter={nameFilter}
             sinks={sinks}
             loading={loading}
+            isPolling={isPolling}
           />
         }
       />

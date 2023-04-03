@@ -5,7 +5,7 @@ import useSources, { Source } from "~/api/materialize/useSources";
 import { SchemaObject } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -29,7 +29,7 @@ const SourceRoutes = () => {
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
-  useForegroundInterval(() => !loading && refetch());
+  const isPolling = usePoll(loading, refetch);
 
   return (
     <>
@@ -43,6 +43,7 @@ const SourceRoutes = () => {
               nameFilter={nameFilter}
               sources={sources}
               loading={loading}
+              isPolling={isPolling}
             />
           }
         />

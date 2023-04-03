@@ -72,6 +72,7 @@ interface SourceListProps {
   schemaFilter: SchemaFilterState;
   sources: Source[] | null;
   loading: boolean;
+  isPolling: boolean;
 }
 
 const SourcesListPage = ({
@@ -80,12 +81,13 @@ const SourcesListPage = ({
   schemaFilter,
   sources,
   loading,
+  isPolling,
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
-  const showLoading = useDelayedLoading(loading);
+  const showLoading = useDelayedLoading(!isPolling && loading);
 
   const isDisabled = currentEnvironment?.state !== "enabled";
   const isInitialLoad = sources === null;
