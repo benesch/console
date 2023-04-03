@@ -26,7 +26,7 @@ const useCreateEnvironment = (accessToken: string) => {
           {},
           accessToken
         );
-        navigate(`/regions/${regionIdToSlug(regionId)}`);
+        navigate(`/regions/${regionIdToSlug(regionId)}/connect`);
       } catch (e: any) {
         console.log(e);
         setCreatingRegionId(undefined);
