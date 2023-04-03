@@ -140,7 +140,9 @@ export function useSqlMany(request?: SqlRequest) {
     };
   }, [request, runSql, abortRequest]);
 
-  return { ...inner, refetch: () => runSql(request) };
+  const refetch = React.useCallback(() => runSql(request), [request, runSql]);
+
+  return { ...inner, refetch };
 }
 
 /**
