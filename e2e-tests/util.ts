@@ -238,8 +238,8 @@ export class TestContext {
         // eslint-disable-next-line no-unsafe-finally
         throw new Error(
           `API Error ${response.status()}  ${url}, req: ${
-            request.data ?? "No request body"
-          }, res: ${responsePayload ?? "No response body"}`
+            JSON.stringify(request.data) ?? "No request body"
+          }, res: ${JSON.stringify(responsePayload) ?? "No response body"}`
         );
     }
 
