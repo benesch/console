@@ -7,6 +7,8 @@ import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
 import { usePoll } from "~/useForegroundInterval";
 
+import NewClusterForm from "./NewClusterForm";
+
 export type ClusterDetailParams = {
   regionSlug: string;
   clusterName: string;
@@ -22,6 +24,7 @@ const ClusterRoutes = () => {
         path="/"
         element={<ClustersListPage clusterResponse={clusterResponse} />}
       />
+      <Route path="new" element={<NewClusterForm />} />
       <Route
         path=":id/:clusterName/*"
         element={<ClusterOrRedirect clusters={clusterResponse.data} />}

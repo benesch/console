@@ -1,4 +1,5 @@
 import {
+  Button,
   HStack,
   Spinner,
   Table,
@@ -11,8 +12,9 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { Cluster, ClusterResponse } from "~/api/materialized";
@@ -65,6 +67,7 @@ type Props = {
 
 const ClustersListPage = ({ clusterResponse }: Props) => {
   const { colors } = useTheme<MaterializeTheme>();
+  const flags = useFlags();
 
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -79,6 +82,11 @@ const ClustersListPage = ({ clusterResponse }: Props) => {
     <>
       <PageHeader>
         <PageHeading>Clusters</PageHeading>
+        {flags["source-creation-41"] && (
+          <Button variant="primary" size="sm" as={NavLink} to="new">
+            New cluster
+          </Button>
+        )}
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
