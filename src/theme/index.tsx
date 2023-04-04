@@ -14,6 +14,7 @@ import { ChakraTheme, extendTheme, Flex } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 import { FronteggThemeOptions } from "@frontegg/react";
 import React from "react";
+import { GroupBase, mergeStyles, StylesConfig } from "react-select";
 
 import logo from "~/img/wordmark.svg";
 import SignupFooter from "~/layouts/SignupFooter";
@@ -191,12 +192,22 @@ export const darkTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: darkColors,
   },
+  semanticTokens: {
+    colors: {
+      "chakra-placeholder-color": darkColors.foreground.secondary,
+    },
+  },
   shadows: darkShadows,
 });
 
 export const lightTheme = extendTheme(baseTheme, {
   colors: {
     semanticColors: lightColors,
+  },
+  semanticTokens: {
+    colors: {
+      "chakra-placeholder-color": lightColors.foreground.secondary,
+    },
   },
   shadows: lightShadows,
 });
@@ -223,6 +234,89 @@ const fronteggTheme: FronteggThemeOptions = {
       placement: "page",
     },
   },
+};
+
+export const buildReactSelectStyles = <
+  Option = unknown,
+  IsMulti extends boolean = boolean,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>(
+  semanticColors: ThemeColors,
+  shadows: ThemeShadows,
+  overrides: StylesConfig<Option, IsMulti, Group> = {}
+): StylesConfig<Option, IsMulti, Group> => {
+  return mergeStyles(
+    {
+      menu: (base) => ({
+        ...base,
+        position: "absolute",
+        left: "-8px",
+        marginTop: "2px",
+        minWidth: "240px",
+        width: "fit-content",
+        background: semanticColors.background.primary,
+        border: "1px solid",
+        borderColor: semanticColors.border.primary,
+        shadow: shadows.level2,
+        borderRadius: "8px",
+        overflow: "hidden",
+      }),
+      control: (base, state) => ({
+        ...base,
+        color: semanticColors.foreground.secondary,
+        fontSize: "14px",
+        lineHeight: "16px",
+        minHeight: "32px",
+        padding: "0px",
+        borderRadius: "8px",
+        borderWidth: "0",
+        boxShadow: "none",
+        background: state.isFocused
+          ? semanticColors.background.secondary
+          : semanticColors.background.primary,
+      }),
+      dropdownIndicator: (base) => ({
+        ...base,
+        color: semanticColors.foreground.secondary,
+        ":hover": {
+          color: semanticColors.foreground.secondary,
+        },
+      }),
+      groupHeading: (base) => ({
+        ...base,
+        color: semanticColors.foreground.tertiary,
+        fontSize: "14px",
+        fontWeight: "500",
+        lineHeight: "16px",
+        overflow: "hidden",
+        padding: "0 16px",
+        textTransform: "none",
+      }),
+      option: (base) => ({
+        ...base,
+        userSelect: "none",
+        cursor: "pointer",
+      }),
+      input: (base) => ({
+        ...base,
+      }),
+      indicatorSeparator: (base) => ({
+        ...base,
+        display: "none",
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        paddingRight: "2px",
+      }),
+      singleValue: (base) => ({
+        ...base,
+        color: semanticColors.foreground.secondary,
+        padding: 0,
+        margin: 0,
+      }),
+    },
+    overrides
+  );
 };
 
 export const getFronteggTheme = (

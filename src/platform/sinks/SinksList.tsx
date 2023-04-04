@@ -8,6 +8,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
   VStack,
@@ -19,6 +20,9 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { Sink } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -35,6 +39,12 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
+import {
+  DatabaseFilterState,
+  NameFilterState,
+  SchemaFilterState,
+} from "~/useSchemaObjectFilters";
 
 import { sinkErrorsPath } from "./SinkRoutes";
 
@@ -61,23 +71,49 @@ const sinkSuggestions: SQLSuggestion[] = [
 ];
 
 interface SinkListProps {
+  databaseFilter: DatabaseFilterState;
+  nameFilter: NameFilterState;
+  schemaFilter: SchemaFilterState;
   sinks: Sink[] | null;
+  loading: boolean;
+  isPolling: boolean;
 }
 
-const SinksListPage = ({ sinks }: SinkListProps) => {
+const SinksListPage = ({
+  databaseFilter,
+  nameFilter,
+  schemaFilter,
+  sinks,
+  loading,
+  isPolling,
+}: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
 
+  const showLoading = useDelayedLoading(!isPolling && loading);
+
   const isDisabled = currentEnvironment?.state !== "enabled";
-  const isLoading = sinks === null;
+  const isInitialLoad = sinks === null;
+  const isLoading = isInitialLoad || showLoading;
   const isEmpty = !isLoading && sinks.length === 0;
 
   return (
     <>
       <PageHeader>
         <PageHeading>Sinks</PageHeading>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFilter} />
+          <SearchInput
+            name="sink"
+            value={nameFilter.name}
+            onChange={(e) => {
+              nameFilter.setName(e.target.value);
+            }}
+          />
+        </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
@@ -177,7 +213,14 @@ const SinkTable = (props: SinkTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {s.name}
+                <Tooltip
+                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {s.name}
+                </Tooltip>
               </Box>
             </Td>
             <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>

@@ -1,10 +1,12 @@
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { SchemaObject, Source, useSources } from "~/api/materialized";
+import useSources, { Source } from "~/api/materialize/useSources";
+import { SchemaObject } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
   objectOrRedirect,
@@ -12,14 +14,39 @@ import {
 } from "../schemaObjectRouteHelpers";
 import SourceDetail from "./SourceDetail";
 
+const NAME_FILTER_QUERY_STRING_KEY = "sourceName";
+
 const SourceRoutes = () => {
-  const { data: sources, loading, refetch } = useSources();
-  useForegroundInterval(() => !loading && refetch());
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
+  );
+  const {
+    data: sources,
+    loading,
+    refetch,
+  } = useSources({
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
+  });
+  const isPolling = usePoll(loading, refetch);
 
   return (
     <>
       <SentryRoutes>
-        <Route path="/" element={<SourcesList sources={sources} />} />
+        <Route
+          path="/"
+          element={
+            <SourcesList
+              databaseFilter={databaseFilter}
+              schemaFilter={schemaFilter}
+              nameFilter={nameFilter}
+              sources={sources}
+              loading={loading}
+              isPolling={isPolling}
+            />
+          }
+        />
         <Route
           path=":id/:databaseName/:schemaName/:objectName/*"
           element={<SourceOrRedirect sources={sources} />}

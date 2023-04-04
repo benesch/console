@@ -1,7 +1,12 @@
 import { ThemeProvider } from "@emotion/react";
 import { render } from "@testing-library/react";
 import React, { ReactElement } from "react";
-import { MemoryRouter, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  MemoryRouter,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { MutableSnapshot, RecoilRoot, SetRecoilState } from "recoil";
 
 import {
@@ -52,6 +57,9 @@ export const setFakeEnvironment = (
 
 export type InitializeStateFn = (mutableSnapshot: MutableSnapshot) => void;
 
+/**
+ * Renders a component with all our app providers
+ */
 export const renderComponent = (
   element: ReactElement,
   options: {
@@ -60,12 +68,59 @@ export const renderComponent = (
   } = {}
 ) => {
   return render(
-    <RecoilRoot initializeState={options.initializeState}>
+    <ProviderWrapper
+      initializeState={options.initializeState}
+      initialRouterEntries={options.initialRouterEntries}
+    >
+      {element}
+    </ProviderWrapper>
+  );
+};
+
+export interface ProviderWrapperProps {
+  initializeState?: InitializeStateFn;
+  initialRouterEntries?: string[];
+}
+
+/**
+ * Factory function to create a ProviderWrapper with initial recoil state and router entries for use with renderHook.
+ * This wrapper includes a BrowserRouter rather than a MemoryRouter.
+ */
+export const createProviderWrapper = ({
+  initializeState,
+}: React.PropsWithChildren<ProviderWrapperProps>) => {
+  return function ({ children }: React.PropsWithChildren) {
+    return (
+      <RecoilRoot initializeState={initializeState}>
+        <ThemeProvider theme={lightTheme}>
+          <React.Suspense fallback="suspense-fallback">
+            <BrowserRouter>
+              <SentryRoutes>
+                <Route path="/*" element={children} />
+              </SentryRoutes>
+            </BrowserRouter>
+          </React.Suspense>
+        </ThemeProvider>
+      </RecoilRoot>
+    );
+  };
+};
+
+/**
+ * Test component with all the necessary providers for our various hooks.
+ */
+export const ProviderWrapper = ({
+  children,
+  initializeState,
+  initialRouterEntries,
+}: React.PropsWithChildren<ProviderWrapperProps>) => {
+  return (
+    <RecoilRoot initializeState={initializeState}>
       <ThemeProvider theme={lightTheme}>
         <React.Suspense fallback="suspense-fallback">
-          <MemoryRouter initialEntries={options.initialRouterEntries}>
+          <MemoryRouter initialEntries={initialRouterEntries}>
             <SentryRoutes>
-              <Route path="/*" element={element} />
+              <Route path="/*" element={children} />
             </SentryRoutes>
           </MemoryRouter>
         </React.Suspense>

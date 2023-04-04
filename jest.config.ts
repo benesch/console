@@ -13,6 +13,7 @@ const config: Config.InitialOptions = {
       "<rootDir>/src/__mocks__/fileMock.js",
     "^~/(.*)$": "<rootDir>/src/$1",
   },
+  testPathIgnorePatterns: ["e2e-tests"],
 };
 
 export default config;

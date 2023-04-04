@@ -8,6 +8,7 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
   VStack,
@@ -16,9 +17,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source } from "~/api/materialized";
+import { Source } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
@@ -35,6 +39,12 @@ import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
+import {
+  DatabaseFilterState,
+  NameFilterState,
+  SchemaFilterState,
+} from "~/useSchemaObjectFilters";
 
 import { sourceErrorsPath } from "./SourceRoutes";
 
@@ -57,23 +67,50 @@ const sourcesSuggestions: SQLSuggestion[] = [
 ];
 
 interface SourceListProps {
+  databaseFilter: DatabaseFilterState;
+  nameFilter: NameFilterState;
+  schemaFilter: SchemaFilterState;
   sources: Source[] | null;
+  loading: boolean;
+  isPolling: boolean;
 }
 
-const SourcesListPage = ({ sources }: SourceListProps) => {
+const SourcesListPage = ({
+  databaseFilter,
+  nameFilter,
+  schemaFilter,
+  sources,
+  loading,
+  isPolling,
+}: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
+  const showLoading = useDelayedLoading(!isPolling && loading);
 
   const isDisabled = currentEnvironment?.state !== "enabled";
-  const isLoading = sources === null;
+  const isInitialLoad = sources === null;
+  const isLoading = isInitialLoad || showLoading;
   const isEmpty = !isLoading && sources.length === 0;
 
   return (
     <>
       <PageHeader>
         <PageHeading>Sources</PageHeading>
+        <HStack gap="16px">
+          <HStack gap="0px">
+            <DatabaseFilter {...databaseFilter} />
+            <SchemaFilter {...schemaFilter} />
+          </HStack>
+          <SearchInput
+            name="source"
+            value={nameFilter.name}
+            onChange={(e) => {
+              nameFilter.setName(e.target.value);
+            }}
+          />
+        </HStack>
       </PageHeader>
       {isLoading && !isEmpty && !isDisabled && (
         <Spinner data-testid="loading-spinner" />
@@ -179,7 +216,14 @@ const SourceTable = (props: SourceTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {s.name}
+                <Tooltip
+                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {s.name}
+                </Tooltip>
               </Box>
             </Td>
             <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>

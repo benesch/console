@@ -2,7 +2,7 @@ import React from "react";
 
 import colors from "~/theme/colors";
 
-export const CheckmarkIcon = () => {
+const CheckmarkIcon = ({ color }: { color: string }) => {
   return (
     <svg
       width="16"
@@ -13,9 +13,10 @@ export const CheckmarkIcon = () => {
     >
       <path
         d="M13.3337 4.43945L6.00033 11.7728L2.66699 8.43945"
-        stroke={colors.green[500]}
+        stroke={color}
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth="1.5"
       />
     </svg>
   );

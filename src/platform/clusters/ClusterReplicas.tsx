@@ -36,7 +36,7 @@ import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
 import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",
@@ -74,7 +74,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
     data: replicas,
     refetch,
   } = useClusterReplicasWithUtilization(cluster?.id);
-  useForegroundInterval(() => !loading && refetch());
+  usePoll(loading, refetch);
 
   const isDisabled =
     !currentEnvironmentState || currentEnvironment?.state !== "enabled";

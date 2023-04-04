@@ -140,7 +140,9 @@ export function useSqlMany(request?: SqlRequest) {
     };
   }, [request, runSql, abortRequest]);
 
-  return { ...inner, refetch: () => runSql(request) };
+  const refetch = React.useCallback(() => runSql(request), [request, runSql]);
+
+  return { ...inner, refetch };
 }
 
 /**
@@ -191,7 +193,6 @@ export function useSqlApiRequest() {
           setError(null);
         }
       } catch (err) {
-        console.error(err);
         setError(defaultError);
       } finally {
         clearTimeout(timeout);
@@ -424,13 +425,6 @@ export interface SchemaObject {
   databaseName: string;
 }
 
-export interface Source extends SchemaObject {
-  type: string;
-  size?: string;
-  status?: ConnectorStatus;
-  error?: string;
-}
-
 export function extractData<DataType>(
   data: Results,
   f: (extractor: (colName: string) => any) => DataType
@@ -438,36 +432,6 @@ export function extractData<DataType>(
   const { rows, getColumnByName } = data;
   assert(getColumnByName);
   return rows.map((row) => f((colName) => getColumnByName(row, colName)));
-}
-
-/**
- * Fetches all sources in the current environment
- */
-export function useSources() {
-  const sourceResponse =
-    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
-FROM mz_sources s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
-WHERE s.id LIKE 'u%'
-AND s.type <> 'subsource';`);
-
-  let sources: Source[] | null = null;
-  if (sourceResponse.data) {
-    sources = extractData(sourceResponse.data, (x) => ({
-      id: x("id"),
-      name: x("name"),
-      schemaName: x("schema_name"),
-      databaseName: x("database_name"),
-      type: x("type"),
-      size: x("size"),
-      status: x("status"),
-      error: x("error"),
-    }));
-  }
-
-  return { ...sourceResponse, data: sources };
 }
 
 export interface GroupedError {
@@ -647,7 +611,11 @@ export interface Sink extends SchemaObject {
 /**
  * Fetches all sinks in the current environment
  */
-export function useSinks() {
+export function useSinks({
+  databaseId,
+  schemaId,
+  nameFilter,
+}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
   const sinkResponse =
     useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
 FROM mz_sinks s
@@ -655,8 +623,10 @@ INNER JOIN mz_schemas sc ON sc.id = s.schema_id
 INNER JOIN mz_databases d ON d.id = sc.database_id
 LEFT OUTER JOIN mz_internal.mz_sink_statuses st
 ON st.id = s.id
-WHERE s.id LIKE 'u%';
-`);
+WHERE s.id LIKE 'u%'
+${databaseId ? `AND d.id = ${databaseId}` : ""}
+${schemaId ? `AND sc.id = ${schemaId}` : ""}
+${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
   let sinks: Sink[] | null = null;
   if (sinkResponse.data) {
     sinks = extractData(sinkResponse.data, (x) => ({
@@ -764,15 +734,26 @@ AND i.id LIKE 'u%';`
 export interface Secret {
   id: string;
   name: string;
+  databaseName: string;
+  schemaName: string;
 }
 
 /**
  * Fetches all secrets in the current environment
  */
-export function useSecrets() {
-  const secretResponse = useSql(`SELECT id, name 
-FROM mz_secrets;
-`);
+export function useSecrets({
+  databaseId,
+  schemaId,
+  nameFilter,
+}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
+  const secretResponse =
+    useSql(`SELECT s.id, s.name, d.name as database_name, sc.name as schema_name
+FROM mz_secrets s
+INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+INNER JOIN mz_databases d ON d.id = sc.database_id
+${databaseId ? `AND d.id = ${databaseId}` : ""}
+${schemaId ? `AND sc.id = ${schemaId}` : ""}
+${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
   let secrets: Secret[] | null = null;
   if (secretResponse.data) {
     const { rows, getColumnByName } = secretResponse.data;
@@ -781,6 +762,8 @@ FROM mz_secrets;
     secrets = rows.map((row) => ({
       id: getColumnByName(row, "id"),
       name: getColumnByName(row, "name"),
+      databaseName: getColumnByName(row, "database_name"),
+      schemaName: getColumnByName(row, "schema_name"),
     }));
   }
 

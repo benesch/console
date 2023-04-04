@@ -4,7 +4,8 @@ import { Route, useParams } from "react-router-dom";
 import { SchemaObject, Sink, useSinks } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
   objectOrRedirect,
@@ -17,12 +18,38 @@ export type ClusterDetailParams = {
   clusterName: string;
 };
 
+const NAME_FILTER_QUERY_STRING_KEY = "sinkName";
+
 const SinkRoutes = () => {
-  const { data: sinks, loading, refetch } = useSinks();
-  useForegroundInterval(() => !loading && refetch());
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
+  );
+  const {
+    data: sinks,
+    loading,
+    refetch,
+  } = useSinks({
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
+  });
+  const isPolling = usePoll(loading, refetch);
+
   return (
     <SentryRoutes>
-      <Route path="/" element={<SinksList sinks={sinks} />} />
+      <Route
+        path="/"
+        element={
+          <SinksList
+            databaseFilter={databaseFilter}
+            schemaFilter={schemaFilter}
+            nameFilter={nameFilter}
+            sinks={sinks}
+            loading={loading}
+            isPolling={isPolling}
+          />
+        }
+      />
       <Route
         path=":id/:databaseName/:schemaName/:objectName/*"
         element={<SinkOrRedirect sinks={sinks} />}

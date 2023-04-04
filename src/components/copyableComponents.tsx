@@ -30,9 +30,13 @@ export const useCopyableText = (text: string, delay?: number) => {
 export const CopyStateIcon: React.FC<
   React.PropsWithChildren<{ copied: boolean } & IconProps>
 > = ({ copied }) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   if (copied)
     return (
       <CheckmarkIcon
+        color={semanticColors.accent.green}
         data-testid="copyable-checkicon"
         aria-label="Text has been copied"
       />

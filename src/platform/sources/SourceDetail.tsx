@@ -2,7 +2,8 @@ import { Box, HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { Source, useSchemaObjectDDLStatement } from "~/api/materialized";
+import { Source } from "~/api/materialize/useSources";
+import { useSchemaObjectDDLStatement } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";

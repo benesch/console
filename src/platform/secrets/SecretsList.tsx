@@ -1,6 +1,7 @@
 import {
   Button,
   Circle,
+  HStack,
   Spinner,
   Table,
   Tbody,
@@ -8,12 +9,16 @@ import {
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
 } from "@chakra-ui/react";
 import React from "react";
 
 import { Secret, useSecrets } from "~/api/materialized";
+import DatabaseFilter from "~/components/DatabaseFilter";
+import SchemaFilter from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -23,6 +28,10 @@ import {
 } from "~/layouts/listPageComponents";
 import LockIcon from "~/svg/Lock";
 import { MaterializeTheme } from "~/theme";
+import useDelayedLoading from "~/useDelayedLoading";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
+
+const NAME_FILTER_QUERY_STRING_KEY = "secretName";
 
 const EmptyState = () => {
   const {
@@ -57,22 +66,42 @@ const EmptyState = () => {
 };
 
 const SecretsList = () => {
-  const { data: secrets } = useSecrets();
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
+  );
+  const { data: secrets, loading } = useSecrets({
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
+  });
 
-  const isLoading = secrets === null;
+  const showLoading = useDelayedLoading(loading);
 
-  const isEmpty = !isLoading && secrets.length === 0;
+  const isInitialLoad = secrets === null;
+
+  const isEmpty = !isInitialLoad && secrets.length === 0;
 
   return (
     <>
       <PageHeader>
         <PageHeading>Secrets</PageHeading>
-        {/* TODO: Add handler for Secret creation flow(issue#17) */}
-        <Button variant="primary" size="sm">
-          New secret
-        </Button>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFilter} />
+          <SearchInput
+            name="sink"
+            value={nameFilter.name}
+            onChange={(e) => {
+              nameFilter.setName(e.target.value);
+            }}
+          />
+          {/* TODO: Add handler for Secret creation flow(issue#17) */}
+          <Button variant="primary" size="sm">
+            New secret
+          </Button>
+        </HStack>
       </PageHeader>
-      {isLoading ? (
+      {showLoading || isInitialLoad ? (
         <Spinner data-testid="loading-spinner" />
       ) : isEmpty ? (
         <EmptyState />
@@ -105,7 +134,14 @@ const SecretsTable = ({ secrets }: SecretsTableProps) => {
                 borderBottomWidth="1px"
                 borderBottomColor={colors.semanticColors.border.primary}
               >
-                {secret.name}
+                <Tooltip
+                  label={`${secret.databaseName}.${secret.schemaName}.${secret.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {secret.name}
+                </Tooltip>
               </Td>
             </Tr>
           );
