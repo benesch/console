@@ -18,6 +18,7 @@ import { assert } from "~/util";
 /// Named used to identify ourselves to the server, needs to be kept in sync with
 /// the `ApplicationNameHint`.
 export const APPLICATION_NAME = "web_console";
+export const DEFAULT_QUERY_ERROR = "Error running query.";
 
 export interface Results {
   columns: Array<string>;
@@ -106,10 +107,17 @@ export function useSqlLazy<TVariables>({
   const { runSql: runSqlInner, data, error, loading } = useSqlApiRequest();
 
   const runSql = React.useCallback(
-    (variables: TVariables) => {
+    (
+      variables: TVariables,
+      options?: { onSuccess?: onSuccess; onError?: onError }
+    ) => {
       const sql = queryBuilder(variables);
       const request = genMzIntrospectionSqlRequest(sql);
-      runSqlInner(request, onSuccess, onError);
+      runSqlInner(
+        request,
+        options?.onSuccess ?? onSuccess,
+        options?.onError ?? onError
+      );
     },
     [queryBuilder, runSqlInner, onSuccess, onError]
   );
@@ -163,7 +171,6 @@ export function useSqlApiRequest() {
   const controllerRef = React.useRef<AbortController>(new AbortController());
   const [results, setResults] = useState<Results[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const defaultError = "Error running query.";
 
   const runSql = React.useCallback(
     async (request?: SqlRequest, onSuccess?: onSuccess, onError?: onError) => {
@@ -197,7 +204,7 @@ export function useSqlApiRequest() {
           setError(null);
         }
       } catch (err) {
-        setError(defaultError);
+        setError(DEFAULT_QUERY_ERROR);
       } finally {
         clearTimeout(timeout);
         setLoading(false);
@@ -228,7 +235,6 @@ export const executeSql = async (
   assert(environment.resolvable);
 
   const address = environment.environmentdHttpsAddress;
-  const defaultError = "Error running query.";
   if (!address) {
     return { results: null, errorMessage: null };
   }
@@ -268,7 +274,7 @@ export const executeSql = async (
   if (!response.ok) {
     return {
       errorMessage: `HTTP Error ${response.status}: ${
-        responseText ?? defaultError
+        responseText ?? DEFAULT_QUERY_ERROR
       }`,
       results: null,
     };

@@ -34,6 +34,9 @@ const SuccessToastComponent = ({
       px="6"
       py="4"
       width="auto"
+      minW="360px"
+      mb="6"
+      mr="6"
     >
       <HStack spacing="4">
         <Box>{icon}</Box>

@@ -1,7 +1,18 @@
 import {
   Button,
   Circle,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   HStack,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Table,
   Tbody,
@@ -11,14 +22,19 @@ import {
   Thead,
   Tooltip,
   Tr,
+  useDisclosure,
   useTheme,
+  VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { Secret, useSecrets } from "~/api/materialized";
+import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import InlayBanner from "~/components/InlayBanner";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
+import { useSuccessToast } from "~/components/SuccessToast";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -32,6 +48,13 @@ import useDelayedLoading from "~/useDelayedLoading";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 const NAME_FILTER_QUERY_STRING_KEY = "secretName";
+
+import { serverErrorToUserError } from "./serverErrorToUserError";
+
+type FormValues = {
+  name: string;
+  value: string;
+};
 
 const EmptyState = () => {
   const {
@@ -65,15 +88,178 @@ const EmptyState = () => {
   );
 };
 
+function createSecretQueryBuilder(variables: { name: string; value: string }) {
+  return `
+  CREATE SECRET ${variables.name}
+  AS '${variables.value}'
+`;
+}
+
+const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <>
+      <Text color={semanticColors.foreground.primary} as="span">
+        {secretName}{" "}
+      </Text>
+      created successfully
+    </>
+  );
+};
+
+const NAME_FIELD = "name";
+const VALUE_FIELD = "value";
+
+const SecretsCreationModal = ({
+  isOpen,
+  onClose,
+  onPrimaryButtonAction,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onPrimaryButtonAction: () => void;
+}) => {
+  const [showGenericQueryError, setShowGenericQueryError] = useState(false);
+  const toast = useSuccessToast();
+
+  const { shadows } = useTheme<MaterializeTheme>();
+
+  const {
+    register,
+    handleSubmit: handleSubmit,
+    reset: formReset,
+    formState,
+    setError,
+    setFocus,
+  } = useForm<FormValues>({
+    mode: "onTouched",
+  });
+
+  const { runSql: createSecret, loading: isCreationInFlight } = useSqlLazy({
+    queryBuilder: createSecretQueryBuilder,
+  });
+
+  const handleValidSubmit = async (formValues: FormValues) => {
+    setShowGenericQueryError(false);
+    createSecret(formValues, {
+      onSuccess: () => {
+        onPrimaryButtonAction();
+        toast({
+          description: <SuccessToastDescription secretName={formValues.name} />,
+        });
+        formReset();
+      },
+      onError: (errorMessage) => {
+        const userErrorMessage = serverErrorToUserError(errorMessage);
+        if (userErrorMessage === null) {
+          setShowGenericQueryError(true);
+        } else {
+          setError(NAME_FIELD, {
+            message: userErrorMessage,
+          });
+          setFocus(NAME_FIELD);
+        }
+      },
+    });
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent shadow={shadows.level4}>
+        <form onSubmit={handleSubmit(handleValidSubmit)}>
+          <ModalHeader>Create a secret</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack pb={6} spacing="4">
+              {showGenericQueryError && (
+                <InlayBanner
+                  variant="error"
+                  label="Error"
+                  message="There was an error creating a secret key. Please try again."
+                />
+              )}
+              <FormControl isInvalid={!!formState.errors.name}>
+                <FormLabel htmlFor={NAME_FIELD} fontSize="sm">
+                  Name
+                </FormLabel>
+                <Input
+                  {...register(NAME_FIELD, {
+                    required: "Name is required.",
+                  })}
+                  placeholder="confluent_password"
+                  autoFocus={isOpen}
+                  autoCorrect="off"
+                  size="sm"
+                  variant={formState.errors.name ? "error" : "default"}
+                />
+                <FormErrorMessage>
+                  {formState.errors.name?.message}
+                </FormErrorMessage>
+              </FormControl>
+              <FormControl isInvalid={!!formState.errors.value}>
+                <FormLabel htmlFor={VALUE_FIELD} fontSize="sm">
+                  Value
+                </FormLabel>
+                <Input
+                  {...register(VALUE_FIELD, {
+                    required: "Value is required.",
+                  })}
+                  autoCorrect="off"
+                  size="sm"
+                  variant={formState.errors.value ? "error" : "default"}
+                />
+                <FormErrorMessage>
+                  {formState.errors.value?.message}
+                </FormErrorMessage>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <HStack spacing="2">
+              <Button variant="secondary" size="sm" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="sm"
+                isDisabled={isCreationInFlight}
+              >
+                Create secret
+              </Button>
+            </HStack>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
+  );
+};
+
 const SecretsList = () => {
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
-  const { data: secrets, loading } = useSecrets({
+  const {
+    data: secrets,
+    loading,
+    refetch,
+  } = useSecrets({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
+  // const { data: secrets, refetch } = useSecrets();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleSecretCreation = () => {
+    onClose();
+    refetch();
+  };
 
   const showLoading = useDelayedLoading(loading);
 
@@ -95,8 +281,7 @@ const SecretsList = () => {
               nameFilter.setName(e.target.value);
             }}
           />
-          {/* TODO: Add handler for Secret creation flow(issue#17) */}
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={onOpen}>
             New secret
           </Button>
         </HStack>
@@ -106,7 +291,14 @@ const SecretsList = () => {
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <SecretsTable secrets={secrets} />
+        <>
+          <SecretsTable secrets={secrets} />
+          <SecretsCreationModal
+            isOpen={isOpen}
+            onClose={onClose}
+            onPrimaryButtonAction={handleSecretCreation}
+          />
+        </>
       )}
     </>
   );
