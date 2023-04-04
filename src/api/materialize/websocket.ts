@@ -4,7 +4,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { currentEnvironmentState } from "~/recoil/environments";
 
-import { ExplainTimestampResult } from "../materialized";
+import { APPLICATION_NAME, ExplainTimestampResult } from "../materialized";
 
 export interface SimpleRequest {
   query: string;
@@ -111,12 +111,8 @@ export const useSqlWs = () => {
       ws = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
-      // Options to provide on startup of the WebSocket, each value will be applied as a session
-      // variable.
-      const options = {
-        // Note: this needs to be kept in sync with `ApplicationNameHint` in the materialize repo
-        application_name: "web_console",
-      };
+      // Optional session vars to provide on startup of the WebSocket.
+      const options = { application_name: APPLICATION_NAME };
 
       setSocketError(null);
       ws.addEventListener("message", handleMessage);
