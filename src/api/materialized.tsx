@@ -15,6 +15,10 @@ import {
 } from "~/recoil/environments";
 import { assert } from "~/util";
 
+/// Named used to identify ourselves to the server, needs to be kept in sync with
+/// the `ApplicationNameHint`.
+export const APPLICATION_NAME = "web_console";
+
 export interface Results {
   columns: Array<string>;
   rows: Array<any>;
@@ -240,20 +244,24 @@ export const executeSql = async (
   }
   queries.push(...request.queries);
 
-  const response = await fetch(
-    `${config.environmentdScheme}://${address}/api/sql`,
-    {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        queries: queries,
-      }),
-      ...requestOpts,
-    }
-  );
+  const url = new URL(`${config.environmentdScheme}://${address}/api/sql`);
+
+  // Optional session vars that will be set before running the request.
+  const options = { application_name: APPLICATION_NAME };
+  const param = encodeURIComponent(JSON.stringify(options));
+  url.searchParams.append("options", param);
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      queries: queries,
+    }),
+    ...requestOpts,
+  });
 
   const responseText = await response.text();
 
