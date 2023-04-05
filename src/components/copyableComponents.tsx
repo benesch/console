@@ -101,7 +101,7 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
       borderRadius={variant === "default" ? "lg" : "0"}
       bg={
         variant === "default"
-          ? semanticColors.background.tertiary
+          ? semanticColors.background.secondary
           : "transparent"
       }
       w="full"
