@@ -37,6 +37,17 @@ export const Button = {
     fontWeight: 500,
   },
   variants: {
+    borderless: {
+      color: "semanticColors.foreground.secondary",
+      fontSize: "14px",
+      lineHeight: "16px",
+      fontWeight: 500,
+      backgroundColor: "semanticColors.background.primary",
+      transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
+      _hover: {
+        backgroundColor: "semanticColors.background.secondary",
+      },
+    },
     secondary: {
       color: "semanticColors.foreground.primary",
       backgroundColor: "semanticColors.background.primary",
@@ -182,6 +193,13 @@ export const Modal = {
       dialog: {
         minWidth: "3xl",
         maxWidth: "3xl",
+      },
+    },
+    fullscreen: {
+      dialog: {
+        minWidth: "100vw",
+        minHeigth: "100vh",
+        m: 0,
       },
     },
   },

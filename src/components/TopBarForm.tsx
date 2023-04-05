@@ -6,10 +6,12 @@ import { MaterializeTheme } from "~/theme";
 
 export interface FormTopBarProps {
   title: string;
+  backButtonHref: string;
 }
 
-const FormTopBar = ({
+export const FormTopBar = ({
   title,
+  backButtonHref,
   children,
 }: React.PropsWithChildren<FormTopBarProps>) => {
   const {
@@ -24,7 +26,12 @@ const FormTopBar = ({
           mr="4"
           borderRight={`1px solid ${semanticColors.border.secondary}`}
         >
-          <CloseButton as={NavLink} to=".." height="24px" width="24px" />
+          <CloseButton
+            as={NavLink}
+            to={backButtonHref}
+            height="24px"
+            width="24px"
+          />
         </Box>
         <Text fontWeight="500" fontSize="14px" lineHeight="16px">
           {title}

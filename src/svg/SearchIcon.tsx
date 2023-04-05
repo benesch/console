@@ -1,6 +1,6 @@
 import React from "react";
 
-const CopyIcon = (props: { color: string }) => (
+const SearchIcon = (props: { color: string }) => (
   <svg
     width="16"
     height="16"
@@ -16,4 +16,4 @@ const CopyIcon = (props: { color: string }) => (
   </svg>
 );
 
-export default CopyIcon;
+export default SearchIcon;
