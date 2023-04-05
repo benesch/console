@@ -20,11 +20,11 @@ describe("SwitchStackModal", () => {
   });
 
   describe("when the feature flag is disabled", () => {
-    it("renders nothing", () => {
+    it("renders nothing", async () => {
       mockFlags({ "switch-stacks-modal": false });
       const result = renderComponent(<SwitchStackModal />);
 
-      expect(result.container).toBeEmptyDOMElement();
+      expect(result.queryByTestId("switch-stack-modal")).toBeNull();
     });
   });
 

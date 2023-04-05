@@ -358,8 +358,4 @@ describe("genSqlQueryHandler", () => {
       results: [{ error: mockCommitQuery.error, notices: [] }],
     });
   });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
 });
