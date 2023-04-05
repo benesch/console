@@ -3,7 +3,7 @@ import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
 import { Source } from "~/api/materialize/useSources";
-import { useSchemaObjectDDLStatement } from "~/api/materialized";
+import { useShowCreate } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
@@ -26,7 +26,7 @@ export interface SourceDetailProps {
 }
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const { ddl } = useSchemaObjectDDLStatement("SOURCE", source?.name);
+  const { ddl } = useShowCreate("SOURCE", source);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
     () => [
