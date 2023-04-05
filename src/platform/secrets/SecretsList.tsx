@@ -182,9 +182,7 @@ const SecretsCreationModal = ({
                 />
               )}
               <FormControl isInvalid={!!formState.errors.name}>
-                <FormLabel htmlFor={NAME_FIELD} fontSize="sm">
-                  Name
-                </FormLabel>
+                <FormLabel fontSize="sm">Name</FormLabel>
                 <Input
                   {...register(NAME_FIELD, {
                     required: "Name is required.",
@@ -200,9 +198,7 @@ const SecretsCreationModal = ({
                 </FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formState.errors.value}>
-                <FormLabel htmlFor={VALUE_FIELD} fontSize="sm">
-                  Value
-                </FormLabel>
+                <FormLabel fontSize="sm">Value</FormLabel>
                 <Input
                   {...register(VALUE_FIELD, {
                     required: "Value is required.",
@@ -239,7 +235,7 @@ const SecretsCreationModal = ({
   );
 };
 
-const SecretsList = () => {
+export const SecretsList = () => {
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
@@ -252,7 +248,6 @@ const SecretsList = () => {
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
-  // const { data: secrets, refetch } = useSecrets();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -291,15 +286,13 @@ const SecretsList = () => {
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <>
-          <SecretsTable secrets={secrets} />
-          <SecretsCreationModal
-            isOpen={isOpen}
-            onClose={onClose}
-            onPrimaryButtonAction={handleSecretCreation}
-          />
-        </>
+        <SecretsTable secrets={secrets} />
       )}
+      <SecretsCreationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onPrimaryButtonAction={handleSecretCreation}
+      />
     </>
   );
 };
