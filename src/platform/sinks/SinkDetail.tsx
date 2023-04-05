@@ -25,7 +25,7 @@ export interface SinkDetailProps {
 
 const SinkDetail = ({ sink }: SinkDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const { ddl } = useShowCreate("SINK", sink?.name);
+  const { ddl } = useShowCreate("SINK", sink);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
     () => [{ title: "Sinks", href: ".." }, { title: params.objectName ?? "" }],

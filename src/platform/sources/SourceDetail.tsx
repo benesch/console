@@ -26,7 +26,7 @@ export interface SourceDetailProps {
 }
 const SourceDetail = ({ source }: SourceDetailProps) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const { ddl } = useShowCreate("SOURCE", source?.name);
+  const { ddl } = useShowCreate("SOURCE", source);
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
     () => [
