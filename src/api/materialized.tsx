@@ -663,10 +663,7 @@ type DDLNoun = "SINK" | "SOURCE";
 /**
  * Fetches the DDL statement for creating a schema object
  */
-export function useSchemaObjectDDLStatement(
-  noun: DDLNoun,
-  objectName?: string
-) {
+export function useShowCreate(noun: DDLNoun, objectName?: string) {
   const { data, error, refetch } = useSql(
     objectName
       ? `SHOW CREATE ${noun} ${quoteIdentifier(objectName)}`
