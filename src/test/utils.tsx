@@ -1,3 +1,4 @@
+import { EnvironmentProvider, ToastProvider } from "@chakra-ui/react";
 import { ThemeProvider } from "@emotion/react";
 import { render } from "@testing-library/react";
 import React, { ReactElement } from "react";
@@ -93,13 +94,16 @@ export const createProviderWrapper = ({
     return (
       <RecoilRoot initializeState={initializeState}>
         <ThemeProvider theme={lightTheme}>
-          <React.Suspense fallback="suspense-fallback">
-            <BrowserRouter>
-              <SentryRoutes>
-                <Route path="/*" element={children} />
-              </SentryRoutes>
-            </BrowserRouter>
-          </React.Suspense>
+          <EnvironmentProvider>
+            <React.Suspense fallback="suspense-fallback">
+              <BrowserRouter>
+                <SentryRoutes>
+                  <Route path="/*" element={children} />
+                </SentryRoutes>
+              </BrowserRouter>
+            </React.Suspense>
+            <ToastProvider />
+          </EnvironmentProvider>
         </ThemeProvider>
       </RecoilRoot>
     );
@@ -117,13 +121,16 @@ export const ProviderWrapper = ({
   return (
     <RecoilRoot initializeState={initializeState}>
       <ThemeProvider theme={lightTheme}>
-        <React.Suspense fallback="suspense-fallback">
-          <MemoryRouter initialEntries={initialRouterEntries}>
-            <SentryRoutes>
-              <Route path="/*" element={children} />
-            </SentryRoutes>
-          </MemoryRouter>
-        </React.Suspense>
+        <EnvironmentProvider>
+          <React.Suspense fallback="suspense-fallback">
+            <MemoryRouter initialEntries={initialRouterEntries}>
+              <SentryRoutes>
+                <Route path="/*" element={children} />
+              </SentryRoutes>
+            </MemoryRouter>
+          </React.Suspense>
+          <ToastProvider />
+        </EnvironmentProvider>
       </ThemeProvider>
     </RecoilRoot>
   );

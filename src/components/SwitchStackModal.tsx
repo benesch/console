@@ -113,7 +113,12 @@ const SwitchStackModal = () => {
         </Tag>
       </Button>
 
-      <Modal size="3xl" isOpen={isOpen} onClose={onClose}>
+      <Modal
+        size="3xl"
+        isOpen={isOpen}
+        onClose={onClose}
+        data-testid="switch-stack-modal"
+      >
         <ModalOverlay />
         <form
           onSubmit={handleSubmit(async (data) => {
