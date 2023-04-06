@@ -9,13 +9,6 @@ export interface DataflowQuery {
   objectId: string;
 }
 
-export interface DataflowQuery {
-  clusterId: string;
-  replicaId: string;
-  // catalog ID, not any kind of internal DF id
-  objectId: string;
-}
-
 export interface Operator {
   id: number;
   name: string;
@@ -138,14 +131,14 @@ GROUP BY
         id: x("id") as number,
         name: x("name"),
         parentId: x("parent_id") as number | null,
-        arrangementRecords: +(x("arrangement_records") as string),
+        arrangementRecords: parseInt(x("arrangement_records") as string),
         elapsedNs: x("elapsed_ns") as number,
       }));
       const channels = extractData(channelsData, (x) => ({
         id: x("id") as number,
         fromOperatorId: x("from_operator_id") as number,
         toOperatorId: x("to_operator_id") as number,
-        messagesSent: +(x("sent") as string),
+        messagesSent: parseInt(x("sent") as string),
       }));
       return { operators, channels };
     } else {
