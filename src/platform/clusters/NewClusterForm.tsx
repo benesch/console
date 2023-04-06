@@ -18,6 +18,8 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
+import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
+import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import { useSqlLazy } from "~/api/materialized";
 import FormInfoBox from "~/components/FormInfoBox";
 import FormSection from "~/components/FormSection";
@@ -36,19 +38,7 @@ type FormState = {
   }[];
 };
 
-const SIZE_OPTIONS = [
-  "2xsmall",
-  "xsmall",
-  "small",
-  "medium",
-  "large",
-  "xlarge",
-  "2xlarge",
-  "3xlarge",
-  "4xlarge",
-  "5xlarge",
-  "6xlarge",
-];
+const DEFAULT_SIZE_OPTION = "3xsmall";
 
 const COLUMN_GAP = 60;
 const REMOVE_BUTTON_WIDTH = 32;
@@ -63,9 +53,12 @@ const NewClusterForm = ({
     string | undefined
   >(undefined);
   const navigate = useNavigate();
+  const { data: clusterSizes } = useAvailableClusterSizes();
+  const { data: maxReplicas } = useMaxReplicasPerCluster();
   const {
     control,
     formState,
+    getValues,
     handleSubmit: handleSubmit,
     register,
     setError,
@@ -73,7 +66,7 @@ const NewClusterForm = ({
   } = useForm<FormState>({
     defaultValues: {
       name: "",
-      replicas: [{ replicaName: "", replicaSize: SIZE_OPTIONS[0] }],
+      replicas: [{ replicaName: "", replicaSize: DEFAULT_SIZE_OPTION }],
     },
     mode: "onTouched",
   });
@@ -224,43 +217,51 @@ REPLICAS (
                             </FormErrorMessage>
                           </FormControl>
                           <FormControl>
-                            <SimpleSelect
-                              {...register(
-                                `replicas.${index}.replicaSize` as const
-                              )}
-                            >
-                              {SIZE_OPTIONS.map((size) => (
-                                <option key={size} value={size}>
-                                  {size}
-                                </option>
-                              ))}
-                            </SimpleSelect>
-                            {index > 0 && (
-                              <Button
-                                variant="borderless"
-                                position="absolute"
-                                right={`-${
-                                  COLUMN_GAP / 2 + REMOVE_BUTTON_WIDTH / 2
-                                }px`}
-                                minWidth={`${REMOVE_BUTTON_WIDTH}px`}
-                                height={`${REMOVE_BUTTON_WIDTH}px`}
-                                p="0"
-                                onClick={() => remove(index)}
+                            {clusterSizes && (
+                              <SimpleSelect
+                                {...register(
+                                  `replicas.${index}.replicaSize` as const
+                                )}
                               >
-                                <CloseIcon height="8px" width="8px" />
-                              </Button>
+                                {clusterSizes &&
+                                  clusterSizes.map((size) => (
+                                    <option key={size} value={size}>
+                                      {size}
+                                    </option>
+                                  ))}
+                              </SimpleSelect>
                             )}
                           </FormControl>
+                          {index > 0 && (
+                            <Button
+                              variant="borderless"
+                              position="absolute"
+                              right={`-${
+                                COLUMN_GAP / 2 + REMOVE_BUTTON_WIDTH / 2
+                              }px`}
+                              minWidth={`${REMOVE_BUTTON_WIDTH}px`}
+                              height={`${REMOVE_BUTTON_WIDTH}px`}
+                              p="0"
+                              onClick={() => remove(index)}
+                            >
+                              <CloseIcon height="8px" width="8px" />
+                            </Button>
+                          )}
                         </Grid>
                       ))}
                     </VStack>
                     <Button
                       mt="4"
                       variant="borderless"
+                      isDisabled={
+                        maxReplicas
+                          ? getValues().replicas.length >= maxReplicas
+                          : true
+                      }
                       onClick={() =>
                         append({
                           replicaName: "",
-                          replicaSize: SIZE_OPTIONS[0],
+                          replicaSize: DEFAULT_SIZE_OPTION,
                         })
                       }
                     >
