@@ -83,6 +83,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
             maxW="100%"
             px={MAIN_CONTENT_MARIGIN}
             pb={4}
+            bg="semanticColors.background.primary"
           >
             <Flex flexDir="column" w="full" h="full">
               <ErrorBoundary fallback={<ErrorBox />}>

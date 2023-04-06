@@ -69,7 +69,7 @@ const SourceDetail = ({ source }: SourceDetailProps) => {
                   >
                     The following statement was used to create this source.
                   </Box>
-                  <CopyableBox mt={4} contents={ddl ?? ""}>
+                  <CopyableBox mt={4} contents={ddl ?? ""} maxHeight="200px">
                     {ddl}
                   </CopyableBox>
                 </Box>
