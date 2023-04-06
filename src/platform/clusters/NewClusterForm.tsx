@@ -17,10 +17,12 @@ import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import { useSqlLazy } from "~/api/materialized";
 import FormInfoBox from "~/components/FormInfoBox";
 import FormSection from "~/components/FormSection";
 import FullScreen from "~/components/FullScreen";
+import InlayBanner from "~/components/InlayBanner";
 import SimpleSelect from "~/components/SimpleSelect";
 import TextLink from "~/components/TextLink";
 import FormTopBar from "~/components/TopBarForm";
@@ -57,12 +59,17 @@ export interface NewClusterFormProps {
 const NewClusterForm = ({
   refetchClusters,
 }: React.PropsWithChildren<NewClusterFormProps>) => {
+  const [generalFormError, setGeneralFormError] = React.useState<
+    string | undefined
+  >(undefined);
   const navigate = useNavigate();
   const {
-    register,
     control,
-    handleSubmit: handleSubmit,
     formState,
+    handleSubmit: handleSubmit,
+    register,
+    setError,
+    setFocus,
   } = useForm<FormState>({
     defaultValues: {
       name: "",
@@ -81,7 +88,7 @@ const NewClusterForm = ({
       return `
 CREATE CLUSTER ${name}
 REPLICAS (
-  ${replicas.map((r) => `${r.replicaName} (SIZE = '3xsmall')`)}
+  ${replicas.map((r) => `${r.replicaName} (SIZE = '${r.replicaSize}')`)}
 );
 `;
     },
@@ -93,17 +100,23 @@ REPLICAS (
         await refetchClusters();
         navigate("..");
       },
-      // onError: (errorMessage) => {
-      //   const userErrorMessage = serverErrorToUserError(errorMessage);
-      //   if (userErrorMessage === null) {
-      //     setShowGenericQueryError(true);
-      //   } else {
-      //     setError(NAME_FIELD, {
-      //       message: userErrorMessage,
-      //     });
-      //     setFocus(NAME_FIELD);
-      //   }
-      // },
+      onError: (errorMessage) => {
+        let userErrorMessage: string | undefined = undefined;
+        const objectName = alreadyExistsError(errorMessage);
+        if (objectName) {
+          userErrorMessage = `A cluster with that name already exists.`;
+        }
+        if (userErrorMessage) {
+          if (objectName === values.name) {
+            setError("name", {
+              message: userErrorMessage,
+            });
+            setFocus("name");
+          }
+        } else {
+          setGeneralFormError(errorMessage);
+        }
+      },
     });
   };
 
@@ -127,7 +140,7 @@ REPLICAS (
                 templateColumns="1fr 420px 1fr"
                 templateRows="auto 1fr"
                 columnGap={`${COLUMN_GAP}px`}
-                rowGap="40px"
+                rowGap="10"
                 alignItems="start"
                 justifyContent="center"
               >
@@ -140,12 +153,20 @@ REPLICAS (
                   Cluster Information
                 </Box>
                 <Box gridColumnStart="2">
+                  {generalFormError && (
+                    <InlayBanner
+                      variant="error"
+                      label="Error"
+                      message={generalFormError}
+                      mb="40px"
+                    />
+                  )}
                   <FormSection title="General">
                     <FormControl
                       isInvalid={!!formState.errors.name}
                       display="grid"
                       as={Grid}
-                      templateColumns="auto fit-content(320px)"
+                      templateColumns="auto max-content(320px)"
                       alignItems="center"
                     >
                       <FormLabel htmlFor="name" fontSize="sm" mb="0" mr="6">
@@ -161,7 +182,7 @@ REPLICAS (
                         size="sm"
                         variant={formState.errors.name ? "error" : "default"}
                       />
-                      <FormErrorMessage>
+                      <FormErrorMessage gridColumnStart="2">
                         {formState.errors.name?.message}
                       </FormErrorMessage>
                     </FormControl>
@@ -195,7 +216,7 @@ REPLICAS (
                                   : "default"
                               }
                             />
-                            <FormErrorMessage>
+                            <FormErrorMessage gridColumnStart="2">
                               {
                                 formState.errors.replicas?.[index]?.replicaName
                                   ?.message

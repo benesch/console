@@ -114,7 +114,7 @@ describe("SecretsList", () => {
       await user.click(screen.getByText("Create secret"));
 
       expect(
-        await screen.findByText("A secret with the name test_1 already exists.")
+        await screen.findByText("A secret with that name already exists.")
       ).toBeVisible();
     });
 
