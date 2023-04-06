@@ -26,6 +26,7 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
+import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -302,23 +303,19 @@ type SecretsTableProps = {
 };
 
 const SecretsTable = ({ secrets }: SecretsTableProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
-
   return (
     <Table variant="standalone">
       <Thead>
         <Tr>
           <Th>Name</Th>
+          <Th>Created</Th>
         </Tr>
       </Thead>
       <Tbody>
         {secrets.map((secret) => {
           return (
             <Tr key={secret.id} textColor="default" aria-label={secret.name}>
-              <Td
-                borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
-              >
+              <Td>
                 <Tooltip
                   label={`${secret.databaseName}.${secret.schemaName}.${secret.name}`}
                   placement="bottom"
@@ -327,6 +324,9 @@ const SecretsTable = ({ secrets }: SecretsTableProps) => {
                 >
                   {secret.name}
                 </Tooltip>
+              </Td>
+              <Td width="25%">
+                <Text>{format(secret.createdAt, "MMM d, yyyy")}</Text>
               </Td>
             </Tr>
           );

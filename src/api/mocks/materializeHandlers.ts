@@ -1,6 +1,6 @@
 import { rest } from "msw";
 
-import { genUseSqlQueryHandler } from "./genSqlQueryHandler";
+import { buildUseSqlQueryHandler } from "./buildSqlQueryHandler";
 
 export const defaultQueryHandler = rest.post("*/api/sql", (_req, res, ctx) => {
   return res(
@@ -19,21 +19,21 @@ export const defaultQueryHandler = rest.post("*/api/sql", (_req, res, ctx) => {
   );
 });
 
-const useDatabasesHandler = genUseSqlQueryHandler({
+const useDatabasesHandler = buildUseSqlQueryHandler({
   type: "SELECT" as const,
   columns: ["id", "name"],
   rows: [],
 });
 
-const useSchemasHandler = genUseSqlQueryHandler({
+const useSchemasHandler = buildUseSqlQueryHandler({
   type: "SELECT" as const,
   columns: ["id", "name", "database_id", "database_name"],
   rows: [],
 });
 
-const useSecretsHandler = genUseSqlQueryHandler({
+const useSecretsHandler = buildUseSqlQueryHandler({
   type: "SELECT" as const,
-  columns: ["id", "name", "database_name", "schema_name"],
+  columns: ["id", "name", "created_at", "database_name", "schema_name"],
   rows: [],
 });
 
@@ -43,42 +43,3 @@ export default [
   useSecretsHandler,
   defaultQueryHandler,
 ];
-
-// results
-// :
-// [{ok: "SET", notices: []}, {tag: "SELECT 1", rows: [[1]], col_names: ["?column?"], notices: []}]
-// 0
-// :
-// {ok: "SET", notices: []}
-// notices
-// :
-// []
-// ok
-// :
-// "SET"
-// 1
-// :
-// {tag: "SELECT 1", rows: [[1]], col_names: ["?column?"], notices: []}
-// col_names
-// :
-// ["?column?"]
-// notices
-// :
-// []
-// rows
-// :
-// [[1]]
-// tag
-// :
-// "SELECT 1"
-
-// [
-//     {
-//         "query": "SET cluster=mz_introspection",
-//         "params": []
-//     },
-//     {
-//         "query": "SELECT 1",
-//         "params": []
-//     }
-// ]
