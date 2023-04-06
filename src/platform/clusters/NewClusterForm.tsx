@@ -43,6 +43,12 @@ const DEFAULT_SIZE_OPTION = "3xsmall";
 const COLUMN_GAP = 60;
 const REMOVE_BUTTON_WIDTH = 32;
 
+const replicaErrorMessage = (type?: string) => {
+  if (!type) return;
+  if (type === "required") return "Replica name is required.";
+  if (type === "unique") return "Replica names must be unique.";
+};
+
 export interface NewClusterFormProps {
   refetchClusters: () => Promise<void>;
 }
@@ -175,7 +181,7 @@ REPLICAS (
                         size="sm"
                         variant={formState.errors.name ? "error" : "default"}
                       />
-                      <FormErrorMessage gridColumnStart="2">
+                      <FormErrorMessage>
                         {formState.errors.name?.message}
                       </FormErrorMessage>
                     </FormControl>
@@ -197,7 +203,17 @@ REPLICAS (
                               {...register(
                                 `replicas.${index}.replicaName` as const,
                                 {
-                                  required: "Replica name is required.",
+                                  required: true,
+                                  validate: {
+                                    unique: (value) => {
+                                      const count = getValues()
+                                        .replicas.map((r) => r.replicaName)
+                                        .filter(
+                                          (name) => name === value
+                                        ).length;
+                                      return count <= 1;
+                                    },
+                                  },
                                 }
                               )}
                               placeholder={`r${index + 1}`}
@@ -209,11 +225,11 @@ REPLICAS (
                                   : "default"
                               }
                             />
-                            <FormErrorMessage gridColumnStart="2">
-                              {
+                            <FormErrorMessage>
+                              {replicaErrorMessage(
                                 formState.errors.replicas?.[index]?.replicaName
-                                  ?.message
-                              }
+                                  ?.type
+                              )}
                             </FormErrorMessage>
                           </FormControl>
                           <FormControl>
