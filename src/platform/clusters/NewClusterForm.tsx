@@ -9,6 +9,7 @@ import {
   Input,
   Modal,
   ModalContent,
+  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -16,6 +17,7 @@ import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { useSqlLazy } from "~/api/materialized";
 import FormInfoBox from "~/components/FormInfoBox";
 import FormSection from "~/components/FormSection";
 import FullScreen from "~/components/FullScreen";
@@ -49,7 +51,12 @@ const SIZE_OPTIONS = [
 const COLUMN_GAP = 60;
 const REMOVE_BUTTON_WIDTH = 32;
 
-const NewClusterForm = () => {
+export interface NewClusterFormProps {
+  refetchClusters: () => Promise<void>;
+}
+const NewClusterForm = ({
+  refetchClusters,
+}: React.PropsWithChildren<NewClusterFormProps>) => {
   const navigate = useNavigate();
   const {
     register,
@@ -69,8 +76,35 @@ const NewClusterForm = () => {
     name: "replicas",
   });
 
+  const { runSql: createCluster, loading: isCreating } = useSqlLazy({
+    queryBuilder: ({ name, replicas }: FormState) => {
+      return `
+CREATE CLUSTER ${name}
+REPLICAS (
+  ${replicas.map((r) => `${r.replicaName} (SIZE = '3xsmall')`)}
+);
+`;
+    },
+  });
+
   const handleValidSubmit = (values: FormState) => {
-    console.log("submit", values);
+    createCluster(values, {
+      onSuccess: async () => {
+        await refetchClusters();
+        navigate("..");
+      },
+      // onError: (errorMessage) => {
+      //   const userErrorMessage = serverErrorToUserError(errorMessage);
+      //   if (userErrorMessage === null) {
+      //     setShowGenericQueryError(true);
+      //   } else {
+      //     setError(NAME_FIELD, {
+      //       message: userErrorMessage,
+      //     });
+      //     setFocus(NAME_FIELD);
+      //   }
+      // },
+    });
   };
 
   return (
@@ -85,7 +119,7 @@ const NewClusterForm = () => {
           <FullScreen>
             <FormTopBar title="New Cluster" backButtonHref="..">
               <Button variant="primary" size="sm" type="submit">
-                Create cluster
+                {isCreating ? <Spinner /> : "Create cluster"}
               </Button>
             </FormTopBar>
             <Box>
@@ -135,16 +169,16 @@ const NewClusterForm = () => {
                   <FormSection title="Cluster Replicas">
                     <VStack spacing="4">
                       {fields.map((field, index) => (
-                        <FormControl
+                        <Grid
                           key={field.id}
-                          display="grid"
-                          as={Grid}
                           templateColumns="1fr 1fr"
-                          alignItems="center"
+                          alignItems="start"
                           gap="16px"
                           position="relative"
                         >
-                          <Box>
+                          <FormControl
+                            isInvalid={!!formState.errors.replicas?.[index]}
+                          >
                             <Input
                               {...register(
                                 `replicas.${index}.replicaName` as const,
@@ -156,40 +190,47 @@ const NewClusterForm = () => {
                               autoCorrect="off"
                               size="sm"
                               variant={
-                                formState.errors.name ? "error" : "default"
+                                formState.errors.replicas?.[index]?.replicaName
+                                  ? "error"
+                                  : "default"
                               }
                             />
                             <FormErrorMessage>
-                              {formState.errors.name?.message}
+                              {
+                                formState.errors.replicas?.[index]?.replicaName
+                                  ?.message
+                              }
                             </FormErrorMessage>
-                          </Box>
-                          <SimpleSelect
-                            {...register(
-                              `replicas.${index}.replicaSize` as const
-                            )}
-                          >
-                            {SIZE_OPTIONS.map((size) => (
-                              <option key={size} value={size}>
-                                {size}
-                              </option>
-                            ))}
-                          </SimpleSelect>
-                          {index > 0 && (
-                            <Button
-                              variant="borderless"
-                              position="absolute"
-                              right={`-${
-                                COLUMN_GAP / 2 + REMOVE_BUTTON_WIDTH / 2
-                              }px`}
-                              minWidth={`${REMOVE_BUTTON_WIDTH}px`}
-                              height={`${REMOVE_BUTTON_WIDTH}px`}
-                              p="0"
-                              onClick={() => remove(index)}
+                          </FormControl>
+                          <FormControl>
+                            <SimpleSelect
+                              {...register(
+                                `replicas.${index}.replicaSize` as const
+                              )}
                             >
-                              <CloseIcon height="8px" width="8px" />
-                            </Button>
-                          )}
-                        </FormControl>
+                              {SIZE_OPTIONS.map((size) => (
+                                <option key={size} value={size}>
+                                  {size}
+                                </option>
+                              ))}
+                            </SimpleSelect>
+                            {index > 0 && (
+                              <Button
+                                variant="borderless"
+                                position="absolute"
+                                right={`-${
+                                  COLUMN_GAP / 2 + REMOVE_BUTTON_WIDTH / 2
+                                }px`}
+                                minWidth={`${REMOVE_BUTTON_WIDTH}px`}
+                                height={`${REMOVE_BUTTON_WIDTH}px`}
+                                p="0"
+                                onClick={() => remove(index)}
+                              >
+                                <CloseIcon height="8px" width="8px" />
+                              </Button>
+                            )}
+                          </FormControl>
+                        </Grid>
                       ))}
                     </VStack>
                     <Button

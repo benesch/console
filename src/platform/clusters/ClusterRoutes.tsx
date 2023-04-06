@@ -24,7 +24,10 @@ const ClusterRoutes = () => {
         path="/"
         element={<ClustersListPage clusterResponse={clusterResponse} />}
       />
-      <Route path="new" element={<NewClusterForm />} />
+      <Route
+        path="new"
+        element={<NewClusterForm refetchClusters={clusterResponse.refetch} />}
+      />
       <Route
         path=":id/:clusterName/*"
         element={<ClusterOrRedirect clusters={clusterResponse.data} />}
