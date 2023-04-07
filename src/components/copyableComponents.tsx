@@ -87,11 +87,13 @@ const CopyButtonWidth = "40px";
 export interface CopyableBoxProps extends BoxProps {
   contents: string;
   variant?: "default" | "embedded";
+  maxHeight?: string;
 }
 /** Copyable component with a bg box but no line breaks  */
 export const CopyableBox: React.FC<CopyableBoxProps> = ({
   contents,
   variant = "default",
+  maxHeight,
   ...props
 }) => {
   const {
@@ -117,10 +119,14 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
         pl={4}
         flex={1}
         whiteSpace="pre-wrap"
-        width={`calc(100% - ${CopyButtonWidth})`}
+        minWidth={0}
         {...(variant === "embedded" && {
           py: "4",
           pl: "6",
+        })}
+        {...(maxHeight && {
+          maxHeight,
+          overflow: "auto",
         })}
       >
         {props.children}
