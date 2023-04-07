@@ -41,7 +41,7 @@ type SQLQuery =
   | SQLSetQuery
   | SQLShowQuery;
 
-function genNotSurroundedByParensRegex(searchTerm: string) {
+function buildNotSurroundedByParensRegex(searchTerm: string) {
   /*
 (?<!         - Negative lookbehind assertion: Assert that the previous characters do NOT match the following pattern:
   \([^)]*    - Match an opening parenthesis followed by zero or more non-closing parenthesis characters
@@ -69,14 +69,15 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
   const selectEndPosition =
     selectQueryStr
       .toUpperCase()
-      .search(genNotSurroundedByParensRegex("SELECT")) + "SELECT".length;
+      .search(buildNotSurroundedByParensRegex("SELECT")) + "SELECT".length;
   const fromStartPosition = selectQueryStr
     .toUpperCase()
-    .search(genNotSurroundedByParensRegex("(\n| )FROM(\n| )"));
+    .search(buildNotSurroundedByParensRegex("FROM\\s"));
 
   // For commas in functions (i.e. SELECT coalesce(records, 0) ...)
-  const commaNotSurroundedByParensRegex = genNotSurroundedByParensRegex(",");
+  const commaNotSurroundedByParensRegex = buildNotSurroundedByParensRegex(",");
 
+  // Separate potential columns via commas
   const targetElemTokens = selectQueryStr
     .substring(selectEndPosition, fromStartPosition)
     .split(commaNotSurroundedByParensRegex)
@@ -85,8 +86,22 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
   const colNames = targetElemTokens.map((targetElemToken) => {
     const words = targetElemToken.split(" ").map((el) => el.trim());
 
-    const asPosition = words.findIndex((val) => val.toUpperCase() === "AS");
+    // Check for aliases
+    const checkIfAs = (val: string) => val.toUpperCase() === "AS";
+    const asPosition = words.findIndex(checkIfAs);
     if (asPosition !== -1) {
+      const asCount = words.filter(checkIfAs).length;
+
+      if (asCount > 1) {
+        // The column's name is 'as' and has an alias
+        return words[words.length - 1];
+      }
+
+      if (asCount === 1 && words.length === 1) {
+        // The column's name is 'as' and has no alias
+        return words[0];
+      }
+
       return words[asPosition + 1];
     }
 
@@ -106,16 +121,18 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
 }
 
 export function getQueryType(sqlQuery: string) {
-  // Make sure SELECT is the last query type in this iterable since other query commands can include SELECT
   for (const queryType of [
+    "SELECT",
     "CREATE",
     "COMMIT",
     "DROP",
     "SET",
     "SHOW",
-    "SELECT",
   ]) {
-    if (sqlQuery.toUpperCase().includes(queryType)) {
+    // Since aliases and column names can contain these keywords, only match when they're standalone
+    if (
+      sqlQuery.toUpperCase().search(new RegExp(`${queryType}(\\s|;)`)) !== -1
+    ) {
       return queryType;
     }
   }
@@ -137,7 +154,7 @@ export function getQueryType(sqlQuery: string) {
  * @returns - An MSW handler that's response follows the endpoint's API response format: https://materialize.com/docs/integrations/http-api/.
  *
  */
-export function genSqlQueryHandler(mockQueries: Array<SQLQuery>) {
+export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
   return rest.post("*/api/sql", async (req, res, ctx) => {
     const results = [];
 
@@ -233,14 +250,14 @@ export function genSqlQueryHandler(mockQueries: Array<SQLQuery>) {
 }
 
 /**
- * A wrapper over genSqlQueryHandler.
+ * A wrapper over buildSqlQueryHandler.
  * Returns a handler that mocks requests from useSqlLazy and useSql.
  * @param mockQuery - SQL query to mock
  * @returns
  */
 
-export function genUseSqlQueryHandler(mockQuery: SQLQuery) {
+export function buildUseSqlQueryHandler(mockQuery: SQLQuery) {
   // The hooks above use only a single query and set the cluster to "mz_introspection" first.
   const queries = [{ type: "SET" as const }, mockQuery];
-  return genSqlQueryHandler(queries);
+  return buildSqlQueryHandler(queries);
 }

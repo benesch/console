@@ -1,8 +1,9 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { format } from "date-fns";
 import React from "react";
 
-import { genUseSqlQueryHandler } from "~/api/mocks/genSqlQueryHandler";
+import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
@@ -35,10 +36,13 @@ describe("SecretsList", () => {
     });
 
     it("renders secrets", async () => {
-      const useSecretsHandler = genUseSqlQueryHandler({
+      const mockTimestamp = "0";
+      const useSecretsHandler = buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "name", "database_name", "schema_name"],
-        rows: [["id_1", "name_1", "database_name_1", "schema_name_1"]],
+        columns: ["id", "name", "database_name", "schema_name", "created_at"],
+        rows: [
+          ["id_1", "name_1", "database_name_1", "schema_name_1", mockTimestamp],
+        ],
       });
 
       server.use(useSecretsHandler);
@@ -48,12 +52,17 @@ describe("SecretsList", () => {
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
       });
       expect(await screen.findByText("name_1")).toBeVisible();
+      expect(
+        await screen.findByText(
+          format(new Date(parseInt(mockTimestamp)), "MMM d, yyyy")
+        )
+      ).toBeVisible();
     });
   });
 
   describe("Creation flow", () => {
     it("should create a secret successfully and show feedback that the creation was successful", async () => {
-      const createSecretHandler = genUseSqlQueryHandler({
+      const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
       });
       server.use(createSecretHandler);
@@ -80,7 +89,7 @@ describe("SecretsList", () => {
     });
 
     it("should show an error when trying to create a secret and the secret already exists", async () => {
-      const createSecretHandler = genUseSqlQueryHandler({
+      const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
         error: "catalog item 'test_1' already exists",
       });
@@ -110,7 +119,7 @@ describe("SecretsList", () => {
     });
 
     it("should show the inlay error banner when an error occurs while trying to create a secret", async () => {
-      const createSecretHandler = genUseSqlQueryHandler({
+      const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
         error: "Something went wrong.",
       });

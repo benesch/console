@@ -1,9 +1,9 @@
 import server from "~/api/mocks/server";
 
 import {
+  buildSqlQueryHandler,
   extractSQLSelectColumnNames,
-  genSqlQueryHandler,
-} from "./genSqlQueryHandler";
+} from "./buildSqlQueryHandler";
 
 const MOCK_API_URL = new URL("http://materialize/api/sql");
 
@@ -101,9 +101,45 @@ describe("extractSQLSelectColumnNames", () => {
       "sent",
     ]);
   });
+
+  it("SELECT statements with columns that contain 'AS'", () => {
+    const query = `
+        SELECT 
+            as_hot
+        FROM mz_introspection;
+    `;
+    expect(extractSQLSelectColumnNames(query)).toEqual(["as_hot"]);
+  });
+
+  it("SELECT statements with a column that's name is 'as'", () => {
+    const query = `
+        SELECT 
+            as 
+        FROM mz_introspection;
+    `;
+    expect(extractSQLSelectColumnNames(query)).toEqual(["as"]);
+  });
+
+  it("SELECT statements with a column that's name is 'as' and has an alias", () => {
+    const query = `
+        SELECT 
+            as AS abstract_syntax
+        FROM mz_introspection;
+    `;
+    expect(extractSQLSelectColumnNames(query)).toEqual(["abstract_syntax"]);
+  });
+
+  it("SELECT statements with columns that contain 'FROM'", () => {
+    const query = `
+        SELECT 
+          from_toronto
+        FROM table;
+    `;
+    expect(extractSQLSelectColumnNames(query)).toEqual(["from_toronto"]);
+  });
 });
 
-describe("genSqlQueryHandler", () => {
+describe("buildSqlQueryHandler", () => {
   it("should not intercept when queries are in incorrect order", async () => {
     const mockQueries = [
       {
@@ -120,7 +156,7 @@ describe("genSqlQueryHandler", () => {
       },
       { query: `SET cluster=mz_introspection;`, params: [] },
     ];
-    server.use(genSqlQueryHandler(mockQueries));
+    server.use(buildSqlQueryHandler(mockQueries));
 
     const response = await fetch(MOCK_API_URL, {
       method: "POST",
@@ -160,7 +196,7 @@ describe("genSqlQueryHandler", () => {
         params: [],
       },
     ];
-    server.use(genSqlQueryHandler(mockQueries));
+    server.use(buildSqlQueryHandler(mockQueries));
 
     const response = await fetch(MOCK_API_URL, {
       method: "POST",
@@ -213,7 +249,7 @@ describe("genSqlQueryHandler", () => {
         params: [],
       },
     ];
-    server.use(genSqlQueryHandler(mockQueries));
+    server.use(buildSqlQueryHandler(mockQueries));
 
     const response = await fetch(MOCK_API_URL, {
       method: "POST",
@@ -272,8 +308,8 @@ describe("genSqlQueryHandler", () => {
         params: [],
       },
     ];
-    server.use(genSqlQueryHandler([mockSelectQuery1]));
-    server.use(genSqlQueryHandler([mockSelectQuery2]));
+    server.use(buildSqlQueryHandler([mockSelectQuery1]));
+    server.use(buildSqlQueryHandler([mockSelectQuery2]));
 
     const response1 = await fetch(MOCK_API_URL, {
       method: "POST",
@@ -321,7 +357,7 @@ describe("genSqlQueryHandler", () => {
       ok: "Commit successful.",
     };
     const requestQueries = [{ query: `COMMIT;`, params: [] }];
-    server.use(genSqlQueryHandler([mockCommitQuery]));
+    server.use(buildSqlQueryHandler([mockCommitQuery]));
 
     const response = await fetch(MOCK_API_URL, {
       method: "POST",
@@ -343,7 +379,7 @@ describe("genSqlQueryHandler", () => {
       error: "Commit unsuccessful.",
     };
     const requestQueries = [{ query: `COMMIT;`, params: [] }];
-    server.use(genSqlQueryHandler([mockCommitQuery]));
+    server.use(buildSqlQueryHandler([mockCommitQuery]));
 
     const response = await fetch(MOCK_API_URL, {
       method: "POST",
