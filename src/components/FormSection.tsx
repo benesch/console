@@ -23,7 +23,7 @@ const FormSection = ({
         fontSize="14px"
         lineHeight="16px"
         color={semanticColors.foreground.tertiary}
-        mb="4"
+        mb="6"
       >
         {title}
       </Text>

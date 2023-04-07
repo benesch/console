@@ -19,7 +19,15 @@ export const FormTopBar = ({
   } = useTheme<MaterializeTheme>();
 
   return (
-    <Flex alignItems="center" justifyContent="space-between" p="4">
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      px="4"
+      py="3"
+      boxSizing="border-box"
+      borderBottom="1px solid"
+      borderBottomColor={semanticColors.border.primary}
+    >
       <Flex alignItems="center">
         <Box
           pr="4"

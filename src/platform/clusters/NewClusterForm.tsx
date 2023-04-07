@@ -11,6 +11,7 @@ import {
   ModalContent,
   Spinner,
   Text,
+  useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
@@ -29,6 +30,7 @@ import SimpleSelect from "~/components/SimpleSelect";
 import TextLink from "~/components/TextLink";
 import FormTopBar from "~/components/TopBarForm";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
+import { MaterializeTheme } from "~/theme";
 
 type FormState = {
   name: string;
@@ -59,6 +61,11 @@ const NewClusterForm = ({
     string | undefined
   >(undefined);
   const navigate = useNavigate();
+
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+
   const { data: clusterSizes } = useAvailableClusterSizes();
   const { data: maxReplicas } = useMaxReplicasPerCluster();
   const {
@@ -134,7 +141,7 @@ REPLICAS (
                 {isCreating ? <Spinner /> : "Create cluster"}
               </Button>
             </FormTopBar>
-            <Box>
+            <Box mt={10}>
               <Grid
                 templateColumns="1fr 420px 1fr"
                 templateRows="auto 1fr"
@@ -143,13 +150,15 @@ REPLICAS (
                 alignItems="start"
                 justifyContent="center"
               >
-                <Box
-                  gridColumnStart="2"
-                  fontWeight="600"
-                  lineHeight="24px"
-                  fontSize="20px"
-                >
-                  Cluster Information
+                <Box gridColumnStart="2">
+                  <Text
+                    as="h1"
+                    fontSize="20px"
+                    fontWeight="600"
+                    lineHeight="24px"
+                  >
+                    Cluster Information
+                  </Text>
                 </Box>
                 <Box gridColumnStart="2">
                   {generalFormError && (
@@ -168,7 +177,7 @@ REPLICAS (
                       templateColumns="auto max-content(320px)"
                       alignItems="center"
                     >
-                      <FormLabel htmlFor="name" fontSize="sm" mb="0" mr="6">
+                      <FormLabel htmlFor="name" fontSize="sm" mb="2" mr="6">
                         Name
                       </FormLabel>
                       <Input
@@ -176,7 +185,6 @@ REPLICAS (
                           required: "Cluster name is required.",
                         })}
                         placeholder="my_production_cluster"
-                        autoFocus
                         autoCorrect="off"
                         size="sm"
                         variant={formState.errors.name ? "error" : "default"}
@@ -191,6 +199,7 @@ REPLICAS (
                       {fields.map((field, index) => (
                         <Grid
                           key={field.id}
+                          width="100%"
                           templateColumns="1fr 1fr"
                           alignItems="start"
                           gap="16px"
@@ -218,6 +227,7 @@ REPLICAS (
                               )}
                               placeholder={`r${index + 1}`}
                               autoCorrect="off"
+                              spellCheck="false"
                               size="sm"
                               variant={
                                 formState.errors.replicas?.[index]?.replicaName
@@ -266,40 +276,68 @@ REPLICAS (
                         </Grid>
                       ))}
                     </VStack>
-                    <Button
-                      mt="4"
-                      variant="borderless"
-                      isDisabled={
-                        maxReplicas
-                          ? getValues().replicas.length >= maxReplicas
-                          : true
-                      }
-                      onClick={() =>
-                        append({
-                          replicaName: "",
-                          replicaSize: DEFAULT_SIZE_OPTION,
-                        })
-                      }
-                    >
-                      <Box mr="2">
-                        <PlusCircleIcon />
-                      </Box>{" "}
-                      Add cluster replica
-                    </Button>
+                    {maxReplicas &&
+                      getValues().replicas.length < maxReplicas && (
+                        <Button
+                          mt="4"
+                          p="0"
+                          height={8}
+                          background="none"
+                          sx={{
+                            _hover: {
+                              background: "none",
+                            },
+                          }}
+                          variant="borderless"
+                          onClick={() =>
+                            append({
+                              replicaName: "",
+                              replicaSize: DEFAULT_SIZE_OPTION,
+                            })
+                          }
+                        >
+                          <Box mr="2">
+                            <PlusCircleIcon />
+                          </Box>{" "}
+                          Add cluster replica
+                        </Button>
+                      )}
                   </FormSection>
                 </Box>
                 <FormInfoBox>
-                  <Text>Need help connecting to Kafka?</Text>
-                  <Text>
-                    Check out our step-by-step guides or reach out to the team
-                    for help with setting up your Kafka connection.
+                  <Text
+                    fontSize="14px"
+                    lineHeight="16px"
+                    fontWeight={500}
+                    color={semanticColors.foreground.primary}
+                    mb={2}
+                  >
+                    Not sure how to set up your cluster?
+                  </Text>
+                  <Text
+                    fontSize="14px"
+                    lineHeight="20px"
+                    color={semanticColors.foreground.secondary}
+                    maxW="40ch"
+                    mb={4}
+                  >
+                    View the documentation to learn how clusters and cluster
+                    replicas work in Materialize.
                   </Text>
                   <TextLink
+                    fontSize="14px"
+                    lineHeight="16px"
+                    fontWeight={500}
+                    color={semanticColors.accent.brightPurple}
+                    sx={{
+                      fontFeatureSettings: '"calt"',
+                      textDecoration: "none",
+                    }}
                     href="https://materialize.com/docs/sql/create-cluster/"
                     target="_blank"
                     rel="noopener"
                   >
-                    View cluster documentation –&gt;
+                    View cluster documentation -&gt;
                   </TextLink>
                 </FormInfoBox>
               </Grid>
