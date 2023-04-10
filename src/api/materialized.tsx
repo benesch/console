@@ -253,9 +253,10 @@ export const executeSql = async (
   const url = new URL(`${config.environmentdScheme}://${address}/api/sql`);
 
   // Optional session vars that will be set before running the request.
+  //
+  // Note: the JSON object is automatically URI encoded by the URL object.
   const options = { application_name: APPLICATION_NAME };
-  const param = encodeURIComponent(JSON.stringify(options));
-  url.searchParams.append("options", param);
+  url.searchParams.append("options", JSON.stringify(options));
 
   const response = await fetch(url, {
     method: "POST",
