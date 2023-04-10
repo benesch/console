@@ -177,13 +177,14 @@ REPLICAS (
                       templateColumns="auto max-content(320px)"
                       alignItems="center"
                     >
-                      <FormLabel htmlFor="name" fontSize="sm" mb="2" mr="6">
+                      <FormLabel fontSize="sm" mb="2" mr="6">
                         Name
                       </FormLabel>
                       <Input
                         {...register("name", {
                           required: "Cluster name is required.",
                         })}
+                        autoFocus
                         placeholder="my_production_cluster"
                         autoCorrect="off"
                         size="sm"
