@@ -189,7 +189,7 @@ export const useClusterUtilization = (
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
 WHERE r.cluster_id = '${clusterId}'
-${replicaId ? `AND r.id = ${replicaId}` : ""}`;
+${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
 
     // first we fetch the minimum frontier we can query
     if (socketReady && !explainSent) {
