@@ -22,13 +22,14 @@ import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import { useSqlLazy } from "~/api/materialized";
+import FormContainer from "~/components/FormContainer";
 import FormInfoBox from "~/components/FormInfoBox";
 import FormSection from "~/components/FormSection";
+import FormTopBar from "~/components/FormTopBar";
 import FullScreen from "~/components/FullScreen";
 import InlayBanner from "~/components/InlayBanner";
 import SimpleSelect from "~/components/SimpleSelect";
 import TextLink from "~/components/TextLink";
-import FormTopBar from "~/components/TopBarForm";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
 import { MaterializeTheme } from "~/theme";
 
@@ -41,9 +42,6 @@ type FormState = {
 };
 
 const DEFAULT_SIZE_OPTION = "3xsmall";
-
-const COLUMN_GAP = 60;
-const REMOVE_BUTTON_WIDTH = 32;
 
 const replicaErrorMessage = (type?: string) => {
   if (!type) return;
@@ -141,170 +139,9 @@ REPLICAS (
                 {isCreating ? <Spinner /> : "Create cluster"}
               </Button>
             </FormTopBar>
-            <Box mt={10}>
-              <Grid
-                templateColumns="1fr 420px 1fr"
-                templateRows="auto 1fr"
-                columnGap={`${COLUMN_GAP}px`}
-                rowGap="10"
-                alignItems="start"
-                justifyContent="center"
-              >
-                <Box gridColumnStart="2">
-                  <Text
-                    as="h1"
-                    fontSize="20px"
-                    fontWeight="600"
-                    lineHeight="24px"
-                  >
-                    Cluster Information
-                  </Text>
-                </Box>
-                <Box gridColumnStart="2">
-                  {generalFormError && (
-                    <InlayBanner
-                      variant="error"
-                      label="Error"
-                      message={generalFormError}
-                      mb="40px"
-                    />
-                  )}
-                  <FormSection title="General">
-                    <FormControl
-                      isInvalid={!!formState.errors.name}
-                      display="grid"
-                      as={Grid}
-                      templateColumns="auto max-content(320px)"
-                      alignItems="center"
-                    >
-                      <FormLabel fontSize="sm" mb="2" mr="6">
-                        Name
-                      </FormLabel>
-                      <Input
-                        {...register("name", {
-                          required: "Cluster name is required.",
-                        })}
-                        autoFocus
-                        placeholder="my_production_cluster"
-                        autoCorrect="off"
-                        size="sm"
-                        variant={formState.errors.name ? "error" : "default"}
-                      />
-                      <FormErrorMessage>
-                        {formState.errors.name?.message}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </FormSection>
-                  <FormSection title="Cluster Replicas">
-                    <VStack spacing="4">
-                      {fields.map((field, index) => (
-                        <Grid
-                          key={field.id}
-                          width="100%"
-                          templateColumns="1fr 1fr"
-                          alignItems="start"
-                          gap="16px"
-                          position="relative"
-                        >
-                          <FormControl
-                            isInvalid={!!formState.errors.replicas?.[index]}
-                          >
-                            <Input
-                              {...register(
-                                `replicas.${index}.replicaName` as const,
-                                {
-                                  required: true,
-                                  validate: {
-                                    unique: (value) => {
-                                      const count = getValues()
-                                        .replicas.map((r) => r.replicaName)
-                                        .filter(
-                                          (name) => name === value
-                                        ).length;
-                                      return count <= 1;
-                                    },
-                                  },
-                                }
-                              )}
-                              placeholder={`r${index + 1}`}
-                              autoCorrect="off"
-                              spellCheck="false"
-                              size="sm"
-                              variant={
-                                formState.errors.replicas?.[index]?.replicaName
-                                  ? "error"
-                                  : "default"
-                              }
-                            />
-                            <FormErrorMessage>
-                              {replicaErrorMessage(
-                                formState.errors.replicas?.[index]?.replicaName
-                                  ?.type
-                              )}
-                            </FormErrorMessage>
-                          </FormControl>
-                          <FormControl>
-                            {clusterSizes && (
-                              <SimpleSelect
-                                {...register(
-                                  `replicas.${index}.replicaSize` as const
-                                )}
-                              >
-                                {clusterSizes &&
-                                  clusterSizes.map((size) => (
-                                    <option key={size} value={size}>
-                                      {size}
-                                    </option>
-                                  ))}
-                              </SimpleSelect>
-                            )}
-                          </FormControl>
-                          {index > 0 && (
-                            <Button
-                              variant="borderless"
-                              position="absolute"
-                              right={`-${
-                                COLUMN_GAP / 2 + REMOVE_BUTTON_WIDTH / 2
-                              }px`}
-                              minWidth={`${REMOVE_BUTTON_WIDTH}px`}
-                              height={`${REMOVE_BUTTON_WIDTH}px`}
-                              p="0"
-                              onClick={() => remove(index)}
-                            >
-                              <CloseIcon height="8px" width="8px" />
-                            </Button>
-                          )}
-                        </Grid>
-                      ))}
-                    </VStack>
-                    {maxReplicas &&
-                      getValues().replicas.length < maxReplicas && (
-                        <Button
-                          mt="4"
-                          p="0"
-                          height={8}
-                          background="none"
-                          sx={{
-                            _hover: {
-                              background: "none",
-                            },
-                          }}
-                          variant="borderless"
-                          onClick={() =>
-                            append({
-                              replicaName: "",
-                              replicaSize: DEFAULT_SIZE_OPTION,
-                            })
-                          }
-                        >
-                          <Box mr="2">
-                            <PlusCircleIcon />
-                          </Box>{" "}
-                          Add cluster replica
-                        </Button>
-                      )}
-                  </FormSection>
-                </Box>
+            <FormContainer
+              title="Cluster Information"
+              aside={
                 <FormInfoBox>
                   <Text
                     fontSize="14px"
@@ -341,8 +178,136 @@ REPLICAS (
                     View cluster documentation -&gt;
                   </TextLink>
                 </FormInfoBox>
-              </Grid>
-            </Box>
+              }
+            >
+              {generalFormError && (
+                <InlayBanner
+                  variant="error"
+                  label="Error"
+                  message={generalFormError}
+                  mb="40px"
+                />
+              )}
+              <FormSection title="General">
+                <FormControl
+                  isInvalid={!!formState.errors.name}
+                  variant="leftAlignedLabel"
+                >
+                  <FormLabel variant="inline">Name</FormLabel>
+                  <Input
+                    {...register("name", {
+                      required: "Cluster name is required.",
+                    })}
+                    autoFocus
+                    placeholder="my_production_cluster"
+                    autoCorrect="off"
+                    size="sm"
+                    variant={formState.errors.name ? "error" : "default"}
+                  />
+                  <FormErrorMessage variant="spanColumns">
+                    {formState.errors.name?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </FormSection>
+              <FormSection title="Cluster Replicas">
+                <VStack spacing="4">
+                  {fields.map((field, index) => (
+                    <Grid
+                      key={field.id}
+                      width="100%"
+                      templateColumns="1fr 1fr"
+                      alignItems="start"
+                      gap="16px"
+                      position="relative"
+                    >
+                      <FormControl
+                        isInvalid={!!formState.errors.replicas?.[index]}
+                      >
+                        <Input
+                          {...register(
+                            `replicas.${index}.replicaName` as const,
+                            {
+                              required: true,
+                              validate: {
+                                unique: (value) => {
+                                  const count = getValues()
+                                    .replicas.map((r) => r.replicaName)
+                                    .filter((name) => name === value).length;
+                                  return count <= 1;
+                                },
+                              },
+                            }
+                          )}
+                          placeholder={`r${index + 1}`}
+                          autoCorrect="off"
+                          spellCheck="false"
+                          size="sm"
+                          variant={
+                            formState.errors.replicas?.[index]?.replicaName
+                              ? "error"
+                              : "default"
+                          }
+                        />
+                        <FormErrorMessage>
+                          {replicaErrorMessage(
+                            formState.errors.replicas?.[index]?.replicaName
+                              ?.type
+                          )}
+                        </FormErrorMessage>
+                      </FormControl>
+                      <FormControl>
+                        {clusterSizes && (
+                          <SimpleSelect
+                            {...register(
+                              `replicas.${index}.replicaSize` as const
+                            )}
+                          >
+                            {clusterSizes.map((size) => (
+                              <option key={size} value={size}>
+                                {size}
+                              </option>
+                            ))}
+                          </SimpleSelect>
+                        )}
+                      </FormControl>
+                      {index > 0 && (
+                        <Button
+                          variant="formGutter"
+                          onClick={() => remove(index)}
+                        >
+                          <CloseIcon height="8px" width="8px" />
+                        </Button>
+                      )}
+                    </Grid>
+                  ))}
+                </VStack>
+                {maxReplicas && getValues().replicas.length < maxReplicas && (
+                  <Button
+                    mt="4"
+                    p="0"
+                    height={8}
+                    background="none"
+                    sx={{
+                      _hover: {
+                        background: "none",
+                      },
+                    }}
+                    variant="borderless"
+                    onClick={() =>
+                      append({
+                        replicaName: "",
+                        replicaSize: DEFAULT_SIZE_OPTION,
+                      })
+                    }
+                  >
+                    <Box mr="2">
+                      <PlusCircleIcon />
+                    </Box>
+                    Add cluster replica
+                  </Button>
+                )}
+              </FormSection>
+            </FormContainer>
           </FullScreen>
         </form>
       </ModalContent>
