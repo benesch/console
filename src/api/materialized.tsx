@@ -100,7 +100,7 @@ export function useSqlLazy<TVariables>({
   onSuccess,
   onError,
 }: {
-  queryBuilder: (variables: TVariables) => string;
+  queryBuilder: (variables: TVariables) => string | SqlRequest;
   onSuccess?: onSuccess;
   onError?: onError;
 }) {
@@ -111,13 +111,21 @@ export function useSqlLazy<TVariables>({
       variables: TVariables,
       options?: { onSuccess?: onSuccess; onError?: onError }
     ) => {
-      const sql = queryBuilder(variables);
-      const request = genMzIntrospectionSqlRequest(sql);
-      runSqlInner(
-        request,
-        options?.onSuccess ?? onSuccess,
-        options?.onError ?? onError
-      );
+      const queryOrQueries = queryBuilder(variables);
+      if (typeof queryOrQueries === "string") {
+        const request = genMzIntrospectionSqlRequest(queryOrQueries);
+        runSqlInner(
+          request,
+          options?.onSuccess ?? onSuccess,
+          options?.onError ?? onError
+        );
+      } else {
+        runSqlInner(
+          queryOrQueries,
+          options?.onSuccess ?? onSuccess,
+          options?.onError ?? onError
+        );
+      }
     },
     [queryBuilder, runSqlInner, onSuccess, onError]
   );

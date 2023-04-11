@@ -3,7 +3,10 @@ import userEvent from "@testing-library/user-event";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
+import {
+  buildSqlQueryHandler,
+  buildUseSqlQueryHandler,
+} from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
   createProviderWrapper,
@@ -25,7 +28,7 @@ const renderComponent = (element: ReactElement) => {
   return render(
     <Wrapper>
       <Routes>
-        <Route path="/" element={<div>Cluster List</div>} />
+        <Route path="/:id/:name" element={<div>Cluster Details</div>} />
         <Route path="/new-cluster" element={element} />
       </Routes>
     </Wrapper>
@@ -53,9 +56,11 @@ describe("NewClusterForm", () => {
 
   it("creates a cluster successfully and redirects to the cluster list", async () => {
     server.use(
-      buildUseSqlQueryHandler({
-        type: "CREATE" as const,
-      })
+      buildSqlQueryHandler([
+        { type: "SET" as const },
+        { type: "CREATE" as const },
+        { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
+      ])
     );
     const user = userEvent.setup();
     renderComponent(<NewClusterForm refetchClusters={refetchMock} />);
@@ -67,15 +72,11 @@ describe("NewClusterForm", () => {
     await user.click(screen.getByText("Create cluster"));
 
     expect(refetchMock).toHaveBeenCalled();
-    expect(await screen.findByText("Cluster List")).toBeVisible();
+    expect(await screen.findByText("Cluster Details")).toBeVisible();
+    expect(location.pathname).toEqual("/u3/test_cluster");
   });
 
   it("shows an error for missing cluster and replica names", async () => {
-    server.use(
-      buildUseSqlQueryHandler({
-        type: "CREATE" as const,
-      })
-    );
     const user = userEvent.setup();
     renderComponent(<NewClusterForm refetchClusters={refetchMock} />);
 
@@ -87,10 +88,14 @@ describe("NewClusterForm", () => {
 
   it("shows an error for duplicate cluster names", async () => {
     server.use(
-      buildUseSqlQueryHandler({
-        type: "CREATE" as const,
-        error: "catalog item 'default' already exists",
-      })
+      buildSqlQueryHandler([
+        { type: "SET" as const },
+        {
+          type: "CREATE" as const,
+          error: "catalog item 'default' already exists",
+        },
+        { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
+      ])
     );
     const user = userEvent.setup();
     renderComponent(<NewClusterForm refetchClusters={refetchMock} />);
@@ -107,6 +112,13 @@ describe("NewClusterForm", () => {
   });
 
   it("shows the database error when an unexpected error occurs ", async () => {
+    server.use(
+      buildSqlQueryHandler([
+        { type: "SET" as const },
+        { type: "CREATE" as const, error: "some unexpected database error" },
+        { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
+      ])
+    );
     const createSecretHandler = buildUseSqlQueryHandler({
       type: "CREATE" as const,
       error: "some unexpected database error",

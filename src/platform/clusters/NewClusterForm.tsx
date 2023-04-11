@@ -32,6 +32,9 @@ import SimpleSelect from "~/components/SimpleSelect";
 import TextLink from "~/components/TextLink";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
 import { MaterializeTheme } from "~/theme";
+import { assert } from "~/util";
+
+import { relativeClusterPath } from "./ClusterRoutes";
 
 type FormState = {
   name: string;
@@ -89,20 +92,34 @@ const NewClusterForm = ({
 
   const { runSql: createCluster, loading: isCreating } = useSqlLazy({
     queryBuilder: ({ name, replicas }: FormState) => {
-      return `
+      return {
+        queries: [
+          {
+            query: `
 CREATE CLUSTER ${name}
 REPLICAS (
   ${replicas.map((r) => `${r.replicaName} (SIZE = '${r.replicaSize}')`)}
 );
-`;
+`,
+            params: [],
+          },
+          {
+            query: `SELECT id FROM mz_clusters WHERE name = $1;`,
+            params: [name],
+          },
+        ],
+        cluster: "mz_introspection",
+      };
     },
   });
 
   const handleValidSubmit = (values: FormState) => {
     createCluster(values, {
-      onSuccess: async () => {
+      onSuccess: async (response) => {
+        assert(response);
+        const id = response[2].rows[0][0] as string;
         await refetchClusters();
-        navigate("..");
+        navigate(`../${relativeClusterPath({ id, name: values.name })}`);
       },
       onError: (errorMessage) => {
         let userErrorMessage: string | undefined = undefined;
