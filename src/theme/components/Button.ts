@@ -1,7 +1,5 @@
 import { gradients, shadows } from "../colors";
-import { FORM_COLUMN_GAP } from "./Form";
 
-const FORM_GUTTER_BUTTON_WIDTH = 32;
 export const Button = {
   baseStyle: {
     borderRadius: "lg",
@@ -17,22 +15,6 @@ export const Button = {
       lineHeight: "16px",
       fontWeight: 500,
       backgroundColor: "semanticColors.background.primary",
-      transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
-      _hover: {
-        backgroundColor: "semanticColors.background.secondary",
-      },
-    },
-    formGutter: {
-      backgroundColor: "semanticColors.background.primary",
-      color: "semanticColors.foreground.secondary",
-      fontSize: "14px",
-      fontWeight: 500,
-      height: `${FORM_GUTTER_BUTTON_WIDTH}px`,
-      lineHeight: "16px",
-      minWidth: `${FORM_GUTTER_BUTTON_WIDTH}px`,
-      p: "0",
-      position: "absolute",
-      right: `-${FORM_COLUMN_GAP / 2 + FORM_GUTTER_BUTTON_WIDTH / 2}px`,
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
         backgroundColor: "semanticColors.background.secondary",

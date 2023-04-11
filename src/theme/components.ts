@@ -23,8 +23,6 @@ export const Alert = {
 };
 
 export { Button } from "~/theme/components/Button";
-export { Form } from "~/theme/components/Form";
-export { FormError } from "~/theme/components/FormError";
 export { FormLabel } from "~/theme/components/FormLabel";
 
 export const Badge = {

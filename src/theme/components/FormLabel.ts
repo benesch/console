@@ -1,7 +1,9 @@
 export const FormLabel = {
+  baseStyle: {
+    fontSize: "sm",
+  },
   variants: {
     inline: {
-      fontSize: "sm",
       m: 0,
       whiteSpace: "nowrap",
     },

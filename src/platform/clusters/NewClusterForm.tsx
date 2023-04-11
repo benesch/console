@@ -4,7 +4,6 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
-  FormLabel,
   Grid,
   Input,
   Modal,
@@ -22,10 +21,14 @@ import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import { useSqlLazy } from "~/api/materialized";
-import FormContainer from "~/components/FormContainer";
-import FormInfoBox from "~/components/FormInfoBox";
-import FormSection from "~/components/FormSection";
-import FormTopBar from "~/components/FormTopBar";
+import {
+  FormContainer,
+  FormInfoBox,
+  FormSection,
+  FormTopBar,
+  GutterContainer,
+  InlineLabeledInput,
+} from "~/components/formComponents";
 import FullScreen from "~/components/FullScreen";
 import InlayBanner from "~/components/InlayBanner";
 import SimpleSelect from "~/components/SimpleSelect";
@@ -218,24 +221,22 @@ REPLICAS (
                 />
               )}
               <FormSection title="General">
-                <FormControl
-                  isInvalid={!!formState.errors.name}
-                  variant="leftAlignedLabel"
-                >
-                  <FormLabel variant="inline">Name</FormLabel>
-                  <Input
-                    {...register("name", {
-                      required: "Cluster name is required.",
-                    })}
-                    autoFocus
-                    placeholder="my_production_cluster"
-                    autoCorrect="off"
-                    size="sm"
-                    variant={formState.errors.name ? "error" : "default"}
-                  />
-                  <FormErrorMessage variant="spanColumns">
-                    {formState.errors.name?.message}
-                  </FormErrorMessage>
+                <FormControl isInvalid={!!formState.errors.name}>
+                  <InlineLabeledInput
+                    label="Name"
+                    error={formState.errors.name?.message}
+                  >
+                    <Input
+                      {...register("name", {
+                        required: "Cluster name is required.",
+                      })}
+                      autoFocus
+                      placeholder="my_production_cluster"
+                      autoCorrect="off"
+                      size="sm"
+                      variant={formState.errors.name ? "error" : "default"}
+                    />
+                  </InlineLabeledInput>
                 </FormControl>
               </FormSection>
               <FormSection title="Cluster Replicas">
@@ -300,12 +301,17 @@ REPLICAS (
                         )}
                       </FormControl>
                       {index > 0 && (
-                        <Button
-                          variant="formGutter"
-                          onClick={() => remove(index)}
-                        >
-                          <CloseIcon height="8px" width="8px" />
-                        </Button>
+                        <GutterContainer>
+                          <Button
+                            variant="borderless"
+                            height="8"
+                            minWidth="8"
+                            width="8"
+                            onClick={() => remove(index)}
+                          >
+                            <CloseIcon height="8px" width="8px" />
+                          </Button>
+                        </GutterContainer>
                       )}
                     </Grid>
                   ))}
