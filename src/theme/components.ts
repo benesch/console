@@ -31,13 +31,14 @@ export const Badge = {
 export const Button = {
   baseStyle: {
     borderRadius: "lg",
+    useSelect: "none",
+    fontSize: "14px",
+    lineHeight: "16px",
+    fontWeight: 500,
   },
   variants: {
     secondary: {
       color: "semanticColors.foreground.primary",
-      fontSize: "14px",
-      lineHeight: "16px",
-      fontWeight: 500,
       backgroundColor: "semanticColors.background.primary",
       borderWidth: "1px",
       borderColor: "semanticColors.border.secondary",
@@ -54,7 +55,7 @@ export const Button = {
       lineHeight: "16px",
       fontWeight: 500,
       backgroundColor: "semanticColors.accent.purple",
-      shadow: shadows.light.level1,
+      shadow: "shadows.level1",
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
         shadow: "none",

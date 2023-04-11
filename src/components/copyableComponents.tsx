@@ -3,6 +3,7 @@ import { Box, BoxProps, Flex, HStack, Spacer } from "@chakra-ui/layout";
 import {
   chakra,
   HTMLChakraProps,
+  Text,
   Tooltip,
   useClipboard,
   useTheme,
@@ -117,6 +118,7 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
         as="pre"
         fontFamily="mono"
         pl={4}
+        py={2}
         flex={1}
         whiteSpace="pre-wrap"
         minWidth={0}
@@ -186,7 +188,7 @@ export const TabbedCodeBlock: React.FC<
   wrap,
   ...props
 }: TabbedCodeBlockProps & BoxProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const { colors, shadows } = useTheme<MaterializeTheme>();
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.title || "");
 
   if (tabs.length === 0) return null;
@@ -216,18 +218,18 @@ export const TabbedCodeBlock: React.FC<
       role="group"
       position="relative"
       border="1px"
-      borderColor={colors.semanticColors.border.primary}
-      borderRadius="md"
+      borderColor={colors.semanticColors.border.secondary}
+      borderRadius="8px"
       w="full"
       textAlign="left"
+      shadow={shadows.level1}
+      overflow="hidden"
       {...props}
     >
       <Flex
         borderBottom="1px"
         bg={colors.semanticColors.background.secondary}
-        borderColor={colors.semanticColors.border.primary}
-        borderTopLeftRadius="md"
-        borderTopRightRadius="md"
+        borderColor={colors.semanticColors.border.secondary}
         w="full"
         alignItems="stretch"
         justifyContent="flex-start"
@@ -258,13 +260,17 @@ export const TabbedCodeBlock: React.FC<
                 <Box w="4" h="4">
                   {icon}
                 </Box>
-                <span>{title}</span>
+                <Text as="span" fontWeight="500">
+                  {title}
+                </Text>
               </CodeBlockHeading>
             ))}
           </>
         ) : (
           <CodeBlockHeading>
-            <span>{tabs[0].title}</span>
+            <Text as="span" fontWeight="500">
+              {tabs[0].title}
+            </Text>
           </CodeBlockHeading>
         )}
         <Spacer />
