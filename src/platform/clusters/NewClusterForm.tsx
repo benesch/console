@@ -29,6 +29,7 @@ import FormTopBar from "~/components/FormTopBar";
 import FullScreen from "~/components/FullScreen";
 import InlayBanner from "~/components/InlayBanner";
 import SimpleSelect from "~/components/SimpleSelect";
+import useSuccessToast from "~/components/SuccessToast";
 import TextLink from "~/components/TextLink";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
 import { MaterializeTheme } from "~/theme";
@@ -62,6 +63,7 @@ const NewClusterForm = ({
     string | undefined
   >(undefined);
   const navigate = useNavigate();
+  const toast = useSuccessToast();
 
   const {
     colors: { semanticColors },
@@ -119,6 +121,16 @@ REPLICAS (
         assert(response);
         const id = response[2].rows[0][0] as string;
         await refetchClusters();
+        toast({
+          description: (
+            <>
+              <Text color={semanticColors.foreground.primary} as="span">
+                {values.name}{" "}
+              </Text>
+              created successfully
+            </>
+          ),
+        });
         navigate(`../${relativeClusterPath({ id, name: values.name })}`);
       },
       onError: (errorMessage) => {
