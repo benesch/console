@@ -343,13 +343,13 @@ export interface Replica {
  */
 export function useClusters() {
   const response = useSql(
-    `SELECT r.id,
+    `SELECT c.id,
+    c.name as cluster_name,
+    r.id as replica_id,
     r.name as replica_name,
-    r.cluster_id,
-    r.size,
-    c.name as cluster_name
-  FROM mz_cluster_replicas r
-  JOIN mz_clusters c ON c.id = r.cluster_id
+    r.size
+  FROM mz_clusters c
+  LEFT OUTER JOIN mz_cluster_replicas r ON c.id = r.cluster_id
   ORDER BY r.id;`
   );
 
@@ -359,24 +359,27 @@ export function useClusters() {
     assert(getColumnByName);
 
     response.data.rows.forEach((row) => {
-      const clusterId = getColumnByName(row, "cluster_id") as string;
+      const clusterId = getColumnByName(row, "id") as string;
       const clusterName = getColumnByName(row, "cluster_name") as string;
-      // TODO Make this just `string` once Materialize 0.49 is released.
-      const replicaId = getColumnByName(row, "id") as number | string;
-      const replica: Replica = {
-        id: replicaId.toString(),
-        name: getColumnByName(row, "replica_name") as string,
-        size: getColumnByName(row, "size") as string,
-        clusterName: clusterName,
-      };
+      const replicaId = getColumnByName(row, "replica_id") as
+        | string
+        | undefined;
+      const replica: Replica | undefined = replicaId
+        ? {
+            id: replicaId.toString(),
+            name: getColumnByName(row, "replica_name") as string,
+            size: getColumnByName(row, "size") as string,
+            clusterName: clusterName,
+          }
+        : undefined;
       const cluster = clusterMap.get(clusterId);
-      if (cluster) {
+      if (cluster && replica) {
         cluster.replicas.push(replica);
       } else {
         clusterMap.set(clusterId, {
           id: clusterId,
           name: clusterName,
-          replicas: [replica],
+          replicas: replica ? [replica] : [],
         });
       }
     });
