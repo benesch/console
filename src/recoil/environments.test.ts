@@ -43,7 +43,7 @@ describe("recoil/environments", () => {
           message: "Environmentd health check failed",
         },
         {
-          message: "HTTP Error 400: bad request",
+          message: "bad request",
         },
       ]);
     });

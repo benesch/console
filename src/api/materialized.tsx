@@ -192,7 +192,7 @@ export function useSqlApiRequest() {
       const requestId = requestIdRef.current;
       try {
         setLoading(true);
-        const { results: res, errorMessage } = await executeSql(
+        const result = await executeSql(
           environment,
           request,
           user.accessToken,
@@ -202,13 +202,13 @@ export function useSqlApiRequest() {
           // a new query has been kicked off, ignore these results
           return;
         }
-        if (errorMessage) {
-          onError?.(errorMessage);
+        if ("errorMessage" in result) {
+          onError?.(result.errorMessage);
           setResults(null);
-          setError(errorMessage);
+          setError(result.errorMessage);
         } else {
-          onSuccess?.(res);
-          setResults(res);
+          onSuccess?.(result.results);
+          setResults(result.results);
           setError(null);
         }
       } catch (err) {
@@ -229,9 +229,14 @@ export function useSqlApiRequest() {
   return { data: results, error, loading, runSql, abortRequest };
 }
 
-interface ExecuteSqlOutput {
+type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
+
+interface ExecuteSqlSuccess {
   results: Results[] | null;
-  errorMessage: string | null;
+}
+interface ExecuteSqlError {
+  status?: number;
+  errorMessage: string;
 }
 
 export const executeSql = async (
@@ -244,7 +249,7 @@ export const executeSql = async (
 
   const address = environment.environmentdHttpsAddress;
   if (!address) {
-    return { results: null, errorMessage: null };
+    return { errorMessage: "environment not enabled" };
   }
 
   const queries: SqlStatement[] = [
@@ -282,10 +287,8 @@ export const executeSql = async (
 
   if (!response.ok) {
     return {
-      errorMessage: `HTTP Error ${response.status}: ${
-        responseText ?? DEFAULT_QUERY_ERROR
-      }`,
-      results: null,
+      status: response.status,
+      errorMessage: responseText ?? DEFAULT_QUERY_ERROR,
     };
   } else {
     const parsedResponse = JSON.parse(responseText);
@@ -309,7 +312,7 @@ export const executeSql = async (
         };
       }
       if (resultsError) {
-        return { results: null, errorMessage: resultsError };
+        return { errorMessage: resultsError };
       } else {
         outResults.push({
           rows: rows,
@@ -318,7 +321,7 @@ export const executeSql = async (
         });
       }
     }
-    return { errorMessage: null, results: outResults };
+    return { results: outResults };
   }
 };
 

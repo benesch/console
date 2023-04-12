@@ -281,7 +281,7 @@ export const fetchEnvironmentHealth = async (
     if (!environment.resolvable) {
       throw new Error(`environment unresolvable`);
     }
-    const { errorMessage } = await executeSql(
+    const result = await executeSql(
       environment,
       {
         queries: [{ query: "SELECT 1", params: [] }],
@@ -290,12 +290,12 @@ export const fetchEnvironmentHealth = async (
       accessToken,
       { signal: controller.signal }
     );
-    if (errorMessage !== null) {
+    if ("errorMessage" in result) {
       errors.push({
         message: "Environmentd health check failed",
       });
       errors.push({
-        message: errorMessage,
+        message: result.errorMessage,
       });
       health = "crashed";
     } else {
