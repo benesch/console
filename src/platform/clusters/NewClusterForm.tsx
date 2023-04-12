@@ -29,7 +29,6 @@ import {
   GutterContainer,
   InlineLabeledInput,
 } from "~/components/formComponents";
-import FullScreen from "~/components/FullScreen";
 import InlayBanner from "~/components/InlayBanner";
 import SimpleSelect from "~/components/SimpleSelect";
 import useSuccessToast from "~/components/SuccessToast";
@@ -174,191 +173,186 @@ REPLICAS (
     >
       <ModalContent>
         <form onSubmit={handleSubmit(handleValidSubmit)}>
-          <FullScreen>
-            <FormTopBar title="New Cluster" backButtonHref="..">
-              <Button
-                variant="primary"
-                size="sm"
-                type="submit"
-                isDisabled={isCreating}
-              >
-                Create cluster
-              </Button>
-            </FormTopBar>
-            <FormContainer
-              title="Cluster Information"
-              aside={
-                <FormInfoBox>
-                  <Text
-                    fontSize="14px"
-                    lineHeight="16px"
-                    fontWeight={500}
-                    color={semanticColors.foreground.primary}
-                    mb={2}
-                  >
-                    Not sure how to set up your cluster?
-                  </Text>
-                  <Text
-                    fontSize="14px"
-                    lineHeight="20px"
-                    color={semanticColors.foreground.secondary}
-                    maxW="40ch"
-                    mb={4}
-                  >
-                    View the documentation to learn how clusters and cluster
-                    replicas work in Materialize.
-                  </Text>
-                  <TextLink
-                    fontSize="14px"
-                    lineHeight="16px"
-                    fontWeight={500}
-                    color={semanticColors.accent.brightPurple}
-                    sx={{
-                      fontFeatureSettings: '"calt"',
-                      textDecoration: "none",
-                    }}
-                    href="https://materialize.com/docs/sql/create-cluster/"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    View cluster documentation -&gt;
-                  </TextLink>
-                </FormInfoBox>
-              }
+          <FormTopBar title="New Cluster" backButtonHref="..">
+            <Button
+              variant="primary"
+              size="sm"
+              type="submit"
+              isDisabled={isCreating}
             >
-              {generalFormError && (
-                <InlayBanner
-                  variant="error"
-                  label="Error"
-                  message={generalFormError}
-                  mb="40px"
-                />
-              )}
-              <FormSection title="General">
-                <FormControl isInvalid={!!formState.errors.name}>
-                  <InlineLabeledInput
-                    label="Name"
-                    error={clusterNameErrorMessage(formState.errors.name)}
+              Create cluster
+            </Button>
+          </FormTopBar>
+          <FormContainer
+            title="Cluster Information"
+            aside={
+              <FormInfoBox>
+                <Text
+                  fontSize="14px"
+                  lineHeight="16px"
+                  fontWeight={500}
+                  color={semanticColors.foreground.primary}
+                  mb={2}
+                >
+                  Not sure how to set up your cluster?
+                </Text>
+                <Text
+                  fontSize="14px"
+                  lineHeight="20px"
+                  color={semanticColors.foreground.secondary}
+                  maxW="40ch"
+                  mb={4}
+                >
+                  View the documentation to learn how clusters and cluster
+                  replicas work in Materialize.
+                </Text>
+                <TextLink
+                  fontSize="14px"
+                  lineHeight="16px"
+                  fontWeight={500}
+                  color={semanticColors.accent.brightPurple}
+                  sx={{
+                    fontFeatureSettings: '"calt"',
+                    textDecoration: "none",
+                  }}
+                  href="https://materialize.com/docs/sql/create-cluster/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  View cluster documentation -&gt;
+                </TextLink>
+              </FormInfoBox>
+            }
+          >
+            {generalFormError && (
+              <InlayBanner
+                variant="error"
+                label="Error"
+                message={generalFormError}
+                mb="40px"
+              />
+            )}
+            <FormSection title="General">
+              <FormControl isInvalid={!!formState.errors.name}>
+                <InlineLabeledInput
+                  label="Name"
+                  error={clusterNameErrorMessage(formState.errors.name)}
+                >
+                  <Input
+                    {...register("name", {
+                      required: "Cluster name is required.",
+                      pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                    })}
+                    autoFocus
+                    placeholder="my_production_cluster"
+                    autoCorrect="off"
+                    size="sm"
+                    variant={formState.errors.name ? "error" : "default"}
+                  />
+                </InlineLabeledInput>
+              </FormControl>
+            </FormSection>
+            <FormSection title="Cluster Replicas">
+              <VStack spacing="4">
+                {fields.map((field, index) => (
+                  <Grid
+                    key={field.id}
+                    width="100%"
+                    templateColumns="1fr 1fr"
+                    alignItems="start"
+                    gap="16px"
+                    position="relative"
                   >
-                    <Input
-                      {...register("name", {
-                        required: true,
-                        pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                      })}
-                      autoFocus
-                      placeholder="my_production_cluster"
-                      autoCorrect="off"
-                      size="sm"
-                      variant={formState.errors.name ? "error" : "default"}
-                    />
-                  </InlineLabeledInput>
-                </FormControl>
-              </FormSection>
-              <FormSection title="Cluster Replicas">
-                <VStack spacing="4">
-                  {fields.map((field, index) => (
-                    <Grid
-                      key={field.id}
-                      width="100%"
-                      templateColumns="1fr 1fr"
-                      alignItems="start"
-                      gap="16px"
-                      position="relative"
+                    <FormControl
+                      isInvalid={!!formState.errors.replicas?.[index]}
                     >
-                      <FormControl
-                        isInvalid={!!formState.errors.replicas?.[index]}
-                      >
-                        <Input
-                          {...register(
-                            `replicas.${index}.replicaName` as const,
-                            {
-                              required: true,
-                              pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                              validate: {
-                                unique: (value) => {
-                                  const count = getValues()
-                                    .replicas.map((r) => r.replicaName)
-                                    .filter((name) => name === value).length;
-                                  return count <= 1;
-                                },
-                              },
-                            }
-                          )}
-                          placeholder={`r${index + 1}`}
-                          autoCorrect="off"
-                          spellCheck="false"
-                          size="sm"
-                          variant={
-                            formState.errors.replicas?.[index]?.replicaName
-                              ? "error"
-                              : "default"
-                          }
-                        />
-                        <FormErrorMessage>
-                          {replicaErrorMessage(
-                            formState.errors.replicas?.[index]?.replicaName
-                          )}
-                        </FormErrorMessage>
-                      </FormControl>
-                      <FormControl>
-                        {clusterSizes && (
-                          <SimpleSelect
-                            {...register(
-                              `replicas.${index}.replicaSize` as const
-                            )}
-                          >
-                            {clusterSizes.map((size) => (
-                              <option key={size} value={size}>
-                                {size}
-                              </option>
-                            ))}
-                          </SimpleSelect>
+                      <Input
+                        {...register(`replicas.${index}.replicaName` as const, {
+                          required: true,
+                          pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                          validate: {
+                            unique: (value) => {
+                              const count = getValues()
+                                .replicas.map((r) => r.replicaName)
+                                .filter((name) => name === value).length;
+                              return count <= 1;
+                            },
+                          },
+                        })}
+                        placeholder={`r${index + 1}`}
+                        autoCorrect="off"
+                        spellCheck="false"
+                        size="sm"
+                        variant={
+                          formState.errors.replicas?.[index]?.replicaName
+                            ? "error"
+                            : "default"
+                        }
+                      />
+                      <FormErrorMessage>
+                        {replicaErrorMessage(
+                          formState.errors.replicas?.[index]?.replicaName
                         )}
-                      </FormControl>
-                      {index > 0 && (
-                        <GutterContainer>
-                          <Button
-                            variant="borderless"
-                            height="8"
-                            minWidth="8"
-                            width="8"
-                            onClick={() => remove(index)}
-                          >
-                            <CloseIcon height="8px" width="8px" />
-                          </Button>
-                        </GutterContainer>
+                      </FormErrorMessage>
+                    </FormControl>
+                    <FormControl>
+                      {clusterSizes && (
+                        <SimpleSelect
+                          {...register(
+                            `replicas.${index}.replicaSize` as const
+                          )}
+                        >
+                          {clusterSizes.map((size) => (
+                            <option key={size} value={size}>
+                              {size}
+                            </option>
+                          ))}
+                        </SimpleSelect>
                       )}
-                    </Grid>
-                  ))}
-                </VStack>
-                {maxReplicas && getValues().replicas.length < maxReplicas && (
-                  <Button
-                    mt="4"
-                    p="0"
-                    height={8}
-                    background="none"
-                    sx={{
-                      _hover: {
-                        background: "none",
-                      },
-                    }}
-                    variant="borderless"
-                    onClick={() =>
-                      append({
-                        replicaName: "",
-                        replicaSize: DEFAULT_SIZE_OPTION,
-                      })
-                    }
-                  >
-                    <Box mr="2">
-                      <PlusCircleIcon />
-                    </Box>
-                    Add cluster replica
-                  </Button>
-                )}
-              </FormSection>
-            </FormContainer>
-          </FullScreen>
+                    </FormControl>
+                    {index > 0 && (
+                      <GutterContainer>
+                        <Button
+                          variant="borderless"
+                          height="8"
+                          minWidth="8"
+                          width="8"
+                          onClick={() => remove(index)}
+                        >
+                          <CloseIcon height="8px" width="8px" />
+                        </Button>
+                      </GutterContainer>
+                    )}
+                  </Grid>
+                ))}
+              </VStack>
+              {maxReplicas && getValues().replicas.length < maxReplicas && (
+                <Button
+                  mt="4"
+                  p="0"
+                  height={8}
+                  background="none"
+                  sx={{
+                    _hover: {
+                      background: "none",
+                    },
+                  }}
+                  variant="borderless"
+                  onClick={() =>
+                    append({
+                      replicaName: "",
+                      replicaSize: DEFAULT_SIZE_OPTION,
+                    })
+                  }
+                >
+                  <Box mr="2">
+                    <PlusCircleIcon />
+                  </Box>
+                  Add cluster replica
+                </Button>
+              )}
+            </FormSection>
+          </FormContainer>
         </form>
       </ModalContent>
     </Modal>

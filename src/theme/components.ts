@@ -134,7 +134,7 @@ export const Modal = {
     fullscreen: {
       dialog: {
         minWidth: "100vw",
-        minHeigth: "100vh",
+        height: "100vh",
         m: 0,
       },
     },
