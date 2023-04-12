@@ -68,8 +68,7 @@ export const getSyncServerUrl = (stack: string) => {
     return "https://sync.cloud.materialize.com";
   }
   if (stack === "local") {
-    // local development again cloud services uses staging frontegg
-    return "https://sync.staging.cloud.materialize.com";
+    return "http://localhost:8003";
   }
   return `https://sync.${stack}.cloud.materialize.com`;
 };
