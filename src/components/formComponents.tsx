@@ -203,7 +203,7 @@ export const InlineLabeledInput = ({
     >
       <FormLabel variant="inline">{label}</FormLabel>
       {children}
-      <Box gridColumnEnd="span 2">
+      <Box gridColumn="2">
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>
