@@ -74,10 +74,8 @@ describe("getSyncServerUrl", () => {
     );
   });
 
-  it("local stack should return the staging url", () => {
-    expect(getSyncServerUrl("local")).toEqual(
-      "https://sync.staging.cloud.materialize.com"
-    );
+  it("local stack should return the local url", () => {
+    expect(getSyncServerUrl("local")).toEqual("http://localhost:8003");
   });
 
   it("personal stack should return the personal stack url", () => {
