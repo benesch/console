@@ -8,7 +8,6 @@ import {
   Input,
   Modal,
   ModalContent,
-  Spinner,
   Text,
   useTheme,
   VStack,
@@ -167,8 +166,13 @@ REPLICAS (
         <form onSubmit={handleSubmit(handleValidSubmit)}>
           <FullScreen>
             <FormTopBar title="New Cluster" backButtonHref="..">
-              <Button variant="primary" size="sm" type="submit">
-                {isCreating ? <Spinner /> : "Create cluster"}
+              <Button
+                variant="primary"
+                size="sm"
+                type="submit"
+                isDisabled={isCreating}
+              >
+                Create cluster
               </Button>
             </FormTopBar>
             <FormContainer
