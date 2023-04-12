@@ -13,12 +13,13 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { FieldError, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
+import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import {
   FormContainer,
@@ -49,10 +50,19 @@ type FormState = {
 
 const DEFAULT_SIZE_OPTION = "3xsmall";
 
-const replicaErrorMessage = (type?: string) => {
-  if (!type) return;
-  if (type === "required") return "Replica name is required.";
-  if (type === "unique") return "Replica names must be unique.";
+const clusterNameErrorMessage = (error: FieldError | undefined) => {
+  if (!error?.type) return error?.message;
+  if (error.type === "pattern")
+    return "Cluster name must not include special characters";
+  if (error.type === "required") return "Cluster name is required.";
+};
+
+const replicaErrorMessage = (error: FieldError | undefined) => {
+  if (!error?.type) return error?.message;
+  if (error.type === "pattern")
+    return "Replica name must not include special characters";
+  if (error.type === "required") return "Replica name is required.";
+  if (error.type === "unique") return "Replica names must be unique.";
 };
 
 export interface NewClusterFormProps {
@@ -228,11 +238,12 @@ REPLICAS (
                 <FormControl isInvalid={!!formState.errors.name}>
                   <InlineLabeledInput
                     label="Name"
-                    error={formState.errors.name?.message}
+                    error={clusterNameErrorMessage(formState.errors.name)}
                   >
                     <Input
                       {...register("name", {
-                        required: "Cluster name is required.",
+                        required: true,
+                        pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                       })}
                       autoFocus
                       placeholder="my_production_cluster"
@@ -262,6 +273,7 @@ REPLICAS (
                             `replicas.${index}.replicaName` as const,
                             {
                               required: true,
+                              pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                               validate: {
                                 unique: (value) => {
                                   const count = getValues()
@@ -285,7 +297,6 @@ REPLICAS (
                         <FormErrorMessage>
                           {replicaErrorMessage(
                             formState.errors.replicas?.[index]?.replicaName
-                              ?.type
                           )}
                         </FormErrorMessage>
                       </FormControl>

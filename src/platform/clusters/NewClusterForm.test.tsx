@@ -119,12 +119,6 @@ describe("NewClusterForm", () => {
         { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
       ])
     );
-    const createSecretHandler = buildUseSqlQueryHandler({
-      type: "CREATE" as const,
-      error: "some unexpected database error",
-    });
-
-    server.use(createSecretHandler);
 
     const user = userEvent.setup();
 
