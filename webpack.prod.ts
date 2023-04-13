@@ -45,6 +45,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
 
 const scriptSrc = [
   "'self'",
+  "'wasm-unsafe-eval'",
   "https://js.stripe.com",
   "https://www.recaptcha.net/recaptcha/",
   "https://*.googletagmanager.com",
