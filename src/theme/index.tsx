@@ -23,6 +23,8 @@ import * as components from "~/theme/components";
 
 import { darkColors, darkShadows } from "./dark";
 import { lightColors, lightShadows } from "./light";
+import type { TextStyles } from "./typography";
+import { typographySystem } from "./typography";
 
 export interface ThemeColors {
   accent: {
@@ -77,6 +79,7 @@ export interface MaterializeTheme extends ChakraTheme {
   colors: ChakraTheme["colors"] & {
     semanticColors: ThemeColors;
   };
+  textStyles: ChakraTheme["textStyles"] & TextStyles;
   fonts: {
     heading: string;
     body: string;
@@ -141,6 +144,7 @@ export const baseTheme: Partial<ChakraTheme> = {
     "3xl": "120em", // 1920px
     "4xl": "160em", // 2560px
   },
+  textStyles: typographySystem,
   components: {
     // Something about the ESM module format breaks Chakra styles unless we use the spread operator here.
     // The spread operator removes the __esModule property among other things, which makes this work.

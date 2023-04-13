@@ -98,7 +98,7 @@ const PasswordStep = (props: BoxProps) => {
         borderBottom="1px"
         borderColor={semanticColors.border.primary}
       >
-        <Text flex={1} fontWeight="500" fontSize="md">
+        <Text flex={1} textStyle="heading-sm">
           App passwords
         </Text>
         <HStack spacing={2}>
