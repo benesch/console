@@ -185,7 +185,7 @@ async function testAccountBlocking(
 
 async function testPlatformEnvironment(
   page: Page,
-  request: APIRequestContext,
+  _request: APIRequestContext,
   password: string
 ) {
   /**

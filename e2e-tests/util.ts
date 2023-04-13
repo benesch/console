@@ -1,5 +1,5 @@
 import { FronteggAuthenticator, HttpClient } from "@frontegg/client";
-import { APIRequestContext, Page } from "@playwright/test";
+import { APIRequestContext, expect, Page } from "@playwright/test";
 
 function getEnvVarOrFail(varName: string, errorMessage: string): string {
   const value = process.env[varName];
@@ -43,14 +43,12 @@ export const ensureLoggedIn = async (page: Page) => {
   await page.press("[name=email]", "Enter");
   await page.waitForSelector("[name=password]"); // wait for animation
   await page.type("[name=password]", PASSWORD);
-  await Promise.all([
-    page.waitForNavigation(),
-    page.press("[name=password]", "Enter"),
-  ]);
+  page.press("[name=password]", "Enter");
+  await expect(
+    page.getByRole("link", { name: "Logo Materialize" })
+  ).toBeVisible();
   await page.context().storageState({ path: STATE_NAME });
 };
-
-export const LEGACY_VERSION = "v0.26.0";
 
 const adminPortalHost = () => {
   if (IS_KIND) {
