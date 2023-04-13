@@ -103,10 +103,7 @@ for (const region of PLATFORM_REGIONS) {
         break;
 
       case DashboardState.ThisRegionActive:
-        console.log("Re-using active region");
-        // TODO: If we hit this, we may be seeing a bug.
-        // I need to think through this case a bit more.
-        break;
+        throw new Error(`Region ${region} already active, which is unexpected`);
 
       case DashboardState.SomeRegionsActive:
         console.log("Activating yet-inactive region");
@@ -114,7 +111,7 @@ for (const region of PLATFORM_REGIONS) {
         break;
 
       default:
-        console.log("welp, this is broken!");
+        regionState satisfies never;
     }
     await expect(page.locator("body")).toContainText("Enabling region");
     // Expect to see the pending region state fairly quickly
