@@ -1,3 +1,5 @@
+import { SystemStyleObjectRecord } from "@chakra-ui/react";
+
 interface TextStyle {
   fontFamily: string;
   fontSize: string;
@@ -7,7 +9,7 @@ interface TextStyle {
   fontFeatureSettings?: string;
 }
 
-export interface TextStyles {
+export interface TextStyles extends SystemStyleObjectRecord {
   "heading-xxl": TextStyle;
   "heading-xl": TextStyle;
   "heading-lg": TextStyle;
