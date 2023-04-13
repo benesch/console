@@ -326,6 +326,7 @@ export const defaultRegion = () => {
     region = window.localStorage.getItem(SELECTED_REGION_KEY) || region;
     if (!config.cloudRegions.has(region)) {
       // If the selected region isn't valid, update the value in local storage
+      region = config.cloudRegions.keys().next().value;
       window.localStorage.setItem(SELECTED_REGION_KEY, region);
     }
   }
