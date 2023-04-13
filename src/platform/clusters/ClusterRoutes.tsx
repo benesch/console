@@ -7,6 +7,8 @@ import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
 import { usePoll } from "~/useForegroundInterval";
 
+import NewClusterForm from "./NewClusterForm";
+
 export type ClusterDetailParams = {
   regionSlug: string;
   clusterName: string;
@@ -23,6 +25,10 @@ const ClusterRoutes = () => {
         element={<ClustersListPage clusterResponse={clusterResponse} />}
       />
       <Route
+        path="new"
+        element={<NewClusterForm refetchClusters={clusterResponse.refetch} />}
+      />
+      <Route
         path=":id/:clusterName/*"
         element={<ClusterOrRedirect clusters={clusterResponse.data} />}
       />
@@ -35,7 +41,7 @@ type ClusterParams = {
   clusterName: string;
 };
 
-export const relativeClusterPath = (cluster: Cluster) =>
+export const relativeClusterPath = (cluster: { id: string; name: string }) =>
   `${cluster.id}/${encodeURIComponent(cluster.name)}`;
 
 const handleRenamedCluster = (

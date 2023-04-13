@@ -1,5 +1,6 @@
 import { rest } from "msw";
 
+import { SqlResult } from "~/api/materialize/types";
 import { SqlStatement } from "~/api/materialized";
 
 type ISQLQuery = {
@@ -31,6 +32,8 @@ type SQLSetQuery = ISQLQuery & {
 
 type SQLShowQuery = ISQLQuery & {
   type: "SHOW";
+  column: string;
+  rows: Array<Array<unknown>>;
 };
 
 type SQLQuery =
@@ -114,7 +117,11 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
     }
 
     // When a column is prefixed by a table name
-    return targetElemToken.split(".").pop();
+    const columnName = targetElemToken.split(".").pop();
+    if (columnName === undefined) {
+      throw new Error("Failed to parse column name");
+    }
+    return columnName;
   });
 
   return colNames;
@@ -156,7 +163,7 @@ export function getQueryType(sqlQuery: string) {
  */
 export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
   return rest.post("*/api/sql", async (req, res, ctx) => {
-    const results = [];
+    const results: SqlResult[] = [];
 
     const body = await req.json();
     if (body == null) {
@@ -178,6 +185,25 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
       }
 
       switch (mockQuery.type) {
+        case "SHOW": {
+          const regex = new RegExp("SHOW (\\w*)");
+          const requestShowVariableName = regex.exec(requestQuery)?.[1];
+          const { column, rows } = mockQuery;
+
+          if (column.toUpperCase() !== requestShowVariableName?.toUpperCase()) {
+            return undefined;
+          }
+
+          // Replace the response with the rows from our mock query
+          results.push({
+            tag: `SELECT ${rows.length}`,
+            col_names: [requestShowVariableName],
+            rows: rows,
+            notices: [],
+          });
+
+          break;
+        }
         case "SELECT": {
           const requestQueryColNames =
             extractSQLSelectColumnNames(requestQuery);

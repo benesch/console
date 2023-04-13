@@ -100,7 +100,7 @@ export function useSqlLazy<TVariables>({
   onSuccess,
   onError,
 }: {
-  queryBuilder: (variables: TVariables) => string;
+  queryBuilder: (variables: TVariables) => string | SqlRequest;
   onSuccess?: onSuccess;
   onError?: onError;
 }) {
@@ -111,13 +111,21 @@ export function useSqlLazy<TVariables>({
       variables: TVariables,
       options?: { onSuccess?: onSuccess; onError?: onError }
     ) => {
-      const sql = queryBuilder(variables);
-      const request = genMzIntrospectionSqlRequest(sql);
-      runSqlInner(
-        request,
-        options?.onSuccess ?? onSuccess,
-        options?.onError ?? onError
-      );
+      const queryOrQueries = queryBuilder(variables);
+      if (typeof queryOrQueries === "string") {
+        const request = genMzIntrospectionSqlRequest(queryOrQueries);
+        runSqlInner(
+          request,
+          options?.onSuccess ?? onSuccess,
+          options?.onError ?? onError
+        );
+      } else {
+        runSqlInner(
+          queryOrQueries,
+          options?.onSuccess ?? onSuccess,
+          options?.onError ?? onError
+        );
+      }
     },
     [queryBuilder, runSqlInner, onSuccess, onError]
   );
@@ -184,7 +192,7 @@ export function useSqlApiRequest() {
       const requestId = requestIdRef.current;
       try {
         setLoading(true);
-        const { results: res, errorMessage } = await executeSql(
+        const result = await executeSql(
           environment,
           request,
           user.accessToken,
@@ -194,13 +202,13 @@ export function useSqlApiRequest() {
           // a new query has been kicked off, ignore these results
           return;
         }
-        if (errorMessage) {
-          onError?.(errorMessage);
+        if ("errorMessage" in result) {
+          onError?.(result.errorMessage);
           setResults(null);
-          setError(errorMessage);
+          setError(result.errorMessage);
         } else {
-          onSuccess?.(res);
-          setResults(res);
+          onSuccess?.(result.results);
+          setResults(result.results);
           setError(null);
         }
       } catch (err) {
@@ -221,9 +229,14 @@ export function useSqlApiRequest() {
   return { data: results, error, loading, runSql, abortRequest };
 }
 
-interface ExecuteSqlOutput {
+type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
+
+interface ExecuteSqlSuccess {
   results: Results[] | null;
-  errorMessage: string | null;
+}
+interface ExecuteSqlError {
+  status?: number;
+  errorMessage: string;
 }
 
 export const executeSql = async (
@@ -236,7 +249,7 @@ export const executeSql = async (
 
   const address = environment.environmentdHttpsAddress;
   if (!address) {
-    return { results: null, errorMessage: null };
+    return { errorMessage: "environment not enabled" };
   }
 
   const queries: SqlStatement[] = [
@@ -274,10 +287,8 @@ export const executeSql = async (
 
   if (!response.ok) {
     return {
-      errorMessage: `HTTP Error ${response.status}: ${
-        responseText ?? DEFAULT_QUERY_ERROR
-      }`,
-      results: null,
+      status: response.status,
+      errorMessage: responseText ?? DEFAULT_QUERY_ERROR,
     };
   } else {
     const parsedResponse = JSON.parse(responseText);
@@ -301,7 +312,7 @@ export const executeSql = async (
         };
       }
       if (resultsError) {
-        return { results: null, errorMessage: resultsError };
+        return { errorMessage: resultsError };
       } else {
         outResults.push({
           rows: rows,
@@ -310,7 +321,7 @@ export const executeSql = async (
         });
       }
     }
-    return { errorMessage: null, results: outResults };
+    return { results: outResults };
   }
 };
 
@@ -332,13 +343,13 @@ export interface Replica {
  */
 export function useClusters() {
   const response = useSql(
-    `SELECT r.id,
+    `SELECT c.id,
+    c.name as cluster_name,
+    r.id as replica_id,
     r.name as replica_name,
-    r.cluster_id,
-    r.size,
-    c.name as cluster_name
-  FROM mz_cluster_replicas r
-  JOIN mz_clusters c ON c.id = r.cluster_id
+    r.size
+  FROM mz_clusters c
+  LEFT OUTER JOIN mz_cluster_replicas r ON c.id = r.cluster_id
   ORDER BY r.id;`
   );
 
@@ -348,24 +359,27 @@ export function useClusters() {
     assert(getColumnByName);
 
     response.data.rows.forEach((row) => {
-      const clusterId = getColumnByName(row, "cluster_id") as string;
+      const clusterId = getColumnByName(row, "id") as string;
       const clusterName = getColumnByName(row, "cluster_name") as string;
-      // TODO Make this just `string` once Materialize 0.49 is released.
-      const replicaId = getColumnByName(row, "id") as number | string;
-      const replica: Replica = {
-        id: replicaId.toString(),
-        name: getColumnByName(row, "replica_name") as string,
-        size: getColumnByName(row, "size") as string,
-        clusterName: clusterName,
-      };
+      const replicaId = getColumnByName(row, "replica_id") as
+        | string
+        | undefined;
+      const replica: Replica | undefined = replicaId
+        ? {
+            id: replicaId.toString(),
+            name: getColumnByName(row, "replica_name") as string,
+            size: getColumnByName(row, "size") as string,
+            clusterName: clusterName,
+          }
+        : undefined;
       const cluster = clusterMap.get(clusterId);
-      if (cluster) {
+      if (cluster && replica) {
         cluster.replicas.push(replica);
       } else {
         clusterMap.set(clusterId, {
           id: clusterId,
           name: clusterName,
-          replicas: [replica],
+          replicas: replica ? [replica] : [],
         });
       }
     });

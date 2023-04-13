@@ -31,6 +31,7 @@ export const InlayBanner = ({
   showButton = false,
   buttonText = "View details",
   buttonProps = {},
+  ...props
 }: InlayBannerProps) => {
   const {
     colors: { semanticColors },
@@ -57,6 +58,7 @@ export const InlayBanner = ({
       borderColor={colorScheme[variant].border}
       borderWidth="1px"
       overflow="hidden"
+      {...props}
     >
       <Box p="4" background={colorScheme[variant].background}>
         <HStack spacing={10} justifyContent="space-between">

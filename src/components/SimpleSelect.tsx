@@ -1,16 +1,18 @@
-import { Select, SelectProps, useTheme } from "@chakra-ui/react";
+import { forwardRef, Select, SelectProps, useTheme } from "@chakra-ui/react";
 import * as React from "react";
 
 import { MaterializeTheme } from "~/theme";
 
 export type SimpleSelectProps = SelectProps;
 
-const SimpleSelect = (props: SimpleSelectProps) => {
+const SimpleSelect = forwardRef<SimpleSelectProps, "select">((props, ref) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+
   return (
     <Select
+      ref={ref}
       size="sm"
       fontSize="14px"
       lineHeight="16px"
@@ -36,6 +38,6 @@ const SimpleSelect = (props: SimpleSelectProps) => {
       {...props}
     />
   );
-};
+});
 
 export default SimpleSelect;
