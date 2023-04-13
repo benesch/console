@@ -29,7 +29,7 @@ export const PASSWORD = getEnvVarOrFail(
 
 export const EMAIL = `infra+cloud-integration-tests-${PULUMI_STACK}-console-${process.env.TEST_PARALLEL_INDEX}@materialize.io`;
 
-export const STATE_NAME = `state-${process.env.TEST_PARALLEL_INDEX}.json`;
+export const STATE_NAME = `e2e-tests/state-${process.env.TEST_PARALLEL_INDEX}.json`;
 
 export const FRONTEGG_CLIENT_ID = process.env["E2E_FRONTEGG_CLIENT_ID"];
 

@@ -10,7 +10,7 @@
     "build": "NODE_ENV=production webpack --config=webpack.prod.ts",
     "build:analyze": "BUNDLE_ANALYZE=1 yarn build",
     "test:unit": " jest 'test.tsx?'",
-    "test:e2e": "cd e2e-tests && DEBUG=pw:api playwright test",
+    "test:e2e": "DEBUG=pw:api playwright test e2e-tests/*",
     "eslint": "eslint --ignore-path .gitignore --max-warnings 0 .",
     "eslint:fix": "eslint --ignore-path .gitignore --fix .",
     "playwright": "playwright",
