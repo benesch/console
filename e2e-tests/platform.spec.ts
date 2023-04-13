@@ -1,4 +1,4 @@
-import { APIRequestContext, Page, test } from "@playwright/test";
+import { APIRequestContext, expect, Page, test } from "@playwright/test";
 import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
@@ -116,8 +116,23 @@ for (const region of PLATFORM_REGIONS) {
       default:
         console.log("welp, this is broken!");
     }
-    // Wait for the region to be available
-    await page.waitForSelector('text="Connect to Materialize"', {
+    await expect(page.locator("body")).toContainText("Enabling region");
+    // Expect to see the pending region state fairly quickly
+    // This helps prevent tests from hanging for a long time if we get an error
+    await Promise.race([
+      page.waitForSelector(
+        'text="New regions can take a few minutes to set up. In the meantime, here are some next steps!"',
+        {
+          timeout: 60 * 1000,
+        }
+      ),
+      // Sometimes enabling a region is very fast and we don't see the pending state
+      page.waitForSelector('text="Connect to Materialize"', {
+        timeout: 60 * 1000,
+      }),
+    ]);
+    // Enabling regions can be very slow
+    await expect(page.locator("body")).toContainText("Connect to Materialize", {
       timeout: 15 * 60 * 1000,
     });
     await testPlatformEnvironment(page, request, password);
