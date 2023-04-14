@@ -126,7 +126,7 @@ function scopeToGv(scope: EnrichedOperator): string {
     }
     if (ch.toOperatorAddress[ch.toOperatorAddress.length - 1] === 0) {
       toAddressKey = `${toAddressKey}:${ch.toPort}:TO`;
-      pseudoOperators.set(toAddressKey, `input ${ch.toPort}`);
+      pseudoOperators.set(toAddressKey, `output ${ch.toPort}`);
     }
     const chanLabel = ch.messagesSent > 0 ? `sent ${ch.messagesSent}` : "";
     const chanGv = `"${fromAddressKey}" -> "${toAddressKey}" [label="${chanLabel}"];`;
