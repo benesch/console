@@ -1,7 +1,7 @@
 import { extractData, GroupedError, useSql } from "~/api/materialized";
 
 /**
- * Fetches errors for a specific source
+ * Fetches errors for a specific source and subsources
  */
 export default function useSourceErrors({
   limit = 20,
@@ -19,7 +19,8 @@ export default function useSourceErrors({
       ? `
 SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
 FROM mz_internal.mz_source_status_history h
-WHERE source_id = '${sourceId}'
+JOIN mz_internal.mz_object_dependencies d ON h.source_id = d.referenced_object_id
+WHERE (d.object_id = '${sourceId}' OR source_id = '${sourceId}')
 AND error IS NOT NULL
 AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
 GROUP BY h.error
