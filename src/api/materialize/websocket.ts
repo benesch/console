@@ -73,7 +73,7 @@ export class SqlWebSocket {
   }
 }
 
-export const useSqlWs = () => {
+export const useSqlWs = ({ open }: { open: boolean }) => {
   const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -90,11 +90,33 @@ export const useSqlWs = () => {
       setSocketReady(true);
     }
   }, []);
+
   const handleClose = React.useCallback((_: CloseEvent) => {
     setSocketReady(false);
     setSocketError("Connection error");
   }, []);
+
+  const closeSocket = React.useCallback(
+    (ws?: WebSocket) => {
+      if (!ws) return;
+      ws.close();
+      ws.removeEventListener("close", handleClose);
+      ws.removeEventListener("message", handleMessage);
+    },
+    [handleClose, handleMessage]
+  );
+
   React.useEffect(() => {
+    if (!socket) return;
+
+    if (!open) {
+      closeSocket(socket.socket);
+    }
+  }, [closeSocket, open, socket]);
+
+  React.useEffect(() => {
+    if (!open) return;
+
     let ws: WebSocket;
     if (
       accessToken &&
@@ -138,7 +160,7 @@ export const useSqlWs = () => {
         ws.removeEventListener("message", handleMessage);
       }
     };
-  }, [currentEnvironment, handleClose, handleMessage, accessToken]);
+  }, [currentEnvironment, handleClose, handleMessage, accessToken, open]);
 
   return { socketReady, socket, socketError };
 };

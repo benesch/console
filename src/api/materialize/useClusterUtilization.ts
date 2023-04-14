@@ -17,12 +17,15 @@ const useClusterUtilization = (
   replicaId?: string
 ) => {
   const [data, setData] = React.useState<ReplicaUtilization[] | null>(null);
+  const [commandComplete, setCommandComplete] = React.useState<boolean>(false);
   const [isStale, setIsStale] = React.useState(false);
   const [errors, setErrors] = React.useState<string[]>([]);
   const [explainSent, setExplainSent] = React.useState<boolean>(false);
   const [querySent, setQuerySent] = React.useState<boolean>(false);
   const [minFrontier, setMinFrontier] = React.useState<number | undefined>();
-  const { socketReady, socket, socketError } = useSqlWs();
+  const { socketReady, socket, socketError } = useSqlWs({
+    open: !commandComplete,
+  });
 
   React.useEffect(() => {
     if (socketError) {
@@ -38,6 +41,7 @@ const useClusterUtilization = (
     setExplainSent(false);
     setMinFrontier(undefined);
     setIsStale(true);
+    setCommandComplete(false);
     const interval = setInterval(() => {
       // If there are changes since the last interval, push them into react state and clear the buffer
       if (socketBufferRef.current.length > 0) {
@@ -51,7 +55,7 @@ const useClusterUtilization = (
     return () => {
       clearInterval(interval);
     };
-  }, [socket, replicaId, clusterId, startTime, endTime]);
+  }, [replicaId, clusterId, startTime, endTime]);
 
   const socketBufferRef = React.useRef<ReplicaUtilization[]>([]);
 
@@ -110,8 +114,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
           // If querySent is false, it means we are still getting results from a previous query,
           // but we ignore them, since the user has already changed the time period
           const mzdiff = result.payload[1] as number;
-          // TODO Make this just `string` once Materialize 0.49 is released.
-          const id = result.payload[2] as number | string;
+          const id = result.payload[2] as string;
           // ignore retractions
           if (mzdiff === 1) {
             const utilization: ReplicaUtilization = {
@@ -124,6 +127,9 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
             setIsStale(false);
           }
         }
+      }
+      if (querySent && result.type === "CommandComplete") {
+        setCommandComplete(true);
       }
     });
 
