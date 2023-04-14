@@ -18,7 +18,8 @@ import {
   YAxis,
 } from "recharts";
 
-import { TimestampedCounts, useBucketedSourceErrors } from "~/api/materialized";
+import useBucketedSourceErrors from "~/api/materialize/useBucketedSourceErrors";
+import { TimestampedCounts } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
