@@ -1,4 +1,4 @@
-import { APIRequestContext, Page, test } from "@playwright/test";
+import { APIRequestContext, expect, Page, test } from "@playwright/test";
 import assert from "assert";
 import CacheableLookup from "cacheable-lookup";
 import { Client } from "pg";
@@ -103,10 +103,7 @@ for (const region of PLATFORM_REGIONS) {
         break;
 
       case DashboardState.ThisRegionActive:
-        console.log("Re-using active region");
-        // TODO: If we hit this, we may be seeing a bug.
-        // I need to think through this case a bit more.
-        break;
+        throw new Error(`Region ${region} already active, which is unexpected`);
 
       case DashboardState.SomeRegionsActive:
         console.log("Activating yet-inactive region");
@@ -114,10 +111,25 @@ for (const region of PLATFORM_REGIONS) {
         break;
 
       default:
-        console.log("welp, this is broken!");
+        regionState satisfies never;
     }
-    // Wait for the region to be available
-    await page.waitForSelector('text="Connect to Materialize"', {
+    await expect(page.locator("body")).toContainText("Enabling region");
+    // Expect to see the pending region state fairly quickly
+    // This helps prevent tests from hanging for a long time if we get an error
+    await Promise.race([
+      page.waitForSelector(
+        'text="New regions can take a few minutes to set up. In the meantime, here are some next steps!"',
+        {
+          timeout: 60 * 1000,
+        }
+      ),
+      // Sometimes enabling a region is very fast and we don't see the pending state
+      page.waitForSelector('text="Connect to Materialize"', {
+        timeout: 60 * 1000,
+      }),
+    ]);
+    // Enabling regions can be very slow
+    await expect(page.locator("body")).toContainText("Connect to Materialize", {
       timeout: 15 * 60 * 1000,
     });
     await testPlatformEnvironment(page, request, password);
@@ -185,7 +197,7 @@ async function testAccountBlocking(
 
 async function testPlatformEnvironment(
   page: Page,
-  request: APIRequestContext,
+  _request: APIRequestContext,
   password: string
 ) {
   /**

@@ -61,6 +61,13 @@ Run the jest test with `yarn test:unit` or `yarn test:unit --watch`.
 
 The playwright end-to-end tests require a cloud stack to run, generally using
 Kind is simplest locally.
+First, run the dev server pointing to your local stack:
+
+```shell
+DEFAULT_STACK=local yarn start
+```
+
+Then, use the cloud scripts to bring up the local stack:
 
 ```shell
 cd ../cloud
