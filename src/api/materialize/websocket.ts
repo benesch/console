@@ -178,7 +178,22 @@ export const useClusterUtilization = (
     setExplainSent(false);
     setMinFrontier(undefined);
     setIsStale(true);
+    const interval = setInterval(() => {
+      // If there are changes since the last interval, push them into react state and clear the buffer
+      if (socketBufferRef.current.length > 0) {
+        setData((val) => {
+          const newVal = [...(val ?? []), ...socketBufferRef.current];
+          socketBufferRef.current = [];
+          return newVal;
+        });
+      }
+    }, 100);
+    return () => {
+      clearInterval(interval);
+    };
   }, [socket, replicaId, clusterId, startTime, endTime]);
+
+  const socketBufferRef = React.useRef<ReplicaUtilization[]>([]);
 
   React.useEffect(() => {
     if (!socket || !clusterId) return;
@@ -216,6 +231,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
       });
       setQuerySent(true);
       setData(null);
+      socketBufferRef.current = [];
     }
 
     socket.onResult((result) => {
@@ -244,7 +260,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,
             };
-            setData((val) => (val ? [...val, utilization] : [utilization]));
+            socketBufferRef.current.push(utilization);
             setIsStale(false);
           }
         }
