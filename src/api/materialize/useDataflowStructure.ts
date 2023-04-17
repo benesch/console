@@ -87,7 +87,6 @@ SELECT
         to_operator_address,
         to_port,
         COALESCE(sum(sent), 0) AS sent
-        -- COALESCE(sum(received), 0) AS received
 FROM
         mz_internal.mz_dataflow_channel_operators AS mdco
         JOIN mz_internal.mz_dataflow_channels AS mdc ON
