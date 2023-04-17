@@ -17,11 +17,14 @@ import React from "react";
 import { GroupedError } from "~/api/materialized";
 import { MaterializeTheme } from "~/theme";
 
+import ErrorBox from "./ErrorBox";
 import { timePeriodOptions } from "./TimePeriodSelect";
 
 interface ConnectorErrorsTableProps {
   errors: GroupedError[] | null;
-  loading: boolean;
+  isError: boolean;
+  isLoading: boolean;
+  errorMessage?: string;
   timePeriodMinutes: number;
 }
 
@@ -32,21 +35,31 @@ const titleForTimePeriod = (timePeriodMinutes: number) => {
 
 const ConnectorErrorsTable = ({
   errors,
-  loading,
+  isError,
+  errorMessage,
+  isLoading,
   timePeriodMinutes,
 }: ConnectorErrorsTableProps) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
 
+  const isEmpty = errors && errors.length === 0;
+
   return (
     <VStack spacing={6} width="100%" alignItems="flex-start">
       <Text fontSize="16px" fontWeight={500}>
         {titleForTimePeriod(timePeriodMinutes)}
       </Text>
-      {!errors || loading ? (
+      {isError ? (
+        <ErrorBox message={errorMessage} />
+      ) : isLoading ? (
         <Flex justifyContent="center" width="100%">
-          <Spinner />
+          <Spinner data-testid="loading-spinner" />
+        </Flex>
+      ) : isEmpty ? (
+        <Flex width="100%" justifyContent="center">
+          No errors during this time period.
         </Flex>
       ) : (
         <Table
@@ -62,7 +75,7 @@ const ConnectorErrorsTable = ({
             </Tr>
           </Thead>
           <Tbody>
-            {errors.map((error) => (
+            {errors?.map((error) => (
               <Tr key={error.lastOccurred.getMilliseconds()}>
                 <Td>{error.error}</Td>
                 <Td>{error.count}</Td>
@@ -90,11 +103,6 @@ const ConnectorErrorsTable = ({
             ))}
           </Tbody>
         </Table>
-      )}
-      {errors?.length === 0 && (
-        <Flex width="100%" justifyContent="center">
-          No errors during this time period.
-        </Flex>
       )}
     </VStack>
   );

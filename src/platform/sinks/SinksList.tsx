@@ -15,12 +15,12 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Sink } from "~/api/materialized";
+import { Sink, SinksResponse } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
@@ -35,7 +35,6 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
-import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SinksIcon from "~/svg/Sinks";
 import { MaterializeTheme } from "~/theme";
@@ -46,6 +45,7 @@ import {
   SchemaFilterState,
 } from "~/useSchemaObjectFilters";
 
+import { SINKS_FETCH_ERROR_MESSAGE } from "./constants";
 import { sinkErrorsPath } from "./SinkRoutes";
 
 const SINK_CREATE_SQL = `CREATE SINK <sink_name>
@@ -74,30 +74,24 @@ interface SinkListProps {
   databaseFilter: DatabaseFilterState;
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
-  sinks: Sink[] | null;
-  loading: boolean;
-  isPolling: boolean;
+  sinksResponse: SinksResponse;
+  isPolling?: boolean;
 }
 
 const SinksListPage = ({
   databaseFilter,
   nameFilter,
   schemaFilter,
-  sinks,
-  loading,
+  sinksResponse,
   isPolling,
 }: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
-  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState
-  );
+  const { data: sinks, loading, isInitiallyLoading, isError } = sinksResponse;
 
-  const showLoading = useDelayedLoading(!isPolling && loading);
+  const isFetching = useDelayedLoading(loading && !isPolling);
 
-  const isDisabled = currentEnvironment?.state !== "enabled";
-  const isInitialLoad = sinks === null;
-  const isLoading = isInitialLoad || showLoading;
-  const isEmpty = !isLoading && sinks.length === 0;
+  const isLoading = isInitiallyLoading || isFetching;
+  const isEmpty = sinks && sinks.length === 0;
 
   return (
     <>
@@ -115,10 +109,11 @@ const SinksListPage = ({
           />
         </HStack>
       </PageHeader>
-      {isLoading && !isEmpty && !isDisabled && (
+      {isError ? (
+        <ErrorBox message={SINKS_FETCH_ERROR_MESSAGE} />
+      ) : isLoading ? (
         <Spinner data-testid="loading-spinner" />
-      )}
-      {isEmpty && !isDisabled && (
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Empty">
@@ -139,10 +134,9 @@ const SinksListPage = ({
             />
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && !isDisabled && (
+      ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <SinkTable sinks={sinks} />
+          <SinkTable sinks={sinks || []} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with sinks</CardHeader>
             <CardContent pb={8}>

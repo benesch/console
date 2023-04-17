@@ -14,24 +14,41 @@ import {
 import React from "react";
 
 import { useSubsources } from "~/api/materialize/useSubsources";
+import ErrorBox from "~/components/ErrorBox";
+
+import { SOURCES_FETCH_ERROR_MESSAGE } from "./constants";
 
 export interface SubsourceProps {
   sourceId?: string;
 }
 
 const Subsources = ({ sourceId }: SubsourceProps) => {
-  const { data: sources, loading } = useSubsources(sourceId);
+  const {
+    data: sources,
+    isInitiallyLoading: isLoading,
+    isError,
+  } = useSubsources(sourceId);
+
+  const isEmpty = sources && sources.length === 0;
 
   return (
-    <HStack spacing={6} alignItems="flex-start">
-      <VStack width="100%" alignItems="flex-start" spacing={6}>
-        <VStack spacing={6} width="100%" alignItems="flex-start">
+    <HStack spacing={6} height="100%">
+      <VStack width="100%" spacing={6} height="100%">
+        <VStack spacing={6} width="100%" height="100%" alignItems="flex-start">
           <Text fontSize="16px" fontWeight={500}>
             Subsources
           </Text>
-          {!sources || loading ? (
+          {isError ? (
+            <Flex justifyContent="center" width="100%" flex="1">
+              <ErrorBox message={SOURCES_FETCH_ERROR_MESSAGE} />
+            </Flex>
+          ) : isLoading ? (
             <Flex justifyContent="center" width="100%">
               <Spinner data-testid="loading-spinner" />
+            </Flex>
+          ) : isEmpty ? (
+            <Flex width="100%" justifyContent="center">
+              No subsources
             </Flex>
           ) : (
             <Table
@@ -45,18 +62,13 @@ const Subsources = ({ sourceId }: SubsourceProps) => {
                 </Tr>
               </Thead>
               <Tbody>
-                {sources.map((s) => (
+                {sources?.map((s) => (
                   <Tr key={s.id}>
                     <Td>{s.name}</Td>
                   </Tr>
                 ))}
               </Tbody>
             </Table>
-          )}
-          {sources?.length === 0 && (
-            <Flex width="100%" justifyContent="center">
-              No subsources
-            </Flex>
           )}
         </VStack>
         );

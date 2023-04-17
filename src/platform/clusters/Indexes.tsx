@@ -1,10 +1,12 @@
 import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Route, useNavigate } from "react-router-dom";
+import { Route, useNavigate, useParams } from "react-router-dom";
 
-import { Cluster, Index, Replica, useIndexes } from "~/api/materialized";
+import { Replica, useClusters } from "~/api/materialize/useClusters";
+import { Index, useIndexes } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
+import ErrorBox from "~/components/ErrorBox";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -15,23 +17,39 @@ import {
 import { SentryRoutes } from "~/sentry";
 import ClustersIcon from "~/svg/Clusters";
 
-const DFViz = React.lazy(() => import("./Introspection"));
+import { ClusterParams } from "./ClusterRoutes";
+import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
-type IndexesProps = {
-  cluster?: Cluster;
-};
+const DFViz = React.lazy(() => import("./Introspection"));
 
 const createExample = `CREATE INDEX active_customers_geo_idx ON active_customers (geo_id);`;
 
-const Indexes = ({ cluster }: IndexesProps) => {
-  const { data: indexes } = useIndexes(cluster?.id);
-  const isLoading = !indexes;
-  const isEmpty = !isLoading && (!indexes || indexes.length === 0);
+const Indexes = () => {
+  const { id: clusterId } = useParams<ClusterParams>();
+  const {
+    data: indexes,
+    isInitiallyLoading: isIndexesLoading,
+    isError: indexesError,
+  } = useIndexes(clusterId);
+  const {
+    getClusterById,
+    isInitiallyLoading: isClustersLoading,
+    isError: clustersError,
+  } = useClusters();
+
+  const cluster = getClusterById(clusterId);
+
+  const isLoading = isIndexesLoading || isClustersLoading;
+
+  const isEmpty = indexes && indexes.length === 0;
 
   return (
     <>
-      {isLoading && !isEmpty && <Spinner data-testid="loading-spinner" />}
-      {isEmpty && (
+      {indexesError || clustersError ? (
+        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
+      ) : isLoading ? (
+        <Spinner data-testid="loading-spinner" />
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Missing">
@@ -52,9 +70,11 @@ const Indexes = ({ cluster }: IndexesProps) => {
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && (
-        <IndexTable indexes={indexes} replicas={cluster?.replicas || []} />
+      ) : (
+        <IndexTable
+          indexes={indexes ?? []}
+          replicas={cluster?.replicas ?? []}
+        />
       )}
     </>
   );

@@ -32,6 +32,7 @@ import { useForm } from "react-hook-form";
 
 import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
@@ -242,8 +243,10 @@ export const SecretsList = () => {
   );
   const {
     data: secrets,
-    loading,
+    isInitiallyLoading,
     refetch,
+    isError,
+    loading,
   } = useSecrets({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
@@ -257,11 +260,9 @@ export const SecretsList = () => {
     refetch();
   };
 
-  const showLoading = useDelayedLoading(loading);
-
-  const isInitialLoad = secrets === null;
-
-  const isEmpty = !isInitialLoad && secrets.length === 0;
+  const isEmpty = secrets && secrets.length === 0;
+  const isFetching = useDelayedLoading(loading);
+  const isLoading = isInitiallyLoading || isFetching;
 
   return (
     <>
@@ -282,12 +283,14 @@ export const SecretsList = () => {
           </Button>
         </HStack>
       </PageHeader>
-      {showLoading || isInitialLoad ? (
+      {isError ? (
+        <ErrorBox message="An error occurred loading secrets" />
+      ) : isLoading ? (
         <Spinner data-testid="loading-spinner" />
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <SecretsTable secrets={secrets} />
+        <SecretsTable secrets={secrets ?? []} />
       )}
       <SecretsCreationModal
         isOpen={isOpen}

@@ -10,6 +10,7 @@ import TimePeriodSelect, {
 } from "~/components/TimePeriodSelect";
 import { MaterializeTheme } from "~/theme";
 
+import { SINKS_FETCH_ERROR_MESSAGE } from "./constants";
 import SinkErrorsGraph from "./SinkErrorsGraph";
 
 export interface SinkDetailProps {
@@ -27,7 +28,11 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
 
-  const { data: errors, loading } = useSinkErrors({
+  const {
+    data: errors,
+    isInitiallyLoading: isLoading,
+    isError,
+  } = useSinkErrors({
     sinkId: sink?.id,
     startTime,
     endTime,
@@ -75,8 +80,10 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
           </Box>
           <ConnectorErrorsTable
             errors={errors}
-            loading={loading}
+            isLoading={isLoading}
+            isError={isError}
             timePeriodMinutes={timePeriodMinutes}
+            errorMessage={SINKS_FETCH_ERROR_MESSAGE}
           />
         </VStack>
       </VStack>

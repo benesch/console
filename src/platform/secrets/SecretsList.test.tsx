@@ -27,6 +27,23 @@ describe("SecretsList", () => {
       expect(await screen.findByTestId("loading-spinner")).toBeVisible();
     });
 
+    it("shows an error state when there's an error fetching secrets", async () => {
+      const useSecretsHandler = buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_name", "schema_name", "created_at"],
+        rows: [],
+        error: "Something went wrong",
+      });
+      server.use(useSecretsHandler);
+      renderComponent(<SecretsList />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      });
+      expect(
+        await screen.findByText("An error occurred loading secrets")
+      ).toBeVisible();
+    });
+
     it("shows the empty state when there are no results", async () => {
       renderComponent(<SecretsList />, {
         initializeState: ({ set }) =>

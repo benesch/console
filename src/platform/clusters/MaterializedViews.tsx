@@ -1,12 +1,10 @@
 import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
+import { useParams } from "react-router-dom";
 
-import {
-  Cluster,
-  MaterializedView,
-  useMaterializedViews,
-} from "~/api/materialized";
+import { MaterializedView, useMaterializedViews } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
+import ErrorBox from "~/components/ErrorBox";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -16,9 +14,8 @@ import {
 } from "~/layouts/listPageComponents";
 import ClustersIcon from "~/svg/Clusters";
 
-type MaterializedViewsProps = {
-  cluster?: Cluster;
-};
+import { ClusterParams } from "./ClusterRoutes";
+import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 const createExample = `CREATE MATERIALIZED VIEW winning_bids AS
   SELECT auction_id,
@@ -28,17 +25,24 @@ const createExample = `CREATE MATERIALIZED VIEW winning_bids AS
   FROM highest_bid_per_auction
   WHERE end_time < mz_now();`;
 
-const MaterializedViews = ({ cluster }: MaterializedViewsProps) => {
-  const { data: materializedViews } = useMaterializedViews(cluster?.id);
+const MaterializedViews = () => {
+  const { id: clusterId } = useParams<ClusterParams>();
 
-  const isLoading = !materializedViews;
-  const isEmpty =
-    !isLoading && (!materializedViews || materializedViews.length === 0);
+  const {
+    data: materializedViews,
+    isInitiallyLoading,
+    isError,
+  } = useMaterializedViews(clusterId);
+
+  const isEmpty = materializedViews && materializedViews.length === 0;
 
   return (
     <>
-      {isLoading && !isEmpty && <Spinner data-testid="loading-spinner" />}
-      {isEmpty && (
+      {isError ? (
+        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
+      ) : isInitiallyLoading ? (
+        <Spinner data-testid="loading-spinner" />
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Missing">
@@ -59,9 +63,8 @@ const MaterializedViews = ({ cluster }: MaterializedViewsProps) => {
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && (
-        <MaterializedViewTable materializedViews={materializedViews} />
+      ) : (
+        <MaterializedViewTable materializedViews={materializedViews ?? []} />
       )}
     </>
   );

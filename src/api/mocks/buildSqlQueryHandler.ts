@@ -36,13 +36,20 @@ type SQLShowQuery = ISQLQuery & {
   rows: Array<Array<unknown>>;
 };
 
+type SQLShowCreateQuery = ISQLQuery & {
+  type: "SHOW CREATE";
+  name: string;
+  createSql: string;
+};
+
 type SQLQuery =
   | SQLSelectQuery
   | SQLCreateQuery
   | SQLCommitQuery
   | SQLDropQuery
   | SQLSetQuery
-  | SQLShowQuery;
+  | SQLShowQuery
+  | SQLShowCreateQuery;
 
 function buildNotSurroundedByParensRegex(searchTerm: string) {
   /*
@@ -129,6 +136,7 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
 
 export function getQueryType(sqlQuery: string) {
   for (const queryType of [
+    "SHOW CREATE",
     "SELECT",
     "CREATE",
     "COMMIT",
@@ -185,6 +193,15 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
       }
 
       switch (mockQuery.type) {
+        case "SHOW CREATE":
+          results.push({
+            tag: `SELECT 1`,
+            col_names: ["name", "create_sql"],
+            rows: [[mockQuery.name, mockQuery.createSql]],
+            notices: [],
+          });
+
+          break;
         case "SHOW": {
           const regex = new RegExp("SHOW (\\w*)");
           const requestShowVariableName = regex.exec(requestQuery)?.[1];

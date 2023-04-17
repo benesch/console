@@ -4,12 +4,12 @@ import { graphviz } from "d3-graphviz";
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import { Replica } from "~/api/materialize/useClusters";
 import {
   Channel,
   Operator,
   useDataflowStructure,
 } from "~/api/materialize/useDataflowStructure";
-import { Replica } from "~/api/materialized";
 import LabeledSelect from "~/components/LabeledSelect";
 import { assert } from "~/util";
 

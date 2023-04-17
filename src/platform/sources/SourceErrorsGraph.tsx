@@ -7,6 +7,7 @@ import {
   subMinutes,
 } from "date-fns";
 import React from "react";
+import { useParams } from "react-router-dom";
 import {
   Bar,
   BarChart,
@@ -18,21 +19,25 @@ import {
 } from "recharts";
 
 import { TimestampedCounts, useBucketedSourceErrors } from "~/api/materialized";
+import ErrorBox from "~/components/ErrorBox";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 
+import { SchemaObjectRouteParams } from "../schemaObjectRouteHelpers";
+import { SOURCES_FETCH_ERROR_MESSAGE } from "./constants";
+
 export interface Props {
-  sourceId?: string;
   timePeriodMinutes: number;
 }
 
 const heightPx = 300;
 
-const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
+const SourceErrorsGraph = ({ timePeriodMinutes }: Props) => {
   const {
     colors: { semanticColors },
     fonts,
   } = useTheme<MaterializeTheme>();
+  const { id: sourceId } = useParams<SchemaObjectRouteParams>();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),
@@ -41,14 +46,26 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
   const bucketSizeSeconds = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60;
   }, [timePeriodMinutes]);
-  const { loading, data: statuses } = useBucketedSourceErrors({
+  const {
+    isInitiallyLoading,
+    data: statuses,
+    isError,
+  } = useBucketedSourceErrors({
     sourceId: sourceId,
     startTime,
     endTime,
     bucketSizeSeconds,
   });
 
-  if (!sourceId || loading || !statuses) {
+  if (isError) {
+    return (
+      <Flex height={heightPx} alignItems="center" justifyContent="center">
+        <ErrorBox message={SOURCES_FETCH_ERROR_MESSAGE} />
+      </Flex>
+    );
+  }
+
+  if (isInitiallyLoading) {
     return (
       <Flex height={heightPx} alignItems="center" justifyContent="center">
         <Spinner />
@@ -67,10 +84,10 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <BarChart data={statuses} barSize={4}>
+      <BarChart data={statuses ?? []} barSize={4}>
         <CartesianGrid
           vertical={false}
-          horizontal={statuses.length > 0}
+          horizontal={statuses !== null && statuses.length > 0}
           stroke={semanticColors.border.secondary}
           strokeDasharray="4"
         />
@@ -163,7 +180,7 @@ const SourceErrorsGraph = ({ sourceId, timePeriodMinutes }: Props) => {
           cursor={false}
         />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
-        {statuses.length === 0 && (
+        {statuses?.length === 0 && (
           <text
             x="50%"
             y="50%"

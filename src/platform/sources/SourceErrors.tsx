@@ -1,8 +1,9 @@
 import { Box, Flex, HStack, Text, useTheme, VStack } from "@chakra-ui/react";
 import { subMinutes } from "date-fns";
 import React from "react";
+import { useParams } from "react-router-dom";
 
-import { Source } from "~/api/materialize/useSources";
+import { SourcesResponse } from "~/api/materialize/useSources";
 import { useSourceErrors } from "~/api/materialized";
 import AlertBox from "~/components/AlertBox";
 import ConnectorErrorsTable from "~/components/ConnectorErrorsTable";
@@ -11,13 +12,15 @@ import TimePeriodSelect, {
 } from "~/components/TimePeriodSelect";
 import { MaterializeTheme } from "~/theme";
 
+import { SchemaObjectRouteParams } from "../schemaObjectRouteHelpers";
+import { SOURCES_FETCH_ERROR_MESSAGE } from "./constants";
 import SourceErrorsGraph from "./SourceErrorsGraph";
 
 export interface SourceDetailProps {
-  source?: Source;
+  sourcesResponse: SourcesResponse;
 }
 
-const SourceErrors = ({ source }: SourceDetailProps) => {
+const SourceErrors = ({ sourcesResponse }: SourceDetailProps) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
@@ -28,8 +31,18 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
     return subMinutes(endTime, timePeriodMinutes);
   }, [timePeriodMinutes, endTime]);
 
-  const { data: errors, loading } = useSourceErrors({
-    sourceId: source?.id,
+  const { id: sourceId } = useParams<SchemaObjectRouteParams>();
+
+  const { getSourceById } = sourcesResponse;
+
+  const source = getSourceById(sourceId);
+
+  const {
+    data: errors,
+    isInitiallyLoading: isLoading,
+    isError,
+  } = useSourceErrors({
+    sourceId,
     startTime,
     endTime,
   });
@@ -69,15 +82,14 @@ const SourceErrors = ({ source }: SourceDetailProps) => {
                 setTimePeriodMinutes={setTimePeriodMinutes}
               />
             </Flex>
-            <SourceErrorsGraph
-              sourceId={source?.id}
-              timePeriodMinutes={timePeriodMinutes}
-            />
+            <SourceErrorsGraph timePeriodMinutes={timePeriodMinutes} />
           </Box>
           <ConnectorErrorsTable
             errors={errors}
-            loading={loading}
+            isError={isError}
+            isLoading={isLoading}
             timePeriodMinutes={timePeriodMinutes}
+            errorMessage={SOURCES_FETCH_ERROR_MESSAGE}
           />
         </VStack>
       </VStack>

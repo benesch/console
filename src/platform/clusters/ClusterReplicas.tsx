@@ -13,15 +13,14 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import {
-  Cluster,
   ClusterReplicaWithUtilizaton,
   useClusterReplicasWithUtilization,
 } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import ErrorBox from "~/components/ErrorBox";
 import TextLink from "~/components/TextLink";
 import {
   EmptyListHeader,
@@ -32,11 +31,12 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
-import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
-import { currentEnvironmentState } from "~/recoil/environments";
+import { ClusterParams } from "~/platform/clusters/ClusterRoutes";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
-import { usePoll } from "~/useForegroundInterval";
+import useForegroundInterval from "~/useForegroundInterval";
+
+import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",
@@ -59,34 +59,27 @@ const getReplicasSuggestions = (name: string): SQLSuggestion[] => [
   },
 ];
 
-type Props = {
-  cluster?: Cluster;
-};
-
-const ClusterDetailPage = ({ cluster }: Props) => {
+const ClusterReplicasPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
-  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState
-  );
-  const { clusterName } = useParams<ClusterDetailParams>();
+
+  const { id: clusterId, clusterName } = useParams<ClusterParams>();
   const {
-    loading,
+    isInitiallyLoading,
     data: replicas,
     refetch,
-  } = useClusterReplicasWithUtilization(cluster?.id);
-  usePoll(loading, refetch);
+    isError,
+  } = useClusterReplicasWithUtilization(clusterId);
+  useForegroundInterval(refetch);
 
-  const isDisabled =
-    !currentEnvironmentState || currentEnvironment?.state !== "enabled";
-  const isLoading = !replicas || !cluster;
-  const isEmpty = !isLoading && replicas && replicas.length === 0;
+  const isEmpty = replicas && replicas.length === 0;
 
   return (
     <>
-      {isLoading && !isEmpty && !isDisabled && (
+      {isError ? (
+        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
+      ) : isInitiallyLoading ? (
         <Spinner data-testid="loading-spinner" />
-      )}
-      {isEmpty && !isDisabled && (
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Missing">
@@ -111,10 +104,9 @@ const ClusterDetailPage = ({ cluster }: Props) => {
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && !isDisabled && (
+      ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <ReplicaTable replicas={replicas} />
+          <ReplicaTable replicas={replicas ?? []} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with cluster replicas</CardHeader>
             <CardContent pb={8}>
@@ -132,7 +124,7 @@ const ClusterDetailPage = ({ cluster }: Props) => {
                     View the documentation.
                   </TextLink>
                 </Text>
-                {getReplicasSuggestions(cluster.name).map((suggestion) => (
+                {getReplicasSuggestions(clusterName!).map((suggestion) => (
                   <SQLSuggestionBox
                     key={`suggestion-${suggestion.title}`}
                     {...suggestion}
@@ -187,4 +179,4 @@ const ReplicaTable = (props: ReplicaTableProps) => {
   );
 };
 
-export default ClusterDetailPage;
+export default ClusterReplicasPage;

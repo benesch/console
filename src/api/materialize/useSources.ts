@@ -45,7 +45,12 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
     }));
   }
 
-  return { ...sourceResponse, data: sources };
+  const getSourceById = (sourceId?: string) =>
+    sources?.find((s) => s.id === sourceId) ?? null;
+
+  return { ...sourceResponse, data: sources, getSourceById };
 }
+
+export type SourcesResponse = ReturnType<typeof useSources>;
 
 export default useSources;
