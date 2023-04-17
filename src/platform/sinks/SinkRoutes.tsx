@@ -9,7 +9,7 @@ import {
 } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -36,9 +36,9 @@ const SinkRoutes = () => {
     nameFilter: nameFilter.name,
   });
 
-  const { refetch } = sinksResponse;
+  const { refetch, loading } = sinksResponse;
 
-  useForegroundInterval(refetch);
+  const isPolling = usePoll(loading, refetch);
 
   return (
     <SentryRoutes>
@@ -50,6 +50,7 @@ const SinkRoutes = () => {
             schemaFilter={schemaFilter}
             nameFilter={nameFilter}
             sinksResponse={sinksResponse}
+            isPolling={isPolling}
           />
         }
       />

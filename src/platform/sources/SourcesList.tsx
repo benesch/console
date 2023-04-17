@@ -71,6 +71,7 @@ interface SourceListProps {
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
   sourcesResponse: SourcesResponse;
+  isPolling?: boolean;
 }
 
 const SourcesListPage = ({
@@ -78,6 +79,7 @@ const SourcesListPage = ({
   nameFilter,
   schemaFilter,
   sourcesResponse,
+  isPolling,
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
@@ -86,12 +88,11 @@ const SourcesListPage = ({
     isInitiallyLoading,
     isError,
     loading,
-    isRefetching,
   } = sourcesResponse;
 
   const isEmpty = sources && sources.length === 0;
 
-  const isFetching = useDelayedLoading(loading && !isRefetching);
+  const isFetching = useDelayedLoading(loading && !isPolling);
 
   return (
     <>

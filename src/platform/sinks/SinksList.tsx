@@ -75,6 +75,7 @@ interface SinkListProps {
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
   sinksResponse: SinksResponse;
+  isPolling?: boolean;
 }
 
 const SinksListPage = ({
@@ -82,17 +83,12 @@ const SinksListPage = ({
   nameFilter,
   schemaFilter,
   sinksResponse,
+  isPolling,
 }: SinkListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
-  const {
-    data: sinks,
-    loading,
-    isInitiallyLoading,
-    isError,
-    isRefetching,
-  } = sinksResponse;
+  const { data: sinks, loading, isInitiallyLoading, isError } = sinksResponse;
 
-  const isFetching = useDelayedLoading(loading && !isRefetching);
+  const isFetching = useDelayedLoading(loading && !isPolling);
 
   const isLoading = isInitiallyLoading || isFetching;
   const isEmpty = sinks && sinks.length === 0;

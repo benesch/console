@@ -8,7 +8,7 @@ import useSources, {
 import { SchemaObject } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import useForegroundInterval from "~/useForegroundInterval";
+import { usePoll } from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -30,9 +30,9 @@ const SourceRoutes = () => {
     nameFilter: nameFilter.name,
   });
 
-  const { refetch } = sourcesResponse;
+  const { refetch, loading } = sourcesResponse;
 
-  useForegroundInterval(refetch);
+  const isPolling = usePoll(loading, refetch);
 
   return (
     <>
@@ -45,6 +45,7 @@ const SourceRoutes = () => {
               schemaFilter={schemaFilter}
               nameFilter={nameFilter}
               sourcesResponse={sourcesResponse}
+              isPolling={isPolling}
             />
           }
         />

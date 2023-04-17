@@ -151,7 +151,6 @@ export interface SqlRequest {
  */
 export function useSqlMany(request?: SqlRequest) {
   const { abortRequest, runSql, ...inner } = useSqlApiRequest();
-  const [isRefetching, setIsRefetching] = useState(false);
   // If the sql query changes, execute a new query and abort the previous query.
   useEffect(() => {
     runSql(request);
@@ -161,22 +160,14 @@ export function useSqlMany(request?: SqlRequest) {
     };
   }, [request, runSql, abortRequest]);
 
-  const refetch = async () => {
-    if (inner.loading) {
-      // Don't run a refetch while a query is fetching
-      return;
-    }
-    setIsRefetching(true);
-    await runSql(request);
-    setIsRefetching(false);
-  };
+  const refetch = React.useCallback(() => runSql(request), [request, runSql]);
 
   const isError = inner.error !== null;
 
   // When no data has been loaded and query is currently fetching
   const isInitiallyLoading = !isError && inner.data === null;
 
-  return { ...inner, refetch, isInitiallyLoading, isRefetching, isError };
+  return { ...inner, refetch, isInitiallyLoading, isError };
 }
 
 /**
@@ -244,13 +235,7 @@ export function useSqlApiRequest() {
     controllerRef.current.abort();
   }, []);
 
-  return {
-    data: results,
-    error,
-    loading,
-    runSql,
-    abortRequest,
-  };
+  return { data: results, error, loading, runSql, abortRequest };
 }
 
 type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
