@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
@@ -14,10 +15,11 @@ import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 jest.mock("~/api/auth");
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: jest.fn().mockReturnValue({ id: 1, clusterName: "test_cluster" }),
-}));
+const ClusterReplicasWithRoute = () => (
+  <Routes>
+    <Route path=":id/:clusterName" element={<ClusterReplicas />} />
+  </Routes>
+);
 
 const useClusterReplicasWithUtilizationColumns = [
   "id",
@@ -36,9 +38,10 @@ describe("ClusterReplicas", () => {
         rows: [],
       })
     );
-    renderComponent(<ClusterReplicas />, {
+    renderComponent(<ClusterReplicasWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2/cluster_1"],
     });
 
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
@@ -53,9 +56,10 @@ describe("ClusterReplicas", () => {
         error: "Something went wrong",
       })
     );
-    renderComponent(<ClusterReplicas />, {
+    renderComponent(<ClusterReplicasWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2/cluster_1"],
     });
 
     expect(await screen.findByText(CLUSTERS_FETCH_ERROR_MESSAGE)).toBeVisible();
@@ -69,9 +73,10 @@ describe("ClusterReplicas", () => {
         rows: [],
       })
     );
-    renderComponent(<ClusterReplicas />, {
+    renderComponent(<ClusterReplicasWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2/cluster_1"],
     });
 
     expect(
@@ -87,9 +92,10 @@ describe("ClusterReplicas", () => {
         rows: [["test_id", "test_replica", "test_cluster_id", "2xsmall", 5]],
       })
     );
-    renderComponent(<ClusterReplicas />, {
+    renderComponent(<ClusterReplicasWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2/cluster_1"],
     });
 
     expect(await screen.findByText("test_replica")).toBeVisible();

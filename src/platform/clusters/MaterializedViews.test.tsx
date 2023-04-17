@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
@@ -14,18 +15,20 @@ import MaterializedViews from "./MaterializedViews";
 
 jest.mock("~/api/auth");
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: jest.fn().mockReturnValue({ id: 1 }),
-}));
+const MaterializedViewsWithRoute = () => (
+  <Routes>
+    <Route path=":id" element={<MaterializedViews />} />
+  </Routes>
+);
 
 const useMaterializedViewsColumns = ["id", "name", "definition"];
 
 describe("MaterializedViews", () => {
   it("shows a spinner initially", async () => {
-    renderComponent(<MaterializedViews />, {
+    renderComponent(<MaterializedViewsWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2"],
     });
 
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
@@ -40,9 +43,10 @@ describe("MaterializedViews", () => {
         error: "Something went wrong",
       })
     );
-    renderComponent(<MaterializedViews />, {
+    renderComponent(<MaterializedViewsWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2"],
     });
 
     expect(await screen.findByText(CLUSTERS_FETCH_ERROR_MESSAGE)).toBeVisible();
@@ -56,9 +60,10 @@ describe("MaterializedViews", () => {
         rows: [],
       })
     );
-    renderComponent(<MaterializedViews />, {
+    renderComponent(<MaterializedViewsWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2"],
     });
 
     expect(
@@ -74,9 +79,10 @@ describe("MaterializedViews", () => {
         rows: [["test_id", "test_materialized_view", "test_definition"]],
       })
     );
-    renderComponent(<MaterializedViews />, {
+    renderComponent(<MaterializedViewsWithRoute />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["/u2"],
     });
 
     expect(await screen.findByText("test_materialized_view")).toBeVisible();

@@ -16,11 +16,6 @@ import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 jest.mock("~/api/auth");
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: jest.fn().mockReturnValue({ id: 1 }),
-}));
-
 jest.mock("~/api/materialize/websocket", () => ({
   ...jest.requireActual("~/api/materialize/websocket"),
   useClusterUtilization: jest.fn(),
