@@ -56,14 +56,14 @@ export function useDataflowStructure(params?: DataflowStructureParams) {
         },
         // OPERATORS
         {
-          query: `CREATE TEMPORARY VIEW all_ops AS	
-	SELECT
-		e2d.export_id, mdod.id, mda.address, mdod.name, mdop.parent_id, coalesce(mas.records, 0) AS arrangement_records,
+          query: `CREATE TEMPORARY VIEW all_ops AS
+        SELECT
+                e2d.export_id, mdod.id, mda.address, mdod.name, mdop.parent_id, coalesce(mas.records, 0) AS arrangement_records,
                 coalesce(mse.elapsed_ns, 0) AS elapsed_ns
-	FROM
-		export_to_dataflow AS e2d
-		JOIN mz_internal.mz_dataflow_operator_dataflows
-				AS mdod ON e2d.id = mdod.dataflow_id
+        FROM
+                export_to_dataflow AS e2d
+                JOIN mz_internal.mz_dataflow_operator_dataflows
+                                AS mdod ON e2d.id = mdod.dataflow_id
                 LEFT JOIN mz_internal.mz_scheduling_elapsed
                                 AS mse ON mdod.id = mse.id
                 LEFT JOIN mz_internal.mz_arrangement_sizes
@@ -79,28 +79,28 @@ export function useDataflowStructure(params?: DataflowStructureParams) {
         {
           query: `
 SELECT
-	mdco.id,
-	from_operator_id,
+        mdco.id,
+        from_operator_id,
         from_operator_address,
         from_port,
-	to_operator_id,
+        to_operator_id,
         to_operator_address,
         to_port,
-	COALESCE(sum(sent), 0) AS sent
-	-- COALESCE(sum(received), 0) AS received
+        COALESCE(sum(sent), 0) AS sent
+        -- COALESCE(sum(received), 0) AS received
 FROM
-	mz_internal.mz_dataflow_channel_operators AS mdco
+        mz_internal.mz_dataflow_channel_operators AS mdco
         JOIN mz_internal.mz_dataflow_channels AS mdc ON
                         mdc.id = mdco.id
-	LEFT JOIN mz_internal.mz_message_counts AS mmc ON
-			mdco.id = mmc.channel_id
+        LEFT JOIN mz_internal.mz_message_counts AS mmc ON
+                        mdco.id = mmc.channel_id
         JOIN mz_internal.mz_compute_exports mce ON mce.dataflow_id = from_operator_address[1]
 WHERE mce.export_id = $1
 GROUP BY
-	mdco.id,
-	from_operator_id,
+        mdco.id,
+        from_operator_id,
         from_operator_address,
-	to_operator_id,
+        to_operator_id,
         to_operator_address,
         from_port,
         to_port`,
