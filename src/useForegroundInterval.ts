@@ -42,32 +42,3 @@ const useForegroundInterval = (
 };
 
 export default useForegroundInterval;
-
-/**
- * Executes the refetch function at the specified interval only if not currently loading.
- * Build on useForegroundInterval, the interval only runs when the document is focused.
- * @returns boolean indicating if the callback is currently running
- */
-export const usePoll = (
-  loading: boolean,
-  refetch: () => Promise<void>,
-  intervalMs: number | null = 5000
-) => {
-  const loadingRef = React.useRef(loading);
-  const [isPolling, setIsPolling] = React.useState(false);
-  React.useEffect(() => {
-    loadingRef.current = loading;
-  }, [loading]);
-
-  const fn = React.useCallback(async () => {
-    if (!loadingRef.current) {
-      setIsPolling(true);
-      await refetch();
-      setIsPolling(false);
-    }
-  }, [refetch]);
-
-  useForegroundInterval(fn, intervalMs);
-
-  return isPolling;
-};

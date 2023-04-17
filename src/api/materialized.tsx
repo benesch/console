@@ -151,6 +151,7 @@ export interface SqlRequest {
  */
 export function useSqlMany(request?: SqlRequest) {
   const { abortRequest, runSql, ...inner } = useSqlApiRequest();
+  const [isRefetching, setIsRefetching] = useState(false);
   // If the sql query changes, execute a new query and abort the previous query.
   useEffect(() => {
     runSql(request);
@@ -160,9 +161,22 @@ export function useSqlMany(request?: SqlRequest) {
     };
   }, [request, runSql, abortRequest]);
 
-  const refetch = React.useCallback(() => runSql(request), [request, runSql]);
+  const refetch = async () => {
+    if (inner.loading) {
+      // Don't run a refetch while a query is fetching
+      return;
+    }
+    setIsRefetching(true);
+    await runSql(request);
+    setIsRefetching(false);
+  };
 
-  return { ...inner, refetch };
+  const isError = inner.error !== null;
+
+  // When no data has been loaded and query is currently fetching
+  const isInitiallyLoading = !isError && inner.data === null;
+
+  return { ...inner, refetch, isInitiallyLoading, isRefetching, isError };
 }
 
 /**
@@ -212,6 +226,10 @@ export function useSqlApiRequest() {
           setError(null);
         }
       } catch (err) {
+        if ((err as Error)?.name === "AbortError") {
+          return;
+        }
+
         setError(DEFAULT_QUERY_ERROR);
       } finally {
         clearTimeout(timeout);
@@ -226,7 +244,13 @@ export function useSqlApiRequest() {
     controllerRef.current.abort();
   }, []);
 
-  return { data: results, error, loading, runSql, abortRequest };
+  return {
+    data: results,
+    error,
+    loading,
+    runSql,
+    abortRequest,
+  };
 }
 
 type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
@@ -324,74 +348,6 @@ export const executeSql = async (
     return { results: outResults };
   }
 };
-
-export interface Cluster {
-  id: string;
-  name: string;
-  replicas: Replica[];
-}
-
-export interface Replica {
-  id: string;
-  name: string;
-  size: string;
-  clusterName: string;
-}
-
-/**
- * Fetches all clusters in the current environment.
- */
-export function useClusters() {
-  const response = useSql(
-    `SELECT c.id,
-    c.name as cluster_name,
-    r.id as replica_id,
-    r.name as replica_name,
-    r.size
-  FROM mz_clusters c
-  LEFT OUTER JOIN mz_cluster_replicas r ON c.id = r.cluster_id
-  ORDER BY r.id;`
-  );
-
-  const clusterMap: Map<string, Cluster> = new Map();
-  if (response.data) {
-    const { getColumnByName } = response.data;
-    assert(getColumnByName);
-
-    response.data.rows.forEach((row) => {
-      const clusterId = getColumnByName(row, "id") as string;
-      const clusterName = getColumnByName(row, "cluster_name") as string;
-      const replicaId = getColumnByName(row, "replica_id") as
-        | string
-        | undefined;
-      const replica: Replica | undefined = replicaId
-        ? {
-            id: replicaId.toString(),
-            name: getColumnByName(row, "replica_name") as string,
-            size: getColumnByName(row, "size") as string,
-            clusterName: clusterName,
-          }
-        : undefined;
-      const cluster = clusterMap.get(clusterId);
-      if (cluster && replica) {
-        cluster.replicas.push(replica);
-      } else {
-        clusterMap.set(clusterId, {
-          id: clusterId,
-          name: clusterName,
-          replicas: replica ? [replica] : [],
-        });
-      }
-    });
-  }
-
-  return {
-    ...response,
-    data: response.data ? Array.from(clusterMap.values()) : null,
-  };
-}
-
-export type ClusterResponse = ReturnType<typeof useClusters>;
 
 export interface ClusterReplicaWithUtilizaton {
   id: string;
@@ -670,8 +626,13 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
     }));
   }
 
-  return { ...sinkResponse, data: sinks };
+  const getSinkById = (sinkId?: string) =>
+    sinks?.find((s) => s.id == sinkId) ?? null;
+
+  return { ...sinkResponse, data: sinks, getSinkById };
 }
+
+export type SinksResponse = ReturnType<typeof useSinks>;
 
 type DDLNoun = "SINK" | "SOURCE";
 
@@ -685,18 +646,18 @@ export function useShowCreate(noun: DDLNoun, schemaObject?: SchemaObject) {
       )}.${quoteIdentifier(schemaObject.name)}`
     : undefined;
 
-  const { data, error, refetch } = useSql(
+  const response = useSql(
     schemaObject ? `SHOW CREATE ${noun} ${name}` : undefined
   );
   let ddl: string | null = null;
-  if (schemaObject && data) {
-    const { rows, getColumnByName } = data;
+  if (schemaObject && response.data) {
+    const { rows, getColumnByName } = response.data;
     assert(getColumnByName);
 
     ddl = getColumnByName(rows[0], "create_sql");
   }
 
-  return { ddl, error, refetch };
+  return { ...response, ddl };
 }
 
 export interface MaterializedView {

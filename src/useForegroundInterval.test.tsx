@@ -1,7 +1,7 @@
-import { act, renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 
 import { useIsPollingDisabled } from "./recoil/focus";
-import useForegroundInterval, { usePoll } from "./useForegroundInterval";
+import useForegroundInterval from "./useForegroundInterval";
 
 jest.mock("~/recoil/focus");
 
@@ -49,35 +49,5 @@ describe("useForegroundInterval", () => {
     jest.advanceTimersByTime(5000);
     // Resume polling
     expect(mockCallback).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe("usePoll", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-    jest.spyOn(global, "setInterval");
-    mockCallback.mockReset();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it("should not poll when loading", () => {
-    mockedUseIsPollingDisabled.mockReturnValue(false);
-    renderHook(() => usePoll(true, mockCallback));
-
-    jest.advanceTimersByTime(5000);
-    expect(mockCallback).not.toHaveBeenCalled();
-  });
-
-  it("should poll when not loading", async () => {
-    mockedUseIsPollingDisabled.mockReturnValue(false);
-    renderHook(() => usePoll(false, mockCallback));
-
-    await act(async () => {
-      jest.advanceTimersByTime(5000);
-    });
-    expect(mockCallback).toHaveBeenCalled();
   });
 });
