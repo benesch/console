@@ -60,13 +60,7 @@ export const MAIN_CONTENT_MARIGIN = 10;
  */
 export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
   return (
-    <Flex
-      direction="column"
-      maxHeight="100vh"
-      minHeight="100vh"
-      height="100vh"
-      width="100vw"
-    >
+    <Flex direction="column" minHeight="100vh">
       <AccountStatusAlert />
       <Flex direction={{ base: "column", lg: "row" }} flexGrow="1">
         <NavBar />
@@ -74,8 +68,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
           direction="column"
           flex={1}
           overflowY={overflowY}
-          w="full"
-          h="full"
+          minHeight="100vh"
         >
           <Container
             flex={1}
