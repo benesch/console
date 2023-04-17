@@ -136,7 +136,7 @@ const SinksListPage = ({
         </EmptyListWrapper>
       ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <SinkTable sinks={sinks!} />
+          <SinkTable sinks={sinks || []} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with sinks</CardHeader>
             <CardContent pb={8}>
