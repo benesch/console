@@ -1,9 +1,10 @@
 import { screen, waitFor } from "@testing-library/react";
-import { rest } from "msw";
+import { format } from "date-fns";
 import React from "react";
 
-import { SqlRequest } from "~/api/materialized";
+import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
+import * as SinkDetail from "~/platform/sinks/SinkDetail";
 import {
   healthyEnvironment,
   renderComponent,
@@ -11,213 +12,304 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
+import { SINKS_FETCH_ERROR_MESSAGE } from "./constants";
 import SinkRoutes from "./SinkRoutes";
 
 jest.mock("~/api/auth");
-jest.mock("~/platform/sinks/SinkDetail", () => {
+jest.mock("~/platform/sinks/SinkErrorsGraph", () => {
   return function () {
-    return <div>SinkDetail component</div>;
+    return <div>Sink Errors Graph</div>;
   };
 });
 
-const emptySinksResponse = rest.post("*/api/sql", (_req, res, ctx) => {
-  return res(
-    ctx.status(200),
-    ctx.json({
-      results: [
-        { ok: "SET", notices: [] },
-        {
-          tag: "SELECT 2",
-          rows: [],
-          col_names: [
-            "id",
-            "database_name",
-            "schema_name",
-            "name",
-            "type",
-            "size",
-            "status",
-            "error",
-          ],
-          notices: [],
-        },
-      ],
-    })
-  );
+const MockSinkDetail = () => <div>SinkDetail component</div>;
+
+const useSinksColumns = [
+  "id",
+  "database_name",
+  "schema_name",
+  "name",
+  "type",
+  "size",
+  "status",
+  "error",
+];
+
+const useSinkErrorsColumns = ["last_occurred", "error", "count"];
+
+const emptySinksResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: useSinksColumns,
+  rows: [],
 });
 
-const validSinksResponse = rest.post("*/api/sql", async (req, res, ctx) => {
-  const { queries } = (await req.json()) as SqlRequest;
-  if (queries.some((q) => q.query.includes("FROM mz_sinks"))) {
-    return res(
-      ctx.status(200),
-      ctx.json({
-        results: [
-          { ok: "SET", notices: [] },
-          {
-            tag: "SELECT 1",
-            rows: [
-              [
-                "u7",
-                "default",
-                "public",
-                "json_sink",
-                "kafka",
-                "xsmall",
-                "running",
-                null,
-              ],
-            ],
-            col_names: [
-              "id",
-              "database_name",
-              "schema_name",
-              "name",
-              "type",
-              "size",
-              "status",
-              "error",
-            ],
-            notices: [],
-          },
-        ],
-      })
-    );
-  }
-  if (queries.some((q) => q.query.includes("FROM mz_databases"))) {
-    return res(
-      ctx.status(200),
-      ctx.json({
-        results: [
-          { ok: "SET", notices: [] },
-          {
-            tag: "SELECT 2",
-            rows: [[1, "materialize"]],
-            col_names: ["id", "name"],
-            notices: [],
-          },
-        ],
-      })
-    );
-  }
-  if (queries.some((q) => q.query.includes("FROM mz_schemas"))) {
-    return res(
-      ctx.status(200),
-      ctx.json({
-        results: [
-          { ok: "SET", notices: [] },
-          {
-            tag: "SELECT 3",
-            rows: [[1, "public", 1, "materialize"]],
-            col_names: ["id", "name", "database_id", "database_name"],
-            notices: [],
-          },
-        ],
-      })
-    );
-  }
-  throw new Error("Query not matched");
-});
+function setupSinkDetailPage() {
+  const sink = {
+    id: "u7",
+    database_name: "default",
+    schema_name: "public",
+    name: "json_sink",
+    type: "kafka",
+    size: "xsmall",
+    status: "running",
+    error: null,
+  };
+
+  const validUseSinksHandler = buildUseSqlQueryHandler({
+    type: "SELECT" as const,
+    columns: useSinksColumns,
+    rows: [Object.values(sink)],
+  });
+
+  const validUseSinkErrorsHandler = buildUseSqlQueryHandler({
+    type: "SELECT" as const,
+    columns: useSinkErrorsColumns,
+    rows: [],
+  });
+
+  const validUseShowCreateHandler = buildUseSqlQueryHandler({
+    type: "SHOW CREATE" as const,
+    name: sink.name,
+    createSql: "CREATE SINK ...",
+  });
+
+  server.use(validUseSinksHandler);
+  server.use(validUseShowCreateHandler);
+  server.use(validUseSinkErrorsHandler);
+
+  return `/${sink.id}/${sink.database_name}/${sink.schema_name}/${sink.name}/errors`;
+}
 
 describe("SinkRoutes", () => {
-  it("shows a spinner initially", async () => {
-    renderComponent(<SinkRoutes />, {
-      initializeState: ({ set }) =>
-        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-    });
+  describe("SinksList", () => {
+    it("shows a spinner initially", async () => {
+      server.use(emptySinksResponse);
 
-    expect(await screen.findByText("Sinks")).toBeVisible();
-    expect(await screen.findByTestId("loading-spinner")).toBeVisible();
-  });
-
-  it("shows the empty state when there are no results", async () => {
-    server.use(emptySinksResponse);
-    renderComponent(<SinkRoutes />, {
-      initializeState: ({ set }) =>
-        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-    });
-
-    expect(await screen.findByText("No available sinks")).toBeVisible();
-  });
-
-  it("renders the sink list", async () => {
-    server.use(validSinksResponse);
-    renderComponent(<SinkRoutes />, {
-      initializeState: ({ set }) =>
-        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-    });
-
-    expect(await screen.findByText("json_sink")).toBeVisible();
-    expect(await screen.findByText("Running")).toBeVisible();
-    expect(await screen.findByText("kafka")).toBeVisible();
-    expect(await screen.findByText("xsmall")).toBeVisible();
-  });
-
-  it("redirects back to the list for invalid sinks", async () => {
-    server.use(validSinksResponse);
-    renderComponent(
-      <RenderWithPathname>
-        <SinkRoutes />
-      </RenderWithPathname>,
-      {
+      renderComponent(<SinkRoutes />, {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-        initialRouterEntries: [`/u99/default/public/does_not_exist/errors`],
-      }
-    );
+      });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("pathname")).toHaveTextContent(/^\/$/)
-    );
-    expect(screen.queryByText("SinkDetail component")).toBeNull();
-  });
-
-  it("shows sink details", async () => {
-    server.use(validSinksResponse);
-    renderComponent(<SinkRoutes />, {
-      initializeState: ({ set }) =>
-        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      initialRouterEntries: [`/u7/default/public/json_sink/errors`],
+      expect(await screen.findByText("Sinks")).toBeVisible();
+      expect(await screen.findByTestId("loading-spinner")).toBeVisible();
     });
 
-    expect(screen.getByText("SinkDetail component")).toBeVisible();
-  });
-
-  it("updates the path when the name has changed", async () => {
-    server.use(validSinksResponse);
-    renderComponent(
-      <RenderWithPathname>
-        <SinkRoutes />
-      </RenderWithPathname>,
-      {
+    it("shows an error state when sinks fail to fetch", async () => {
+      server.use(
+        buildUseSqlQueryHandler({
+          type: "SELECT" as const,
+          columns: useSinksColumns,
+          rows: [],
+          error: "Something went wrong",
+        })
+      );
+      renderComponent(<SinkRoutes />, {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-        initialRouterEntries: [`/u7/default/public/old_name/errors`],
-      }
-    );
+      });
 
-    expect(
-      await screen.findByText("/u7/default/public/json_sink/errors")
-    ).toBeVisible();
-    expect(screen.getByText("SinkDetail component")).toBeVisible();
-  });
+      expect(await screen.findByText(SINKS_FETCH_ERROR_MESSAGE)).toBeVisible();
+    });
 
-  it("updates the path when the id has changed", async () => {
-    server.use(validSinksResponse);
-    renderComponent(
-      <RenderWithPathname>
-        <SinkRoutes />
-      </RenderWithPathname>,
-      {
+    it("shows the empty state when there are no results", async () => {
+      server.use(emptySinksResponse);
+      renderComponent(<SinkRoutes />, {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-        initialRouterEntries: [`/u1/default/public/json_sink/errors`],
-      }
-    );
+      });
 
-    expect(
-      await screen.findByText("/u7/default/public/json_sink/errors")
-    ).toBeVisible();
-    expect(screen.getByText("SinkDetail component")).toBeVisible();
+      expect(await screen.findByText("No available sinks")).toBeVisible();
+    });
+
+    it("renders the sink list", async () => {
+      server.use(
+        buildUseSqlQueryHandler({
+          type: "SELECT" as const,
+          columns: useSinksColumns,
+          rows: [
+            [
+              "u7",
+              "default",
+              "public",
+              "json_sink",
+              "kafka",
+              "xsmall",
+              "running",
+              null,
+            ],
+          ],
+        })
+      );
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      });
+
+      expect(await screen.findByText("json_sink")).toBeVisible();
+      expect(await screen.findByText("Running")).toBeVisible();
+      expect(await screen.findByText("kafka")).toBeVisible();
+      expect(await screen.findByText("xsmall")).toBeVisible();
+    });
+  });
+
+  describe("SinkDetail", () => {
+    it("renders a spinner initially", async () => {
+      const initialRoute = setupSinkDetailPage();
+
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [initialRoute],
+      });
+
+      expect(await screen.findByTestId("loading-spinner")).toBeVisible();
+    });
+
+    it("renders an error state when sink errors fail to fetch", async () => {
+      const initialRoute = setupSinkDetailPage();
+
+      const useSinkErrorsHandler = buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: useSinkErrorsColumns,
+        rows: [],
+        error: "Something went wrong",
+      });
+
+      server.use(useSinkErrorsHandler);
+
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [initialRoute],
+      });
+      expect(await screen.findByText(SINKS_FETCH_ERROR_MESSAGE)).toBeVisible();
+    });
+
+    it("renders an empty state when there are no sink errors", async () => {
+      const initialRoute = setupSinkDetailPage();
+
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [initialRoute],
+      });
+      expect(
+        await screen.findByText("No errors during this time period.")
+      ).toBeVisible();
+    });
+
+    it("renders a list of sink errors", async () => {
+      const initialRoute = setupSinkDetailPage();
+      const mockTimestamp = 0;
+
+      const validUseSinkErrorsHandler = buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: useSinkErrorsColumns,
+        rows: [[`${mockTimestamp}`, "error_1", "1"]],
+      });
+
+      server.use(validUseSinkErrorsHandler);
+
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [initialRoute],
+      });
+      expect(await screen.findByText("error_1")).toBeVisible();
+      expect(await screen.findByText("1")).toBeVisible();
+      expect(
+        await screen.findByText(format(mockTimestamp, "MM-dd-yy"))
+      ).toBeVisible();
+    });
+  });
+
+  describe("Redirect", () => {
+    it("redirects back to the list for invalid sinks", async () => {
+      const sinkDetailSpy = jest
+        .spyOn(SinkDetail, "default")
+        .mockImplementation(MockSinkDetail);
+
+      setupSinkDetailPage();
+
+      renderComponent(
+        <RenderWithPathname>
+          <SinkRoutes />
+        </RenderWithPathname>,
+        {
+          initializeState: ({ set }) =>
+            setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+          initialRouterEntries: [`/u99/default/public/does_not_exist/errors`],
+        }
+      );
+
+      await waitFor(() =>
+        expect(screen.getByTestId("pathname")).toHaveTextContent(/^\/$/)
+      );
+      expect(screen.queryByText("SinkDetail component")).toBeNull();
+      sinkDetailSpy.mockRestore();
+    });
+
+    it("shows sink details", async () => {
+      const sinkDetailSpy = jest
+        .spyOn(SinkDetail, "default")
+        .mockImplementation(MockSinkDetail);
+      setupSinkDetailPage();
+
+      renderComponent(<SinkRoutes />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+        initialRouterEntries: [`/u7/default/public/json_sink/errors`],
+      });
+
+      expect(screen.getByText("SinkDetail component")).toBeVisible();
+      sinkDetailSpy.mockRestore();
+    });
+
+    it("updates the path when the name has changed", async () => {
+      const sinkDetailSpy = jest
+        .spyOn(SinkDetail, "default")
+        .mockImplementation(MockSinkDetail);
+      setupSinkDetailPage();
+
+      renderComponent(
+        <RenderWithPathname>
+          <SinkRoutes />
+        </RenderWithPathname>,
+        {
+          initializeState: ({ set }) =>
+            setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+          initialRouterEntries: [`/u7/default/public/old_name/errors`],
+        }
+      );
+
+      expect(
+        await screen.findByText("/u7/default/public/json_sink/errors")
+      ).toBeVisible();
+      expect(screen.getByText("SinkDetail component")).toBeVisible();
+      sinkDetailSpy.mockRestore();
+    });
+
+    it("updates the path when the id has changed", async () => {
+      const sinkDetailSpy = jest
+        .spyOn(SinkDetail, "default")
+        .mockImplementation(MockSinkDetail);
+      setupSinkDetailPage();
+      renderComponent(
+        <RenderWithPathname>
+          <SinkRoutes />
+        </RenderWithPathname>,
+        {
+          initializeState: ({ set }) =>
+            setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+          initialRouterEntries: [`/u1/default/public/json_sink/errors`],
+        }
+      );
+
+      expect(
+        await screen.findByText("/u7/default/public/json_sink/errors")
+      ).toBeVisible();
+      expect(screen.getByText("SinkDetail component")).toBeVisible();
+      sinkDetailSpy.mockRestore();
+    });
   });
 });

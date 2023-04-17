@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import { rest } from "msw";
 import React from "react";
 
+import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
   healthyEnvironment,
@@ -9,6 +10,7 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
+import { SOURCES_FETCH_ERROR_MESSAGE } from "./constants";
 import Subsources from "./Subsources";
 
 jest.mock("~/api/auth");
@@ -58,6 +60,23 @@ describe("Subsources", () => {
 
     expect(await screen.findByText("Subsources")).toBeVisible();
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
+  });
+
+  it("shows an error state when subsources fail to fetch", async () => {
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name"],
+        rows: [],
+        error: "Something went wrong.",
+      })
+    );
+    renderComponent(<Subsources sourceId="u4" />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+    });
+
+    expect(await screen.findByText(SOURCES_FETCH_ERROR_MESSAGE)).toBeVisible();
   });
 
   it("shows the empty state when there are no results", async () => {
