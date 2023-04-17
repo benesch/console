@@ -185,14 +185,16 @@ export const GutterContainer = ({ children }: React.PropsWithChildren) => {
 };
 
 export interface InlineLabeledInputProps {
-  label: string;
   error?: string;
+  label: string;
+  message?: string;
 }
 
 export const InlineLabeledInput = ({
-  label,
-  error,
   children,
+  error,
+  label,
+  message,
 }: React.PropsWithChildren<InlineLabeledInputProps>) => {
   return (
     <Grid
@@ -204,6 +206,13 @@ export const InlineLabeledInput = ({
       <FormLabel variant="inline">{label}</FormLabel>
       {children}
       <Box gridColumn="2">
+        <Text
+          mt="2"
+          textStyle="text-ui-reg"
+          color="semanticColors.foreground.secondary"
+        >
+          {!error && message}
+        </Text>
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>

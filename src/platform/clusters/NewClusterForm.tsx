@@ -237,6 +237,7 @@ REPLICAS (
                 <InlineLabeledInput
                   label="Name"
                   error={clusterNameErrorMessage(formState.errors.name)}
+                  message="Alphanumeric characters and underscores only."
                 >
                   <ObjectNameInput
                     {...register("name", {
