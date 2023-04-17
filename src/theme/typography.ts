@@ -25,49 +25,49 @@ export interface TextStyles extends SystemStyleObjectRecord {
 
 export const typographySystem: TextStyles = {
   "heading-xxl": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "40px",
     lineHeight: "48px",
     fontWeight: "600",
     letterSpacing: "-0.008em",
   },
   "heading-xl": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "32px",
     lineHeight: "40px",
     fontWeight: "600",
     letterSpacing: "-0.008em",
   },
   "heading-lg": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "24px",
     lineHeight: "32px",
     fontWeight: "600",
     letterSpacing: "-0.008em",
   },
   "heading-md": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "20px",
     lineHeight: "24px",
     fontWeight: "500",
     letterSpacing: "-0.008em",
   },
   "heading-sm": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "18px",
     lineHeight: "24px",
     fontWeight: "500",
     letterSpacing: "-0.008em",
   },
   "heading-xs": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "16px",
     lineHeight: "20px",
     fontWeight: "500",
     letterSpacing: "-0.008em",
   },
   "text-base": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "14px",
     lineHeight: "20px",
     fontWeight: "400",
@@ -75,7 +75,7 @@ export const typographySystem: TextStyles = {
     fontFeatureSettings: "'tnum' on, 'lnum' on, 'cv06' on, 'cv10' on",
   },
   "text-small": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "12px",
     lineHeight: "16px",
     fontWeight: "400",
@@ -83,7 +83,7 @@ export const typographySystem: TextStyles = {
     fontFeatureSettings: "'tnum' on, 'lnum' on, 'cv06' on, 'cv10' on",
   },
   "text-ui-med": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "14px",
     lineHeight: "16px",
     fontWeight: "500",
@@ -91,7 +91,7 @@ export const typographySystem: TextStyles = {
     fontFeatureSettings: "'tnum' on, 'lnum' on, 'cv06' on, 'cv10' on",
   },
   "text-ui-reg": {
-    fontFamily: "Inter",
+    fontFamily: "intervariable",
     fontSize: "14px",
     lineHeight: "16px",
     fontWeight: "400",
