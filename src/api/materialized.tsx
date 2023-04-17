@@ -623,7 +623,7 @@ ORDER BY bin_start DESC;`
   if (result.data) {
     statuses = extractData(result.data, (x) => ({
       count: x("count") as number,
-      timestamp: x("bin_start") as number,
+      timestamp: parseInt(x("bin_start")),
     }));
   }
 
