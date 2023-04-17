@@ -32,26 +32,27 @@ function groupBy<T, K>(values: T[], group: (item: T) => K): Map<K, T[]> {
   return output;
 }
 
-// Returns a map of operator ID to corresponding operators,
+// Returns a map of (stringified) operator address to corresponding operators,
 // as well as a designated root.
 function collateOperators(
   operators: Operator[],
   channels: Channel[]
-): [Map<number, EnrichedOperator>, EnrichedOperator] {
+): [Map<string, EnrichedOperator>, EnrichedOperator] {
   const scopes = groupBy(operators, (o) => o.parentId);
-  const channelsByFrom = groupBy(channels, (ch) => ch.fromOperatorId);
+  const channelsByParentScope = groupBy(channels, (ch) =>
+    JSON.stringify(ch.fromOperatorAddress.slice(0, -1))
+  );
 
   const roots = scopes.get(null) || [];
 
   function walk(
     op: Operator,
-    m: Map<number, EnrichedOperator>
+    m: Map<string, EnrichedOperator>
   ): EnrichedOperator {
-    assert(!m.has(op.id));
+    assert(!m.has(JSON.stringify(op.address)));
     const children = (scopes.get(op.id) || []).map((ch) => walk(ch, m));
-    const channelsInScope = children
-      .map((ch) => channelsByFrom.get(ch.id) || [])
-      .flat(1);
+    const channelsInScope =
+      channelsByParentScope.get(JSON.stringify(op.address)) || [];
     const ret = {
       ...op,
       children,
@@ -61,7 +62,7 @@ function collateOperators(
           .map((child) => child.transitiveArrangementRecords)
           .reduce((a, b) => a + b, 0) + op.arrangementRecords,
     };
-    m.set(ret.id, ret);
+    m.set(JSON.stringify(ret.address), ret);
     return ret;
   }
 
@@ -106,25 +107,44 @@ function scopeToGv(scope: EnrichedOperator): string {
       nodeLabelFields.push(`scheduled ${op.elapsedNs / 1_000_000_000} seconds`);
     }
 
-    const nodeGv = `"${op.id}" [fillcolor="${fillColor}",id="${
-      op.id
-    }",label="${nodeLabelFields.join("\n")}",class="${
+    const nodeGv = `"${JSON.stringify(
+      op.address
+    )}" [fillcolor="${fillColor}",id="${JSON.stringify(
+      op.address
+    )}",label="${nodeLabelFields.join("\n")}",class="${
       isRegion ? "region" : ""
     }"];`;
     chunks.push(nodeGv);
   }
+  const pseudoOperators = new Map();
   for (const ch of scope.channelsInScope) {
+    let fromAddressKey = JSON.stringify(ch.fromOperatorAddress);
+    let toAddressKey = JSON.stringify(ch.toOperatorAddress);
+    if (ch.fromOperatorAddress[ch.fromOperatorAddress.length - 1] === 0) {
+      fromAddressKey = `${fromAddressKey}:${ch.fromPort}:FROM`;
+      pseudoOperators.set(fromAddressKey, `input ${ch.fromPort}`);
+    }
+    if (ch.toOperatorAddress[ch.toOperatorAddress.length - 1] === 0) {
+      toAddressKey = `${toAddressKey}:${ch.toPort}:TO`;
+      pseudoOperators.set(toAddressKey, `output ${ch.toPort}`);
+    }
     const chanLabel = ch.messagesSent > 0 ? `sent ${ch.messagesSent}` : "";
-    const chanGv = `${ch.fromOperatorId} -> ${ch.toOperatorId} [label="${chanLabel}"];`;
+    const chanGv = `"${fromAddressKey}" -> "${toAddressKey}" [label="${chanLabel}"];`;
     chunks.push(chanGv);
   }
+
+  for (const [k, v] of pseudoOperators) {
+    chunks.push(`"${k}" [fillcolor="lightgrey",id="${k}",label="${v}"]`);
+  }
+
   chunks.push("}");
-  return chunks.join("\n");
+  const ret = chunks.join("\n");
+  return ret;
 }
 
 interface DotVizProps {
   dot?: string;
-  onClickedNode: (id: number) => void;
+  onClickedNode: (id: string) => void;
 }
 
 const DotViz = ({ dot, onClickedNode }: DotVizProps) => {
@@ -137,7 +157,7 @@ const DotViz = ({ dot, onClickedNode }: DotVizProps) => {
           gv.resetZoom();
           const regions = d3.selectAll(".region");
           regions.on("dblclick", function (event) {
-            const clickedId = Number(event.currentTarget.getAttribute("id"))!;
+            const clickedId = event.currentTarget.getAttribute("id")!;
             if (clickedId) {
               event.stopPropagation();
               onClickedNode(clickedId);
@@ -156,7 +176,7 @@ interface DFVizProps {
 
 const DFViz = (props: DFVizProps) => {
   const p = useParams();
-  const [scopeBreadcrumb, setScopeBreadcrumb] = React.useState<number[]>([]);
+  const [scopeBreadcrumb, setScopeBreadcrumb] = React.useState<string[]>([]);
   const [replicaName, setReplicaName] = React.useState<string | null>(
     props.replicas.length > 0 ? props.replicas[0].name : null
   );
@@ -192,7 +212,7 @@ const DFViz = (props: DFVizProps) => {
   }, [scopeOperator]);
 
   const pushScope = React.useCallback(
-    (s: number) => {
+    (s: string) => {
       const newBreadcrumb = [...scopeBreadcrumb, s];
       setScopeBreadcrumb(newBreadcrumb);
     },
