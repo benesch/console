@@ -34,6 +34,7 @@ import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
+import ObjectNameInput from "~/components/ObjectNameInput";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import { useSuccessToast } from "~/components/SuccessToast";
@@ -185,7 +186,7 @@ const SecretsCreationModal = ({
               )}
               <FormControl isInvalid={!!formState.errors.name}>
                 <FormLabel fontSize="sm">Name</FormLabel>
-                <Input
+                <ObjectNameInput
                   {...register(NAME_FIELD, {
                     required: "Name is required.",
                   })}

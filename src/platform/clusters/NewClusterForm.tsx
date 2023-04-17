@@ -5,7 +5,6 @@ import {
   FormControl,
   FormErrorMessage,
   Grid,
-  Input,
   Modal,
   ModalContent,
   Text,
@@ -30,6 +29,7 @@ import {
   InlineLabeledInput,
 } from "~/components/formComponents";
 import InlayBanner from "~/components/InlayBanner";
+import ObjectNameInput from "~/components/ObjectNameInput";
 import SimpleSelect from "~/components/SimpleSelect";
 import useSuccessToast from "~/components/SuccessToast";
 import TextLink from "~/components/TextLink";
@@ -238,7 +238,7 @@ REPLICAS (
                   label="Name"
                   error={clusterNameErrorMessage(formState.errors.name)}
                 >
-                  <Input
+                  <ObjectNameInput
                     {...register("name", {
                       required: "Cluster name is required.",
                       pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
@@ -266,7 +266,7 @@ REPLICAS (
                     <FormControl
                       isInvalid={!!formState.errors.replicas?.[index]}
                     >
-                      <Input
+                      <ObjectNameInput
                         {...register(`replicas.${index}.replicaName` as const, {
                           required: true,
                           pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
