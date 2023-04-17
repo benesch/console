@@ -37,9 +37,16 @@ const useSecretsHandler = buildUseSqlQueryHandler({
   rows: [],
 });
 
+const useClustersHandler = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: ["id", "cluster_name", "replica_id", "replica_name", "size"],
+  rows: [],
+});
+
 export default [
   useDatabasesHandler,
   useSchemasHandler,
   useSecretsHandler,
+  useClustersHandler,
   defaultQueryHandler,
 ];
