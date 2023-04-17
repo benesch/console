@@ -18,8 +18,11 @@ import {
 } from "recharts";
 
 import { TimestampedCounts, useBucketedSinkErrors } from "~/api/materialized";
+import ErrorBox from "~/components/ErrorBox";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
+
+import { SINKS_FETCH_ERROR_MESSAGE } from "./constants";
 
 export interface Props {
   sinkId?: string;
@@ -41,14 +44,26 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
   const bucketSizeSeconds = React.useMemo(() => {
     return (timePeriodMinutes / 15) * 60;
   }, [timePeriodMinutes]);
-  const { loading, data: statuses } = useBucketedSinkErrors({
+  const {
+    isInitiallyLoading,
+    data: statuses,
+    isError,
+  } = useBucketedSinkErrors({
     sinkId: sinkId,
     startTime,
     endTime,
     bucketSizeSeconds,
   });
 
-  if (!sinkId || loading || !statuses) {
+  if (isError) {
+    return (
+      <Flex height={heightPx} alignItems="center" justifyContent="center">
+        <ErrorBox message={SINKS_FETCH_ERROR_MESSAGE} />
+      </Flex>
+    );
+  }
+
+  if (isInitiallyLoading) {
     return (
       <Flex height={heightPx} alignItems="center" justifyContent="center">
         <Spinner />
@@ -67,10 +82,10 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
 
   return (
     <ResponsiveContainer width="100%" height={heightPx}>
-      <BarChart data={statuses} barSize={4}>
+      <BarChart data={statuses ?? []} barSize={4}>
         <CartesianGrid
           vertical={false}
-          horizontal={statuses.length > 0}
+          horizontal={statuses !== null && statuses.length > 0}
           stroke={semanticColors.border.secondary}
           strokeDasharray="4"
         />
@@ -163,7 +178,7 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
           cursor={false}
         />
         <Bar dataKey="count" fill={colors.red[500]} isAnimationActive={false} />
-        {statuses.length === 0 && (
+        {statuses?.length === 0 && (
           <text
             x="50%"
             y="50%"

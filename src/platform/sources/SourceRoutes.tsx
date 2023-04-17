@@ -1,11 +1,14 @@
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import useSources, { Source } from "~/api/materialize/useSources";
+import useSources, {
+  Source,
+  SourcesResponse,
+} from "~/api/materialize/useSources";
 import { SchemaObject } from "~/api/materialized";
 import SourcesList from "~/platform/sources/SourcesList";
 import { SentryRoutes } from "~/sentry";
-import { usePoll } from "~/useForegroundInterval";
+import useForegroundInterval from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -20,16 +23,16 @@ const SourceRoutes = () => {
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
-  const {
-    data: sources,
-    loading,
-    refetch,
-  } = useSources({
+
+  const sourcesResponse = useSources({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
-  const isPolling = usePoll(loading, refetch);
+
+  const { refetch } = sourcesResponse;
+
+  useForegroundInterval(refetch);
 
   return (
     <>
@@ -41,15 +44,13 @@ const SourceRoutes = () => {
               databaseFilter={databaseFilter}
               schemaFilter={schemaFilter}
               nameFilter={nameFilter}
-              sources={sources}
-              loading={loading}
-              isPolling={isPolling}
+              sourcesResponse={sourcesResponse}
             />
           }
         />
         <Route
           path=":id/:databaseName/:schemaName/:objectName/*"
-          element={<SourceOrRedirect sources={sources} />}
+          element={<SourceOrRedirect sourcesResponse={sourcesResponse} />}
         />
       </SentryRoutes>
     </>
@@ -64,15 +65,16 @@ const relativeSourceErrorsPath = (source: SchemaObject) => {
   return `${relativeObjectPath(source)}/errors`;
 };
 
-const SourceOrRedirect: React.FC<{ sources: Source[] | null }> = ({
-  sources,
+const SourceOrRedirect: React.FC<{ sourcesResponse: SourcesResponse }> = ({
+  sourcesResponse,
 }) => {
+  const { data: sources } = sourcesResponse;
   const params = useParams();
   const result = objectOrRedirect(params, sources, relativeSourceErrorsPath);
   if (result.type === "redirect") {
     return result.redirect;
   } else {
-    return <SourceDetail source={result.object} />;
+    return <SourceDetail sourcesResponse={sourcesResponse} />;
   }
 };
 

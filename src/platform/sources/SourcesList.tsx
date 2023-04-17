@@ -15,12 +15,12 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Source } from "~/api/materialize/useSources";
+import { Source, SourcesResponse } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill from "~/components/StatusPill";
@@ -35,7 +35,6 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
-import { currentEnvironmentState } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import SourcesIcon from "~/svg/Sources";
 import { MaterializeTheme } from "~/theme";
@@ -46,6 +45,7 @@ import {
   SchemaFilterState,
 } from "~/useSchemaObjectFilters";
 
+import { SOURCES_FETCH_ERROR_MESSAGE } from "./constants";
 import { sourceErrorsPath } from "./SourceRoutes";
 
 const sourcesSuggestions: SQLSuggestion[] = [
@@ -70,29 +70,28 @@ interface SourceListProps {
   databaseFilter: DatabaseFilterState;
   nameFilter: NameFilterState;
   schemaFilter: SchemaFilterState;
-  sources: Source[] | null;
-  loading: boolean;
-  isPolling: boolean;
+  sourcesResponse: SourcesResponse;
 }
 
 const SourcesListPage = ({
   databaseFilter,
   nameFilter,
   schemaFilter,
-  sources,
-  loading,
-  isPolling,
+  sourcesResponse,
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
-  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState
-  );
-  const showLoading = useDelayedLoading(!isPolling && loading);
 
-  const isDisabled = currentEnvironment?.state !== "enabled";
-  const isInitialLoad = sources === null;
-  const isLoading = isInitialLoad || showLoading;
-  const isEmpty = !isLoading && sources.length === 0;
+  const {
+    data: sources,
+    isInitiallyLoading,
+    isError,
+    loading,
+    isRefetching,
+  } = sourcesResponse;
+
+  const isEmpty = sources && sources.length === 0;
+
+  const isFetching = useDelayedLoading(loading && !isRefetching);
 
   return (
     <>
@@ -112,10 +111,11 @@ const SourcesListPage = ({
           />
         </HStack>
       </PageHeader>
-      {isLoading && !isEmpty && !isDisabled && (
+      {isError ? (
+        <ErrorBox message={SOURCES_FETCH_ERROR_MESSAGE} />
+      ) : isInitiallyLoading || isFetching ? (
         <Spinner data-testid="loading-spinner" />
-      )}
-      {isEmpty && !isDisabled && (
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Empty">
@@ -142,10 +142,9 @@ CREATE SOURCE <source_name>
             />
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && !isDisabled && (
+      ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <SourceTable sources={sources} />
+          <SourceTable sources={sources ?? []} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with sources</CardHeader>
             <CardContent pb={8}>

@@ -15,11 +15,11 @@ import {
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import { Cluster, ClusterResponse } from "~/api/materialized";
+import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import ErrorBox from "~/components/ErrorBox";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -31,11 +31,11 @@ import {
   SQLSuggestion,
   SQLSuggestionBox,
 } from "~/layouts/listPageComponents";
-import { currentEnvironmentState } from "~/recoil/environments";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
 
 import { relativeClusterPath } from "./ClusterRoutes";
+import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 const createClusterSuggestion = {
   title: "Create a cluster",
@@ -61,22 +61,12 @@ const clustersSuggestions: SQLSuggestion[] = [
   },
 ];
 
-type Props = {
-  clusterResponse: ClusterResponse;
-};
-
-const ClustersListPage = ({ clusterResponse }: Props) => {
+const ClustersListPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
   const flags = useFlags();
+  const { data: clusters, isInitiallyLoading, isError } = useClusters();
 
-  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
-    currentEnvironmentState
-  );
-
-  const { data: clusters } = clusterResponse;
-  const isLoading = clusters === null;
-  const isDisabled = currentEnvironment?.state !== "enabled";
-  const isEmpty = !isLoading && clusters.length === 0;
+  const isEmpty = clusters !== null && clusters.length === 0;
 
   return (
     <>
@@ -88,10 +78,11 @@ const ClustersListPage = ({ clusterResponse }: Props) => {
           </Button>
         )}
       </PageHeader>
-      {isLoading && !isEmpty && !isDisabled && (
+      {isError ? (
+        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
+      ) : isInitiallyLoading ? (
         <Spinner data-testid="loading-spinner" />
-      )}
-      {isEmpty && !isDisabled && (
+      ) : isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Empty">
@@ -115,10 +106,9 @@ const ClustersListPage = ({ clusterResponse }: Props) => {
             </CodeBlock>
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
-      )}
-      {!isLoading && !isEmpty && !isDisabled && (
+      ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <ClusterTable clusters={clusters} />
+          <ClusterTable clusters={clusters ?? []} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with clusters</CardHeader>
             <CardContent pb={8}>

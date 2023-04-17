@@ -2,7 +2,6 @@ import { VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { Cluster } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import {
   Breadcrumb,
@@ -19,11 +18,7 @@ import ClusterReplicas from "./ClusterReplicas";
 import Indexes from "./Indexes";
 import MaterializedViews from "./MaterializedViews";
 
-type Props = {
-  cluster?: Cluster;
-};
-
-const ClusterDetailPage = ({ cluster }: Props) => {
+const ClusterDetailPage = () => {
   const { clusterName } = useParams<ClusterDetailParams>();
 
   const breadcrumbs: Breadcrumb[] = React.useMemo(
@@ -48,16 +43,10 @@ const ClusterDetailPage = ({ cluster }: Props) => {
         <ConnectModal />
       </PageHeader>
       <SentryRoutes>
-        <Route path="/" element={<ClusterOverview cluster={cluster} />} />
-        <Route
-          path="replicas"
-          element={<ClusterReplicas cluster={cluster} />}
-        />
-        <Route
-          path="materialized-views"
-          element={<MaterializedViews cluster={cluster} />}
-        />
-        <Route path="indexes/*" element={<Indexes cluster={cluster} />} />
+        <Route path="/" element={<ClusterOverview />} />
+        <Route path="replicas" element={<ClusterReplicas />} />
+        <Route path="materialized-views" element={<MaterializedViews />} />
+        <Route path="indexes/*" element={<Indexes />} />
       </SentryRoutes>
     </>
   );

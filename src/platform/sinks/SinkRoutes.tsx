@@ -1,10 +1,15 @@
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import { SchemaObject, Sink, useSinks } from "~/api/materialized";
+import {
+  SchemaObject,
+  Sink,
+  SinksResponse,
+  useSinks,
+} from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
-import { usePoll } from "~/useForegroundInterval";
+import useForegroundInterval from "~/useForegroundInterval";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import {
@@ -24,16 +29,16 @@ const SinkRoutes = () => {
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
-  const {
-    data: sinks,
-    loading,
-    refetch,
-  } = useSinks({
+
+  const sinksResponse = useSinks({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
   });
-  const isPolling = usePoll(loading, refetch);
+
+  const { refetch } = sinksResponse;
+
+  useForegroundInterval(refetch);
 
   return (
     <SentryRoutes>
@@ -44,15 +49,13 @@ const SinkRoutes = () => {
             databaseFilter={databaseFilter}
             schemaFilter={schemaFilter}
             nameFilter={nameFilter}
-            sinks={sinks}
-            loading={loading}
-            isPolling={isPolling}
+            sinksResponse={sinksResponse}
           />
         }
       />
       <Route
         path=":id/:databaseName/:schemaName/:objectName/*"
-        element={<SinkOrRedirect sinks={sinks} />}
+        element={<SinkOrRedirect sinksResponse={sinksResponse} />}
       />
     </SentryRoutes>
   );
@@ -66,13 +69,16 @@ const relativeSinkErrorsPath = (sink: SchemaObject) => {
   return `${relativeObjectPath(sink)}/errors`;
 };
 
-const SinkOrRedirect: React.FC<{ sinks: Sink[] | null }> = ({ sinks }) => {
+const SinkOrRedirect: React.FC<{ sinksResponse: SinksResponse }> = ({
+  sinksResponse,
+}) => {
   const params = useParams<SchemaObjectRouteParams>();
+  const { data: sinks } = sinksResponse;
   const result = objectOrRedirect(params, sinks, relativeSinkErrorsPath);
   if (result.type === "redirect") {
     return result.redirect;
   } else {
-    return <SinkDetail sink={result.object} />;
+    return <SinkDetail sinksResponse={sinksResponse} />;
   }
 };
 

@@ -17,6 +17,7 @@ import {
 } from "date-fns";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
+import { useParams } from "react-router-dom";
 import {
   CartesianGrid,
   Legend,
@@ -28,11 +29,11 @@ import {
   YAxis,
 } from "recharts";
 
+import { Replica, useClusters } from "~/api/materialize/useClusters";
 import {
   ReplicaUtilization,
   useClusterUtilization,
 } from "~/api/materialize/websocket";
-import { Cluster, Replica } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
 import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
@@ -41,9 +42,8 @@ import TimePeriodSelect, {
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 
-export interface Props {
-  cluster?: Cluster;
-}
+import { ClusterParams } from "./ClusterRoutes";
+import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 export interface ReplicaData {
   id: string;
@@ -65,11 +65,18 @@ const labelHeightPx = 18;
 // because the data is sampled on 60s intervals, we don't want to show more granular data than this.
 const minBucketSizeMs = 60 * 1000;
 
-const ClusterOverview = ({ cluster }: Props) => {
+const ClusterOverview = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const flags = useFlags();
+  const { id: clusterId } = useParams<ClusterParams>();
+  const {
+    getClusterById,
+    isInitiallyLoading: isClusterLoading,
+    isError: isClusterError,
+  } = useClusters();
+  const cluster = getClusterById(clusterId);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
   const [endTime, setEndTime] = React.useState(new Date());
   const [selectedReplica, setSelectedReplica] = React.useState("all");
@@ -79,7 +86,7 @@ const ClusterOverview = ({ cluster }: Props) => {
   React.useEffect(() => setEndTime(new Date()), [timePeriodMinutes]);
 
   const { data, errors, isStale } = useClusterUtilization(
-    cluster?.id,
+    clusterId,
     startTime,
     endTime,
     selectedReplica === "all" ? undefined : selectedReplica
@@ -192,10 +199,12 @@ const ClusterOverview = ({ cluster }: Props) => {
     return chartData;
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
-  if (errors.length > 0) {
-    return <ErrorBox message="An error occurred loading cluster data" />;
+  if (isClusterError || errors.length > 0) {
+    return <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />;
   }
-  const loading = !cluster?.replicas || !graphData || isStale;
+
+  const isLoading = isClusterLoading || isStale || !graphData;
+
   return (
     <Box
       border={`solid 1px ${semanticColors.border.primary}`}
@@ -236,14 +245,14 @@ const ClusterOverview = ({ cluster }: Props) => {
         </HStack>
       </Flex>
       <HStack spacing={6}>
-        {loading ? (
+        {isLoading ? (
           <Flex
             height={graphHeightPx + labelHeightPx}
             width="100%"
             alignItems="center"
             justifyContent="center"
           >
-            <Spinner />
+            <Spinner data-testid="loading-spinner" />
           </Flex>
         ) : (
           <>

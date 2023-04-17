@@ -1,11 +1,15 @@
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { Cluster, useClusters } from "~/api/materialized";
+import {
+  Cluster,
+  ClustersProvider,
+  useClusters,
+} from "~/api/materialize/useClusters";
 import ClusterDetailPage from "~/platform/clusters/ClusterDetail";
 import ClustersListPage from "~/platform/clusters/ClustersList";
 import { SentryRoutes } from "~/sentry";
-import { usePoll } from "~/useForegroundInterval";
+import useForegroundInterval from "~/useForegroundInterval";
 
 import NewClusterForm from "./NewClusterForm";
 
@@ -16,27 +20,27 @@ export type ClusterDetailParams = {
 
 const ClusterRoutes = () => {
   const clusterResponse = useClusters();
-  usePoll(clusterResponse.loading, clusterResponse.refetch);
+  useForegroundInterval(clusterResponse.refetch);
 
   return (
     <SentryRoutes>
-      <Route
-        path="/"
-        element={<ClustersListPage clusterResponse={clusterResponse} />}
-      />
+      <Route path="/" element={<ClustersListPage />} />
       <Route
         path="new"
         element={<NewClusterForm refetchClusters={clusterResponse.refetch} />}
       />
-      <Route
-        path=":id/:clusterName/*"
-        element={<ClusterOrRedirect clusters={clusterResponse.data} />}
-      />
+      <Route path=":id/:clusterName/*" element={<ClusterOrRedirect />} />
     </SentryRoutes>
   );
 };
 
-type ClusterParams = {
+const ClusterRoutesWithProvider = () => (
+  <ClustersProvider>
+    <ClusterRoutes />
+  </ClustersProvider>
+);
+
+export type ClusterParams = {
   id: string;
   clusterName: string;
 };
@@ -51,13 +55,12 @@ const handleRenamedCluster = (
   if (cluster.name !== params.clusterName) {
     return <Navigate to={`../${relativeClusterPath(cluster)}`} replace />;
   }
-  return <ClusterDetailPage cluster={cluster} />;
+  return <ClusterDetailPage />;
 };
 
-const ClusterOrRedirect: React.FC<{ clusters: Cluster[] | null }> = ({
-  clusters,
-}) => {
+const ClusterOrRedirect: React.FC = () => {
   const params = useParams<ClusterParams>();
+  const { data: clusters } = useClusters();
   // Show loading state until clusters load
   if (!clusters) {
     return <ClusterDetailPage />;
@@ -75,4 +78,4 @@ const ClusterOrRedirect: React.FC<{ clusters: Cluster[] | null }> = ({
   return <Navigate to=".." replace />;
 };
 
-export default ClusterRoutes;
+export default ClusterRoutesWithProvider;
