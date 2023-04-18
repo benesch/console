@@ -28,12 +28,14 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 
+import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
+import ObjectNameInput from "~/components/ObjectNameInput";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import { useSuccessToast } from "~/components/SuccessToast";
@@ -114,6 +116,13 @@ const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
 const NAME_FIELD = "name";
 const VALUE_FIELD = "value";
 
+const secretNameErrorMessage = (error: FieldError | undefined) => {
+  if (!error?.type) return error?.message;
+  if (error.type === "pattern")
+    return "Name must not include special characters";
+  if (error.type === "required") return "Name is required.";
+};
+
 const SecretsCreationModal = ({
   isOpen,
   onClose,
@@ -185,9 +194,10 @@ const SecretsCreationModal = ({
               )}
               <FormControl isInvalid={!!formState.errors.name}>
                 <FormLabel fontSize="sm">Name</FormLabel>
-                <Input
+                <ObjectNameInput
                   {...register(NAME_FIELD, {
-                    required: "Name is required.",
+                    required: true,
+                    pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                   })}
                   placeholder="confluent_password"
                   autoFocus={isOpen}
@@ -195,8 +205,17 @@ const SecretsCreationModal = ({
                   size="sm"
                   variant={formState.errors.name ? "error" : "default"}
                 />
+                {!formState.errors.name && (
+                  <Text
+                    mt="2"
+                    textStyle="text-ui-reg"
+                    color="semanticColors.foreground.secondary"
+                  >
+                    Alphanumeric characters and underscores only.
+                  </Text>
+                )}
                 <FormErrorMessage>
-                  {formState.errors.name?.message}
+                  {secretNameErrorMessage(formState.errors.name)}
                 </FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formState.errors.value}>
