@@ -77,6 +77,39 @@ describe("ConnectionsList", () => {
     ).toBeVisible();
   });
 
+  it("should show the empty state and not the 'filters empty state' when the name filter is reset", async () => {
+    const useConnectionsHandler = buildUseSqlQueryHandler({
+      type: "SELECT" as const,
+      columns: useConnectionsColumns,
+      rows: [],
+    });
+
+    server.use(useConnectionsHandler);
+    renderComponent(<ConnectionsList />, {
+      initializeState: ({ set }) =>
+        setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      initialRouterEntries: ["?connectionName=d"],
+    });
+
+    const searchInput = screen.getByPlaceholderText("Search");
+
+    fireEvent.change(searchInput, { target: { value: "abc" } });
+    expect(await screen.findByText("No available connections")).toBeVisible();
+    expect(
+      await screen.findByText(
+        "There are no connections saved in this namespace. Try looking elsewhere or create a new one."
+      )
+    ).toBeVisible();
+
+    fireEvent.change(searchInput, { target: { value: "" } });
+
+    expect(
+      screen.queryByText(
+        "Create a new connection to connect and authenticate to an external system."
+      )
+    ).toBeNull();
+  });
+
   it("shows the empty state when there are no results", async () => {
     const useConnectionsHandler = buildUseSqlQueryHandler({
       type: "SELECT" as const,

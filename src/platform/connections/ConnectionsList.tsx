@@ -13,7 +13,7 @@ import {
   Tr,
   useTheme,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 
 import useConnections, { Connection } from "~/api/materialize/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
@@ -108,10 +108,13 @@ export const ConnectionsList = () => {
     nameFilter: nameFilter.name,
   });
 
+  const [hasNameFilterReset, setHasNameFilterReset] = useState(false);
+
   const hasFilterChanged =
     !!databaseFilter.selected ||
     !!schemaFilter.selected ||
-    !!nameFilter.name?.length;
+    !!nameFilter.name?.length ||
+    hasNameFilterReset;
 
   const isConnectionsEmpty = connections && connections.length === 0;
 
@@ -131,7 +134,13 @@ export const ConnectionsList = () => {
             value={nameFilter.name ?? ""}
             onChange={(e) => {
               const newName = e.target.value;
+              if (newName.length === 0 && (nameFilter.name ?? "").length > 0) {
+                setHasNameFilterReset(true);
+              }
               nameFilter.setName(newName);
+            }}
+            onBlur={() => {
+              setHasNameFilterReset(false);
             }}
           />
           {/* TODO(#41): Add access to connection creation*/}
