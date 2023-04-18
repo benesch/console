@@ -145,6 +145,7 @@ const getNavItems = (regionSlug: string): NavItemType[] => [
   { label: "Sources", href: `/regions/${regionSlug}/sources` },
   { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
   { label: "Secrets", href: `/regions/${regionSlug}/secrets` },
+  { label: "Connections", href: `/regions/${regionSlug}/connections` },
   // { label: "Editor", href: "/editor" },
   {
     label: "Docs",
@@ -189,7 +190,9 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
   let navItems = getNavItems(regionSlug);
 
   if (!flags["source-creation-41"]) {
-    navItems = navItems.filter(({ label }) => label !== "Secrets");
+    navItems = navItems.filter(
+      ({ label }) => label !== "Secrets" && label !== "Connections"
+    );
   }
 
   return (
