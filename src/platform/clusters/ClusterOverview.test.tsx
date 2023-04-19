@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import React from "react";
 
 import { ClustersProvider } from "~/api/materialize/useClusters";
-import { useClusterUtilization } from "~/api/materialize/websocket";
+import useClusterUtilization from "~/api/materialize/useClusterUtilization";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
@@ -16,9 +16,9 @@ import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 jest.mock("~/api/auth");
 
-jest.mock("~/api/materialize/websocket", () => ({
-  ...jest.requireActual("~/api/materialize/websocket"),
-  useClusterUtilization: jest.fn(),
+jest.mock("~/api/materialize/useClusterUtilization", () => ({
+  __esModule: true,
+  default: jest.fn(),
 }));
 
 const ClusterOverviewWithProviders = () => (

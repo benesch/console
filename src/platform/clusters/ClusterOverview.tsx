@@ -30,10 +30,9 @@ import {
 } from "recharts";
 
 import { Replica, useClusters } from "~/api/materialize/useClusters";
-import {
+import useClusterUtilization, {
   ReplicaUtilization,
-  useClusterUtilization,
-} from "~/api/materialize/websocket";
+} from "~/api/materialize/useClusterUtilization";
 import ErrorBox from "~/components/ErrorBox";
 import LabeledSelect from "~/components/LabeledSelect";
 import TimePeriodSelect, {
