@@ -10,6 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 import useConnections, { Connection } from "~/api/materialize/useConnections";
 import SearchInput from "~/components/SearchInput";
@@ -52,6 +53,8 @@ const SelectConnection = () => {
             <HStack mt="8" spacing="6">
               {connections?.map((connection) => (
                 <Button
+                  as={Link}
+                  to={`../${connection.type}?connectionId=${connection.id}`}
                   key={connection.id}
                   variant="outline"
                   p="6"

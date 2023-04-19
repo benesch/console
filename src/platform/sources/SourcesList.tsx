@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Source, SourcesResponse } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
@@ -114,12 +114,7 @@ const SourcesListPage = ({
             }}
           />
           {flags["source-creation-41"] && (
-            <Button
-              variant="primary"
-              size="sm"
-              as={NavLink}
-              to="new/connection"
-            >
+            <Button variant="primary" size="sm" as={Link} to="new/connection">
               New Source
             </Button>
           )}

@@ -1,5 +1,6 @@
 import {
   Box,
+  BoxProps,
   CloseButton,
   Flex,
   FormErrorMessage,
@@ -89,20 +90,21 @@ export const FormTopBar = ({
   );
 };
 
-export interface FormSectionProps {
+export interface FormSectionProps extends BoxProps {
   title: string;
 }
 
 export const FormSection = ({
   title,
   children,
+  ...props
 }: React.PropsWithChildren<FormSectionProps>) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
 
   return (
-    <Box mb="40px">
+    <Box mb="10" {...props}>
       <Text
         as="legend"
         fontWeight="500"

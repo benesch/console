@@ -15,6 +15,8 @@ import {
 } from "~/recoil/environments";
 import { assert } from "~/util";
 
+import { quoteIdentifier } from "./materialize";
+
 /// Named used to identify ourselves to the server, needs to be kept in sync with
 /// the `ApplicationNameHint`.
 export const APPLICATION_NAME = "web_console";
@@ -42,26 +44,6 @@ export interface ExplainTimestampResult {
     read_frontier: number[];
     write_frontier: number[];
   }[];
-}
-
-/**
- * Quotes a string to be used as a SQL identifier.
- * It is an error to call this function with a string that contains the zero code point.
- */
-export function quoteIdentifier(id: string) {
-  // According to https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS,
-  // any string may be used as an identifier, except those that contain the zero code point.
-  //
-  // In order to support special characters, quoted identifiers must be used.
-  // Within a quoted identifier, the literal double-quote character must be escaped
-  // by writing it twice.
-  // For example, the identifier foo" is represented as "foo""" (including the quotes).
-
-  // Materialize never allows any identifiers to be used whose name contains the null byte,
-  // so this assert should never fire unless this function is called with arbitrary user input.
-  assert(id.search("\0") === -1);
-
-  return `"${id.replace('"', '""')}"`;
 }
 
 export function genMzIntrospectionSqlRequest(sql?: string) {
