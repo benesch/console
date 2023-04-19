@@ -139,29 +139,37 @@ type NavItemType = {
   isInternal?: boolean;
 };
 
-const getNavItems = (regionSlug: string): NavItemType[] => [
-  { label: "Connect", href: `/regions/${regionSlug}/connect` },
-  { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
-  { label: "Sources", href: `/regions/${regionSlug}/sources` },
-  { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
-  { label: "Secrets", href: `/regions/${regionSlug}/secrets` },
-  { label: "Connections", href: `/regions/${regionSlug}/connections` },
-  // { label: "Editor", href: "/editor" },
-  {
-    label: "Docs",
-    href: "//materialize.com/docs/get-started/",
-  },
-];
+const getNavItems = (
+  regionSlug: string,
+  flags: ReturnType<typeof useFlags>
+): NavItemType[] => {
+  return [
+    { label: "Connect", href: `/regions/${regionSlug}/connect` },
+    { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
+    { label: "Sources", href: `/regions/${regionSlug}/sources` },
+    { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
+    ...(flags["source-creation-41"]
+      ? [
+          {
+            label: "Secrets",
+            href: `/regions/${regionSlug}/secrets`,
+          },
+          { label: "Connections", href: `/regions/${regionSlug}/connections` },
+        ]
+      : []),
+    // { label: "Editor", href: "/editor" },
+    {
+      label: "Docs",
+      href: "//materialize.com/docs/get-started/",
+    },
+  ];
+};
 
 const NavMenu = (props: BoxProps) => {
   const flags = useFlags();
   const regionSlug = useRegionSlug();
 
-  let navItems = getNavItems(regionSlug);
-
-  if (!flags["source-creation-41"]) {
-    navItems = navItems.filter(({ label }) => label !== "Secrets");
-  }
+  const navItems = getNavItems(regionSlug, flags);
 
   return (
     <VStack
@@ -187,13 +195,7 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
   const flags = useFlags();
   const regionSlug = useRegionSlug();
 
-  let navItems = getNavItems(regionSlug);
-
-  if (!flags["source-creation-41"]) {
-    navItems = navItems.filter(
-      ({ label }) => label !== "Secrets" && label !== "Connections"
-    );
-  }
+  const navItems = getNavItems(regionSlug, flags);
 
   return (
     <Menu data-test-id="nav-sm">
