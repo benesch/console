@@ -9,7 +9,6 @@ import {
   Text,
   Th,
   Thead,
-  Tooltip,
   Tr,
   useTheme,
 } from "@chakra-ui/react";
@@ -187,16 +186,7 @@ const ConnectionsTable = ({ connections }: ConnectionsTableProps) => {
               textColor="default"
               aria-label={connection.name}
             >
-              <Td width="25%">
-                <Tooltip
-                  label={`${connection.databaseName}.${connection.schemaName}.${connection.name}`}
-                  placement="bottom"
-                  fontSize="xs"
-                  top={-1}
-                >
-                  {connection.name}
-                </Tooltip>
-              </Td>
+              <Td width="25%">{connection.name}</Td>
               <Td width="25%">{connection.type}</Td>
               <Td width="25%">{connection.numSources}</Td>
               <Td width="25%">{connection.numSinks}</Td>
