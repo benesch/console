@@ -142,7 +142,6 @@ export const ConnectionsList = () => {
               setHasNameFilterReset(false);
             }}
           />
-          {/* TODO(#41): Add access to connection creation*/}
           <Button variant="primary" size="sm">
             New connection
           </Button>
