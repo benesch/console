@@ -86,7 +86,7 @@ const NewClusterForm = ({
     control,
     formState,
     getValues,
-    handleSubmit: handleSubmit,
+    handleSubmit,
     register,
     setError,
     setFocus,
@@ -184,7 +184,7 @@ REPLICAS (
             </Button>
           </FormTopBar>
           <FormContainer
-            title="Cluster Information"
+            title="Cluster information"
             aside={
               <FormInfoBox>
                 <Text
