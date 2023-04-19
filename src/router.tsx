@@ -34,6 +34,7 @@ import { SentryRoutes } from "~/sentry";
 import { assert } from "~/util";
 
 import ConnectionsList from "./platform/connections/ConnectionsList";
+import SelectConnection from "./platform/sources/create/SelectConnection";
 import {
   currentEnvironmentIdState,
   defaultRegion,
@@ -135,6 +136,7 @@ const EnvironmentRoutes = () => {
     <Routes>
       <Route path="/connect/*" element={<Home />} />
       <Route path="/clusters/*" element={<ClusterRoutes />} />
+      <Route path="/sources/new/connection" element={<SelectConnection />} />
       <Route path="/sources/*" element={<SourceRoutes />} />
       <Route path="/sinks/*" element={<SinkRoutes />} />
       {/* TODO: Connect Secrets page to route */}
