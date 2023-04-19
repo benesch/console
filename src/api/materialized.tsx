@@ -411,45 +411,6 @@ export interface GroupedError {
 }
 
 /**
- * Fetches errors for a specific source
- */
-export function useSourceErrors({
-  limit = 20,
-  sourceId,
-  startTime,
-  endTime,
-}: {
-  limit?: number;
-  sourceId?: string;
-  startTime: Date;
-  endTime: Date;
-}) {
-  const result = useSql(
-    sourceId
-      ? `
-  SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
-  FROM mz_internal.mz_source_status_history h
-  WHERE source_id = '${sourceId}'
-  AND error IS NOT NULL
-  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
-  GROUP BY h.error
-  ORDER BY last_occurred DESC
-  LIMIT ${limit};`
-      : undefined
-  );
-  let errors: GroupedError[] | null = null;
-  if (result.data) {
-    errors = extractData(result.data, (x) => ({
-      lastOccurred: new Date(parseInt(x("last_occurred"))),
-      error: x("error"),
-      count: x("count"),
-    }));
-  }
-
-  return { ...result, data: errors };
-}
-
-/**
  * Fetches errors for a specific sink
  */
 export function useSinkErrors({
@@ -491,46 +452,6 @@ export function useSinkErrors({
 export interface TimestampedCounts {
   count: number;
   timestamp: number;
-}
-
-export function useBucketedSourceErrors({
-  sourceId,
-  startTime,
-  endTime,
-  bucketSizeSeconds,
-}: {
-  limit?: number;
-  sourceId?: string;
-  startTime: Date;
-  endTime: Date;
-  bucketSizeSeconds: number;
-}) {
-  const result = useSql(
-    sourceId
-      ? `
-SELECT
-  COUNT(error) count,
-  EXTRACT(epoch FROM date_bin(
-    interval '${bucketSizeSeconds} seconds', occurred_at, '${startTime.toISOString()}'
-    )) * 1000 as bin_start
-FROM mz_internal.mz_source_status_history
-WHERE source_id = '${sourceId}'
-AND occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
-GROUP BY bin_start
-ORDER BY bin_start DESC;`
-      : undefined
-  );
-  let statuses: TimestampedCounts[] | null = null;
-  if (result.data) {
-    statuses = extractData(result.data, (x) => {
-      return {
-        count: x("count") as number,
-        timestamp: parseInt(x("bin_start")) as number,
-      };
-    });
-  }
-
-  return { ...result, data: statuses };
 }
 
 export function useBucketedSinkErrors({

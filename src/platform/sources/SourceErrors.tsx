@@ -3,8 +3,8 @@ import { subMinutes } from "date-fns";
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import useSourceErrors from "~/api/materialize/useSourceErrors";
 import { SourcesResponse } from "~/api/materialize/useSources";
-import { useSourceErrors } from "~/api/materialized";
 import AlertBox from "~/components/AlertBox";
 import ConnectorErrorsTable from "~/components/ConnectorErrorsTable";
 import TimePeriodSelect, {
