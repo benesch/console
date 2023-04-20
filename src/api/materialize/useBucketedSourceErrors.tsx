@@ -24,7 +24,7 @@ SELECT
     interval '${bucketSizeSeconds} seconds', occurred_at, '${startTime.toISOString()}'
     )) * 1000 as bin_start
 FROM mz_internal.mz_source_status_history
-JOIN mz_internal.mz_object_dependencies d ON h.source_id = d.referenced_object_id
+JOIN mz_internal.mz_object_dependencies d ON source_id = d.referenced_object_id
 WHERE (d.object_id = '${sourceId}' OR source_id = '${sourceId}')
 AND occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
 GROUP BY bin_start
