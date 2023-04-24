@@ -9,7 +9,7 @@ import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 export interface DatabaseFilterProps {
   databaseList: Database[] | null;
   selected: Database | undefined;
-  setSelectedDatabase: (id: number) => void;
+  setSelectedDatabase: (id: string) => void;
 }
 
 const DatabaseFilter = ({
@@ -26,7 +26,7 @@ const DatabaseFilter = ({
   const options: GroupBase<Database>[] = [
     {
       label: "Filter by database",
-      options: [{ id: 0, name: "All Databases" }, ...databaseList],
+      options: [{ id: "0", name: "All Databases" }, ...databaseList],
     },
   ];
   return (

@@ -2,7 +2,7 @@ import { useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
 export interface Schema {
-  id: number;
+  id: string;
   name: string;
   databaseId: number;
   databaseName: string;
@@ -11,13 +11,15 @@ export interface Schema {
 /**
  * Fetches all schemas, optionally filtered by database
  */
-function useSchemas(databaseId?: number) {
+function useSchemas(databaseId?: string) {
+  // Note: we CAST s.id and database_id to text because in v0.52 we changed the database ids and
+  // schema ids to be strings, namespaced on either System or User.
   const response = useSql(
-    `SELECT s.id, s.name, d.id as database_id, d.name as database_name
+    `SELECT CAST(s.id as text) as id, s.name, d.id as database_id, d.name as database_name
 FROM mz_schemas s
 JOIN mz_databases d
 ON s.database_id = d.id
-${databaseId ? `WHERE database_id = ${databaseId}` : ""}
+${databaseId ? `WHERE CAST(database_id as text) = '${databaseId}'` : ""}
 ORDER BY s.name;`
   );
   let schemas: Schema[] | null = null;

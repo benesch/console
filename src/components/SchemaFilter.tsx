@@ -9,7 +9,7 @@ import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 export interface SchemaFilterProps {
   schemaList: Schema[] | null;
   selected: Schema | undefined;
-  setSelectedSchema: (id: number) => void;
+  setSelectedSchema: (id: string) => void;
 }
 
 const SchemaFilter = ({
@@ -27,7 +27,7 @@ const SchemaFilter = ({
     {
       label: "Filter by schmea",
       options: [
-        { id: 0, name: "All Schemas", databaseId: 0, databaseName: "" },
+        { id: "0", name: "All Schemas", databaseId: 0, databaseName: "" },
         ...schemaList,
       ],
     },

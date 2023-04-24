@@ -24,7 +24,7 @@ const useSchemaObjectFilters = (nameFilterKey: string) => {
     [databaseList, databaseName]
   );
   const setSelectedDatabase = React.useCallback(
-    (id: number) => {
+    (id: string) => {
       const selected = databaseList && databaseList.find((d) => d.id === id);
 
       setSelectedNamespace(selected?.name);
@@ -43,7 +43,7 @@ const useSchemaObjectFilters = (nameFilterKey: string) => {
     );
   }, [databaseName, schemaList, schemaName]);
   const setSelectedSchema = React.useCallback(
-    (id: number) => {
+    (id: string) => {
       const selected = schemaList && schemaList.find((d) => d.id === id);
 
       setSelectedNamespace(

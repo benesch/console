@@ -59,7 +59,7 @@ const validSchemaObjectFilterResponses = rest.post(
   }
 );
 
-const ALL_OPTION = 0;
+const ALL_OPTION = "0";
 const NAME_FILTER_QUERY_STRING_KEY = "name";
 
 describe("useSchemaObjectFilters", () => {
@@ -123,7 +123,7 @@ describe("useSchemaObjectFilters", () => {
       expect(result.current.schemaFilter.schemaList).not.toBeNull();
     });
     act(() => {
-      result.current.schemaFilter.setSelectedSchema(1);
+      result.current.schemaFilter.setSelectedSchema("u1");
     });
     await waitFor(() => {
       expect(location.search).toBe("?namespace=materialize.public");
@@ -147,7 +147,7 @@ describe("useSchemaObjectFilters", () => {
       expect(result.current.schemaFilter.schemaList).not.toBeNull();
     });
     await act(async () => {
-      result.current.databaseFilter.setSelectedDatabase(2);
+      result.current.databaseFilter.setSelectedDatabase("u2");
     });
     await waitFor(() => expect(location.search).toBe("?namespace=other_db"));
   });
