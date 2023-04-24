@@ -1,4 +1,4 @@
-import { VStack } from "@chakra-ui/react";
+import { HStack, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
@@ -30,7 +30,10 @@ const ClusterDetailPage = () => {
     <>
       <PageHeader>
         <VStack spacing={6} alignItems="start" width="100%">
-          <PageBreadcrumbs crumbs={breadcrumbs} />
+          <HStack justifyContent="space-between" width="100%">
+            <PageBreadcrumbs crumbs={breadcrumbs} />
+            <ConnectModal />
+          </HStack>
           <PageTabStrip>
             <PageTab to="." end>
               Overview
@@ -40,7 +43,6 @@ const ClusterDetailPage = () => {
             <PageTab to="indexes">Indexes</PageTab>
           </PageTabStrip>
         </VStack>
-        <ConnectModal />
       </PageHeader>
       <SentryRoutes>
         <Route path="/" element={<ClusterOverview />} />

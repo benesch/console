@@ -39,7 +39,7 @@ export interface BaseLayoutProps {
   overflowY?: CSS.Property.Overflow;
 }
 
-export const MAIN_CONTENT_MARIGIN = 10;
+export const MAIN_CONTENT_MARGIN = 10;
 
 /**
  * The base layout for logged-in users, containing the navigation bar at the
@@ -74,7 +74,7 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
             flex={1}
             as="main"
             maxW="100%"
-            px={MAIN_CONTENT_MARIGIN}
+            px={MAIN_CONTENT_MARGIN}
             pb={4}
             bg="semanticColors.background.primary"
           >
@@ -196,11 +196,11 @@ export interface PageTabStripProps {
 
 export const PageTabStrip = ({ children }: PageTabStripProps) => {
   const { space } = useTheme<MaterializeTheme>();
-  const mainContentMargin = space[MAIN_CONTENT_MARIGIN];
+  const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
   return (
     <HStack
-      width={`calc(100% + ${mainContentMargin} * 4)`}
+      width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
       px={mainContentMargin}
       borderBottom="solid 1px"
