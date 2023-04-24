@@ -221,11 +221,22 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
   );
 };
 
+export function isSubroute(route: string, potentialSubroute: string) {
+  const routeSegments = route.split("/").filter(Boolean);
+  const potentialSubrouteSegments = potentialSubroute
+    .split("/")
+    .filter(Boolean);
+
+  return routeSegments.every(
+    (segment, index) => segment === potentialSubrouteSegments[index]
+  );
+}
+
 const NavItem = (props: NavItemType) => {
   const { colors } = useTheme<MaterializeTheme>();
   const location = useLocation();
   const href = props.href || "#";
-  const active = location.pathname.startsWith(href);
+  const active = isSubroute(href, location.pathname);
 
   const linkContents = (
     <HStack
