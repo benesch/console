@@ -28,6 +28,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
+import FreeTrialNotice from "~/components/FreeTrialNotice";
 import { SUPPORT_HREF } from "~/components/SupportLink";
 import SwitchStackModal from "~/components/SwitchStackModal";
 import blackLogo from "~/img/logo-black.svg";
@@ -125,6 +126,7 @@ const NavBar = () => {
         align={{ base: "center", lg: "stretch" }}
         fontSize="sm"
       >
+        <FreeTrialNotice my="6" mx="4" />
         <SwitchStackModal />
         <HelpDropdown />
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />

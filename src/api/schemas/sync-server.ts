@@ -4,6 +4,11 @@
  */
 
 
+/** Type helpers */
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+type OneOf<T extends any[]> = T extends [infer Only] ? Only : T extends [infer A, infer B, ...infer Rest] ? OneOf<[XOR<A, B>, ...Rest]> : never;
+
 export interface paths {
   "/api/organization": {
     /** @description Get the current organization */
@@ -29,8 +34,10 @@ export interface components {
       id: string;
       name: string;
       blocked: boolean;
-      subscription?: Record<string, never>;
+      subscription: OneOf<[Record<string, never>, null]>;
+      trialExpiresAt: OneOf<[string, null]>;
     };
+    Subscription: Record<string, never>;
   };
   responses: never;
   parameters: never;
