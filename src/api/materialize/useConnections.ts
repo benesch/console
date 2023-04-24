@@ -14,7 +14,9 @@ function useConnections({
   databaseId,
   schemaId,
   nameFilter,
-}: { databaseId?: number; schemaId?: number; nameFilter?: string } = {}) {
+}: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
+  // Note: we CAST databases.id and schemas.id to text because in v0.52 we changed the database ids
+  // and schema ids to be strings, namespaced on either System or User.
   const connectionResponse = useSql(`    
 SELECT 
     connections.id, 
@@ -31,8 +33,8 @@ LEFT JOIN mz_sinks AS sinks ON connections.id = sinks.connection_id
 LEFT JOIN mz_sources AS sources ON connections.id = sources.connection_id 
 WHERE 
     COALESCE(sources.type, '') <> 'subsource'
-    ${databaseId ? `AND databases.id = ${databaseId}` : ""}
-    ${schemaId ? `AND schemas.id = ${schemaId}` : ""}
+    ${databaseId ? `AND CAST(databases.id as text) = '${databaseId}'` : ""}
+    ${schemaId ? `AND CAST(schemas.id as text) = '${schemaId}'` : ""}
     ${nameFilter ? `AND connections.name LIKE '%${nameFilter}%'` : ""}
 GROUP BY connections.id, connections.name, connections.type, schema_name, database_name;`);
 

@@ -2,7 +2,7 @@ import { useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
 export interface Database {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -11,7 +11,7 @@ export interface Database {
  */
 function useDatabases() {
   const response = useSql(
-    `SELECT id, name
+    `SELECT CAST(id as text) as id, name
 FROM mz_databases
 ORDER BY name;`
   );

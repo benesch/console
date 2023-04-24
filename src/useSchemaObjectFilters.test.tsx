@@ -26,8 +26,8 @@ const validSchemaObjectFilterResponses = rest.post(
             {
               tag: "SELECT 1",
               rows: [
-                [1, "materialize"],
-                [2, "other_db"],
+                ["u1", "materialize"],
+                ["u2", "other_db"],
               ],
               col_names: ["id", "name"],
               notices: [],
@@ -45,8 +45,8 @@ const validSchemaObjectFilterResponses = rest.post(
             {
               tag: "SELECT 2",
               rows: [
-                [1, "public", 1, "materialize"],
-                [2, "public", 2, "other_db"],
+                ["u1", "public", "u1", "materialize"],
+                ["u2", "public", "u2", "other_db"],
               ],
               col_names: ["id", "name", "database_id", "database_name"],
               notices: [],
@@ -59,7 +59,7 @@ const validSchemaObjectFilterResponses = rest.post(
   }
 );
 
-const ALL_OPTION = 0;
+const ALL_OPTION = "0";
 const NAME_FILTER_QUERY_STRING_KEY = "name";
 
 describe("useSchemaObjectFilters", () => {
@@ -82,25 +82,25 @@ describe("useSchemaObjectFilters", () => {
     await waitFor(() => {
       expect(result.current.databaseFilter.databaseList).toEqual([
         {
-          id: 1,
+          id: "u1",
           name: "materialize",
         },
         {
-          id: 2,
+          id: "u2",
           name: "other_db",
         },
       ]);
       expect(result.current.schemaFilter.schemaList).toEqual([
         {
-          id: 1,
+          id: "u1",
           name: "public",
-          databaseId: 1,
+          databaseId: "u1",
           databaseName: "materialize",
         },
         {
-          id: 2,
+          id: "u2",
           name: "public",
-          databaseId: 2,
+          databaseId: "u2",
           databaseName: "other_db",
         },
       ]);
@@ -123,7 +123,7 @@ describe("useSchemaObjectFilters", () => {
       expect(result.current.schemaFilter.schemaList).not.toBeNull();
     });
     act(() => {
-      result.current.schemaFilter.setSelectedSchema(1);
+      result.current.schemaFilter.setSelectedSchema("u1");
     });
     await waitFor(() => {
       expect(location.search).toBe("?namespace=materialize.public");
@@ -147,7 +147,7 @@ describe("useSchemaObjectFilters", () => {
       expect(result.current.schemaFilter.schemaList).not.toBeNull();
     });
     await act(async () => {
-      result.current.databaseFilter.setSelectedDatabase(2);
+      result.current.databaseFilter.setSelectedDatabase("u2");
     });
     await waitFor(() => expect(location.search).toBe("?namespace=other_db"));
   });
