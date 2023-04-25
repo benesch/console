@@ -92,6 +92,7 @@ const SwitchStackModal = () => {
         mx={NAV_HORIZONTAL_SPACING}
         variant="secondary"
         size="sm"
+        width="auto"
         fontWeight={500}
         color="semanticColors.foreground.primary"
         _hover={NAV_HOVER_STYLES}
