@@ -55,7 +55,7 @@ const FreeTrialNotice = (props: BoxProps) => {
       </Text>
       <Button
         as="a"
-        href="mailto:sales@materialize.com?subject='Free trial'"
+        href="https://materialize.com/convert-account/"
         mt="4"
         rel="noopener noreferrer"
         size="sm"
