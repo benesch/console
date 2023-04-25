@@ -10,6 +10,12 @@ if (config.segmentApiKey) {
       writeKey: config.segmentApiKey,
     },
     {
+      integrations: {
+        "Segment.io": {
+          // proxies to https://api.segment.io/v1
+          apiHost: "api.segment.materialize.com/v1",
+        },
+      },
       retryQueue: true,
     }
   );
