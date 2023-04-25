@@ -96,14 +96,21 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
     setSocketError("Connection error");
   }, []);
 
+  const handleError = React.useCallback((e: Event) => {
+    setSocketReady(false);
+    setSocketError("Unexpected error");
+  }, []);
+
   const closeSocket = React.useCallback(
     (ws?: WebSocket) => {
       if (!ws) return;
-      ws.close();
+      // In Safari, error and close callbacks trigger even if we close the socket, so remove them before closing
+      ws.removeEventListener("error", handleError);
       ws.removeEventListener("close", handleClose);
       ws.removeEventListener("message", handleMessage);
+      ws.close();
     },
-    [handleClose, handleMessage]
+    [handleClose, handleError, handleMessage]
   );
 
   React.useEffect(() => {
@@ -147,6 +154,7 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         );
       };
       ws.addEventListener("close", handleClose);
+      ws.addEventListener("error", handleError);
 
       setSocket(new SqlWebSocket(ws, setSocketReady));
     }
@@ -160,7 +168,14 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         ws.removeEventListener("message", handleMessage);
       }
     };
-  }, [currentEnvironment, handleClose, handleMessage, accessToken, open]);
+  }, [
+    currentEnvironment,
+    handleClose,
+    handleError,
+    handleMessage,
+    accessToken,
+    open,
+  ]);
 
   return { socketReady, socket, socketError };
 };

@@ -132,11 +132,6 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
         setCommandComplete(true);
       }
     });
-
-    socket.socket.onerror = function (event) {
-      console.error("[websocket error]", event);
-      setErrors((val) => [...val, "Unexpected error"]);
-    };
   }, [
     clusterId,
     socketReady,
