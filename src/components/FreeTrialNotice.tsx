@@ -63,7 +63,7 @@ const FreeTrialNotice = (props: BoxProps) => {
         variant="primary"
         width="100%"
       >
-        Contact sales
+        Contact our team
       </Button>
     </Box>
   );
