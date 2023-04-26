@@ -38,7 +38,7 @@ const FreeTrialNotice = (props: BoxProps) => {
         Free trial
         <Box
           as="a"
-          href="https://materialize.com/free-trial-terms/"
+          href="https://materialize.com/docs/free-trial-faqs/"
           ml="1"
           rel="noopener"
           target="_blank"
