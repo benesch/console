@@ -27,6 +27,7 @@ import {
 import { useFlags } from "launchdarkly-react-client-sdk";
 import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import FreeTrialNotice from "~/components/FreeTrialNotice";
 import { SUPPORT_HREF } from "~/components/SupportLink";
@@ -38,6 +39,10 @@ import ProfileDropdown, {
   AVATAR_WIDTH,
   ProfileMenuItems,
 } from "~/layouts/ProfileDropdown";
+import {
+  currentEnvironmentState,
+  LoadedEnvironment,
+} from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import { MaterializeTheme } from "~/theme";
 
@@ -46,6 +51,26 @@ export const NAV_HOVER_STYLES = {
   bg: "semanticColors.background.tertiary",
 };
 export const NAV_LOGO_HEIGHT = "80px";
+
+function isEnvironmentHealthy(environment?: LoadedEnvironment) {
+  return environment?.state === "enabled" && environment.health === "healthy";
+}
+
+export const HideIfEnvironmentUnhealthy = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
+  const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState
+  );
+
+  if (!isEnvironmentHealthy(currentEnvironment)) {
+    return null;
+  }
+
+  return <>{children}</>;
+};
 
 const NavBar = () => {
   const { colors } = useTheme<MaterializeTheme>();
@@ -144,6 +169,7 @@ type NavItemType = {
   label: string;
   href: string;
   isInternal?: boolean;
+  hideIfEnvironmentUnhealthy?: boolean;
 };
 
 const getNavItems = (
@@ -151,17 +177,37 @@ const getNavItems = (
   flags: ReturnType<typeof useFlags>
 ): NavItemType[] => {
   return [
-    { label: "Connect", href: `/regions/${regionSlug}/connect` },
-    { label: "Clusters", href: `/regions/${regionSlug}/clusters` },
-    { label: "Sources", href: `/regions/${regionSlug}/sources` },
-    { label: "Sinks", href: `/regions/${regionSlug}/sinks` },
+    {
+      label: "Connect",
+      href: `/regions/${regionSlug}/connect`,
+    },
+    {
+      label: "Clusters",
+      href: `/regions/${regionSlug}/clusters`,
+      hideIfEnvironmentUnhealthy: true,
+    },
+    {
+      label: "Sources",
+      href: `/regions/${regionSlug}/sources`,
+      hideIfEnvironmentUnhealthy: true,
+    },
+    {
+      label: "Sinks",
+      href: `/regions/${regionSlug}/sinks`,
+      hideIfEnvironmentUnhealthy: true,
+    },
     ...(flags["source-creation-41"]
       ? [
           {
             label: "Secrets",
             href: `/regions/${regionSlug}/secrets`,
+            hideIfEnvironmentUnhealthy: true,
           },
-          { label: "Connections", href: `/regions/${regionSlug}/connections` },
+          {
+            label: "Connections",
+            href: `/regions/${regionSlug}/connections`,
+            hideIfEnvironmentUnhealthy: true,
+          },
         ]
       : []),
     // { label: "Editor", href: "/editor" },
@@ -189,9 +235,15 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {navItems.map(({ label, href }) => (
-        <NavItem key={label} label={label} href={href} />
-      ))}
+      {navItems.map(({ label, href, hideIfEnvironmentUnhealthy }) =>
+        hideIfEnvironmentUnhealthy ? (
+          <HideIfEnvironmentUnhealthy key={label}>
+            <NavItem label={label} href={href} />
+          </HideIfEnvironmentUnhealthy>
+        ) : (
+          <NavItem key={label} label={label} href={href} />
+        )
+      )}
     </VStack>
   );
 };
@@ -217,11 +269,20 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         {...props}
       />
       <MenuList>
-        {navItems.map((item) => (
-          <MenuItem as={RouterLink} key={item.label} to={item.href}>
-            {`${item.label}${item.isInternal ? " (internal)" : ""}`}
-          </MenuItem>
-        ))}
+        {navItems.map(
+          ({ label, href, isInternal, hideIfEnvironmentUnhealthy }) =>
+            hideIfEnvironmentUnhealthy ? (
+              <HideIfEnvironmentUnhealthy key={label}>
+                <MenuItem as={RouterLink} to={href}>
+                  {`${label}${isInternal ? " (internal)" : ""}`}
+                </MenuItem>
+              </HideIfEnvironmentUnhealthy>
+            ) : (
+              <MenuItem as={RouterLink} key={label} to={href}>
+                {`${label}${isInternal ? " (internal)" : ""}`}
+              </MenuItem>
+            )
+        )}
         <ProfileMenuItems />
       </MenuList>
     </Menu>
