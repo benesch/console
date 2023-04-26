@@ -4,7 +4,7 @@ import { Link, LinkProps } from "react-router-dom";
 
 export type IconNavLinkProps = LinkProps &
   ButtonProps & {
-    iconSource: string;
+    iconSource?: string;
   };
 
 const IconNavLink = ({ iconSource, children, ...props }: IconNavLinkProps) => {

@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   HStack,
   Tab,
@@ -10,9 +9,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Link } from "react-router-dom";
 
 import useConnections, { Connection } from "~/api/materialize/useConnections";
+import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
 import kafkaLogo from "~/img/kafka-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
@@ -52,19 +51,14 @@ const SelectConnection = () => {
           <TabPanel>
             <HStack mt="8" spacing="6">
               {connections?.map((connection) => (
-                <Button
-                  as={Link}
-                  to={`../${connection.type}?connectionId=${connection.id}`}
+                <IconNavLink
                   key={connection.id}
-                  variant="outline"
-                  p="6"
-                  height="auto"
+                  iconSource={connectionIcon(connection)}
                   width="100%"
-                  justifyContent="left"
+                  to={`../${connection.type}?connectionId=${connection.id}`}
                 >
-                  <Box as="img" src={connectionIcon(connection)} mr="4" />
                   {connection.name}
-                </Button>
+                </IconNavLink>
               ))}
             </HStack>
           </TabPanel>
