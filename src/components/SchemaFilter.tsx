@@ -27,7 +27,7 @@ const SchemaFilter = ({
     {
       label: "Filter by schmea",
       options: [
-        { id: "0", name: "All Schemas", databaseId: 0, databaseName: "" },
+        { id: "0", name: "All Schemas", databaseId: "0", databaseName: "" },
         ...schemaList,
       ],
     },

@@ -1,31 +1,22 @@
 import { useTheme } from "@chakra-ui/react";
 import React from "react";
-import ReactSelect, { GroupBase } from "react-select";
+import ReactSelect, { GroupBase, Props } from "react-select";
 
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
 
 export type SelectOption = { id: string; name: string };
 
-export interface SearchableSelectProps {
+export interface SearchableSelectProps
+  extends Props<SelectOption, false, GroupBase<SelectOption>> {
   ariaLabel: string;
-  onChange: (value: SelectOption) => void;
   options: SelectOption[];
-  placeholder?: string;
   sectionLabel: string;
-  value: SelectOption | null;
 }
 
 const SearchableSelect = React.forwardRef(
   (
-    {
-      options,
-      ariaLabel,
-      onChange,
-      placeholder,
-      sectionLabel,
-      value,
-    }: SearchableSelectProps,
+    { options, ariaLabel, sectionLabel, ...props }: SearchableSelectProps,
     ref: React.Ref<any>
   ) => {
     const {
@@ -44,11 +35,7 @@ const SearchableSelect = React.forwardRef(
         getOptionValue={(option) => option.name}
         isMulti={false}
         isSearchable
-        onChange={(newValue) => {
-          newValue && onChange(newValue);
-        }}
         ref={ref}
-        placeholder={placeholder}
         options={[
           {
             label: sectionLabel,
@@ -60,7 +47,7 @@ const SearchableSelect = React.forwardRef(
           shadows,
           {}
         )}
-        value={value}
+        {...props}
       />
     );
   }

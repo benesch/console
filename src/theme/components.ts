@@ -364,10 +364,20 @@ export const Menu = {
 };
 
 export const Accordion = {
+  defaultProps: {
+    variant: "borderless",
+  },
   variants: {
     borderless: {
       container: {
         border: "none",
+      },
+      button: {
+        p: 0,
+      },
+      panel: {
+        mt: 6,
+        p: 0,
       },
     },
   },

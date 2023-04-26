@@ -1,5 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
   FormControl,
@@ -30,6 +35,8 @@ import {
   Connection,
   useConnectionsFiltered,
 } from "~/api/materialize/useConnections";
+import useDatabases, { Database } from "~/api/materialize/useDatabases";
+import useSchemas, { Schema } from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
@@ -53,6 +60,8 @@ import { relativeSourceErrorsPath } from "../SourceRoutes";
 type FormState = {
   name: string;
   connection: Connection | null;
+  database?: Database | null;
+  schema?: Schema | null;
   cluster: Cluster | null;
   publication: string;
   allTables: boolean;
@@ -88,12 +97,17 @@ const NewPostgresSource = () => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const [queryParams] = useSearchParams();
+  const { data: databases, error: databasesError } = useDatabases();
+  const { data: schemas, error: schemasError } = useSchemas();
   const { data: clusters, error: clustersError } = useClustersFetch();
   const { data: connections, error: connectionsError } = useConnectionsFiltered(
     {
       type: "postgres" as const,
     }
   );
+
+  const loadingError =
+    databasesError || schemasError || clustersError || connectionsError;
 
   const {
     control,
@@ -119,6 +133,14 @@ const NewPostgresSource = () => {
   const { field: connectionField } = useController({
     control,
     name: "connection",
+  });
+  const { field: databaseField } = useController({
+    control,
+    name: "database",
+  });
+  const { field: schemaField } = useController({
+    control,
+    name: "schema",
   });
   const { field: clusterField } = useController({
     control,
@@ -232,7 +254,7 @@ WHERE s.name = $1;`,
 
   const allTables = watch("allTables");
 
-  if (connectionsError || clustersError) {
+  if (loadingError) {
     return <ErrorBox />;
   }
   return (
@@ -302,6 +324,40 @@ WHERE s.name = $1;`,
                 </InlineLabeledInput>
               </FormControl>
             </FormSection>
+            <Accordion mb="12" allowToggle>
+              <AccordionItem>
+                <AccordionButton color={semanticColors.accent.brightPurple}>
+                  <Text textStyle="text-ui-med">Additional Options</Text>
+                  <AccordionIcon ml="2" />
+                </AccordionButton>
+                <AccordionPanel
+                  motionProps={{ style: { overflow: "visible" } }}
+                >
+                  <FormControl>
+                    <InlineLabeledInput label="Database">
+                      <SearchableSelect
+                        ariaLabel="Select database"
+                        sectionLabel="Select database"
+                        placeholder="Select one"
+                        {...databaseField}
+                        options={databases ?? []}
+                      />
+                    </InlineLabeledInput>
+                  </FormControl>
+                  <FormControl>
+                    <InlineLabeledInput label="Schema">
+                      <SearchableSelect
+                        ariaLabel="Select schema"
+                        sectionLabel="Select schema"
+                        placeholder="Select one"
+                        {...schemaField}
+                        options={schemas ?? []}
+                      />
+                    </InlineLabeledInput>
+                  </FormControl>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
             <FormSection title="Compute cluster">
               <FormControl isInvalid={!!formState.errors.cluster}>
                 <InlineLabeledInput

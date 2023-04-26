@@ -4,7 +4,7 @@ import { assert } from "~/util";
 export interface Schema {
   id: string;
   name: string;
-  databaseId: number;
+  databaseId: string;
   databaseName: string;
 }
 
