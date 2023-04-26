@@ -28,6 +28,7 @@ const FreeTrialNotice = (props: BoxProps) => {
       borderRadius="8"
       background={semanticColors.background.info}
       p="4"
+      display={{ base: "none", lg: "block" }}
       {...props}
     >
       <Text
@@ -38,7 +39,7 @@ const FreeTrialNotice = (props: BoxProps) => {
         Free trial
         <Box
           as="a"
-          href="https://materialize.com/free-trial-terms/"
+          href="https://materialize.com/docs/free-trial-faqs/"
           ml="1"
           rel="noopener"
           target="_blank"
@@ -55,7 +56,7 @@ const FreeTrialNotice = (props: BoxProps) => {
       </Text>
       <Button
         as="a"
-        href="mailto:sales@materialize.com?subject='Free trial'"
+        href="https://materialize.com/convert-account/"
         mt="4"
         rel="noopener noreferrer"
         size="sm"
@@ -63,7 +64,7 @@ const FreeTrialNotice = (props: BoxProps) => {
         variant="primary"
         width="100%"
       >
-        Contact sales
+        Contact our team
       </Button>
     </Box>
   );
