@@ -132,7 +132,6 @@ const NavBar = () => {
         alignItems="flex-start"
         justifyContent="stretch"
         px={NAV_HORIZONTAL_SPACING}
-        pb={{ base: 0, lg: 2 }}
         order={{ base: 100, lg: 2 }}
       >
         <React.Suspense

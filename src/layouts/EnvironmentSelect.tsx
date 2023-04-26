@@ -70,18 +70,20 @@ const EnvironmentSelectField = () => {
   const currentOption = options.find((o) => o.id === currentEnvironmentId)!;
 
   return (
-    <ReactSelect
-      id="environment-select"
-      aria-label="Environment"
-      name="environment-select"
-      components={{ Option: EnvOption, SingleValue }}
-      options={options}
-      value={currentOption}
-      onChange={selectHandler}
-      styles={colorStyles}
-      isMulti={false}
-      isSearchable={false}
-    />
+    <Box minH={{ base: "auto", lg: "54px" }}>
+      <ReactSelect
+        id="environment-select"
+        aria-label="Environment"
+        name="environment-select"
+        components={{ Option: EnvOption, SingleValue }}
+        options={options}
+        value={currentOption}
+        onChange={selectHandler}
+        styles={colorStyles}
+        isMulti={false}
+        isSearchable={false}
+      />
+    </Box>
   );
 };
 
