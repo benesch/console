@@ -32,6 +32,7 @@ import {
 } from "~/api/materialize/useConnections";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
+import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
   FormSection,
@@ -87,10 +88,12 @@ const NewPostgresSource = () => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const [queryParams] = useSearchParams();
-  const { data: clusters } = useClustersFetch();
-  const { data: connections } = useConnectionsFiltered({
-    type: "postgres" as const,
-  });
+  const { data: clusters, error: clustersError } = useClustersFetch();
+  const { data: connections, error: connectionsError } = useConnectionsFiltered(
+    {
+      type: "postgres" as const,
+    }
+  );
 
   const {
     control,
@@ -229,11 +232,13 @@ WHERE s.name = $1;`,
 
   const allTables = watch("allTables");
 
+  if (connectionsError || clustersError) {
+    return <ErrorBox />;
+  }
   return (
     <Modal
       isOpen
       onClose={() => {
-        console.log("onClose");
         navigate("../connection");
       }}
       variant="fullscreen"

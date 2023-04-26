@@ -15,6 +15,7 @@ import {
   Connection,
   useConnectionsFiltered,
 } from "~/api/materialize/useConnections";
+import ErrorBox from "~/components/ErrorBox";
 import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
 import postgresLogo from "~/img/postgres-logo.svg";
@@ -33,8 +34,11 @@ const connectionIcon = (connection: Connection) => {
 };
 
 const SelectConnection = () => {
-  const { data: connections } = useConnectionsFiltered();
+  const { data: connections, error } = useConnectionsFiltered();
 
+  if (error) {
+    return <ErrorBox />;
+  }
   return (
     <VStack mt="20" width="548px" alignSelf="center" spacing="6">
       <PageHeading mb="10" alignSelf="start">
