@@ -23,7 +23,7 @@ import {
 } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { quoteIdentifier } from "~/api/materialize";
+import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
 import useConnections, { Connection } from "~/api/materialize/useConnections";
@@ -131,25 +131,7 @@ const NewPostgresSource = () => {
       return {
         queries: [
           {
-            query: `
-CREATE SOURCE ${values.name}
-IN CLUSTER ${values.cluster.name}
-FROM POSTGRES CONNECTION ${quoteIdentifier(
-              values.connection.name
-            )} (PUBLICATION '${values.publication}')
-            ${
-              allTables
-                ? "FOR ALL TABLES"
-                : `FOR TABLES (
-  ${values.tables.map(
-    (t) =>
-      `${quoteIdentifier(t.name)} ${
-        t.alias ? `AS ${quoteIdentifier(t.alias)}` : ""
-      }`
-  )}
-)`
-            };
-`,
+            query: createSourceStatement(values),
             params: [],
           },
           {
