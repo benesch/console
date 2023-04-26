@@ -28,6 +28,7 @@ const FreeTrialNotice = (props: BoxProps) => {
       borderRadius="8"
       background={semanticColors.background.info}
       p="4"
+      display={{ base: "none", lg: "block" }}
       {...props}
     >
       <Text
