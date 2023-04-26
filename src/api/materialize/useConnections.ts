@@ -2,7 +2,7 @@ import { SchemaObject, useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
 export interface Connection extends SchemaObject {
-  type: string;
+  type: "postgres" | "kafka";
   numSinks: number;
   numSources: number;
 }

@@ -6,7 +6,7 @@ import {
   transparentize,
 } from "@chakra-ui/theme-tools";
 
-import { CARD_PADDING } from "../components/cardComponents";
+import { MaterializeTheme } from ".";
 import colors from "./colors";
 
 export const Alert = {
@@ -306,20 +306,23 @@ export const Table = defineMultiStyleConfig({
 
 export const Tabs = {
   variants: {
-    line: (props: StyleFunctionProps) => {
-      const { colorScheme: c } = props;
+    line: ({ theme }: StyleFunctionProps) => {
+      const {
+        colors: { semanticColors },
+      } = theme as MaterializeTheme;
       return {
         tab: {
-          borderBottomWidth: "3px",
-          marginBottom: "0",
-          px: 3,
-          py: 2,
+          _active: {
+            borderBottomColor: semanticColors.accent.purple,
+          },
+          borderBottomWidth: "1px",
+          marginBottom: "-1px",
+          px: 0,
+          mr: 10,
         },
         tablist: {
+          borderBottomColor: semanticColors.border.primary,
           borderBottomWidth: "1px",
-          borderColor: mode(`${c}.100`, `${c}.600`)(props) as string,
-          px: CARD_PADDING,
-          justifyContent: "flex-start",
         },
         tabpanel: {
           px: 0,
@@ -329,7 +332,6 @@ export const Tabs = {
     },
   },
   defaultProps: {
-    colorScheme: "purple",
     variant: "line",
   },
 };

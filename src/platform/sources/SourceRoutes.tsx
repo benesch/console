@@ -15,11 +15,22 @@ import {
   objectOrRedirect,
   relativeObjectPath,
 } from "../schemaObjectRouteHelpers";
+import NewPostgresSource from "./create/NewPostgresSource";
+import SelectConnection from "./create/SelectConnection";
 import SourceDetail from "./SourceDetail";
 
 const NAME_FILTER_QUERY_STRING_KEY = "sourceName";
 
 const SourceRoutes = () => {
+  return (
+    <SentryRoutes>
+      <Route path="/new/*" element={<NewSourceRoutes />} />
+      <Route path="/*" element={<ShowSourceRoutes />} />
+    </SentryRoutes>
+  );
+};
+
+const ShowSourceRoutes = () => {
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
@@ -58,11 +69,20 @@ const SourceRoutes = () => {
   );
 };
 
+const NewSourceRoutes = () => {
+  return (
+    <SentryRoutes>
+      <Route path="/connection" element={<SelectConnection />} />
+      <Route path="/postgres" element={<NewPostgresSource />} />
+    </SentryRoutes>
+  );
+};
+
 export const sourceErrorsPath = (regionSlug: string, source: Source) => {
   return `/regions/${regionSlug}/sources/${relativeSourceErrorsPath(source)}`;
 };
 
-const relativeSourceErrorsPath = (source: SchemaObject) => {
+export const relativeSourceErrorsPath = (source: SchemaObject) => {
   return `${relativeObjectPath(source)}/errors`;
 };
 

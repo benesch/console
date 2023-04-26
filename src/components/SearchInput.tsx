@@ -1,15 +1,19 @@
 import { SearchIcon } from "@chakra-ui/icons";
-import { Box, Input, InputProps, useTheme } from "@chakra-ui/react";
+import { Box, BoxProps, Input, InputProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import { MaterializeTheme } from "~/theme";
 
-const SearchInput = (props: InputProps) => {
+export interface SearchInputProps extends InputProps {
+  containerProps?: BoxProps;
+}
+
+const SearchInput = ({ containerProps, ...props }: SearchInputProps) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   return (
-    <Box as="div" position="relative">
+    <Box as="div" position="relative" {...containerProps}>
       <Input pl="32px" minWidth="256px" placeholder="Search" {...props} />
       <Box
         position="absolute"
