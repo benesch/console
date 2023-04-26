@@ -16,8 +16,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
-  Connection,
   ConnectionsResponse,
+  ConnectionWithDetails,
 } from "~/api/materialize/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
@@ -168,7 +168,7 @@ export const ConnectionsList = ({
 };
 
 type ConnectionsTableProps = {
-  connections: Connection[];
+  connections: ConnectionWithDetails[];
 };
 
 const ConnectionsTable = ({ connections }: ConnectionsTableProps) => {

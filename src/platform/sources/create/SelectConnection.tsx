@@ -11,7 +11,10 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import useConnections, { Connection } from "~/api/materialize/useConnections";
+import {
+  Connection,
+  useConnectionsFiltered,
+} from "~/api/materialize/useConnections";
 import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
 import postgresLogo from "~/img/postgres-logo.svg";
@@ -30,7 +33,7 @@ const connectionIcon = (connection: Connection) => {
 };
 
 const SelectConnection = () => {
-  const { data: connections } = useConnections();
+  const { data: connections } = useConnectionsFiltered();
 
   return (
     <VStack mt="20" width="548px" alignSelf="center" spacing="6">

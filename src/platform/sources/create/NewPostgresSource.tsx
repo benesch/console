@@ -26,7 +26,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
-import useConnections, { Connection } from "~/api/materialize/useConnections";
+import {
+  Connection,
+  useConnectionsFiltered,
+} from "~/api/materialize/useConnections";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import {
@@ -85,7 +88,9 @@ const NewPostgresSource = () => {
   } = useTheme<MaterializeTheme>();
   const [queryParams] = useSearchParams();
   const { data: clusters } = useClustersFetch();
-  const { data: connections } = useConnections();
+  const { data: connections } = useConnectionsFiltered({
+    type: "postgres" as const,
+  });
 
   const {
     control,
