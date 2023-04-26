@@ -104,14 +104,19 @@ const NavBar = () => {
       </HStack>
       <Flex
         flex={0}
-        minH={{ base: "auto", lg: "54px" }}
         alignItems="flex-start"
         justifyContent="stretch"
         px={NAV_HORIZONTAL_SPACING}
         pb={{ base: 0, lg: 2 }}
         order={{ base: 100, lg: 2 }}
       >
-        <React.Suspense fallback={<Spinner />}>
+        <React.Suspense
+          fallback={
+            <Box minH={{ base: "auto", lg: "54px" }}>
+              <Spinner />
+            </Box>
+          }
+        >
           <EnvironmentSelectField />
         </React.Suspense>
       </Flex>

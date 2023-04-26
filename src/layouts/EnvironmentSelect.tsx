@@ -1,10 +1,4 @@
-import {
-  Box,
-  ColorMode,
-  HStack,
-  Spinner,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Box, ColorMode, HStack, useColorMode } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect, {
@@ -76,20 +70,18 @@ const EnvironmentSelectField = () => {
   const currentOption = options.find((o) => o.id === currentEnvironmentId)!;
 
   return (
-    <React.Suspense fallback={<Spinner />}>
-      <ReactSelect
-        id="environment-select"
-        aria-label="Environment"
-        name="environment-select"
-        components={{ Option: EnvOption, SingleValue }}
-        options={options}
-        value={currentOption}
-        onChange={selectHandler}
-        styles={colorStyles}
-        isMulti={false}
-        isSearchable={false}
-      />
-    </React.Suspense>
+    <ReactSelect
+      id="environment-select"
+      aria-label="Environment"
+      name="environment-select"
+      components={{ Option: EnvOption, SingleValue }}
+      options={options}
+      value={currentOption}
+      onChange={selectHandler}
+      styles={colorStyles}
+      isMulti={false}
+      isSearchable={false}
+    />
   );
 };
 
