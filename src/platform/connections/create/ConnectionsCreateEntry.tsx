@@ -90,7 +90,10 @@ const ConnectionsCreateEntry = () => {
         </VStack>
         <Text textStyle="text-base" color={semanticColors.foreground.secondary}>
           Looking to connect somewhere else?{" "}
-          <TextLink href="https://materialize.com/contact/" target="_blank">
+          <TextLink
+            href="https://materialize.com/docs/integrations/"
+            target="_blank"
+          >
             Let us know.
           </TextLink>
         </Text>
