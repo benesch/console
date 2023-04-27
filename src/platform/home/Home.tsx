@@ -121,7 +121,7 @@ const Home = () => {
         alignItems="center"
         justifyContent="center"
       >
-        <React.Suspense fallback={<LoadingState />}>{content}</React.Suspense>
+        {content}
       </VStack>
     </VStack>
   );
