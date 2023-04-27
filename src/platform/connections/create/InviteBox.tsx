@@ -94,6 +94,7 @@ const InviteBox = (props: InviteBoxProps) => {
 
       setError(null);
       toast({ description: "Invitation sent" });
+      setEmail("");
     } catch (e) {
       if (e instanceof Error) {
         setError(normalizeFronteggError(e.message));
