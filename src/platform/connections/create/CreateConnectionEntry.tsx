@@ -19,7 +19,7 @@ import { MaterializeTheme } from "~/theme";
 
 import InviteBox from "./InviteBox";
 
-const ConnectionsCreateEntry = () => {
+const CreateConnectionEntry = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
@@ -103,4 +103,4 @@ const ConnectionsCreateEntry = () => {
   );
 };
 
-export default ConnectionsCreateEntry;
+export default CreateConnectionEntry;

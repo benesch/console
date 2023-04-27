@@ -6,7 +6,7 @@ import { SentryRoutes } from "~/sentry";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import ConnectionsList from "./ConnectionsList";
-import ConnectionsCreateEntry from "./create/ConnectionsCreateEntry";
+import CreateConnectionEntry from "./create/CreateConnectionEntry";
 
 const NAME_FILTER_QUERY_STRING_KEY = "connectionName";
 
@@ -32,7 +32,7 @@ const ConnectionsRoutes = () => {
           />
         }
       />
-      <Route path="new" element={<ConnectionsCreateEntry />} />
+      <Route path="new" element={<CreateConnectionEntry />} />
     </SentryRoutes>
   );
 };
