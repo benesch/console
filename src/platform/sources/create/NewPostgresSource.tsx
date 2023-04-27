@@ -79,7 +79,7 @@ const NewPostgresSource = () => {
     string | undefined
   >(undefined);
   const navigate = useNavigate();
-  const toast = useSuccessToast({});
+  const toast = useSuccessToast();
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();

@@ -22,20 +22,18 @@ const ConnectionsRoutes = () => {
   });
 
   return (
-    <>
-      <SentryRoutes>
-        <Route
-          path="/"
-          element={
-            <ConnectionsList
-              schemaObjectFilters={schemaObjectFilters}
-              connectionsResponse={connectionsResponse}
-            />
-          }
-        />
-        <Route path="new" element={<ConnectionsCreateEntry />} />
-      </SentryRoutes>
-    </>
+    <SentryRoutes>
+      <Route
+        path="/"
+        element={
+          <ConnectionsList
+            schemaObjectFilters={schemaObjectFilters}
+            connectionsResponse={connectionsResponse}
+          />
+        }
+      />
+      <Route path="new" element={<ConnectionsCreateEntry />} />
+    </SentryRoutes>
   );
 };
 
