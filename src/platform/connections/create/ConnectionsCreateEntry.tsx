@@ -1,12 +1,20 @@
-import { Flex, Grid, GridItem, Text, useTheme, VStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Text,
+  useTheme,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 
 import IconNavLink from "~/components/IconNavLink";
 import TextLink from "~/components/TextLink";
 import awsLogo from "~/img/aws-logo.svg";
-import kafkaLogo from "~/img/kafka-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
-import terminalIcon from "~/img/terminal.svg";
+import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
+import TerminalIcon from "~/svg/Terminal";
 import { MaterializeTheme } from "~/theme";
 
 import InviteBox from "./InviteBox";
@@ -36,12 +44,20 @@ const ConnectionsCreateEntry = () => {
           </Text>
           <Grid gridTemplateColumns="1fr 1fr" gridGap="4">
             <GridItem>
-              <IconNavLink iconSource={kafkaLogo} width="100%" to="kafka">
+              <IconNavLink
+                icon={<KafkaLogoIcon width="6" height="6" />}
+                width="100%"
+                to="kafka"
+              >
                 Apache Kafka
               </IconNavLink>
             </GridItem>
             <GridItem>
-              <IconNavLink iconSource={postgresLogo} width="100%" to="postgres">
+              <IconNavLink
+                icon={<Image height="6" width="6" src={postgresLogo} />}
+                width="100%"
+                to="postgres"
+              >
                 Postgres
               </IconNavLink>
             </GridItem>
@@ -53,12 +69,20 @@ const ConnectionsCreateEntry = () => {
           </Text>
           <Grid gridTemplateColumns="1fr 1fr" gridGap="4">
             <GridItem>
-              <IconNavLink iconSource={terminalIcon} width="100%" to="ssh">
+              <IconNavLink
+                icon={<TerminalIcon width="6" height="6" />}
+                width="100%"
+                to="ssh"
+              >
                 SSH Tunnel
               </IconNavLink>
             </GridItem>
             <GridItem>
-              <IconNavLink iconSource={awsLogo} width="100%" to="aws">
+              <IconNavLink
+                icon={<Image height="6" width="6" src={awsLogo} />}
+                width="100%"
+                to="aws"
+              >
                 PrivateLink
               </IconNavLink>
             </GridItem>

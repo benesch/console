@@ -4,10 +4,10 @@ import { Link, LinkProps } from "react-router-dom";
 
 export type IconNavLinkProps = LinkProps &
   ButtonProps & {
-    iconSource?: string;
+    icon?: React.ReactNode;
   };
 
-const IconNavLink = ({ iconSource, children, ...props }: IconNavLinkProps) => {
+const IconNavLink = ({ icon, children, ...props }: IconNavLinkProps) => {
   return (
     <Button
       as={Link}
@@ -17,7 +17,7 @@ const IconNavLink = ({ iconSource, children, ...props }: IconNavLinkProps) => {
       justifyContent="left"
       {...props}
     >
-      <Box as="img" src={iconSource} mr="4" />
+      {icon && <Box mr="4">{icon}</Box>}
       <Text textStyle="text-ui-med">{children}</Text>
     </Button>
   );

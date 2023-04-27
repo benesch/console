@@ -1,6 +1,7 @@
 import {
   Button,
   HStack,
+  Image,
   Tab,
   TabList,
   TabPanel,
@@ -13,18 +14,18 @@ import React from "react";
 import useConnections, { Connection } from "~/api/materialize/useConnections";
 import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
-import kafkaLogo from "~/img/kafka-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
 import { PageHeading } from "~/layouts/BaseLayout";
+import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
 
 const connectionIcon = (connection: Connection) => {
   switch (connection.type) {
     case "kafka":
-      return kafkaLogo;
+      return <KafkaLogoIcon height="6" width="6" />;
     case "postgres":
-      return postgresLogo;
+      return <Image height="6" width="6" src={postgresLogo} />;
     default:
-      connection.type satisfies never;
+      return null;
   }
 };
 
@@ -53,7 +54,7 @@ const SelectConnection = () => {
               {connections?.map((connection) => (
                 <IconNavLink
                   key={connection.id}
-                  iconSource={connectionIcon(connection)}
+                  icon={connectionIcon(connection)}
                   width="100%"
                   to={`../${connection.type}?connectionId=${connection.id}`}
                 >
