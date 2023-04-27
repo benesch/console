@@ -33,7 +33,7 @@ import SourceRoutes from "~/platform/sources/SourceRoutes";
 import { SentryRoutes } from "~/sentry";
 import { assert } from "~/util";
 
-import ConnectionsList from "./platform/connections/ConnectionsList";
+import ConnectionsRoutes from "./platform/connections/ConnectionsRoutes";
 import {
   currentEnvironmentIdState,
   defaultRegion,
@@ -141,7 +141,7 @@ const EnvironmentRoutes = () => {
       {flags["source-creation-41"] && (
         <>
           <Route path="/secrets" element={<SecretsList />} />
-          <Route path="/connections" element={<ConnectionsList />} />
+          <Route path="/connections/*" element={<ConnectionsRoutes />} />
         </>
       )}
 

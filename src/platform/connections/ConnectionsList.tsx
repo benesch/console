@@ -13,8 +13,12 @@ import {
   useTheme,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import useConnections, { Connection } from "~/api/materialize/useConnections";
+import {
+  Connection,
+  ConnectionsResponse,
+} from "~/api/materialize/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
@@ -29,9 +33,7 @@ import {
 import ConnectionIcon from "~/svg/ConnectionIcon";
 import { MaterializeTheme } from "~/theme";
 import useDelayedLoading from "~/useDelayedLoading";
-import useSchemaObjectFilters from "~/useSchemaObjectFilters";
-
-const NAME_FILTER_QUERY_STRING_KEY = "connectionName";
+import { SchemaObjectFilters } from "~/useSchemaObjectFilters";
 
 const FiltersEmptyState = () => {
   const {
@@ -92,20 +94,23 @@ const EmptyState = () => {
   );
 };
 
-export const ConnectionsList = () => {
-  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
-    NAME_FILTER_QUERY_STRING_KEY
-  );
+type Props = {
+  connectionsResponse: ConnectionsResponse;
+  schemaObjectFilters: SchemaObjectFilters;
+};
+
+export const ConnectionsList = ({
+  connectionsResponse,
+  schemaObjectFilters,
+}: Props) => {
   const {
     data: connections,
     isInitiallyLoading,
     isError,
     loading,
-  } = useConnections({
-    databaseId: databaseFilter.selected?.id,
-    schemaId: schemaFilter.selected?.id,
-    nameFilter: nameFilter.name,
-  });
+  } = connectionsResponse;
+
+  const { databaseFilter, schemaFilter, nameFilter } = schemaObjectFilters;
 
   const [hasNameFilterReset, setHasNameFilterReset] = useState(false);
 
@@ -142,7 +147,7 @@ export const ConnectionsList = () => {
               setHasNameFilterReset(false);
             }}
           />
-          <Button variant="primary" size="sm">
+          <Button as={Link} variant="primary" size="sm" to="new">
             New connection
           </Button>
         </HStack>

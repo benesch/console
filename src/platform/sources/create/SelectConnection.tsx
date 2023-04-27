@@ -1,7 +1,7 @@
 import {
-  Box,
   Button,
   HStack,
+  Image,
   Tab,
   TabList,
   TabPanel,
@@ -10,22 +10,22 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Link } from "react-router-dom";
 
 import useConnections, { Connection } from "~/api/materialize/useConnections";
+import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
-import kafkaLogo from "~/img/kafka-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
 import { PageHeading } from "~/layouts/BaseLayout";
+import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
 
 const connectionIcon = (connection: Connection) => {
   switch (connection.type) {
     case "kafka":
-      return kafkaLogo;
+      return <KafkaLogoIcon height="6" width="6" />;
     case "postgres":
-      return postgresLogo;
+      return <Image height="6" width="6" src={postgresLogo} />;
     default:
-      connection.type satisfies never;
+      return null;
   }
 };
 
@@ -52,19 +52,14 @@ const SelectConnection = () => {
           <TabPanel>
             <HStack mt="8" spacing="6">
               {connections?.map((connection) => (
-                <Button
-                  as={Link}
-                  to={`../${connection.type}?connectionId=${connection.id}`}
+                <IconNavLink
                   key={connection.id}
-                  variant="outline"
-                  p="6"
-                  height="auto"
+                  icon={connectionIcon(connection)}
                   width="100%"
-                  justifyContent="left"
+                  to={`../${connection.type}?connectionId=${connection.id}`}
                 >
-                  <Box as="img" src={connectionIcon(connection)} mr="4" />
                   {connection.name}
-                </Button>
+                </IconNavLink>
               ))}
             </HStack>
           </TabPanel>
