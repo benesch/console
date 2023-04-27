@@ -17,6 +17,12 @@ import {
 
 import GettingStarted from "./GettingStarted";
 
+const LoadingState = () => (
+  <HStack width="100%" justifyContent="center">
+    <Spinner />
+  </HStack>
+);
+
 const Home = () => {
   const { user } = useAuth();
   const environments = useEnvironmentsWithHealth(user.accessToken, {
@@ -31,11 +37,7 @@ const Home = () => {
   const { organization } = useCurrentOrganization();
   const tenantIsBlocked = organization ? organization.blocked : false;
 
-  let content = (
-    <HStack justifyContent="flex-start" width="100%">
-      <Spinner />
-    </HStack>
-  );
+  let content = <LoadingState />;
 
   if (Array.from(environments.values()).every((e) => e.state === "disabled")) {
     content = (
@@ -119,15 +121,7 @@ const Home = () => {
         alignItems="center"
         justifyContent="center"
       >
-        <React.Suspense
-          fallback={
-            <HStack justifyContent="flex-start" width="100%">
-              <Spinner />
-            </HStack>
-          }
-        >
-          {content}
-        </React.Suspense>
+        {content}
       </VStack>
     </VStack>
   );
