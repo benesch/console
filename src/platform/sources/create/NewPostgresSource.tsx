@@ -124,16 +124,10 @@ const NewPostgresSource = () => {
     }
   );
 
-  const clusterOptions = React.useMemo(() => {
-    return [
-      ...(clusters ?? []),
-      {
-        id: NEW_CLUSTER_ID,
-        name: "Create new cluster",
-        display: "addItem" as const,
-      },
-    ];
-  }, [clusters]);
+  const NEW_CLUSTER_ID_OPTION = {
+    id: NEW_CLUSTER_ID,
+    name: "Create new cluster",
+  };
 
   const clusterSizeOptions = React.useMemo(() => {
     return (clusterSizes ?? []).map((s) => ({ id: s, name: s }));
@@ -438,9 +432,14 @@ WHERE s.name = $1;`,
                       options={[
                         {
                           label: "Select cluster",
-                          options: clusterOptions,
+                          options: clusters ?? [],
                         },
                       ]}
+                      displayAddNewItem
+                      addNewItemLabel="Create new cluster"
+                      onAddNewItem={() => {
+                        clusterField.onChange(NEW_CLUSTER_ID_OPTION);
+                      }}
                     />
                     {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
                       <Text

@@ -1,7 +1,6 @@
 import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
-import { notNullOrUndefined } from "~/util";
 
-import { quoteIdentifier } from ".";
+import { attachNamespace, quoteIdentifier } from ".";
 import { Cluster } from "./useClusters";
 import { Connection } from "./useConnections";
 
@@ -24,11 +23,11 @@ const createSourceStatement = (params: CreateSourceParameters) => {
   if (!params.cluster && !params.clusterSize) {
     throw new Error("You must specify either a cluster or a cluster size");
   }
-  const namespace = [params.databaseName, params.schemaName]
-    .filter(notNullOrUndefined)
-    .map(quoteIdentifier)
-    .join(".");
-  const name = namespace ? `${namespace}.${params.name}` : params.name;
+  const name = attachNamespace(
+    params.name,
+    params.databaseName,
+    params.schemaName
+  );
   const createNewCluster = params.cluster?.id === NEW_CLUSTER_ID;
 
   return `

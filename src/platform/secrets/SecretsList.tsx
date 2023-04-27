@@ -30,8 +30,12 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { FieldError, useForm } from "react-hook-form";
 
+import useSecrets, {
+  createSecretQueryBuilder,
+  Secret,
+} from "~/api/materialize/useSecrets";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
-import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
+import { useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
@@ -91,13 +95,6 @@ const EmptyState = () => {
     </EmptyListWrapper>
   );
 };
-
-function createSecretQueryBuilder(variables: { name: string; value: string }) {
-  return `
-  CREATE SECRET ${variables.name}
-  AS '${variables.value}'
-`;
-}
 
 const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
   const {

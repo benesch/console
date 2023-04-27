@@ -11,6 +11,11 @@ describe("alreadyExistsError", () => {
     expect(alreadyExistsError(serverError)).toBe(null);
   });
 
+  it("server error with double quotations", () => {
+    const serverError = 'catalog item "test_1" already exists';
+    expect(alreadyExistsError(serverError)).toBe("test_1");
+  });
+
   it("server error with quotations but doesn't end with 'already exists'", () => {
     const serverError = "system item 'test_1' cannot be modified";
     expect(alreadyExistsError(serverError)).toBe(null);

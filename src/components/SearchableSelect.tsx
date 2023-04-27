@@ -1,6 +1,8 @@
+import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, Image, Text, useTheme } from "@chakra-ui/react";
-import React from "react";
+import React, { ComponentProps } from "react";
 import ReactSelect, {
+  components as ReactSelectComponents,
   GroupBase,
   mergeStyles,
   OptionProps,
@@ -8,18 +10,35 @@ import ReactSelect, {
   Props,
   StylesConfig,
 } from "react-select";
+import { ClearIndicatorProps } from "react-select/dist/declarations/src/components/indicators";
 
 import { DropdownIndicator } from "~/components/reactSelectComponents";
 import plus from "~/img/plus.svg";
 import { MaterializeTheme, ThemeColors, ThemeShadows } from "~/theme";
 
-export type SelectOption = { id: string; name: string; display?: "addItem" };
+export type SelectOption = {
+  id: string;
+  name: string;
+};
 
-export interface SearchableSelectProps<Option extends SelectOption>
-  extends Props<Option, false, GroupBase<Option>> {
-  ariaLabel: string;
-  options: OptionsOrGroups<Option, GroupBase<Option>>;
-}
+type AdditionalMenuProps = {
+  onAddNewItem?: () => void;
+  displayAddNewItem?: boolean;
+  addNewItemLabel?: string;
+};
+
+type MenuProps<Option extends SelectOption> = ComponentProps<
+  typeof ReactSelectComponents.Menu<Option, false, GroupBase<Option>>
+> & {
+  selectProps: AdditionalMenuProps;
+};
+
+export type SearchableSelectProps<Option extends SelectOption = SelectOption> =
+  Props<Option, false, GroupBase<Option>> &
+    AdditionalMenuProps & {
+      ariaLabel: string;
+      options: OptionsOrGroups<Option, GroupBase<Option>>;
+    };
 
 const buildStyles = <
   Option = unknown,
@@ -117,30 +136,32 @@ const buildStyles = <
   });
 };
 
-const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
-  const { data, isFocused, isSelected, innerRef, innerProps } = props;
+const ClearIndicator = <
+  Option,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>(
+  props: React.PropsWithChildren<ClearIndicatorProps<Option, false, Group>>
+) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <ReactSelectComponents.ClearIndicator {...props}>
+      <CloseIcon
+        height="8px"
+        width="8px"
+        color={semanticColors.foreground.secondary}
+      />
+    </ReactSelectComponents.ClearIndicator>
+  );
+};
+
+const Option = (props: OptionProps<SelectOption, false>) => {
+  const { isFocused, isSelected, innerRef, innerProps } = props;
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
 
-  if (data.display === "addItem") {
-    return (
-      <Flex
-        {...innerProps}
-        background={semanticColors.background.secondary}
-        borderColor={semanticColors.border.secondary}
-        borderTopWidth="1px"
-        color={semanticColors.accent.brightPurple}
-        cursor="pointer"
-        p="3"
-        ref={innerRef}
-        textStyle="text-ui-reg"
-      >
-        <Image alt="Plus icon" src={plus} mr="2" />
-        {data.name}
-      </Flex>
-    );
-  }
   return (
     <Box
       ref={innerRef}
@@ -163,6 +184,38 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
   );
 };
 
+const Menu = <Option extends SelectOption>(props: MenuProps<Option>) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+
+  const { children, selectProps } = props;
+
+  return (
+    <ReactSelectComponents.Menu {...props}>
+      {children}
+      {selectProps.displayAddNewItem && (
+        <Flex
+          background={semanticColors.background.secondary}
+          borderColor={semanticColors.border.secondary}
+          borderTopWidth="1px"
+          color={semanticColors.accent.brightPurple}
+          cursor="pointer"
+          p="3"
+          textStyle="text-ui-reg"
+          onClick={() => {
+            selectProps.onAddNewItem?.();
+            selectProps.onMenuClose();
+          }}
+        >
+          <Image alt="Plus icon" src={plus} mr="2" />
+          {selectProps.addNewItemLabel ?? "Add New Item"}
+        </Flex>
+      )}
+    </ReactSelectComponents.Menu>
+  );
+};
+
 export interface SearchableSelectType
   extends React.ForwardRefExoticComponent<SearchableSelectProps<SelectOption>> {
   <T extends SelectOption>(
@@ -182,8 +235,10 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
       <ReactSelect<SelectOption, false, GroupBase<SelectOption>>
         aria-label={ariaLabel}
         components={{
-          Option: AddButtonOrOption,
+          Option: Option,
           DropdownIndicator: DropdownIndicator,
+          Menu: Menu,
+          ClearIndicator: ClearIndicator,
           ...components,
         }}
         getOptionLabel={(option) => option.name}

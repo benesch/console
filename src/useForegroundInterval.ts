@@ -1,6 +1,7 @@
 import { useCallbackRef } from "@chakra-ui/react";
 import React from "react";
 
+import { Results } from "./api/materialized";
 import { useIsPollingDisabled } from "./recoil/focus";
 
 /**
@@ -50,7 +51,7 @@ export default useForegroundInterval;
  */
 export const usePoll = (
   loading: boolean,
-  refetch: () => Promise<void>,
+  refetch: () => Promise<Results[] | null | undefined>,
   intervalMs: number | null = 5000
 ) => {
   const loadingRef = React.useRef(loading);

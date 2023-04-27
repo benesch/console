@@ -56,7 +56,7 @@ const CreateConnectionEntry = () => {
               <IconNavLink
                 icon={<Image height="6" width="6" src={postgresLogo} />}
                 width="100%"
-                to="postgres"
+                to="../postgres"
               >
                 Postgres
               </IconNavLink>
