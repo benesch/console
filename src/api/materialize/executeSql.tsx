@@ -44,23 +44,16 @@ const executeSql = async (
     return { errorMessage: "environment not enabled" };
   }
 
-  const queries: SqlStatement[] = [
-    { query: `SET cluster=${request.cluster}`, params: [] },
-  ];
-  if (request.replica) {
-    queries.push({
-      query: `SET cluster_replica=${request.replica}`,
-      params: [],
-    });
-  }
-  queries.push(...request.queries);
-
   const url = new URL(`${config.environmentdScheme}://${address}/api/sql`);
 
   // Optional session vars that will be set before running the request.
   //
   // Note: the JSON object is automatically URI encoded by the URL object.
-  const options = { application_name: APPLICATION_NAME };
+  const options = {
+    application_name: APPLICATION_NAME,
+    cluster: request.cluster,
+    cluster_replica: request.replica,
+  };
   url.searchParams.append("options", JSON.stringify(options));
 
   const response = await fetch(url, {
@@ -70,7 +63,7 @@ const executeSql = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      queries: queries,
+      queries: request.queries,
     }),
     ...requestOpts,
   });

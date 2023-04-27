@@ -56,9 +56,7 @@ export function useSql(sql?: string) {
   const request = React.useMemo(() => genMzIntrospectionSqlRequest(sql), [sql]);
   const inner = useSqlMany(request);
 
-  // The first result is the empty "ok" for the `SET` command;
-  // we want the second.
-  const data = inner.data ? inner.data[1] : null;
+  const data = inner.data ? inner.data[0] : null;
   return { ...inner, data };
 }
 
