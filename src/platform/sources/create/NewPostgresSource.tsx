@@ -30,6 +30,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
+import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
 import {
   Connection,
@@ -49,7 +50,7 @@ import {
 } from "~/components/formComponents";
 import InlayBanner from "~/components/InlayBanner";
 import ObjectNameInput from "~/components/ObjectNameInput";
-import SearchableSelect from "~/components/SearchableSelect";
+import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import useSuccessToast from "~/components/SuccessToast";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
 import { MaterializeTheme } from "~/theme";
@@ -63,6 +64,7 @@ type FormState = {
   database?: Database | null;
   schema?: Schema | null;
   cluster: Cluster | null;
+  clusterSize: SelectOption | null;
   publication: string;
   allTables: boolean;
   tables: {
@@ -99,6 +101,8 @@ const NewPostgresSource = () => {
   const [queryParams] = useSearchParams();
   const { data: databases, error: databasesError } = useDatabases();
   const { data: schemas, error: schemasError } = useSchemas();
+  const { data: clusterSizes, error: clusterSizesError } =
+    useAvailableClusterSizes();
   const { data: clusters, error: clustersError } = useClustersFetch();
   const { data: connections, error: connectionsError } = useConnectionsFiltered(
     {
@@ -106,8 +110,20 @@ const NewPostgresSource = () => {
     }
   );
 
+  const clusterOptions = React.useMemo(() => {
+    return [{ id: "0", name: "Create new cluster" }, ...(clusters ?? [])];
+  }, [clusters]);
+
+  const clusterSizeOptions = React.useMemo(() => {
+    return (clusterSizes ?? []).map((s) => ({ id: s, name: s }));
+  }, [clusterSizes]);
+
   const loadingError =
-    databasesError || schemasError || clustersError || connectionsError;
+    databasesError ||
+    schemasError ||
+    clusterSizesError ||
+    clustersError ||
+    connectionsError;
 
   const {
     control,
@@ -147,6 +163,13 @@ const NewPostgresSource = () => {
     name: "cluster",
     rules: {
       required: "Cluster is required.",
+    },
+  });
+  const { field: clusterSizeField } = useController({
+    control,
+    name: "clusterSize",
+    rules: {
+      required: "Cluster size is required.",
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -252,7 +275,9 @@ WHERE s.name = $1;`,
     }
   }, [connections, getValues, queryParams, setValue]);
 
+  const sourceName = watch("name");
   const allTables = watch("allTables");
+  const selectedCluster = watch("cluster");
 
   if (loadingError) {
     return <ErrorBox />;
@@ -369,10 +394,37 @@ WHERE s.name = $1;`,
                     sectionLabel="Select cluster"
                     placeholder="Select one"
                     {...clusterField}
-                    options={clusters ?? []}
+                    options={clusterOptions}
                   />
                 </InlineLabeledInput>
               </FormControl>
+              {selectedCluster?.id === "0" && (
+                <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
+                  <InlineLabeledInput
+                    label="Cluster size"
+                    error={formState.errors.clusterSize?.message}
+                  >
+                    <Box>
+                      <SearchableSelect
+                        ariaLabel="Select cluster size"
+                        sectionLabel="Select cluster size"
+                        placeholder="Select one"
+                        {...clusterSizeField}
+                        options={clusterSizeOptions}
+                      />
+                      <Text
+                        color={semanticColors.foreground.secondary}
+                        mt="2"
+                        maxWidth="260px"
+                        textStyle="text-small"
+                      >
+                        Cluster name: {sourceName}_linked_cluster. You can edit
+                        this after creation.
+                      </Text>
+                    </Box>
+                  </InlineLabeledInput>
+                </FormControl>
+              )}
             </FormSection>
             <FormSection title="Configuration">
               <VStack spacing="6" alignItems="start">

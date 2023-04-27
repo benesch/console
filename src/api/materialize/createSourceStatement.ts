@@ -12,6 +12,7 @@ export interface CreateSourceParameters {
   database?: Database | null;
   schema?: Schema | null;
   cluster: Cluster | null;
+  clusterSize: { id: string; name: string } | null;
   publication: string;
   allTables: boolean;
   tables: {
@@ -28,10 +29,12 @@ const createSourceStatement = (params: CreateSourceParameters) => {
     .map(quoteIdentifier)
     .join(".");
   const name = namespace ? `${namespace}.${params.name}` : params.name;
+  const createNewCluster = params.cluster.id === "0";
 
   return `
-CREATE SOURCE ${name}
-IN CLUSTER ${params.cluster.name}
+CREATE SOURCE ${name}${
+    createNewCluster ? "" : `\nIN CLUSTER ${params.cluster.name}`
+  }
 FROM POSTGRES CONNECTION ${quoteIdentifier(
     params.connection.name
   )} (PUBLICATION '${params.publication}')
@@ -47,7 +50,7 @@ ${params.tables
       }`
   )
   .join(",\n")})`
-};`;
+}${createNewCluster ? `\nWITH (SIZE = '${params.clusterSize?.name}')` : ""};`;
 };
 
 export default createSourceStatement;

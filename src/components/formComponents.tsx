@@ -203,9 +203,11 @@ export const InlineLabeledInput = ({
       templateColumns="min-content minmax(auto, 320px)"
       columnGap="6"
       justifyContent="space-between"
-      alignItems="center"
+      alignItems="start"
     >
-      <FormLabel variant="inline">{label}</FormLabel>
+      <FormLabel variant="inline" mt="2" lineHeight="16px">
+        {label}
+      </FormLabel>
       {children}
       <Box gridColumn="2">
         <Text

@@ -12,6 +12,7 @@ describe("createSourceStatement", () => {
         schemaName: "public",
       },
       cluster: { id: "u1", name: "default", replicas: [] },
+      clusterSize: null,
       publication: "mz_publication",
       allTables: true,
       tables: [{ name: "not_used", alias: "" }],
@@ -36,6 +37,7 @@ FOR ALL TABLES;`
         schemaName: "public",
       },
       cluster: { id: "u1", name: "default", replicas: [] },
+      clusterSize: null,
       publication: "mz_publication",
       allTables: false,
       tables: [
@@ -53,6 +55,7 @@ FOR TABLES (
 "second");`
     );
   });
+
   it("generates a valid statement with a namespace", () => {
     const statement = createSourceStatement({
       name: "pg_source",
@@ -71,6 +74,7 @@ FOR TABLES (
         databaseName: "production",
       },
       cluster: { id: "u1", name: "default", replicas: [] },
+      clusterSize: null,
       publication: "mz_publication",
       allTables: true,
       tables: [],
@@ -81,6 +85,38 @@ CREATE SOURCE "production"."marketing".pg_source
 IN CLUSTER default
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES;`
+    );
+  });
+
+  it("generates a valid statement when creating a cluster", () => {
+    const statement = createSourceStatement({
+      name: "pg_source",
+      connection: {
+        id: "u1",
+        type: "postgres",
+        name: "pg_conn",
+        databaseName: "materialize",
+        schemaName: "public",
+      },
+      database: { id: "1", name: "production" },
+      schema: {
+        id: "1",
+        name: "marketing",
+        databaseId: "1",
+        databaseName: "production",
+      },
+      cluster: { id: "0", name: "Create new", replicas: [] },
+      clusterSize: { id: "3xsmall", name: "3xsmall" },
+      publication: "mz_publication",
+      allTables: true,
+      tables: [],
+    });
+    expect(statement).toEqual(
+      `
+CREATE SOURCE "production"."marketing".pg_source
+FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
+FOR ALL TABLES
+WITH (SIZE = '3xsmall');`
     );
   });
 });
