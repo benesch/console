@@ -172,7 +172,14 @@ const NewPostgresSource = () => {
     control,
     name: "clusterSize",
     rules: {
-      required: "Cluster size is required.",
+      validate: {
+        required: (value) => {
+          const selectedCluster = getValues("cluster");
+          if (!value && selectedCluster?.id === "0") {
+            return "Cluster size is required.";
+          }
+        },
+      },
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -392,29 +399,15 @@ WHERE s.name = $1;`,
                   label="Cluster"
                   error={formState.errors.cluster?.message}
                 >
-                  <SearchableSelect
-                    ariaLabel="Select cluster"
-                    sectionLabel="Select cluster"
-                    placeholder="Select one"
-                    {...clusterField}
-                    options={clusterOptions}
-                  />
-                </InlineLabeledInput>
-              </FormControl>
-              {selectedCluster?.id === "0" && (
-                <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
-                  <InlineLabeledInput
-                    label="Cluster size"
-                    error={formState.errors.clusterSize?.message}
-                  >
-                    <Box>
-                      <SearchableSelect
-                        ariaLabel="Select cluster size"
-                        sectionLabel="Select cluster size"
-                        placeholder="Select one"
-                        {...clusterSizeField}
-                        options={clusterSizeOptions}
-                      />
+                  <Box>
+                    <SearchableSelect
+                      ariaLabel="Select cluster"
+                      sectionLabel="Select cluster"
+                      placeholder="Select one"
+                      {...clusterField}
+                      options={clusterOptions}
+                    />
+                    {selectedCluster?.id === "0" && (
                       <Text
                         color={semanticColors.foreground.secondary}
                         mt="2"
@@ -424,7 +417,23 @@ WHERE s.name = $1;`,
                         Cluster name: {sourceName}_linked_cluster. You can edit
                         this after creation.
                       </Text>
-                    </Box>
+                    )}
+                  </Box>
+                </InlineLabeledInput>
+              </FormControl>
+              {selectedCluster?.id === "0" && (
+                <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
+                  <InlineLabeledInput
+                    label="Cluster size"
+                    error={formState.errors.clusterSize?.message}
+                  >
+                    <SearchableSelect
+                      ariaLabel="Select cluster size"
+                      sectionLabel="Select cluster size"
+                      placeholder="Select one"
+                      {...clusterSizeField}
+                      options={clusterSizeOptions}
+                    />
                   </InlineLabeledInput>
                 </FormControl>
               )}
@@ -465,6 +474,7 @@ WHERE s.name = $1;`,
                           columnGap="6"
                           justifyContent="space-between"
                           alignItems="start"
+                          position="relative"
                           width="100%"
                         >
                           <FormLabel variant="inline">
