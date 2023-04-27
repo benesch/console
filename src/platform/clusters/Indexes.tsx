@@ -123,7 +123,7 @@ const IndexTable = (props: IndexTableProps) => {
           path="hierarchical-viz/:id/:indexName"
           element={<DFViz replicas={props.replicas} />}
         />
-        <Route path="/" />
+        <Route path="/" element={null} />
       </SentryRoutes>
     </>
   );
