@@ -4,7 +4,7 @@ import ReactSelect, { GroupBase } from "react-select";
 
 import { Schema } from "~/api/materialize/useSchemas";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
-import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
+import { buildReactSelectFilterStyles, MaterializeTheme } from "~/theme";
 
 export interface SchemaFilterProps {
   schemaList: Schema[] | null;
@@ -58,10 +58,9 @@ const SchemaFilter = ({
       )}
       options={options}
       value={selected ?? options[0].options[0]}
-      styles={buildReactSelectStyles<Schema, false>(
+      styles={buildReactSelectFilterStyles<Schema, false>(
         semanticColors,
-        shadows,
-        {}
+        shadows
       )}
     />
   );

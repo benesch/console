@@ -240,7 +240,7 @@ const fronteggTheme: FronteggThemeOptions = {
   },
 };
 
-export const buildReactSelectStyles = <
+export const buildReactSelectFilterStyles = <
   Option = unknown,
   IsMulti extends boolean = boolean,
   Group extends GroupBase<Option> = GroupBase<Option>
@@ -273,8 +273,7 @@ export const buildReactSelectStyles = <
         minHeight: "32px",
         padding: "0px",
         borderRadius: "8px",
-        borderWidth: "0",
-        boxShadow: "none",
+        border: "none",
         background: state.isFocused
           ? semanticColors.background.secondary
           : semanticColors.background.primary,
@@ -314,7 +313,6 @@ export const buildReactSelectStyles = <
       }),
       singleValue: (base) => ({
         ...base,
-        color: semanticColors.foreground.secondary,
         padding: 0,
         margin: 0,
       }),

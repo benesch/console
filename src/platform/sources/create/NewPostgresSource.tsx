@@ -111,7 +111,10 @@ const NewPostgresSource = () => {
   );
 
   const clusterOptions = React.useMemo(() => {
-    return [{ id: "0", name: "Create new cluster" }, ...(clusters ?? [])];
+    return [
+      ...(clusters ?? []),
+      { id: "0", name: "Create new cluster", display: "addItem" as const },
+    ];
   }, [clusters]);
 
   const clusterSizeOptions = React.useMemo(() => {
