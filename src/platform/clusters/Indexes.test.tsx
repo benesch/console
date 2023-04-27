@@ -19,9 +19,8 @@ jest.mock("~/api/auth");
 const IndexesWithSetup = () => (
   <ClustersProvider>
     <Routes>
-      <Route path=":id" element={<Indexes />} />
+      <Route path="/:id/*" element={<Indexes />} />
     </Routes>
-    <Indexes />
   </ClustersProvider>
 );
 
