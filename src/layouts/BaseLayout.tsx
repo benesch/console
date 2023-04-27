@@ -190,24 +190,77 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
   );
 };
 
+type Tab = { label: string; href: string };
 export interface PageTabStripProps {
-  children: React.ReactNode;
+  /* children: React.ReactNode; */
+  tabData: Tab[];
 }
 
-export const PageTabStrip = ({ children }: PageTabStripProps) => {
+export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
   const { space } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
+  const [tabBoundingBox, setTabBoundingBox] = React.useState<any>(null);
+  const [wrapperBoundingBox, setWrapperBoundingBox] = React.useState<any>(null);
+  const [highlightedTab, setHighlightedTab] = React.useState(null);
+  const [isHoveredFromNull, setIsHoveredFromNull] = React.useState(true);
+
+  const wrapperRef = React.useRef<any>(null);
+  const highlightRef = React.useRef(null);
+
+  const repositionHighlight = (e: any, tab: any) => {
+    setTabBoundingBox(e.target.getBoundingClientRect());
+    setWrapperBoundingBox(wrapperRef.current!.getBoundingClientRect());
+    setIsHoveredFromNull(!highlightedTab);
+    setHighlightedTab(tab);
+  };
+
+  const resetHighlight = () => setHighlightedTab(null);
+
+  const highlightStyles = {} as any;
+
+  if (tabBoundingBox && wrapperBoundingBox) {
+    highlightStyles.transitionDuration = isHoveredFromNull ? "0ms" : "150ms";
+    highlightStyles.opacity = highlightedTab ? 1 : 0;
+    highlightStyles.width = `${tabBoundingBox.width}px`;
+    highlightStyles.transform = `translate(${
+      tabBoundingBox.left - wrapperBoundingBox.left
+    }px)`;
+  }
+
   return (
     <HStack
+      ref={wrapperRef}
+      onMouseLeave={resetHighlight}
+      position="relative"
       width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
       px={mainContentMargin}
       borderBottom="solid 1px"
       borderColor="semanticColors.border.primary"
-      spacing={10}
+      spacing={4}
     >
-      {children}
+      <Box
+        ref={highlightRef}
+        background="hsl(0 0% 95.9%)"
+        position="absolute"
+        top="9px"
+        left={0}
+        borderRadius="4px"
+        height="32px"
+        transition="0.15ms ease"
+        transitionProperty="opacity, width, transform"
+        {...highlightStyles}
+      />
+      {tabData.map((tab) => (
+        <PageTab
+          to={tab.href}
+          key={tab.label}
+          onMouseOver={(e) => repositionHighlight(e, tab)}
+        >
+          {tab.label}
+        </PageTab>
+      ))}
     </HStack>
   );
 };
@@ -233,11 +286,21 @@ export const PageTab = (props: PageTabProps) => {
       {...navLinkProps}
     >
       <Box
-        lineHeight="20px"
+        {...tabProps}
+        color={colors.semanticColors.foreground.primary}
+        p="16px 12px"
+        lineHeight="16px"
         fontSize="14px"
         fontWeight="500"
-        pb={2}
-        {...tabProps}
+        display="inline-block"
+        position="relative"
+        cursor="pointer"
+        transition="color 250ms"
+        sx={{
+          _hover: {
+            color: "hsl(0, 0%, 9%)",
+          },
+        }}
       >
         {children}
       </Box>

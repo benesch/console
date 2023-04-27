@@ -34,14 +34,14 @@ const ClusterDetailPage = () => {
             <PageBreadcrumbs crumbs={breadcrumbs} />
             <ConnectModal />
           </HStack>
-          <PageTabStrip>
-            <PageTab to="." end>
-              Overview
-            </PageTab>
-            <PageTab to="replicas">Replicas</PageTab>
-            <PageTab to="materialized-views">Materialized Views</PageTab>
-            <PageTab to="indexes">Indexes</PageTab>
-          </PageTabStrip>
+          <PageTabStrip
+            tabData={[
+              { label: "Overview", href: "." },
+              { label: "Replicas", href: "replicas" },
+              { label: "Materialized Views", href: "materialized-views" },
+              { label: "Indexes", href: "indexes" },
+            ]}
+          />
         </VStack>
       </PageHeader>
       <SentryRoutes>
