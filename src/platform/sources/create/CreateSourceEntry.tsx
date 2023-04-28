@@ -33,7 +33,7 @@ const connectionIcon = (connection: Connection) => {
   }
 };
 
-const SelectConnection = () => {
+const CreateSourceEntry = () => {
   const { data: connections, error } = useConnectionsFiltered();
 
   if (error) {
@@ -77,4 +77,4 @@ const SelectConnection = () => {
   );
 };
 
-export default SelectConnection;
+export default CreateSourceEntry;
