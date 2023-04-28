@@ -193,7 +193,6 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
 
 type Tab = { label: string; href: string };
 export interface PageTabStripProps {
-  /* children: React.ReactNode; */
   tabData: Tab[];
 }
 
@@ -249,7 +248,7 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
     >
       <Box
         ref={highlightRef}
-        background="hsl(0 0% 95.9%)"
+        background="hsl(250 0.5% 96%)"
         position="absolute"
         top="9px"
         left={0}
@@ -277,7 +276,9 @@ export type PageTabProps = NavLinkProps & {
   tabProps?: BoxProps;
 };
 export const PageTab = (props: PageTabProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const { children, tabProps, ...navLinkProps } = props;
 
   return (
@@ -285,7 +286,7 @@ export const PageTab = (props: PageTabProps) => {
       style={({ isActive }) =>
         isActive
           ? {
-              borderBottom: `solid 1px ${colors.semanticColors.accent.purple}`,
+              borderBottom: `solid 1px ${semanticColors.accent.purple}`,
               marginBottom: "-1px",
             }
           : undefined
@@ -295,7 +296,7 @@ export const PageTab = (props: PageTabProps) => {
     >
       <Box
         {...tabProps}
-        color={colors.semanticColors.foreground.primary}
+        color={semanticColors.foreground.primary}
         p="16px 12px"
         lineHeight="16px"
         fontSize="14px"
@@ -304,11 +305,6 @@ export const PageTab = (props: PageTabProps) => {
         position="relative"
         cursor="pointer"
         transition="color 250ms"
-        sx={{
-          _hover: {
-            color: "hsl(0, 0%, 9%)",
-          },
-        }}
       >
         {children}
       </Box>
