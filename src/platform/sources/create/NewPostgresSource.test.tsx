@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -48,13 +48,13 @@ describe("NewPostgresSource", () => {
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
         columns: ["id", "name"],
-        rows: [["u2", "default"]],
+        rows: [["u2", "materialize"]],
       }),
       // useSchemas
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
         columns: ["id", "name", "database_id", "database_name"],
-        rows: [["u1", "default", "u1", "materialize"]],
+        rows: [["u1", "public", "u1", "materialize"]],
       }),
       // useAvailableClusterSizes
       buildUseSqlQueryHandler({
@@ -72,7 +72,7 @@ describe("NewPostgresSource", () => {
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
         columns: ["id", "name", "schema_name", "database_name", "type"],
-        rows: [["u1", "pg_connection", "default", "materialize", "postgres"]],
+        rows: [["u1", "pg_connection", "public", "materialize", "postgres"]],
       })
     );
     history.pushState(undefined, "", "/sources/new/postgres?connectionId=u1");
@@ -85,7 +85,7 @@ describe("NewPostgresSource", () => {
         {
           type: "SELECT" as const,
           columns: ["id", "database_name", "schema_name"],
-          rows: [["u3", "materialize", "default"]],
+          rows: [["u3", "materialize", "public"]],
         },
       ])
     );
@@ -105,7 +105,7 @@ describe("NewPostgresSource", () => {
 
     expect(await screen.findByText("Source Details")).toBeVisible();
     expect(location.pathname).toEqual(
-      "/sources/u3/materialize/default/pg_source/errors"
+      "/sources/u3/materialize/public/pg_source/errors"
     );
   });
 
@@ -116,7 +116,7 @@ describe("NewPostgresSource", () => {
         {
           type: "SELECT" as const,
           columns: ["id", "database_name", "schema_name"],
-          rows: [["u3", "materialize", "default"]],
+          rows: [["u3", "materialize", "public"]],
         },
       ])
     );
@@ -139,22 +139,11 @@ describe("NewPostgresSource", () => {
 
     expect(await screen.findByText("Source Details")).toBeVisible();
     expect(location.pathname).toEqual(
-      "/sources/u3/materialize/default/pg_source/errors"
+      "/sources/u3/materialize/public/pg_source/errors"
     );
   });
 
   it("shows validation messages for all fields", async () => {
-    server.use(
-      buildSqlQueryHandler([
-        { type: "SET" as const },
-        { type: "CREATE" as const },
-        {
-          type: "SELECT" as const,
-          columns: ["id", "database_name", "schema_name"],
-          rows: [["u3", "materialize", "default"]],
-        },
-      ])
-    );
     const user = userEvent.setup();
     renderComponent(<NewPostgresSource />);
 
@@ -170,6 +159,32 @@ describe("NewPostgresSource", () => {
 
     await user.click(screen.getByText("Create source"));
     expect(await screen.findByText("Cluster size is required.")).toBeVisible();
+  });
+
+  it("show validation errors for database and schema if the defaults are missing", async () => {
+    server.use(
+      // useDatabases
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name"],
+        rows: [["u2", "big_co"]],
+      }),
+      // useSchemas
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_id", "database_name"],
+        rows: [["u1", "custom_schema", "u1", "big_co"]],
+      })
+    );
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresSource />);
+
+    await user.click(screen.getByText("Create source"));
+
+    await waitFor(async () => {
+      expect(await screen.findByText("Database is required.")).toBeVisible();
+      expect(await screen.findByText("Schema is required.")).toBeVisible();
+    });
   });
 
   it("shows the database error when an unexpected error occurs ", async () => {

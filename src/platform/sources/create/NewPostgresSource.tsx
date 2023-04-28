@@ -61,8 +61,8 @@ import { relativeSourceErrorsPath } from "../SourceRoutes";
 type FormState = {
   name: string;
   connection: Connection | null;
-  database?: Database | null;
-  schema?: Schema | null;
+  database: Database | null;
+  schema: Schema | null;
   cluster: Cluster | null;
   clusterSize: SelectOption | null;
   publication: string;
@@ -156,10 +156,16 @@ const NewPostgresSource = () => {
   const { field: databaseField } = useController({
     control,
     name: "database",
+    rules: {
+      required: "Database is required.",
+    },
   });
   const { field: schemaField } = useController({
     control,
     name: "schema",
+    rules: {
+      required: "Schema is required.",
+    },
   });
   const { field: clusterField } = useController({
     control,
@@ -210,6 +216,7 @@ WHERE s.name = $1;`,
       };
     },
   });
+
   const handleValidSubmit = (values: FormState) => {
     setGeneralFormError(undefined);
     createSource(values, {
@@ -285,9 +292,34 @@ WHERE s.name = $1;`,
     }
   }, [connections, getValues, queryParams, setValue]);
 
+  React.useEffect(() => {
+    if (!databases) return;
+    if (getValues("database")) return;
+
+    const selected = databases.find((d) => d.name === "materialize");
+    if (selected) {
+      setValue("database", selected);
+    }
+  }, [databases, getValues, setValue]);
+
+  React.useEffect(() => {
+    if (!schemas) return;
+    if (getValues("schema")) return;
+
+    const selected = schemas.find(
+      (s) => s.name === "public" && s.databaseName === "materialize"
+    );
+    if (selected) {
+      setValue("schema", selected);
+    }
+  }, [schemas, getValues, setValue]);
+
   const sourceName = watch("name");
   const allTables = watch("allTables");
   const selectedCluster = watch("cluster");
+
+  const additonalOptionsError =
+    formState.errors.database || formState.errors.schema;
 
   if (loadingError) {
     return <ErrorBox />;
@@ -359,7 +391,11 @@ WHERE s.name = $1;`,
                 </InlineLabeledInput>
               </FormControl>
             </FormSection>
-            <Accordion mb="12" allowToggle>
+            <Accordion
+              mb="12"
+              allowToggle
+              index={additonalOptionsError ? 0 : undefined}
+            >
               <AccordionItem>
                 <AccordionButton color={semanticColors.accent.brightPurple}>
                   <Text textStyle="text-ui-med">Additional Options</Text>
@@ -368,8 +404,11 @@ WHERE s.name = $1;`,
                 <AccordionPanel
                   motionProps={{ style: { overflow: "visible" } }}
                 >
-                  <FormControl>
-                    <InlineLabeledInput label="Database">
+                  <FormControl isInvalid={!!formState.errors.database} mb="4">
+                    <InlineLabeledInput
+                      label="Database"
+                      error={formState.errors.database?.message}
+                    >
                       <SearchableSelect
                         ariaLabel="Select database"
                         sectionLabel="Select database"
@@ -379,8 +418,11 @@ WHERE s.name = $1;`,
                       />
                     </InlineLabeledInput>
                   </FormControl>
-                  <FormControl>
-                    <InlineLabeledInput label="Schema">
+                  <FormControl isInvalid={!!formState.errors.schema}>
+                    <InlineLabeledInput
+                      label="Schema"
+                      error={formState.errors.schema?.message}
+                    >
                       <SearchableSelect
                         ariaLabel="Select schema"
                         sectionLabel="Select schema"
