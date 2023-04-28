@@ -210,13 +210,15 @@ export const InlineLabeledInput = ({
       </FormLabel>
       {children}
       <Box gridColumn="2">
-        <Text
-          mt="2"
-          textStyle="text-ui-reg"
-          color="semanticColors.foreground.secondary"
-        >
-          {!error && message}
-        </Text>
+        {message && (
+          <Text
+            mt="2"
+            textStyle="text-ui-reg"
+            color="semanticColors.foreground.secondary"
+          >
+            {!error && message}
+          </Text>
+        )}
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>
