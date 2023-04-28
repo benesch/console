@@ -19,6 +19,7 @@ import {
   HStack,
   Spinner,
   StackProps,
+  StyleProps,
   useTheme,
 } from "@chakra-ui/react";
 import { ErrorBoundary } from "@sentry/react";
@@ -200,16 +201,22 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
   const { space } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
-  const [tabBoundingBox, setTabBoundingBox] = React.useState<any>(null);
-  const [wrapperBoundingBox, setWrapperBoundingBox] = React.useState<any>(null);
-  const [highlightedTab, setHighlightedTab] = React.useState(null);
+  const [tabBoundingBox, setTabBoundingBox] = React.useState<DOMRect | null>(
+    null
+  );
+  const [wrapperBoundingBox, setWrapperBoundingBox] =
+    React.useState<DOMRect | null>(null);
+  const [highlightedTab, setHighlightedTab] = React.useState<Tab | null>(null);
   const [isHoveredFromNull, setIsHoveredFromNull] = React.useState(true);
 
-  const wrapperRef = React.useRef<any>(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
   const highlightRef = React.useRef(null);
 
-  const repositionHighlight = (e: any, tab: any) => {
-    setTabBoundingBox(e.target.getBoundingClientRect());
+  const repositionHighlight = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    tab: Tab
+  ) => {
+    setTabBoundingBox((e.target as HTMLElement).getBoundingClientRect());
     setWrapperBoundingBox(wrapperRef.current!.getBoundingClientRect());
     setIsHoveredFromNull(!highlightedTab);
     setHighlightedTab(tab);
@@ -217,7 +224,7 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
 
   const resetHighlight = () => setHighlightedTab(null);
 
-  const highlightStyles = {} as any;
+  const highlightStyles = {} as StyleProps;
 
   if (tabBoundingBox && wrapperBoundingBox) {
     highlightStyles.transitionDuration = isHoveredFromNull ? "0ms" : "150ms";
