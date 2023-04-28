@@ -7,7 +7,6 @@ import {
   Breadcrumb,
   PageBreadcrumbs,
   PageHeader,
-  PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";

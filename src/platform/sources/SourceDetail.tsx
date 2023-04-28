@@ -12,7 +12,6 @@ import {
   ExpandablePanel,
   PageBreadcrumbs,
   PageHeader,
-  PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
