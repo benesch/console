@@ -29,7 +29,7 @@ const ClusterDetailPage = () => {
   return (
     <>
       <PageHeader>
-        <VStack spacing={6} alignItems="start" width="100%">
+        <VStack spacing={4} alignItems="start" width="100%">
           <HStack justifyContent="space-between" width="100%">
             <PageBreadcrumbs crumbs={breadcrumbs} />
             <ConnectModal />

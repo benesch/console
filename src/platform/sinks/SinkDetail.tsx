@@ -96,13 +96,13 @@ const SinkDetail = ({ sinksResponse }: SinkDetailProps) => {
               </ExpandablePanel>
             )}
           </VStack>
-          <PageTabStrip>
-            {/* Hide this until we have content for this tab
-          <PageTab to={`/sinks/${params.sinkName}`} end>
-            Overview
-          </PageTab>*/}
-            <PageTab to="errors">Errors</PageTab>
-          </PageTabStrip>
+          <PageTabStrip
+            tabData={[
+              /* Hide this until we have content for this tab
+             { label: "Overview", href: `/sinks/${params.sinkName}` } */
+              { label: "Errors", href: "errors" },
+            ]}
+          />
         </VStack>
       </PageHeader>
       <SentryRoutes>
