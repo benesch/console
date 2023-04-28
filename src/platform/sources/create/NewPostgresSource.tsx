@@ -229,7 +229,7 @@ WHERE s.name = $1;`,
           ),
         });
         navigate(
-          `../../sources/${relativeSourceErrorsPath({
+          `../../${relativeSourceErrorsPath({
             id,
             name: values.name,
             schemaName,

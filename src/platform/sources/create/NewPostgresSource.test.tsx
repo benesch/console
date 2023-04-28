@@ -27,11 +27,15 @@ const renderComponent = (element: ReactElement) => {
   return render(
     <Wrapper>
       <Routes>
-        <Route
-          path="/sources/:id/:db/:schema/:name/errors"
-          element={<div>Source Details</div>}
-        />
-        <Route path="/sources/new" element={element} />
+        <Route path="/sources/*">
+          <Route
+            path=":id/:db/:schema/:name/errors"
+            element={<div>Source Details</div>}
+          />
+          <Route path="new/*">
+            <Route path="postgres" element={element} />
+          </Route>
+        </Route>
       </Routes>
     </Wrapper>
   );
@@ -71,7 +75,7 @@ describe("NewPostgresSource", () => {
         rows: [["u1", "pg_connection", "default", "materialize", "postgres"]],
       })
     );
-    history.pushState(undefined, "", "/sources/new?connectionId=u1");
+    history.pushState(undefined, "", "/sources/new/postgres?connectionId=u1");
   });
 
   it("creates a source successfully and redirects to the new source", async () => {
