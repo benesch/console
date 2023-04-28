@@ -12,7 +12,6 @@ import {
   ExpandablePanel,
   PageBreadcrumbs,
   PageHeader,
-  PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { SchemaObjectRouteParams } from "~/platform/schemaObjectRouteHelpers";
@@ -42,7 +41,7 @@ const SourceDetail = ({ sourcesResponse }: SourceDetailProps) => {
   return (
     <>
       <PageHeader>
-        <VStack spacing={6} alignItems="start" width="100%">
+        <VStack spacing={4} alignItems="start" width="100%">
           <VStack spacing={2} alignItems="start" width="100%">
             <HStack justifyContent="space-between" width="100%">
               <PageBreadcrumbs crumbs={breadcrumbs}>
@@ -99,14 +98,14 @@ const SourceDetail = ({ sourcesResponse }: SourceDetailProps) => {
               </ExpandablePanel>
             )}
           </VStack>
-          <PageTabStrip>
-            {/* Hide this until we have content for this tab
-          <PageTab to={`/sources/${params.sourceName}`} end>
-            Overview
-          </PageTab>*/}
-            <PageTab to="errors">Errors</PageTab>
-            <PageTab to="subsources">Subsources</PageTab>
-          </PageTabStrip>
+          <PageTabStrip
+            tabData={[
+              /* Hide this until we have content for this tab
+              /* { to: `/sources/${params.sourceName}`, label: "Overview" }, */
+              { href: `errors`, label: "Errors" },
+              { href: `subsources`, label: "Subsources" },
+            ]}
+          />
         </VStack>
       </PageHeader>
       <SentryRoutes>

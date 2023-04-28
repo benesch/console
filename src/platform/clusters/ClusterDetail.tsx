@@ -7,7 +7,6 @@ import {
   Breadcrumb,
   PageBreadcrumbs,
   PageHeader,
-  PageTab,
   PageTabStrip,
 } from "~/layouts/BaseLayout";
 import { ClusterDetailParams } from "~/platform/clusters/ClusterRoutes";
@@ -29,19 +28,19 @@ const ClusterDetailPage = () => {
   return (
     <>
       <PageHeader>
-        <VStack spacing={6} alignItems="start" width="100%">
+        <VStack spacing={4} alignItems="start" width="100%">
           <HStack justifyContent="space-between" width="100%">
             <PageBreadcrumbs crumbs={breadcrumbs} />
             <ConnectModal />
           </HStack>
-          <PageTabStrip>
-            <PageTab to="." end>
-              Overview
-            </PageTab>
-            <PageTab to="replicas">Replicas</PageTab>
-            <PageTab to="materialized-views">Materialized Views</PageTab>
-            <PageTab to="indexes">Indexes</PageTab>
-          </PageTabStrip>
+          <PageTabStrip
+            tabData={[
+              { label: "Overview", href: "." },
+              { label: "Replicas", href: "replicas" },
+              { label: "Materialized Views", href: "materialized-views" },
+              { label: "Indexes", href: "indexes" },
+            ]}
+          />
         </VStack>
       </PageHeader>
       <SentryRoutes>

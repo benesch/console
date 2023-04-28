@@ -19,6 +19,7 @@ import {
   HStack,
   Spinner,
   StackProps,
+  StyleProps,
   useTheme,
 } from "@chakra-ui/react";
 import { ErrorBoundary } from "@sentry/react";
@@ -190,24 +191,82 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
   );
 };
 
+type Tab = { label: string; href: string };
 export interface PageTabStripProps {
-  children: React.ReactNode;
+  tabData: Tab[];
 }
 
-export const PageTabStrip = ({ children }: PageTabStripProps) => {
+export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
   const { space } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
+  const [tabBoundingBox, setTabBoundingBox] = React.useState<DOMRect | null>(
+    null
+  );
+  const [wrapperBoundingBox, setWrapperBoundingBox] =
+    React.useState<DOMRect | null>(null);
+  const [highlightedTab, setHighlightedTab] = React.useState<Tab | null>(null);
+  const [isHoveredFromNull, setIsHoveredFromNull] = React.useState(true);
+
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const highlightRef = React.useRef(null);
+
+  const repositionHighlight = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    tab: Tab
+  ) => {
+    setTabBoundingBox((e.target as HTMLElement).getBoundingClientRect());
+    setWrapperBoundingBox(wrapperRef.current!.getBoundingClientRect());
+    setIsHoveredFromNull(!highlightedTab);
+    setHighlightedTab(tab);
+  };
+
+  const resetHighlight = () => setHighlightedTab(null);
+
+  const highlightStyles = {} as StyleProps;
+
+  if (tabBoundingBox && wrapperBoundingBox) {
+    highlightStyles.transitionDuration = isHoveredFromNull ? "0ms" : "150ms";
+    highlightStyles.opacity = highlightedTab ? 1 : 0;
+    highlightStyles.width = `${tabBoundingBox.width}px`;
+    highlightStyles.transform = `translate(${
+      tabBoundingBox.left - wrapperBoundingBox.left
+    }px)`;
+  }
+
   return (
     <HStack
+      ref={wrapperRef}
+      onMouseLeave={resetHighlight}
+      position="relative"
       width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
-      px={mainContentMargin}
+      px={6}
       borderBottom="solid 1px"
       borderColor="semanticColors.border.primary"
-      spacing={10}
+      spacing={4}
     >
-      {children}
+      <Box
+        ref={highlightRef}
+        background="hsl(250 0.5% 96%)"
+        position="absolute"
+        top="9px"
+        left={0}
+        borderRadius="4px"
+        height="32px"
+        transition="0.15ms ease"
+        transitionProperty="opacity, width, transform"
+        {...highlightStyles}
+      />
+      {tabData.map((tab) => (
+        <PageTab
+          to={tab.href}
+          key={tab.label}
+          onMouseOver={(e) => repositionHighlight(e, tab)}
+        >
+          {tab.label}
+        </PageTab>
+      ))}
     </HStack>
   );
 };
@@ -217,7 +276,9 @@ export type PageTabProps = NavLinkProps & {
   tabProps?: BoxProps;
 };
 export const PageTab = (props: PageTabProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const { children, tabProps, ...navLinkProps } = props;
 
   return (
@@ -225,19 +286,25 @@ export const PageTab = (props: PageTabProps) => {
       style={({ isActive }) =>
         isActive
           ? {
-              borderBottom: `solid 1px ${colors.semanticColors.accent.purple}`,
+              borderBottom: `solid 1px ${semanticColors.accent.purple}`,
               marginBottom: "-1px",
             }
           : undefined
       }
+      end={true}
       {...navLinkProps}
     >
       <Box
-        lineHeight="20px"
+        {...tabProps}
+        color={semanticColors.foreground.primary}
+        p="16px 12px"
+        lineHeight="16px"
         fontSize="14px"
         fontWeight="500"
-        pb={2}
-        {...tabProps}
+        display="inline-block"
+        position="relative"
+        cursor="pointer"
+        transition="color 250ms"
       >
         {children}
       </Box>
