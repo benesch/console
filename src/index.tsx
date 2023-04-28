@@ -2,7 +2,9 @@
  * @module
  * Entry point for the frontend.
  */
-import "@fontsource/inter/variable-full.css";
+// We host our own copy of Inter because the fontsource version is very out of date
+import "~/font/Inter.var.woff2";
+import "~/font/inter.css";
 import "@fontsource/roboto-mono";
 import "~/types";
 // Initializes Sentry error reporting and tracing

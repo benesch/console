@@ -26,7 +26,6 @@
     "@chakra-ui/toast": "^4.0.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.8.1",
-    "@fontsource/inter": "^4.5.14",
     "@fontsource/roboto-mono": "^4.5.8",
     "@frontegg/react": "^5.0.18",
     "@melloware/csp-webpack-plugin": "^6.0.4",

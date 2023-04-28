@@ -28,6 +28,7 @@ const config: Configuration = {
     extensions: [".tsx", ".ts", ".js"],
     alias: {
       "~/img": path.resolve(__dirname, "img"),
+      "~/font": path.resolve(__dirname, "font"),
       "~": path.resolve(__dirname, "src"),
     },
   },

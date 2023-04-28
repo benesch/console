@@ -66,7 +66,7 @@ export interface ThemeShadows {
   level4: string;
 }
 
-const fontDefault = "intervariable, Arial, sans-serif";
+const fontDefault = "Inter, Arial, sans-serif";
 
 export const initialColorMode = "system";
 export const config: ChakraTheme["config"] = {
