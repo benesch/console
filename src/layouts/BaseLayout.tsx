@@ -235,7 +235,7 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
       position="relative"
       width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
-      px={mainContentMargin}
+      px={6}
       borderBottom="solid 1px"
       borderColor="semanticColors.border.primary"
       spacing={4}
@@ -283,6 +283,7 @@ export const PageTab = (props: PageTabProps) => {
             }
           : undefined
       }
+      end={true}
       {...navLinkProps}
     >
       <Box
