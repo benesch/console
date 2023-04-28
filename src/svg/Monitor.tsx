@@ -1,13 +1,18 @@
-import { useTheme } from "@chakra-ui/react";
+import { Icon, IconProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import { MaterializeTheme } from "~/theme";
 
-const MonitorIcon = () => {
+const MonitorIcon = (props: IconProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
-    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <Icon
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g clipPath="url(#clip0_185_547)">
         <rect
           x="1"
@@ -33,7 +38,7 @@ const MonitorIcon = () => {
           <rect width="16" height="16" fill="white" />
         </clipPath>
       </defs>
-    </svg>
+    </Icon>
   );
 };
 
