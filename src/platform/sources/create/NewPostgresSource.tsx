@@ -371,7 +371,7 @@ WHERE s.name = $1;`,
               </FormControl>
             </FormSection>
             <FormSection title="General">
-              <FormControl isInvalid={!!formState.errors.name}>
+              <FormControl isInvalid={!!formState.errors.name} mb="4">
                 <InlineLabeledInput
                   label="Name"
                   error={sourceNameErrorMessage(formState.errors.name)}
@@ -390,51 +390,53 @@ WHERE s.name = $1;`,
                   />
                 </InlineLabeledInput>
               </FormControl>
+              <Accordion
+                allowToggle
+                index={additonalOptionsError ? 0 : undefined}
+              >
+                <AccordionItem>
+                  <AccordionButton
+                    color={semanticColors.accent.brightPurple}
+                    py="2"
+                  >
+                    <Text textStyle="text-ui-med">Additional Options</Text>
+                    <AccordionIcon ml="2" />
+                  </AccordionButton>
+                  <AccordionPanel
+                    motionProps={{ style: { overflow: "visible" } }}
+                  >
+                    <FormControl isInvalid={!!formState.errors.database} mb="4">
+                      <InlineLabeledInput
+                        label="Database"
+                        error={formState.errors.database?.message}
+                      >
+                        <SearchableSelect
+                          ariaLabel="Select database"
+                          sectionLabel="Select database"
+                          placeholder="Select one"
+                          {...databaseField}
+                          options={databases ?? []}
+                        />
+                      </InlineLabeledInput>
+                    </FormControl>
+                    <FormControl isInvalid={!!formState.errors.schema}>
+                      <InlineLabeledInput
+                        label="Schema"
+                        error={formState.errors.schema?.message}
+                      >
+                        <SearchableSelect
+                          ariaLabel="Select schema"
+                          sectionLabel="Select schema"
+                          placeholder="Select one"
+                          {...schemaField}
+                          options={schemas ?? []}
+                        />
+                      </InlineLabeledInput>
+                    </FormControl>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
             </FormSection>
-            <Accordion
-              mb="12"
-              allowToggle
-              index={additonalOptionsError ? 0 : undefined}
-            >
-              <AccordionItem>
-                <AccordionButton color={semanticColors.accent.brightPurple}>
-                  <Text textStyle="text-ui-med">Additional Options</Text>
-                  <AccordionIcon ml="2" />
-                </AccordionButton>
-                <AccordionPanel
-                  motionProps={{ style: { overflow: "visible" } }}
-                >
-                  <FormControl isInvalid={!!formState.errors.database} mb="4">
-                    <InlineLabeledInput
-                      label="Database"
-                      error={formState.errors.database?.message}
-                    >
-                      <SearchableSelect
-                        ariaLabel="Select database"
-                        sectionLabel="Select database"
-                        placeholder="Select one"
-                        {...databaseField}
-                        options={databases ?? []}
-                      />
-                    </InlineLabeledInput>
-                  </FormControl>
-                  <FormControl isInvalid={!!formState.errors.schema}>
-                    <InlineLabeledInput
-                      label="Schema"
-                      error={formState.errors.schema?.message}
-                    >
-                      <SearchableSelect
-                        ariaLabel="Select schema"
-                        sectionLabel="Select schema"
-                        placeholder="Select one"
-                        {...schemaField}
-                        options={schemas ?? []}
-                      />
-                    </InlineLabeledInput>
-                  </FormControl>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
             <FormSection title="Compute cluster">
               <FormControl isInvalid={!!formState.errors.cluster}>
                 <InlineLabeledInput

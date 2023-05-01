@@ -22,6 +22,7 @@ export const Alert = {
   },
 };
 
+export { Accordion } from "~/theme/components/Accordion";
 export { Button } from "~/theme/components/Button";
 export { FormLabel } from "~/theme/components/FormLabel";
 
@@ -360,25 +361,5 @@ export const Menu = {
   }),
   defaultProps: {
     colorScheme: "gray",
-  },
-};
-
-export const Accordion = {
-  defaultProps: {
-    variant: "borderless",
-  },
-  variants: {
-    borderless: {
-      container: {
-        border: "none",
-      },
-      button: {
-        p: 0,
-      },
-      panel: {
-        mt: 6,
-        p: 0,
-      },
-    },
   },
 };
