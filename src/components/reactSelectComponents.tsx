@@ -38,7 +38,7 @@ export const Option = <Option,>(
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
-  const { isFocused, isSelected, innerRef, innerProps } = props;
+  const { isFocused, innerRef, innerProps } = props;
   return (
     <Box
       ref={innerRef}
@@ -46,12 +46,11 @@ export const Option = <Option,>(
       _hover={{
         backgroundColor: semanticColors.background.secondary,
       }}
-      backgroundColor={
-        isFocused || isSelected ? semanticColors.background.secondary : ""
-      }
+      backgroundColor={isFocused ? semanticColors.background.secondary : ""}
       py="8px"
       pr="4"
       width="100%"
+      cursor="pointer"
     >
       <HStack spacing="0" alignItems="center" justifyContent="start">
         <Flex justifyContent="center" width="40px">
