@@ -38,7 +38,11 @@ const ConnectInstructions = (props: BoxProps): JSX.Element => {
       data-test-id="connection-options"
       lineNumbers
       tabs={[
-        { title: "Terminal", contents: psqlCopyString, icon: <TerminalIcon /> },
+        {
+          title: "Terminal",
+          contents: psqlCopyString,
+          icon: <TerminalIcon w="4" h="4" />,
+        },
         {
           title: "External tools",
           contents: `HOST=${environmentdAddress.split(":")[0]}
@@ -48,7 +52,7 @@ PORT=${environmentdAddress.split(":")[1]}
 USER=${user.email}
 
 DATABASE=materialize`,
-          icon: <MonitorIcon />,
+          icon: <MonitorIcon w="4" h="4" />,
         },
       ]}
       minHeight="208px"

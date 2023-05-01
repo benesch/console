@@ -257,9 +257,7 @@ export const TabbedCodeBlock: React.FC<
                   bg: colors.semanticColors.background.tertiary,
                 }}
               >
-                <Box w="4" h="4">
-                  {icon}
-                </Box>
+                {icon}
                 <Text as="span" fontWeight="500">
                   {title}
                 </Text>
