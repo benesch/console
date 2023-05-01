@@ -15,7 +15,8 @@
     "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"],
-      "~/img/*": ["./img/*"]
+      "~/img/*": ["./img/*"],
+      "~/font/*": ["./font/*"]
     },
     "noEmit": true,
     "plugins": [
