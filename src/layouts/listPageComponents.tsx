@@ -4,8 +4,6 @@
  */
 
 import {
-  Alert,
-  AlertIcon,
   Box,
   BoxProps,
   Heading,
@@ -20,19 +18,6 @@ import TextLink from "~/components/TextLink";
 import Missing from "~/svg/Missing";
 import Slash from "~/svg/Slash";
 import { MaterializeTheme } from "~/theme";
-
-type GenericListProps = {
-  message: string;
-};
-
-export const ListFetchError = ({ message, ...props }: GenericListProps) => {
-  return (
-    <Alert status="warning" p={1} px={2} {...props}>
-      <AlertIcon />
-      <Text>{message}</Text>
-    </Alert>
-  );
-};
 
 export type SQLSuggestion = {
   title: string;
