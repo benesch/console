@@ -1,7 +1,10 @@
 import {
   Button,
+  Grid,
+  GridItem,
   HStack,
   Image,
+  Spinner,
   Tab,
   TabList,
   TabPanel,
@@ -34,7 +37,7 @@ const connectionIcon = (connection: Connection) => {
 };
 
 const CreateSourceEntry = () => {
-  const { data: connections, error } = useConnectionsFiltered();
+  const { data: connections, error, loading } = useConnectionsFiltered();
 
   if (error) {
     return <ErrorBox />;
@@ -56,19 +59,31 @@ const CreateSourceEntry = () => {
           <Tab>Network security</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>
-            <HStack mt="8" spacing="6">
-              {connections?.map((connection) => (
-                <IconNavLink
-                  key={connection.id}
-                  icon={connectionIcon(connection)}
+          <TabPanel mt="8">
+            <Grid gridTemplateColumns="1fr 1fr" gridGap="4">
+              {loading ? (
+                <GridItem
+                  display="flex"
+                  justifyContent="center"
                   width="100%"
-                  to={`../${connection.type}?connectionId=${connection.id}`}
+                  gridColumnEnd="span 2"
                 >
-                  {connection.name}
-                </IconNavLink>
-              ))}
-            </HStack>
+                  <Spinner />
+                </GridItem>
+              ) : (
+                connections?.map((connection) => (
+                  <GridItem key={connection.id}>
+                    <IconNavLink
+                      icon={connectionIcon(connection)}
+                      width="100%"
+                      to={`../${connection.type}?connectionId=${connection.id}`}
+                    >
+                      {connection.name}
+                    </IconNavLink>
+                  </GridItem>
+                ))
+              )}
+            </Grid>
           </TabPanel>
           <TabPanel></TabPanel>
         </TabPanels>
