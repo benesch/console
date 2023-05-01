@@ -14,7 +14,7 @@ export interface ErrorBoxProps extends FlexProps {
   message?: string;
 }
 
-/** Displays a simple error message that takes up it's full container */
+/** Displays a simple error message that takes up its full container */
 const ErrorBox = ({ message, ...flexProps }: ErrorBoxProps) => {
   return (
     <Flex
