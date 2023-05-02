@@ -142,6 +142,7 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
       backgroundColor={
         isFocused || isSelected ? semanticColors.background.secondary : ""
       }
+      cursor="pointer"
       px="3"
       py="6px"
       width="100%"
