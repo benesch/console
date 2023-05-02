@@ -224,8 +224,7 @@ ORDER BY r.id;`
     assert(getColumnByName);
 
     data = response.data.rows.map((row) => {
-      // TODO Make this just `string` once Materialize 0.49 is released.
-      const replica_id = getColumnByName(row, "id") as number | string;
+      const replica_id = getColumnByName(row, "id") as string;
       const replica: ClusterReplicaWithUtilizaton = {
         id: replica_id.toString(),
         name: getColumnByName(row, "replica_name") as string,
