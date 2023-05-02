@@ -1,6 +1,8 @@
 import { SchemaObject, useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
+import { buildWhereConditions } from ".";
+
 export type ConnectionType = "postgres" | "kafka";
 
 export interface ConnectionWithDetails extends SchemaObject {
@@ -66,11 +68,18 @@ GROUP BY connections.id, connections.name, connections.type, schema_name, databa
 export type ConnectionsResponse = ReturnType<typeof useConnections>;
 
 /**
- * Fetches all connections of a given type
+ * Fetches all connections, filter by any of the following:
+ * * type
+ * * name substring
  */
 export function useConnectionsFiltered({
+  nameFilter,
   type,
-}: { type?: ConnectionType } = {}) {
+}: { nameFilter?: string; type?: ConnectionType } = {}) {
+  const filters = [
+    nameFilter ? `connections.name ILIKE '%${nameFilter}%'` : undefined,
+    type ? `connections.type = '${type}'` : undefined,
+  ];
   const connectionResponse = useSql(`
 SELECT
   connections.id,
@@ -80,8 +89,9 @@ SELECT
   connections.type
 FROM mz_connections AS connections
 INNER JOIN mz_schemas schemas ON schemas.id = connections.schema_id
-INNER JOIN mz_databases databases ON databases.id = schemas.database_id
-${type ? `WHERE connections.type = '${type}';` : ""}`);
+INNER JOIN mz_databases databases ON databases.id = schemas.database_id${buildWhereConditions(
+    filters
+  )};`);
 
   let connections: Connection[] | null = null;
   if (connectionResponse.data) {

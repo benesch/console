@@ -24,6 +24,7 @@ import SearchInput from "~/components/SearchInput";
 import postgresLogo from "~/img/postgres-logo.svg";
 import { PageHeading } from "~/layouts/BaseLayout";
 import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
+import { useQueryStringState } from "~/useQueryString";
 
 const connectionIcon = (connection: Connection) => {
   switch (connection.type) {
@@ -37,7 +38,12 @@ const connectionIcon = (connection: Connection) => {
 };
 
 const CreateSourceEntry = () => {
-  const { data: connections, error, loading } = useConnectionsFiltered();
+  const [nameFilter, setNameFilter] = useQueryStringState("connectionName");
+  const {
+    data: connections,
+    error,
+    loading,
+  } = useConnectionsFiltered({ nameFilter });
 
   if (error) {
     return <ErrorBox />;
@@ -48,7 +54,11 @@ const CreateSourceEntry = () => {
         Choose a connection
       </PageHeading>
       <HStack width="100%">
-        <SearchInput containerProps={{ width: "100%" }} />
+        <SearchInput
+          containerProps={{ width: "100%" }}
+          onChange={(e) => setNameFilter(e.target.value)}
+          value={nameFilter}
+        />
         <Button variant="primary" size="sm" minWidth="auto">
           New connection
         </Button>
