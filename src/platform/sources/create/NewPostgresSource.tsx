@@ -10,7 +10,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Grid,
+  HStack,
   Input,
   Modal,
   ModalContent,
@@ -519,85 +519,85 @@ WHERE s.name = $1;`,
                 </FormControl>
                 {!allTables && (
                   <>
-                    <VStack spacing="4">
+                    <VStack spacing="4" width="100%">
                       {fields.map((field, index) => (
-                        <Grid
+                        <InlineLabeledInput
                           key={field.id}
-                          templateColumns="min-content minmax(auto, 156px) minmax(auto, 156px)"
-                          columnGap="6"
-                          justifyContent="space-between"
-                          alignItems="start"
-                          position="relative"
-                          width="100%"
+                          label={`Table ${index + 1}`}
                         >
-                          <FormLabel variant="inline">
-                            Table {index + 1}
-                          </FormLabel>
-                          <FormControl
-                            isInvalid={!!formState.errors.tables?.[index]}
-                          >
-                            <Input
-                              {...register(`tables.${index}.name` as const, {
-                                required: true,
-                                pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                                validate: {
-                                  unique: (value) => {
-                                    const count = getValues()
-                                      .tables.map((r) => r.name)
-                                      .filter((name) => name === value).length;
-                                    return count <= 1;
+                          <HStack alignItems="start">
+                            <FormControl
+                              isInvalid={!!formState.errors.tables?.[index]}
+                            >
+                              <Input
+                                {...register(`tables.${index}.name` as const, {
+                                  required: true,
+                                  pattern:
+                                    MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                                  validate: {
+                                    unique: (value) => {
+                                      const count = getValues()
+                                        .tables.map((r) => r.name)
+                                        .filter(
+                                          (name) => name === value
+                                        ).length;
+                                      return count <= 1;
+                                    },
                                   },
-                                },
-                              })}
-                              placeholder="table name"
-                              autoCorrect="off"
-                              spellCheck="false"
-                              size="sm"
-                              variant={
-                                formState.errors.tables?.[index]?.name
-                                  ? "error"
-                                  : "default"
+                                })}
+                                placeholder="table name"
+                                autoCorrect="off"
+                                spellCheck="false"
+                                size="sm"
+                                variant={
+                                  formState.errors.tables?.[index]?.name
+                                    ? "error"
+                                    : "default"
+                                }
+                              />
+                              <FormErrorMessage>
+                                {tableNameErrorMessage(
+                                  formState.errors.tables?.[index]?.name
+                                )}
+                              </FormErrorMessage>
+                            </FormControl>
+                            <FormControl
+                              isInvalid={
+                                !!formState.errors.tables?.[index]?.alias
                               }
-                            />
-                            <FormErrorMessage>
-                              {tableNameErrorMessage(
-                                formState.errors.tables?.[index]?.name
-                              )}
-                            </FormErrorMessage>
-                          </FormControl>
-                          <FormControl
-                            isInvalid={
-                              !!formState.errors.tables?.[index]?.alias
-                            }
-                          >
-                            <Input
-                              {...register(`tables.${index}.alias` as const, {
-                                pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                                validate: {
-                                  unique: (value) => {
-                                    const count = getValues()
-                                      .tables.map((r) => r.name)
-                                      .filter((name) => name === value).length;
-                                    return count <= 1;
+                            >
+                              <Input
+                                {...register(`tables.${index}.alias` as const, {
+                                  pattern:
+                                    MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                                  validate: {
+                                    unique: (value) => {
+                                      const count = getValues()
+                                        .tables.map((r) => r.name)
+                                        .filter(
+                                          (name) => name === value
+                                        ).length;
+                                      return count <= 1;
+                                    },
                                   },
-                                },
-                              })}
-                              placeholder="alias"
-                              autoCorrect="off"
-                              spellCheck="false"
-                              size="sm"
-                              variant={
-                                formState.errors.tables?.[index]?.alias
-                                  ? "error"
-                                  : "default"
-                              }
-                            />
-                            <FormErrorMessage>
-                              {tableNameErrorMessage(
-                                formState.errors.tables?.[index]?.alias
-                              )}
-                            </FormErrorMessage>
-                          </FormControl>
+                                })}
+                                placeholder="alias"
+                                autoCorrect="off"
+                                spellCheck="false"
+                                size="sm"
+                                variant={
+                                  formState.errors.tables?.[index]?.alias
+                                    ? "error"
+                                    : "default"
+                                }
+                              />
+                              <FormErrorMessage>
+                                {tableNameErrorMessage(
+                                  formState.errors.tables?.[index]?.alias
+                                )}
+                              </FormErrorMessage>
+                            </FormControl>
+                          </HStack>
                           {index > 0 && (
                             <GutterContainer>
                               <Button
@@ -611,7 +611,7 @@ WHERE s.name = $1;`,
                               </Button>
                             </GutterContainer>
                           )}
-                        </Grid>
+                        </InlineLabeledInput>
                       ))}
                     </VStack>
                     <Button
@@ -624,6 +624,7 @@ WHERE s.name = $1;`,
                         },
                       }}
                       variant="borderless"
+                      width="auto"
                       onClick={() =>
                         append({
                           name: "",

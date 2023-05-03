@@ -204,6 +204,8 @@ export const InlineLabeledInput = ({
       columnGap="6"
       justifyContent="space-between"
       alignItems="start"
+      width="100%"
+      position="relative"
     >
       <FormLabel variant="inline" mt="2" lineHeight="16px">
         {label}
