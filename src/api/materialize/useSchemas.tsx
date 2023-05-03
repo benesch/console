@@ -38,6 +38,10 @@ ORDER BY s.name;`
   return { ...response, data: schemas };
 }
 
+export function isDefaultSchema(schema: Schema) {
+  return schema.name === "public" && schema.databaseName === "materialize";
+}
+
 export type UseSchemaResponse = ReturnType<typeof useSchemas>;
 
 export default useSchemas;

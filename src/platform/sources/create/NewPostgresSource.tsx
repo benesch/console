@@ -36,8 +36,14 @@ import {
   Connection,
   useConnectionsFiltered,
 } from "~/api/materialize/useConnections";
-import useDatabases, { Database } from "~/api/materialize/useDatabases";
-import useSchemas, { Schema } from "~/api/materialize/useSchemas";
+import useDatabases, {
+  Database,
+  isDefaultDatabase,
+} from "~/api/materialize/useDatabases";
+import useSchemas, {
+  isDefaultSchema,
+  Schema,
+} from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
@@ -296,7 +302,7 @@ WHERE s.name = $1;`,
     if (!databases) return;
     if (getValues("database")) return;
 
-    const selected = databases.find((d) => d.name === "materialize");
+    const selected = databases.find(isDefaultDatabase);
     if (selected) {
       setValue("database", selected);
     }
@@ -306,9 +312,7 @@ WHERE s.name = $1;`,
     if (!schemas) return;
     if (getValues("schema")) return;
 
-    const selected = schemas.find(
-      (s) => s.name === "public" && s.databaseName === "materialize"
-    );
+    const selected = schemas.find(isDefaultSchema);
     if (selected) {
       setValue("schema", selected);
     }
