@@ -49,6 +49,7 @@ const buildStyles = <
     }),
     control: (base, state) => ({
       ...base,
+      cursor: "pointer",
       color: semanticColors.foreground.secondary,
       fontSize: "14px",
       lineHeight: "16px",
@@ -61,6 +62,14 @@ const buildStyles = <
       background: state.isFocused
         ? semanticColors.background.secondary
         : semanticColors.background.primary,
+      ":hover": {
+        boxShadow: state.isFocused
+          ? "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)" // accent.brightPurple
+          : "",
+        borderColor: state.isFocused
+          ? semanticColors.accent.brightPurple
+          : "inherit",
+      },
     }),
     dropdownIndicator: (base) => ({
       ...base,
