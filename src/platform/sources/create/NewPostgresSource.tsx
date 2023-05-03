@@ -461,15 +461,14 @@ WHERE s.name = $1;`,
                       {...clusterField}
                       options={clusterOptions}
                     />
-                    {selectedCluster?.id === "0" && (
+                    {selectedCluster?.id === "0" && sourceName && (
                       <Text
                         color={semanticColors.foreground.secondary}
                         mt="2"
                         maxWidth="260px"
-                        textStyle="text-small"
+                        textStyle="text-ui-reg"
                       >
-                        Cluster name: {sourceName}_linked_cluster. You can edit
-                        this after creation.
+                        Cluster name: {sourceName}_linked_cluster.
                       </Text>
                     )}
                   </Box>
