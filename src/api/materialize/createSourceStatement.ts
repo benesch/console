@@ -1,3 +1,4 @@
+import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
 import { assert, notNullOrUndefined } from "~/util";
 
 import { quoteIdentifier } from ".";
@@ -29,7 +30,7 @@ const createSourceStatement = (params: CreateSourceParameters) => {
     .map(quoteIdentifier)
     .join(".");
   const name = namespace ? `${namespace}.${params.name}` : params.name;
-  const createNewCluster = params.cluster.id === "0";
+  const createNewCluster = params.cluster.id === NEW_CLUSTER_ID;
 
   return `
 CREATE SOURCE ${name}${

@@ -95,6 +95,8 @@ function tableNameErrorMessage(error: FieldError | undefined): React.ReactNode {
   if (error.type === "unique") return "Table names must be unique.";
 }
 
+export const NEW_CLUSTER_ID = "0";
+
 const NewPostgresSource = () => {
   const [generalFormError, setGeneralFormError] = React.useState<
     string | undefined
@@ -119,7 +121,11 @@ const NewPostgresSource = () => {
   const clusterOptions = React.useMemo(() => {
     return [
       ...(clusters ?? []),
-      { id: "0", name: "Create new cluster", display: "addItem" as const },
+      {
+        id: NEW_CLUSTER_ID,
+        name: "Create new cluster",
+        display: "addItem" as const,
+      },
     ];
   }, [clusters]);
 
