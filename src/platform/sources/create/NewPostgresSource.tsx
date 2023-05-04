@@ -345,7 +345,7 @@ WHERE s.name = $1;`,
   const allTables = watch("allTables");
   const selectedCluster = watch("cluster");
 
-  const additonalOptionsError =
+  const additionalOptionsError =
     formState.errors.database || formState.errors.schema;
 
   if (loadingError) {
@@ -419,7 +419,7 @@ WHERE s.name = $1;`,
               </FormControl>
               <Accordion
                 allowToggle
-                index={additonalOptionsError ? 0 : undefined}
+                index={additionalOptionsError ? 0 : undefined}
               >
                 <AccordionItem>
                   <AccordionButton
