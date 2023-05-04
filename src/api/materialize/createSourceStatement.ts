@@ -1,5 +1,5 @@
 import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
-import { assert, notNullOrUndefined } from "~/util";
+import { notNullOrUndefined } from "~/util";
 
 import { quoteIdentifier } from ".";
 import { Cluster } from "./useClusters";
@@ -9,9 +9,9 @@ import { Schema } from "./useSchemas";
 
 export interface CreateSourceParameters {
   name: string;
-  connection: Connection | null;
-  database?: Database | null;
-  schema?: Schema | null;
+  connection: Connection;
+  database: Database;
+  schema: Schema;
   cluster: Cluster | null;
   clusterSize: { id: string; name: string } | null;
   publication: string;
@@ -23,18 +23,19 @@ export interface CreateSourceParameters {
 }
 
 const createSourceStatement = (params: CreateSourceParameters) => {
-  assert(params.connection?.name);
-  assert(params.cluster?.name);
+  if (!params.cluster && !params.clusterSize) {
+    throw new Error("You must specificy either a cluster or a cluster size");
+  }
   const namespace = [params.database?.name, params.schema?.name]
     .filter(notNullOrUndefined)
     .map(quoteIdentifier)
     .join(".");
   const name = namespace ? `${namespace}.${params.name}` : params.name;
-  const createNewCluster = params.cluster.id === NEW_CLUSTER_ID;
+  const createNewCluster = params.cluster?.id === NEW_CLUSTER_ID;
 
   return `
 CREATE SOURCE ${name}${
-    createNewCluster ? "" : `\nIN CLUSTER ${params.cluster.name}`
+    createNewCluster ? "" : `\nIN CLUSTER ${params.cluster?.name}`
   }
 FROM POSTGRES CONNECTION ${quoteIdentifier(
     params.connection.name

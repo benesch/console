@@ -1,5 +1,16 @@
 import createSourceStatement from "./createSourceStatement";
 
+const database = {
+  id: "u1",
+  name: "materialize",
+};
+const schema = {
+  id: "u1",
+  name: "public",
+  databaseId: "u1",
+  databaseName: "materialize",
+};
+
 describe("createSourceStatement", () => {
   it("generates a valid statement with all tables", () => {
     const statement = createSourceStatement({
@@ -11,6 +22,8 @@ describe("createSourceStatement", () => {
         databaseName: "materialize",
         schemaName: "public",
       },
+      database,
+      schema,
       cluster: { id: "u1", name: "default", replicas: [] },
       clusterSize: null,
       publication: "mz_publication",
@@ -19,7 +32,7 @@ describe("createSourceStatement", () => {
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE pg_source
+CREATE SOURCE "materialize"."public".pg_source
 IN CLUSTER default
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES;`
@@ -36,6 +49,8 @@ FOR ALL TABLES;`
         databaseName: "materialize",
         schemaName: "public",
       },
+      database,
+      schema,
       cluster: { id: "u1", name: "default", replicas: [] },
       clusterSize: null,
       publication: "mz_publication",
@@ -47,44 +62,12 @@ FOR ALL TABLES;`
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE pg_source
+CREATE SOURCE "materialize"."public".pg_source
 IN CLUSTER default
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR TABLES (
 "first" AS "one",
 "second");`
-    );
-  });
-
-  it("generates a valid statement with a namespace", () => {
-    const statement = createSourceStatement({
-      name: "pg_source",
-      connection: {
-        id: "u1",
-        type: "postgres",
-        name: "pg_conn",
-        databaseName: "materialize",
-        schemaName: "public",
-      },
-      database: { id: "1", name: "production" },
-      schema: {
-        id: "1",
-        name: "marketing",
-        databaseId: "1",
-        databaseName: "production",
-      },
-      cluster: { id: "u1", name: "default", replicas: [] },
-      clusterSize: null,
-      publication: "mz_publication",
-      allTables: true,
-      tables: [],
-    });
-    expect(statement).toEqual(
-      `
-CREATE SOURCE "production"."marketing".pg_source
-IN CLUSTER default
-FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
-FOR ALL TABLES;`
     );
   });
 
@@ -98,13 +81,8 @@ FOR ALL TABLES;`
         databaseName: "materialize",
         schemaName: "public",
       },
-      database: { id: "1", name: "production" },
-      schema: {
-        id: "1",
-        name: "marketing",
-        databaseId: "1",
-        databaseName: "production",
-      },
+      database,
+      schema,
       cluster: { id: "0", name: "Create new", replicas: [] },
       clusterSize: { id: "3xsmall", name: "3xsmall" },
       publication: "mz_publication",
@@ -113,7 +91,7 @@ FOR ALL TABLES;`
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE "production"."marketing".pg_source
+CREATE SOURCE "materialize"."public".pg_source
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES
 WITH (SIZE = '3xsmall');`

@@ -207,12 +207,20 @@ const NewPostgresSource = () => {
 
   const { runSql: createSource, loading: isCreating } = useSqlLazy({
     queryBuilder: (values: FormState) => {
-      assert(values.connection?.name);
-      assert(values.cluster?.name);
+      assert(values.database);
+      assert(values.schema);
+      assert(values.connection);
+      assert(values.cluster);
       return {
         queries: [
           {
-            query: createSourceStatement(values),
+            // new object to narrow the type
+            query: createSourceStatement({
+              ...values,
+              database: values.database,
+              schema: values.schema,
+              connection: values.connection,
+            }),
             params: [],
           },
           {
