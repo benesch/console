@@ -95,6 +95,15 @@ function tableNameErrorMessage(error: FieldError | undefined): React.ReactNode {
   if (error.type === "unique") return "Table names must be unique.";
 }
 
+function tableAliasErrorMessage(
+  error: FieldError | undefined
+): React.ReactNode {
+  if (!error?.type) return error?.message;
+  if (error.type === "pattern")
+    return "Alias must not include special characters";
+  if (error.type === "unique") return "Alias must be unique.";
+}
+
 export const NEW_CLUSTER_ID = "0";
 
 const NewPostgresSource = () => {
@@ -581,7 +590,7 @@ WHERE s.name = $1;`,
                                   validate: {
                                     unique: (value) => {
                                       const count = getValues()
-                                        .tables.map((r) => r.name)
+                                        .tables.map((r) => r.alias)
                                         .filter(
                                           (name) => name === value
                                         ).length;
@@ -600,7 +609,7 @@ WHERE s.name = $1;`,
                                 }
                               />
                               <FormErrorMessage>
-                                {tableNameErrorMessage(
+                                {tableAliasErrorMessage(
                                   formState.errors.tables?.[index]?.alias
                                 )}
                               </FormErrorMessage>
