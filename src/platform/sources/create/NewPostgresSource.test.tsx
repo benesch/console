@@ -18,6 +18,9 @@ import NewPostgresSource from "./NewPostgresSource";
 
 jest.mock("~/api/auth");
 
+// For some reason the user interactions are very slow, it would be great if we could improve this
+jest.setTimeout(20_000);
+
 const Wrapper = createProviderWrapper({
   initializeState: ({ set }) =>
     setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
