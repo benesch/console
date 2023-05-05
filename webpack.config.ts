@@ -29,6 +29,7 @@ const config: Configuration = {
     alias: {
       "~/img": path.resolve(__dirname, "img"),
       "~/font": path.resolve(__dirname, "font"),
+      "~/types": path.resolve(__dirname, "types"),
       "~": path.resolve(__dirname, "src"),
     },
   },

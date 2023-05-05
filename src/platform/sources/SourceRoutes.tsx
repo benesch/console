@@ -91,9 +91,14 @@ export const relativeSourceErrorsPath = (source: SchemaObject) => {
 const SourceOrRedirect: React.FC<{ sourcesResponse: SourcesResponse }> = ({
   sourcesResponse,
 }) => {
-  const { data: sources } = sourcesResponse;
+  const { data: sources, isInitiallyLoading } = sourcesResponse;
   const params = useParams();
-  const result = objectOrRedirect(params, sources, relativeSourceErrorsPath);
+  const result = objectOrRedirect({
+    params,
+    objects: sources,
+    loading: isInitiallyLoading,
+    relativePathFn: relativeSourceErrorsPath,
+  });
   if (result.type === "redirect") {
     return result.redirect;
   } else {

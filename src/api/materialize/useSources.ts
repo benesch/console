@@ -1,5 +1,9 @@
-import { ConnectorStatus, SchemaObject, useSql } from "~/api/materialized";
+import React from "react";
+
+import { ConnectorStatus, SchemaObject, useSqlMany } from "~/api/materialized";
 import { assert } from "~/util";
+
+import { queryBuilder } from "./db";
 
 export interface Source extends SchemaObject {
   type: string;
@@ -16,23 +20,47 @@ function useSources({
   schemaId,
   nameFilter,
 }: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
-  // Note: we CAST d.id and sc.id to text because in v0.52 we changed the database ids and schema
-  // ids to be strings, namespaced on either System or User.
-  const sourceResponse =
-    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
-FROM mz_sources s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
-WHERE s.id LIKE 'u%'
-AND s.type <> 'subsource'
-${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
-${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
-${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
+  const request = React.useMemo(() => {
+    const query = queryBuilder
+      .selectFrom("mz_catalog.mz_sources as s")
+      .select(["s.id", "s.name", "s.type", "s.size"])
+      .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "s.schema_id")
+      .select("sc.name as schema_name")
+      .innerJoin("mz_catalog.mz_databases as d", "d.id", "sc.database_id")
+      .select("d.name as database_name")
+      .leftJoin("mz_internal.mz_source_statuses as st", "st.id", "s.id")
+      .select(["st.status", "st.error"])
+      .where("s.id", "like", "u%")
+      .where("s.type", "<>", "subsource")
+      .$if(!!databaseId, (qb) => {
+        assert(databaseId);
+        return qb.where("d.id", "=", databaseId);
+      })
+      .$if(!!schemaId, (qb) => {
+        assert(schemaId);
+        return qb.where("sc.id", "=", schemaId);
+      })
+      .$if(!!nameFilter, (qb) => {
+        assert(nameFilter);
+        return qb.where("s.name", "like", `%${nameFilter}%`);
+      })
+      .compile();
+    return {
+      queries: [
+        {
+          query: query.sql,
+          params: query.parameters as string[],
+        },
+      ],
+      cluster: "mz_introspection",
+    };
+  }, [databaseId, nameFilter, schemaId]);
+
+  const sourceResponse = useSqlMany(request);
 
   let sources: Source[] | null = null;
   if (sourceResponse.data) {
-    const { rows, getColumnByName } = sourceResponse.data;
+    const { rows, getColumnByName } = sourceResponse.data[0];
     assert(getColumnByName);
 
     sources = rows.map((row) => ({

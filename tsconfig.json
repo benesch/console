@@ -16,7 +16,8 @@
     "paths": {
       "~/*": ["./src/*"],
       "~/img/*": ["./img/*"],
-      "~/font/*": ["./font/*"]
+      "~/font/*": ["./font/*"],
+      "~/types/*": ["./types/*"]
     },
     "noEmit": true,
     "plugins": [
