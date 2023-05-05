@@ -1,9 +1,11 @@
 import { Box, Flex, Image, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, {
+  createFilter,
   GroupBase,
   mergeStyles,
   OptionProps,
+  OptionsOrGroups,
   Props,
   StylesConfig,
 } from "react-select";
@@ -17,8 +19,7 @@ export type SelectOption = { id: string; name: string; display?: "addItem" };
 export interface SearchableSelectProps
   extends Props<SelectOption, false, GroupBase<SelectOption>> {
   ariaLabel: string;
-  options: SelectOption[];
-  sectionLabel: string;
+  options: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
 }
 
 const buildStyles = <
@@ -117,6 +118,11 @@ const buildStyles = <
   });
 };
 
+// To search by name rather than the selected option value
+const customFilterOption = createFilter<SelectOption>({
+  stringify: (option) => option.data.name,
+});
+
 const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
   const { data, isFocused, isSelected, innerRef, innerProps } = props;
   const {
@@ -165,7 +171,7 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
 
 const SearchableSelect = React.forwardRef(
   (
-    { options, ariaLabel, sectionLabel, ...props }: SearchableSelectProps,
+    { options, ariaLabel, ...props }: SearchableSelectProps,
     ref: React.Ref<any>
   ) => {
     const {
@@ -181,17 +187,13 @@ const SearchableSelect = React.forwardRef(
           DropdownIndicator: DropdownIndicator,
         }}
         formatOptionLabel={(data) => data.name}
-        getOptionValue={(option) => option.name}
+        getOptionValue={(option) => option.id}
         isMulti={false}
         isSearchable
         ref={ref}
-        options={[
-          {
-            label: sectionLabel,
-            options,
-          },
-        ]}
+        options={options}
         styles={buildStyles(semanticColors, shadows)}
+        filterOption={customFilterOption}
         {...props}
       />
     );

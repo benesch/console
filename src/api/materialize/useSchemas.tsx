@@ -1,12 +1,16 @@
 import { useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
+import { DEFAULT_DATABASE_NAME } from "./useDatabases";
+
 export interface Schema {
   id: string;
   name: string;
   databaseId: string;
   databaseName: string;
 }
+
+const DEFAULT_SCHEMA_NAME = "public";
 
 /**
  * Fetches all schemas, optionally filtered by database
@@ -39,7 +43,41 @@ ORDER BY s.name;`
 }
 
 export function isDefaultSchema(schema: Schema) {
-  return schema.name === "public" && schema.databaseName === "materialize";
+  return (
+    schema.name === DEFAULT_SCHEMA_NAME &&
+    schema.databaseName === DEFAULT_DATABASE_NAME
+  );
+}
+
+/**
+ * Creates a map of schemas keyed by its database name
+ */
+function groupSchemasByDatabaseName(schemas: Schema[]): Map<string, Schema[]> {
+  const groups = schemas.reduce((accum, schema) => {
+    const { databaseName } = schema;
+    const group = accum.get(databaseName);
+
+    if (group) {
+      group.push(schema);
+    } else {
+      accum.set(databaseName, [schema]);
+    }
+
+    return accum;
+  }, new Map());
+
+  return groups;
+}
+
+/**
+ * Creates react-select options grouped by database names
+ */
+export function buildSchemaSelectOptions(schemas: Schema[]) {
+  const schemasByDatabaseName = groupSchemasByDatabaseName(schemas);
+  return Array.from(schemasByDatabaseName, ([key, value]) => ({
+    label: key,
+    options: value,
+  }));
 }
 
 export type UseSchemaResponse = ReturnType<typeof useSchemas>;

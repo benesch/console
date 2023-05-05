@@ -4,14 +4,12 @@ import { notNullOrUndefined } from "~/util";
 import { quoteIdentifier } from ".";
 import { Cluster } from "./useClusters";
 import { Connection } from "./useConnections";
-import { Database } from "./useDatabases";
-import { Schema } from "./useSchemas";
 
 export interface CreateSourceParameters {
   name: string;
   connection: Connection;
-  database: Database;
-  schema: Schema;
+  databaseName: string;
+  schemaName: string;
   cluster: Cluster | null;
   clusterSize: { id: string; name: string } | null;
   publication: string;
@@ -24,9 +22,9 @@ export interface CreateSourceParameters {
 
 const createSourceStatement = (params: CreateSourceParameters) => {
   if (!params.cluster && !params.clusterSize) {
-    throw new Error("You must specificy either a cluster or a cluster size");
+    throw new Error("You must specify either a cluster or a cluster size");
   }
-  const namespace = [params.database?.name, params.schema?.name]
+  const namespace = [params.databaseName, params.schemaName]
     .filter(notNullOrUndefined)
     .map(quoteIdentifier)
     .join(".");

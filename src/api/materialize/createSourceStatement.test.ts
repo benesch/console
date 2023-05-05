@@ -1,16 +1,5 @@
 import createSourceStatement from "./createSourceStatement";
 
-const database = {
-  id: "u1",
-  name: "materialize",
-};
-const schema = {
-  id: "u1",
-  name: "public",
-  databaseId: "u1",
-  databaseName: "materialize",
-};
-
 describe("createSourceStatement", () => {
   it("generates a valid statement with all tables", () => {
     const statement = createSourceStatement({
@@ -22,8 +11,8 @@ describe("createSourceStatement", () => {
         databaseName: "materialize",
         schemaName: "public",
       },
-      database,
-      schema,
+      databaseName: "materialize",
+      schemaName: "public",
       cluster: { id: "u1", name: "default", replicas: [] },
       clusterSize: null,
       publication: "mz_publication",
@@ -49,8 +38,8 @@ FOR ALL TABLES;`
         databaseName: "materialize",
         schemaName: "public",
       },
-      database,
-      schema,
+      databaseName: "materialize",
+      schemaName: "public",
       cluster: { id: "u1", name: "default", replicas: [] },
       clusterSize: null,
       publication: "mz_publication",
@@ -81,8 +70,8 @@ FOR TABLES (
         databaseName: "materialize",
         schemaName: "public",
       },
-      database,
-      schema,
+      databaseName: "materialize",
+      schemaName: "public",
       cluster: { id: "0", name: "Create new", replicas: [] },
       clusterSize: { id: "3xsmall", name: "3xsmall" },
       publication: "mz_publication",
