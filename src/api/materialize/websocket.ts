@@ -4,7 +4,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { currentEnvironmentState } from "~/recoil/environments";
 
-import { APPLICATION_NAME } from "../materialized";
+import { APPLICATION_NAME } from ".";
 
 export interface SimpleRequest {
   query: string;
