@@ -16,7 +16,8 @@
     "playwright": "playwright",
     "typecheck": "tsc",
     "gen:api": "CONSOLE_DIR=$PWD && cd ../cloud/api && openapi-typescript '*.yml' --output $CONSOLE_DIR/src/api/schemas/",
-    "gen:sourcemap": "NODE_ENV=production SOURCE_MAPS=true GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts"
+    "gen:sourcemap": "NODE_ENV=production SOURCE_MAPS=true GIT_SHA=$SENTRY_RELEASE LAUNCH_DARKLY_KEY=dummy-key webpack --config=webpack.prod.ts",
+    "gen:types": "kysely-codegen --out-file types/materialize.d.ts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.14",
@@ -140,6 +141,7 @@
     ],
     "ignorePatterns": [
       "src/api/schemas",
+      "types/materialize.d.ts",
       "vendor"
     ],
     "settings": {
