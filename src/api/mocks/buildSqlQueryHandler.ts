@@ -280,6 +280,6 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
 
 export function buildUseSqlQueryHandler(mockQuery: SQLQuery) {
   // The hooks above use only a single query and set the cluster to "mz_introspection" first.
-  const queries = [{ type: "SET" as const }, mockQuery];
+  const queries = [mockQuery];
   return buildSqlQueryHandler(queries);
 }

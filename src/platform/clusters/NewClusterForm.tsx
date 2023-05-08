@@ -130,7 +130,7 @@ REPLICAS (
     createCluster(values, {
       onSuccess: async (response) => {
         assert(response);
-        const id = response[2].rows[0][0] as string;
+        const id = response[1].rows[0][0] as string;
         await refetchClusters();
         toast({
           description: (

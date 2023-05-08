@@ -8,9 +8,6 @@ export const defaultQueryHandler = rest.post("*/api/sql", (_req, res, ctx) => {
     ctx.json({
       results: [
         {
-          ok: "SET",
-        },
-        {
           rows: [[1]],
           col_names: ["?column?"],
         },

@@ -1,7 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { rest } from "msw";
 
-import { SqlRequest } from "~/api/materialized";
 import server from "~/api/mocks/server";
 import {
   createProviderWrapper,
@@ -9,62 +7,35 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
+import { buildUseSqlQueryHandler } from "./api/mocks/buildSqlQueryHandler";
 import useSchemaObjectFilters from "./useSchemaObjectFilters";
 
 jest.mock("~/api/auth");
 
-const validSchemaObjectFilterResponses = rest.post(
-  "*/api/sql",
-  async (req, res, ctx) => {
-    const { queries } = (await req.json()) as SqlRequest;
-    if (queries.some((q) => q.query.includes("FROM mz_databases"))) {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          results: [
-            { ok: "SET", notices: [] },
-            {
-              tag: "SELECT 1",
-              rows: [
-                ["u1", "materialize"],
-                ["u2", "other_db"],
-              ],
-              col_names: ["id", "name"],
-              notices: [],
-            },
-          ],
-        })
-      );
-    }
-    if (queries.some((q) => q.query.includes("FROM mz_schemas"))) {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          results: [
-            { ok: "SET", notices: [] },
-            {
-              tag: "SELECT 2",
-              rows: [
-                ["u1", "public", "u1", "materialize"],
-                ["u2", "public", "u2", "other_db"],
-              ],
-              col_names: ["id", "name", "database_id", "database_name"],
-              notices: [],
-            },
-          ],
-        })
-      );
-    }
-    throw new Error("Query not matched");
-  }
-);
+const validUseDatabasesResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: ["id", "name"],
+  rows: [
+    ["u1", "materialize"],
+    ["u2", "other_db"],
+  ],
+});
+const validUseSchemaResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: ["id", "name", "database_id", "database_name"],
+  rows: [
+    ["u1", "public", "u1", "materialize"],
+    ["u2", "public", "u2", "other_db"],
+  ],
+});
 
 const ALL_OPTION = "0";
 const NAME_FILTER_QUERY_STRING_KEY = "name";
 
 describe("useSchemaObjectFilters", () => {
   beforeEach(() => {
-    server.use(validSchemaObjectFilterResponses);
+    server.use(validUseDatabasesResponse);
+    server.use(validUseSchemaResponse);
     history.pushState(undefined, "", "/");
   });
 
