@@ -8,25 +8,14 @@ import { useEffect, useState } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
-import config from "~/config";
-import {
-  currentEnvironmentState,
-  EnabledEnvironment,
-} from "~/recoil/environments";
+import executeSql, { Results, SqlRequest } from "~/api/materialize/executeSql";
+import { currentEnvironmentState } from "~/recoil/environments";
 import { assert } from "~/util";
 
-import { quoteIdentifier } from "./materialize";
+import { DEFAULT_QUERY_ERROR, quoteIdentifier } from "./materialize";
 
-/// Named used to identify ourselves to the server, needs to be kept in sync with
-/// the `ApplicationNameHint`.
-export const APPLICATION_NAME = "web_console";
-export const DEFAULT_QUERY_ERROR = "Error running query.";
-
-export interface Results {
-  columns: Array<string>;
-  rows: Array<any>;
-  getColumnByName?: <R, V>(row: R[], name: string) => V;
-}
+export * from "./materialize/executeSql";
+export { default as executeSql } from "./materialize/executeSql";
 
 export type onSuccess = (data?: Results[] | null) => void;
 export type onError = (error?: string) => void;
@@ -67,9 +56,7 @@ export function useSql(sql?: string) {
   const request = React.useMemo(() => genMzIntrospectionSqlRequest(sql), [sql]);
   const inner = useSqlMany(request);
 
-  // The first result is the empty "ok" for the `SET` command;
-  // we want the second.
-  const data = inner.data ? inner.data[1] : null;
+  const data = inner.data ? inner.data[0] : null;
   return { ...inner, data };
 }
 
@@ -113,17 +100,6 @@ export function useSqlLazy<TVariables>({
   );
 
   return { data, error, loading, runSql };
-}
-
-export interface SqlStatement {
-  query: string;
-  params: (string | null)[];
-}
-
-export interface SqlRequest {
-  queries: SqlStatement[];
-  cluster: string;
-  replica?: string;
 }
 
 /**
@@ -219,102 +195,6 @@ export function useSqlApiRequest() {
 
   return { data: results, error, loading, runSql, abortRequest };
 }
-
-type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
-
-interface ExecuteSqlSuccess {
-  results: Results[] | null;
-}
-interface ExecuteSqlError {
-  status?: number;
-  errorMessage: string;
-}
-
-export const executeSql = async (
-  environment: EnabledEnvironment,
-  request: SqlRequest,
-  accessToken: string,
-  requestOpts?: RequestInit
-): Promise<ExecuteSqlOutput> => {
-  assert(environment.resolvable);
-
-  const address = environment.environmentdHttpsAddress;
-  if (!address) {
-    return { errorMessage: "environment not enabled" };
-  }
-
-  const queries: SqlStatement[] = [
-    { query: `SET cluster=${request.cluster}`, params: [] },
-  ];
-  if (request.replica) {
-    queries.push({
-      query: `SET cluster_replica=${request.replica}`,
-      params: [],
-    });
-  }
-  queries.push(...request.queries);
-
-  const url = new URL(`${config.environmentdScheme}://${address}/api/sql`);
-
-  // Optional session vars that will be set before running the request.
-  //
-  // Note: the JSON object is automatically URI encoded by the URL object.
-  const options = { application_name: APPLICATION_NAME };
-  url.searchParams.append("options", JSON.stringify(options));
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      queries: queries,
-    }),
-    ...requestOpts,
-  });
-
-  const responseText = await response.text();
-
-  if (!response.ok) {
-    return {
-      status: response.status,
-      errorMessage: responseText ?? DEFAULT_QUERY_ERROR,
-    };
-  } else {
-    const parsedResponse = JSON.parse(responseText);
-    const { results } = parsedResponse;
-    const outResults = [];
-    for (const oneResult of results) {
-      // Queries like `CREATE TABLE` or `CREATE CLUSTER` returns a null inside the results array
-      const { error: resultsError, rows, col_names } = oneResult || {};
-      let getColumnByName = undefined;
-      if (col_names) {
-        const columnMap = new Map(
-          (col_names as string[]).map((name, index) => [name, index])
-        );
-        getColumnByName = (row: any[], name: string) => {
-          const index = columnMap.get(name);
-          if (index === undefined) {
-            throw new Error(`Column named ${name} not found`);
-          }
-
-          return row[index];
-        };
-      }
-      if (resultsError) {
-        return { errorMessage: resultsError };
-      } else {
-        outResults.push({
-          rows: rows,
-          columns: col_names,
-          getColumnByName,
-        });
-      }
-    }
-    return { results: outResults };
-  }
-};
 
 export interface ClusterReplicaWithUtilizaton {
   id: string;

@@ -228,38 +228,17 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
 
           // Ensure the column names returned from the API are the same order as the mock columns.
           if (
-            JSON.stringify([...columns].sort()).toUpperCase() !==
-            JSON.stringify([...requestQueryColNames].sort()).toUpperCase()
+            JSON.stringify([...columns]).toUpperCase() !==
+            JSON.stringify([...requestQueryColNames]).toUpperCase()
           ) {
             return undefined;
-          }
-
-          // Make mock rows and columns the same order as the request columns
-          const sortedRows = [...rows];
-
-          for (let j = 0; j < sortedRows.length; j++) {
-            sortedRows[j] = [...sortedRows[j]];
-            const sortedRow = sortedRows[j];
-
-            sortedRow.sort((a, b) => {
-              const aIndex = sortedRow.indexOf(a);
-              const bIndex = sortedRow.indexOf(b);
-
-              const colA = columns[aIndex];
-              const colB = columns[bIndex];
-
-              return (
-                requestQueryColNames.indexOf(colA) -
-                requestQueryColNames.indexOf(colB)
-              );
-            });
           }
 
           // Replace the response with the rows we input in our mock query.
           results.push({
             tag: `SELECT ${rows.length}`,
             col_names: requestQueryColNames,
-            rows: sortedRows,
+            rows: rows,
             notices: [],
           });
 
@@ -301,6 +280,6 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
 
 export function buildUseSqlQueryHandler(mockQuery: SQLQuery) {
   // The hooks above use only a single query and set the cluster to "mz_introspection" first.
-  const queries = [{ type: "SET" as const }, mockQuery];
+  const queries = [mockQuery];
   return buildSqlQueryHandler(queries);
 }

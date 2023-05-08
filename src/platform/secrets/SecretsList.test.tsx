@@ -30,7 +30,7 @@ describe("SecretsList", () => {
     it("shows an error state when there's an error fetching secrets", async () => {
       const useSecretsHandler = buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "name", "database_name", "schema_name", "created_at"],
+        columns: ["id", "name", "created_at", "database_name", "schema_name"],
         rows: [],
         error: "Something went wrong",
       });
@@ -56,9 +56,9 @@ describe("SecretsList", () => {
       const mockTimestamp = "0";
       const useSecretsHandler = buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "name", "database_name", "schema_name", "created_at"],
+        columns: ["id", "name", "created_at", "database_name", "schema_name"],
         rows: [
-          ["id_1", "name_1", "database_name_1", "schema_name_1", mockTimestamp],
+          ["id_1", "name_1", mockTimestamp, "database_name_1", "schema_name_1"],
         ],
       });
 

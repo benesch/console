@@ -57,7 +57,6 @@ describe("NewClusterForm", () => {
   it("creates a cluster successfully and redirects to the cluster list", async () => {
     server.use(
       buildSqlQueryHandler([
-        { type: "SET" as const },
         { type: "CREATE" as const },
         { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
       ])
@@ -89,7 +88,6 @@ describe("NewClusterForm", () => {
   it("shows an error for duplicate cluster names", async () => {
     server.use(
       buildSqlQueryHandler([
-        { type: "SET" as const },
         {
           type: "CREATE" as const,
           error: "catalog item 'default' already exists",
@@ -114,7 +112,6 @@ describe("NewClusterForm", () => {
   it("shows the database error when an unexpected error occurs ", async () => {
     server.use(
       buildSqlQueryHandler([
-        { type: "SET" as const },
         { type: "CREATE" as const, error: "some unexpected database error" },
         { type: "SELECT" as const, columns: ["id"], rows: [["u3"]] },
       ])

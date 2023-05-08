@@ -1,5 +1,4 @@
 import { screen } from "@testing-library/react";
-import { rest } from "msw";
 import React from "react";
 
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
@@ -15,40 +14,19 @@ import Subsources from "./Subsources";
 
 jest.mock("~/api/auth");
 
-const emptyResponse = rest.post("*/api/sql", (_req, res, ctx) => {
-  return res(
-    ctx.status(200),
-    ctx.json({
-      results: [
-        { ok: "SET", notices: [] },
-        {
-          tag: "SELECT 2",
-          rows: [],
-          col_names: ["id", "name"],
-          notices: [],
-        },
-      ],
-    })
-  );
+const emptyResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: ["id", "name"],
+  rows: [],
 });
-const validResponse = rest.post("*/api/sql", (_req, res, ctx) => {
-  return res(
-    ctx.status(200),
-    ctx.json({
-      results: [
-        { ok: "SET", notices: [] },
-        {
-          tag: "SELECT 2",
-          rows: [
-            ["u2", "subsource1"],
-            ["u3", "subsource2"],
-          ],
-          col_names: ["id", "name"],
-          notices: [],
-        },
-      ],
-    })
-  );
+
+const validResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: ["id", "name"],
+  rows: [
+    ["u2", "subsource1"],
+    ["u3", "subsource2"],
+  ],
 });
 
 describe("Subsources", () => {

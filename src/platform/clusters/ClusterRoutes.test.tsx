@@ -24,7 +24,6 @@ const emptyClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
     ctx.status(200),
     ctx.json({
       results: [
-        { ok: "SET", notices: [] },
         {
           tag: "SELECT 4",
           rows: [],
@@ -48,7 +47,6 @@ const validClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
     ctx.status(200),
     ctx.json({
       results: [
-        { ok: "SET", notices: [] },
         {
           tag: "SELECT 4",
           rows: [

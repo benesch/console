@@ -175,50 +175,6 @@ describe("buildSqlQueryHandler", () => {
     });
   });
 
-  it("should intercept select query when order of columns are incorrect", async () => {
-    const mockColumns = ["id", "replica_name"];
-    const mockRows = [["id_1", "replica_1"]];
-    const mockQueries = [
-      {
-        type: "SELECT" as const,
-        columns: mockColumns,
-        rows: mockRows,
-      },
-    ];
-    const requestQueries = [
-      {
-        query: `
-            SELECT 
-                r.name as replica_name,
-                r.id
-            FROM mz_cluster_replicas;
-        `,
-        params: [],
-      },
-    ];
-    server.use(buildSqlQueryHandler(mockQueries));
-
-    const response = await fetch(MOCK_API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        queries: requestQueries,
-      }),
-    });
-
-    const body = await response.json();
-
-    expect(body).toEqual({
-      results: [
-        {
-          rows: [["replica_1", "id_1"]],
-          col_names: ["replica_name", "id"],
-          tag: "SELECT 1",
-          notices: [],
-        },
-      ],
-    });
-  });
-
   it("should intercept simple select query with mock rows", async () => {
     const mockRows = [["id_1", "replica_1", "cluster_1", 100, "10%"]];
     const mockColumns = [
