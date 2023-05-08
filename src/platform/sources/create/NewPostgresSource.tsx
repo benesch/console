@@ -152,9 +152,9 @@ WHERE s.name = $1;`,
     createSource(values, {
       onSuccess: async (response) => {
         assert(response);
-        const id = response[2].rows[0][0] as string;
-        const databaseName = response[2].rows[0][1] as string;
-        const schemaName = response[2].rows[0][2] as string;
+        const id = response[1].rows[0][0] as string;
+        const databaseName = response[1].rows[0][1] as string;
+        const schemaName = response[1].rows[0][2] as string;
         toast({
           description: (
             <>
