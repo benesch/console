@@ -1,27 +1,11 @@
 import { inputAnatomy, selectAnatomy, switchAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
-import {
-  mode,
-  StyleFunctionProps,
-  transparentize,
-} from "@chakra-ui/theme-tools";
+import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 
 import { MaterializeTheme } from ".";
 import colors from "./colors";
 
-export const Alert = {
-  variants: {
-    pale: (props: StyleFunctionProps) => {
-      const { theme, colorScheme: c } = props;
-      return {
-        container: {
-          bg: mode(`${c}.50`, transparentize(`${c}.200`, 0.16)(theme))(props),
-        },
-      };
-    },
-  },
-};
-
+export { Accordion } from "~/theme/components/Accordion";
 export { Button } from "~/theme/components/Button";
 export { FormLabel } from "~/theme/components/FormLabel";
 
@@ -360,15 +344,5 @@ export const Menu = {
   }),
   defaultProps: {
     colorScheme: "gray",
-  },
-};
-
-export const Accordion = {
-  variants: {
-    borderless: {
-      container: {
-        border: "none",
-      },
-    },
   },
 };

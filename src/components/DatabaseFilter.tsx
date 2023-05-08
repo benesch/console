@@ -4,7 +4,7 @@ import ReactSelect, { GroupBase } from "react-select";
 
 import { Database } from "~/api/materialize/useDatabases";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
-import { buildReactSelectStyles, MaterializeTheme } from "~/theme";
+import { buildReactSelectFilterStyles, MaterializeTheme } from "~/theme";
 
 export interface DatabaseFilterProps {
   databaseList: Database[] | null;
@@ -45,10 +45,9 @@ const DatabaseFilter = ({
       formatOptionLabel={(data) => data.name}
       options={options}
       value={selected ?? options[0].options[0]}
-      styles={buildReactSelectStyles<Database, false>(
+      styles={buildReactSelectFilterStyles<Database, false>(
         semanticColors,
-        shadows,
-        {}
+        shadows
       )}
     />
   );

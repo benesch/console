@@ -4,7 +4,7 @@ import { assert } from "~/util";
 export interface Schema {
   id: string;
   name: string;
-  databaseId: number;
+  databaseId: string;
   databaseName: string;
 }
 
@@ -36,6 +36,10 @@ ORDER BY s.name;`
   }
 
   return { ...response, data: schemas };
+}
+
+export function isDefaultSchema(schema: Schema) {
+  return schema.name === "public" && schema.databaseName === "materialize";
 }
 
 export type UseSchemaResponse = ReturnType<typeof useSchemas>;

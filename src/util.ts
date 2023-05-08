@@ -33,3 +33,19 @@ export function isMzInternalEmail(email: string): boolean {
     email.endsWith("@materialize.com") || email.endsWith("@materialize.io")
   );
 }
+
+/**
+ * Returns true unless an object is null or undefined and narrows the type correctly.
+ */
+export function notNullOrUndefined<T>(value: T): value is NonNullable<T> {
+  return value !== null && value !== undefined;
+}
+
+/**
+ * Returns truthiness of any object and narrows the type correctly.
+ */
+export function isTruthy<T>(
+  value?: T | undefined | null | false | "" | 0
+): value is T {
+  return !!value;
+}

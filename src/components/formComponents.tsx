@@ -203,18 +203,24 @@ export const InlineLabeledInput = ({
       templateColumns="min-content minmax(auto, 320px)"
       columnGap="6"
       justifyContent="space-between"
-      alignItems="center"
+      alignItems="start"
+      width="100%"
+      position="relative"
     >
-      <FormLabel variant="inline">{label}</FormLabel>
+      <FormLabel variant="inline" mt="2" lineHeight="16px">
+        {label}
+      </FormLabel>
       {children}
       <Box gridColumn="2">
-        <Text
-          mt="2"
-          textStyle="text-ui-reg"
-          color="semanticColors.foreground.secondary"
-        >
-          {!error && message}
-        </Text>
+        {message && (
+          <Text
+            mt="2"
+            textStyle="text-ui-reg"
+            color="semanticColors.foreground.secondary"
+          >
+            {!error && message}
+          </Text>
+        )}
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>

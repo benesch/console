@@ -29,6 +29,10 @@ ORDER BY name;`
   return { ...response, data: databases };
 }
 
+export function isDefaultDatabase(db: Database) {
+  return db.name === "materialize";
+}
+
 export type UseDatabaseResponse = ReturnType<typeof useDatabases>;
 
 export default useDatabases;

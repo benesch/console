@@ -15,8 +15,8 @@ import {
   objectOrRedirect,
   relativeObjectPath,
 } from "../schemaObjectRouteHelpers";
+import CreateSourceEntry from "./create/CreateSourceEntry";
 import NewPostgresSource from "./create/NewPostgresSource";
-import SelectConnection from "./create/SelectConnection";
 import SourceDetail from "./SourceDetail";
 
 const NAME_FILTER_QUERY_STRING_KEY = "sourceName";
@@ -72,7 +72,7 @@ const ShowSourceRoutes = () => {
 const NewSourceRoutes = () => {
   return (
     <SentryRoutes>
-      <Route path="/connection" element={<SelectConnection />} />
+      <Route path="/connection" element={<CreateSourceEntry />} />
       <Route path="/postgres" element={<NewPostgresSource />} />
     </SentryRoutes>
   );

@@ -1,4 +1,4 @@
-import { assert } from "~/util";
+import { assert, isTruthy } from "~/util";
 
 /**
  * Named used to identify ourselves to the server, needs to be kept in sync with
@@ -25,4 +25,13 @@ export function quoteIdentifier(id: string) {
   assert(id.search("\0") === -1);
 
   return `"${id.replace('"', '""')}"`;
+}
+
+/**
+ * Given an array of sql expressions, builds a string of WHERE + AND clauses.
+ * Also accepts and filters out undefined values for convenience.
+ */
+export function buildWhereConditions(expressions: Array<undefined | string>) {
+  expressions = expressions.filter(isTruthy);
+  return expressions.length > 0 ? `\nWHERE ${expressions.join("\nAND ")}` : "";
 }
