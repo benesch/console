@@ -159,6 +159,7 @@ const NewPostgresSource = () => {
     setError,
     setFocus,
     watch,
+    trigger,
   } = useForm<FormState>({
     defaultValues: {
       name: "",
@@ -548,6 +549,11 @@ WHERE s.name = $1;`,
                             >
                               <Input
                                 {...register(`tables.${index}.name` as const, {
+                                  onChange: () => {
+                                    for (let i = 0; i < fields.length; i++) {
+                                      trigger(`tables.${i}.name`);
+                                    }
+                                  },
                                   required: true,
                                   pattern:
                                     MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
@@ -585,6 +591,11 @@ WHERE s.name = $1;`,
                             >
                               <Input
                                 {...register(`tables.${index}.alias` as const, {
+                                  onChange: () => {
+                                    for (let i = 0; i < fields.length; i++) {
+                                      trigger(`tables.${i}.alias`);
+                                    }
+                                  },
                                   pattern:
                                     MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                                   validate: {
