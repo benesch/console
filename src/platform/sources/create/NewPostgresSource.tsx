@@ -600,6 +600,8 @@ WHERE s.name = $1;`,
                                     MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                                   validate: {
                                     unique: (value) => {
+                                      // alias is not required
+                                      if (!value) return true;
                                       const count = getValues()
                                         .tables.map((r) => r.alias)
                                         .filter(
