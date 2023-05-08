@@ -197,7 +197,10 @@ export interface PageTabStripProps {
 }
 
 export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
-  const { space } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+    space,
+  } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
   const [tabBoundingBox, setTabBoundingBox] = React.useState<DOMRect | null>(
@@ -248,7 +251,7 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
     >
       <Box
         ref={highlightRef}
-        background="hsl(250 0.5% 96%)"
+        background={semanticColors.background.secondary}
         position="absolute"
         top="9px"
         left={0}
