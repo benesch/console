@@ -16,6 +16,7 @@ import {
   relativeObjectPath,
 } from "../schemaObjectRouteHelpers";
 import CreateSourceEntry from "./create/CreateSourceEntry";
+import NewKafkaSource from "./create/NewKafkaSource";
 import NewPostgresSource from "./create/NewPostgresSource";
 import SourceDetail from "./SourceDetail";
 
@@ -74,6 +75,7 @@ const NewSourceRoutes = () => {
     <SentryRoutes>
       <Route path="/connection" element={<CreateSourceEntry />} />
       <Route path="/postgres" element={<NewPostgresSource />} />
+      <Route path="/kafka" element={<NewKafkaSource />} />
     </SentryRoutes>
   );
 };

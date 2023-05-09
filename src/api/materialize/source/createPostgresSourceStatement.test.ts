@@ -1,8 +1,8 @@
-import createSourceStatement from "./createSourceStatement";
+import createPostgresSourceStatement from "./createPostgresSourceStatement";
 
-describe("createSourceStatement", () => {
+describe("createPostgresSourceStatement", () => {
   it("generates a valid statement with all tables", () => {
-    const statement = createSourceStatement({
+    const statement = createPostgresSourceStatement({
       name: "pg_source",
       connection: {
         id: "u1",
@@ -23,13 +23,13 @@ describe("createSourceStatement", () => {
       `
 CREATE SOURCE "materialize"."public"."pg_source"
 IN CLUSTER default
-FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
+FROM POSTGRES CONNECTION "materialize"."public"."pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES;`
     );
   });
 
   it("generates a valid statement with individual tables", () => {
-    const statement = createSourceStatement({
+    const statement = createPostgresSourceStatement({
       name: "pg_source",
       connection: {
         id: "u1",
@@ -53,7 +53,7 @@ FOR ALL TABLES;`
       `
 CREATE SOURCE "materialize"."public"."pg_source"
 IN CLUSTER default
-FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
+FROM POSTGRES CONNECTION "materialize"."public"."pg_conn" (PUBLICATION 'mz_publication')
 FOR TABLES (
 "first" AS "one",
 "second");`
@@ -61,7 +61,7 @@ FOR TABLES (
   });
 
   it("generates a valid statement when creating a cluster", () => {
-    const statement = createSourceStatement({
+    const statement = createPostgresSourceStatement({
       name: "pg_source",
       connection: {
         id: "u1",
@@ -81,7 +81,7 @@ FOR TABLES (
     expect(statement).toEqual(
       `
 CREATE SOURCE "materialize"."public"."pg_source"
-FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
+FROM POSTGRES CONNECTION "materialize"."public"."pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES
 WITH (SIZE = '3xsmall');`
     );

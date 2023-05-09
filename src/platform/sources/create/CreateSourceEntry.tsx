@@ -18,6 +18,7 @@ import { Link, useParams } from "react-router-dom";
 
 import {
   Connection,
+  dataConnectionTypes,
   useConnectionsFiltered,
 } from "~/api/materialize/connection/useConnections";
 import ErrorBox from "~/components/ErrorBox";
@@ -45,7 +46,8 @@ const CreateSourceEntry = () => {
     data: connections,
     error,
     loading,
-  } = useConnectionsFiltered({ nameFilter });
+  } = useConnectionsFiltered({ nameFilter, type: dataConnectionTypes });
+
   const { regionSlug } = useParams();
 
   if (error) {

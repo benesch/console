@@ -5,23 +5,20 @@ import { buildOptionsString } from "./buildOptionsString";
 import createConnection from "./createConnection";
 import { Secret, TextSecret } from "./types";
 
-export interface CreatePostgresConnectionParameters {
+export interface CreateCsrConnectionParameters {
   name: string;
+  url: string;
   databaseName: string;
   schemaName: string;
-  host: string;
-  pgDatabaseName: string;
-  user: string;
-  port?: string;
-  password?: Secret | TextSecret;
-  sslMode?: string;
-  sslKey?: Secret | TextSecret;
+  username?: Secret | TextSecret;
+  password?: Secret;
+  sslKey?: Secret;
   sslCertificate?: Secret | TextSecret;
   sslCertificateAuthority?: Secret | TextSecret;
 }
 
-export const createPostgresConnectionStatement = (
-  params: CreatePostgresConnectionParameters
+export const createCsrConnectionStatement = (
+  params: CreateCsrConnectionParameters
 ) => {
   const name = attachNamespace(
     params.name,
@@ -30,12 +27,9 @@ export const createPostgresConnectionStatement = (
   );
 
   const options: [string, string | Secret | TextSecret | undefined][] = [
-    ["HOST", params.host],
-    ["DATABASE", params.pgDatabaseName],
-    ["USER", params.user],
-    ["PORT", params.port],
+    ["URL", params.url],
+    ["USERNAME", params.username],
     ["PASSWORD", params.password],
-    ["SSL MODE", params.sslMode],
     ["SSL KEY", params.sslKey],
     ["SSL CERTIFICATE", params.sslCertificate],
     ["SSL CERTIFICATE AUTHORITY", params.sslCertificateAuthority],
@@ -44,22 +38,21 @@ export const createPostgresConnectionStatement = (
   const optionsString = buildOptionsString(options);
 
   return `
-CREATE CONNECTION ${name} TO POSTGRES
-(
+CREATE CONNECTION ${name} TO CONFLUENT SCHEMA REGISTRY (
 ${optionsString}
 );`;
 };
 
-export async function createPostgresConnection({
+export function createCsrConnection({
   params,
   environment,
   accessToken,
 }: {
-  params: CreatePostgresConnectionParameters;
+  params: CreateCsrConnectionParameters;
   environment: EnabledEnvironment;
   accessToken: string;
 }) {
-  const createConnectionQuery = createPostgresConnectionStatement(params);
+  const createConnectionQuery = createCsrConnectionStatement(params);
 
   return createConnection({
     connectionName: params.name,
@@ -70,5 +63,3 @@ export async function createPostgresConnection({
     accessToken,
   });
 }
-
-export default createPostgresConnection;

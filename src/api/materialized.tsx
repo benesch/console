@@ -56,12 +56,19 @@ export function useSqlLazy<TVariables>({
   queryBuilder,
   onSuccess,
   onError,
+  timeout,
 }: {
   queryBuilder: (variables: TVariables) => string | SqlRequest;
   onSuccess?: onSuccess;
   onError?: onError;
+  timeout?: number;
 }) {
-  const { runSql: runSqlInner, data, error, loading } = useSqlApiRequest();
+  const {
+    runSql: runSqlInner,
+    data,
+    error,
+    loading,
+  } = useSqlApiRequest({ timeout });
 
   const runSql = React.useCallback(
     (
@@ -120,7 +127,11 @@ export function useSqlMany(request?: SqlRequest) {
  * A React hook that connects SQL API requests to React's lifecycle.
  * It keeps track of the state of the request and exposes a handler to execute a SQL query.
  */
-export function useSqlApiRequest() {
+type UseSqlApiRequestOptions = {
+  timeout?: number;
+};
+
+export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
@@ -130,7 +141,7 @@ export function useSqlApiRequest() {
   const controllerRef = React.useRef<AbortController>(new AbortController());
   const [results, setResults] = useState<Results[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const { timeout = 5_000 } = options ?? {};
   const runSql = React.useCallback(
     async (request?: SqlRequest, onSuccess?: onSuccess, onError?: onError) => {
       if (environment?.state !== "enabled" || !request) {
@@ -139,7 +150,10 @@ export function useSqlApiRequest() {
       }
 
       controllerRef.current = new AbortController();
-      const timeout = setTimeout(() => controllerRef.current.abort(), 5_000);
+      const timeoutId = setTimeout(
+        () => controllerRef.current.abort(),
+        timeout
+      );
       const requestId = requestIdRef.current;
       try {
         setLoading(true);
@@ -170,11 +184,11 @@ export function useSqlApiRequest() {
 
         setError(DEFAULT_QUERY_ERROR);
       } finally {
-        clearTimeout(timeout);
+        clearTimeout(timeoutId);
         setLoading(false);
       }
     },
-    [environment, user.accessToken]
+    [environment, user.accessToken, timeout]
   );
 
   const abortRequest = React.useCallback(() => {

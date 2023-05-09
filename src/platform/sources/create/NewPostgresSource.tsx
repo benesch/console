@@ -32,8 +32,9 @@ import {
   Connection,
   useConnectionsFiltered,
 } from "~/api/materialize/connection/useConnections";
-import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
+import createPostgresSourceStatement from "~/api/materialize/source/createPostgresSourceStatement";
+import getSourceByNameStatement from "~/api/materialize/source/getSourceByNameStatement";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
 import { Database } from "~/api/materialize/useDatabases";
@@ -204,7 +205,7 @@ const NewPostgresSource = () => {
         queries: [
           {
             // new object to narrow the type
-            query: createSourceStatement({
+            query: createPostgresSourceStatement({
               ...values,
               databaseName: values.schema.databaseName,
               schemaName: values.schema.name,
@@ -213,12 +214,12 @@ const NewPostgresSource = () => {
             params: [],
           },
           {
-            query: `SELECT s.id, d.name as database_name, sc.name as schema_name
-FROM mz_sources s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-WHERE s.name = $1;`,
-            params: [values.name],
+            query: getSourceByNameStatement(
+              values.name,
+              values.schema.databaseName,
+              values.schema.name
+            ),
+            params: [],
           },
         ],
         cluster: "mz_introspection",

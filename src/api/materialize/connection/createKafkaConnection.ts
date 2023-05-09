@@ -1,6 +1,7 @@
 import { EnabledEnvironment } from "~/recoil/environments";
 
 import { attachNamespace } from "..";
+import { buildOptionsString } from "./buildOptionsString";
 import createConnection from "./createConnection";
 import { Secret, TextSecret } from "./types";
 
@@ -115,7 +116,7 @@ function createAuthStatement(auth?: Auth) {
     return "";
   }
 
-  const authOptions =
+  const authOptions: [string, string | Secret | TextSecret | undefined][] =
     auth.type === "SASL"
       ? [
           ["SASL MECHANISMS", auth.saslMechanism],
@@ -129,29 +130,7 @@ function createAuthStatement(auth?: Auth) {
           ["SSL CERTIFICATE AUTHORITY", auth.sslCertificateAuthority],
         ];
 
-  return authOptions
-    .filter(([_, value]) => Boolean(value))
-    .map(([key, value]) => {
-      if (typeof value === "string") {
-        return `${key} '${value}'`;
-      }
-
-      if ("secretTextValue" in value!) {
-        return `${key} '${value.secretTextValue}'`;
-      }
-
-      if ("secretName" in value!) {
-        const secret = attachNamespace(
-          value.secretName,
-          value.databaseName,
-          value.schemaName
-        );
-        return `${key} SECRET ${secret}`;
-      }
-
-      return "";
-    })
-    .join(",\n");
+  return buildOptionsString(authOptions);
 }
 
 export function createKafkaConnectionStatement(

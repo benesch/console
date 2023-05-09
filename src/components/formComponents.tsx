@@ -93,6 +93,7 @@ export const FormTopBar = ({
 
 export interface FormSectionProps extends BoxProps {
   title: string;
+  variant?: "narrow" | "full-page";
 }
 
 export const FormSection = ({
@@ -103,14 +104,15 @@ export const FormSection = ({
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const variant = props.variant ?? "full-page";
 
   return (
-    <Box mb="10" {...props}>
+    <Box mb={variant === "full-page" ? "10" : "2"} {...props}>
       <Text
         as="legend"
         textStyle="heading-xs"
         color={semanticColors.foreground.tertiary}
-        mb="4"
+        mb={variant === "full-page" ? "6" : "4"}
       >
         {title}
       </Text>
