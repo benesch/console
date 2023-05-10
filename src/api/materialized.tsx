@@ -403,32 +403,6 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
 
 export type SinksResponse = ReturnType<typeof useSinks>;
 
-type DDLNoun = "SINK" | "SOURCE";
-
-/**
- * Fetches the DDL statement for creating a schema object
- */
-export function useShowCreate(noun: DDLNoun, schemaObject?: SchemaObject) {
-  const name = schemaObject
-    ? `${quoteIdentifier(schemaObject.databaseName)}.${quoteIdentifier(
-        schemaObject.schemaName
-      )}.${quoteIdentifier(schemaObject.name)}`
-    : undefined;
-
-  const response = useSql(
-    schemaObject ? `SHOW CREATE ${noun} ${name}` : undefined
-  );
-  let ddl: string | null = null;
-  if (schemaObject && response.data) {
-    const { rows, getColumnByName } = response.data;
-    assert(getColumnByName);
-
-    ddl = getColumnByName(rows[0], "create_sql");
-  }
-
-  return { ...response, ddl };
-}
-
 export interface MaterializedView {
   id: string;
   name: string;
