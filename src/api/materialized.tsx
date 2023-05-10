@@ -200,6 +200,7 @@ export interface ClusterReplicaWithUtilizaton {
   id: string;
   name: string;
   size: string;
+  cpuPercent?: number;
   memoryPercent?: number;
 }
 
@@ -210,6 +211,7 @@ export function useClusterReplicasWithUtilization(clusterId?: string) {
   r.name as replica_name,
   r.cluster_id,
   r.size,
+  u.cpu_percent,
   u.memory_percent
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
@@ -229,6 +231,7 @@ ORDER BY r.id;`
         id: replica_id.toString(),
         name: getColumnByName(row, "replica_name") as string,
         size: getColumnByName(row, "size") as string,
+        cpuPercent: getColumnByName(row, "cpu_percent") as number,
         memoryPercent: getColumnByName(row, "memory_percent") as number,
       };
       return replica;

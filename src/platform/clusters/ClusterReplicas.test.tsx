@@ -26,6 +26,7 @@ const useClusterReplicasWithUtilizationColumns = [
   "replica_name",
   "cluster_id",
   "size",
+  "cpu_percent",
   "memory_percent",
 ];
 
@@ -89,7 +90,16 @@ describe("ClusterReplicas", () => {
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
         columns: useClusterReplicasWithUtilizationColumns,
-        rows: [["test_id", "test_replica", "test_cluster_id", "2xsmall", 5]],
+        rows: [
+          [
+            "test_id",
+            "test_replica",
+            "test_cluster_id",
+            "2xsmall",
+            18.0015698,
+            6.836938858032227,
+          ],
+        ],
       })
     );
     renderComponent(<ClusterReplicasWithRoute />, {
@@ -100,6 +110,7 @@ describe("ClusterReplicas", () => {
 
     expect(await screen.findByText("test_replica")).toBeVisible();
     expect(await screen.findByText("2xsmall")).toBeVisible();
-    expect(await screen.findByText("5.0")).toBeVisible();
+    expect(await screen.findByText("18.0")).toBeVisible();
+    expect(await screen.findByText("6.8")).toBeVisible();
   });
 });
