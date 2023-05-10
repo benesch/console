@@ -4,6 +4,7 @@ import { versionHeaders } from "../version/api";
 import { components, paths } from "./schemas/sync-server";
 
 export type Organization = components["schemas"]["Organization"];
+export type Invoice = components["schemas"]["Invoice"];
 
 export const currentOrganization = (
   syncServerUrl: string,
@@ -21,4 +22,19 @@ export const currentOrganization = (
   });
 
   return fetcher.path("/api/organization").method("get").create()({});
+};
+
+export const recentInvoices = (syncServerUrl: string, accessToken: string) => {
+  const fetcher = Fetcher.for<paths>();
+  fetcher.configure({
+    baseUrl: syncServerUrl,
+    init: {
+      headers: {
+        ...versionHeaders(),
+        authorization: `Bearer ${accessToken}`,
+      },
+    },
+  });
+
+  return fetcher.path("/api/invoices").method("get").create()({});
 };

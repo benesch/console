@@ -14,6 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { AdminPortal, useAuthActions } from "@frontegg/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -134,6 +135,7 @@ const ProfileDropdown = (props: ButtonProps) => {
 
 export const ProfileMenuItems = () => {
   const { routes: authRoutes } = useAuth();
+  const flags = useFlags();
   return (
     <>
       <MenuItem as={RouterLink} to="/access" fontWeight="medium">
@@ -142,6 +144,11 @@ export const ProfileMenuItems = () => {
       <MenuItem fontWeight="medium" onClick={() => AdminPortal.show()}>
         Account settings
       </MenuItem>
+      {flags["billing-and-usage-45"] && (
+        <MenuItem as={RouterLink} to="/billing" fontWeight="medium">
+          Invoices
+        </MenuItem>
+      )}
       <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
         Pricing
       </MenuItem>
