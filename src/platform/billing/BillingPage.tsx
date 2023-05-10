@@ -1,11 +1,4 @@
-import {
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import React from "react";
 
 import { useInvoices } from "~/api/auth";
@@ -33,10 +26,10 @@ const BillingPage = () => {
         </Thead>
         <Tbody>
           {invoices !== null &&
-            invoices.map((i) => {
+            invoices.map((invoice, i) => {
               // Orb sometimes gives us `hosted_invoice_url` and sometimes `invoice_pdf`.
               // The former has more detail, so expose it if possible.
-              const link = i.hostedInvoiceUrl || i.invoicePdf;
+              const link = invoice.hostedInvoiceUrl || invoice.invoicePdf;
               // TODO[btv] -- This is a bit weird: we localize the
               // date, but not the total. Once we can get currency from the invoice, we should also localize that.
               // H/t Julian for pointing this out.
@@ -46,14 +39,17 @@ const BillingPage = () => {
               //   style: "currency",
               //   currency: i.currency,
               // }).format(Number(i.total));
-              const rendered_date = new Date(i.invoiceDate).toLocaleDateString(
-                navigator.language,
-                { month: "short", day: "numeric", year: "numeric" }
-              );
+              const rendered_date = new Date(
+                invoice.invoiceDate
+              ).toLocaleDateString(navigator.language, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              });
               return (
-                <Tr>
+                <Tr key={i}>
                   <Td>{rendered_date}</Td>
-                  <Td>{i.total}</Td>
+                  <Td>{invoice.total}</Td>
                   <Td>
                     {link && (
                       <TextLink href={link} isExternal={true}>
