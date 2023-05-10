@@ -1,38 +1,16 @@
 import {
-  Button,
-  HStack,
-  Spinner,
   Table,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
-  useTheme,
-  VStack,
 } from "@chakra-ui/react";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 
 import { useInvoices } from "~/api/auth";
-import { Invoice } from "~/api/syncServer";
-import { Card, CardContent, CardHeader } from "~/components/cardComponents";
-import { CodeBlock } from "~/components/copyableComponents";
-import ErrorBox from "~/components/ErrorBox";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
-import {
-  EmptyListHeader,
-  EmptyListHeaderContents,
-  EmptyListWrapper,
-  IconBox,
-  SampleCodeBoxWrapper,
-  SQLSuggestion,
-  SQLSuggestionBox,
-} from "~/layouts/listPageComponents";
-import { MaterializeTheme } from "~/theme";
 
 const BillingPage = () => {
   const { invoices } = useInvoices();
