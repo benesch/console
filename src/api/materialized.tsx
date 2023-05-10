@@ -12,7 +12,7 @@ import executeSql, { Results, SqlRequest } from "~/api/materialize/executeSql";
 import { currentEnvironmentState } from "~/recoil/environments";
 import { assert } from "~/util";
 
-import { DEFAULT_QUERY_ERROR, quoteIdentifier } from "./materialize";
+import { DEFAULT_QUERY_ERROR } from "./materialize";
 
 export * from "./materialize/executeSql";
 export { default as executeSql } from "./materialize/executeSql";
@@ -35,14 +35,14 @@ export interface ExplainTimestampResult {
   }[];
 }
 
-export function genMzIntrospectionSqlRequest(sql?: string) {
+export function buildSqlRequest(sql?: string, cluster = "mz_introspection") {
   return sql
     ? // Run all queries on the `mz_introspection` cluster, as it's
       // guaranteed to exist. (The `default` cluster may have been dropped
       // by the user.)
       {
         queries: [{ query: sql, params: [] }],
-        cluster: "mz_introspection",
+        cluster,
       }
     : undefined;
 }
@@ -52,8 +52,11 @@ export function genMzIntrospectionSqlRequest(sql?: string) {
  * Runs all queries on the `mz_introspection` cluster.
  * @param sql - SQL query string to execute in the environment.
  */
-export function useSql(sql?: string) {
-  const request = React.useMemo(() => genMzIntrospectionSqlRequest(sql), [sql]);
+export function useSql(sql?: string, cluster?: string) {
+  const request = React.useMemo(
+    () => buildSqlRequest(sql, cluster),
+    [sql, cluster]
+  );
   const inner = useSqlMany(request);
 
   const data = inner.data ? inner.data[0] : null;
@@ -82,7 +85,7 @@ export function useSqlLazy<TVariables>({
     ) => {
       const queryOrQueries = queryBuilder(variables);
       if (typeof queryOrQueries === "string") {
-        const request = genMzIntrospectionSqlRequest(queryOrQueries);
+        const request = buildSqlRequest(queryOrQueries);
         runSqlInner(
           request,
           options?.onSuccess ?? onSuccess,
