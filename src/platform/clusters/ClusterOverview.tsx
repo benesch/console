@@ -15,7 +15,6 @@ import {
   format,
   subMinutes,
 } from "date-fns";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -68,7 +67,6 @@ const ClusterOverview = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
-  const flags = useFlags();
   const { id: clusterId } = useParams<ClusterParams>();
   const {
     getClusterById,
@@ -255,22 +253,20 @@ const ClusterOverview = () => {
           </Flex>
         ) : (
           <>
-            {flags["cluster-cpu-utilization-5188"] && (
-              <Box width="100%">
-                <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
-                  CPU
-                </Text>
-                <UtilizationGraph
-                  dataKey="cpuPercent"
-                  data={graphData}
-                  startTime={startTime}
-                  endTime={endTime}
-                  timePeriodMinutes={timePeriodMinutes}
-                  replicaColorMap={replicaColorMap}
-                  replicas={selectedReplicas}
-                />
-              </Box>
-            )}
+            <Box width="100%">
+              <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
+                CPU
+              </Text>
+              <UtilizationGraph
+                dataKey="cpuPercent"
+                data={graphData}
+                startTime={startTime}
+                endTime={endTime}
+                timePeriodMinutes={timePeriodMinutes}
+                replicaColorMap={replicaColorMap}
+                replicas={selectedReplicas}
+              />
+            </Box>
             <Box width="100%">
               <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
                 Memory
