@@ -1,7 +1,6 @@
 import { Box, Flex, Image, Text, useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, {
-  createFilter,
   GroupBase,
   mergeStyles,
   OptionProps,
@@ -16,10 +15,10 @@ import { MaterializeTheme, ThemeColors, ThemeShadows } from "~/theme";
 
 export type SelectOption = { id: string; name: string; display?: "addItem" };
 
-export interface SearchableSelectProps
-  extends Props<SelectOption, false, GroupBase<SelectOption>> {
+export interface SearchableSelectProps<Option extends SelectOption>
+  extends Props<Option, false, GroupBase<Option>> {
   ariaLabel: string;
-  options: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
+  options: OptionsOrGroups<Option, GroupBase<Option>>;
 }
 
 const buildStyles = <
@@ -118,11 +117,6 @@ const buildStyles = <
   });
 };
 
-// To search by name rather than the selected option value
-const customFilterOption = createFilter<SelectOption>({
-  stringify: (option) => option.data.name,
-});
-
 const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
   const { data, isFocused, isSelected, innerRef, innerProps } = props;
   const {
@@ -169,11 +163,15 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
   );
 };
 
-const SearchableSelect = React.forwardRef(
-  (
-    { options, ariaLabel, ...props }: SearchableSelectProps,
-    ref: React.Ref<any>
-  ) => {
+export interface SearchableSelectType
+  extends React.FC<SearchableSelectProps<SelectOption>> {
+  <T extends SelectOption>(props: SearchableSelectProps<T>): ReturnType<
+    React.FC<SearchableSelectProps<T>>
+  >;
+}
+
+const SearchableSelect: SearchableSelectType = React.forwardRef(
+  ({ options, ariaLabel, ...props }, ref: React.Ref<any>) => {
     const {
       colors: { semanticColors },
       shadows,
@@ -186,14 +184,13 @@ const SearchableSelect = React.forwardRef(
           Option: AddButtonOrOption,
           DropdownIndicator: DropdownIndicator,
         }}
-        formatOptionLabel={(data) => data.name}
+        getOptionLabel={(option) => option.name}
         getOptionValue={(option) => option.id}
         isMulti={false}
         isSearchable
         ref={ref}
         options={options}
         styles={buildStyles(semanticColors, shadows)}
-        filterOption={customFilterOption}
         {...props}
       />
     );

@@ -27,6 +27,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { createFilter } from "react-select";
 
 import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
@@ -416,11 +417,15 @@ WHERE s.name = $1;`,
                         label="Schema"
                         error={formState.errors.schema?.message}
                       >
-                        <SearchableSelect
+                        <SearchableSelect<Schema>
                           ariaLabel="Select schema"
                           placeholder="Select one"
                           {...schemaField}
                           options={schemaSelectOptions}
+                          filterOption={createFilter<Schema>({
+                            stringify: (option) =>
+                              `${option.data.databaseName}.${option.data.name}`,
+                          })}
                         />
                       </InlineLabeledInput>
                     </FormControl>
