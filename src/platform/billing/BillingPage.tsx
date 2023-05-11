@@ -1,4 +1,5 @@
-import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import { format } from "date-fns";
 import React from "react";
 
 import { useInvoices } from "~/api/auth";
@@ -6,13 +7,13 @@ import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 
 const BillingPage = () => {
-  const { invoices } = useInvoices();
+  const { invoices, loading } = useInvoices();
   return (
     <>
       <PageHeader>
         <PageHeading>Invoices</PageHeading>
       </PageHeader>
-      <Table
+      {loading ? <Spinner data-testid="loading-spinner" /> : <Table
         variant="standalone"
         data-testid="invoices-table"
         borderRadius="xl"
@@ -20,36 +21,25 @@ const BillingPage = () => {
         <Thead>
           <Tr>
             <Th>Issue date</Th>
-            <Th>Total amount</Th>
+            <Th>Amount due</Th>
             <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
           {invoices !== null &&
             invoices.map((invoice, i) => {
-              // Orb sometimes gives us `hosted_invoice_url` and sometimes `invoice_pdf`.
+              // Orb sometimes gives us `hosted_invoice_url` (which the sync server calls `webUrl`)
+              // and sometimes `invoice_pdf` (respecitvely `pdfUrl`).
               // The former has more detail, so expose it if possible.
-              const link = invoice.hostedInvoiceUrl || invoice.invoicePdf;
-              // TODO[btv] -- This is a bit weird: we localize the
-              // date, but not the total. Once we can get currency from the invoice, we should also localize that.
-              // H/t Julian for pointing this out.
-              //
-              // E.g.:
-              // const rendered_total = new Intl.NumberFormat(navigator.language, {
-              //   style: "currency",
-              //   currency: i.currency,
-              // }).format(Number(i.total));
-              const rendered_date = new Date(
-                invoice.invoiceDate
-              ).toLocaleDateString(navigator.language, {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              });
+              const link = invoice.webUrl || invoice.pdfUrl;
+              const rendered_date = format(
+                new Date(invoice.issueDate),
+                "MMM d, yyyy"
+              );
               return (
                 <Tr key={i}>
                   <Td>{rendered_date}</Td>
-                  <Td>{invoice.total}</Td>
+                  <Td>{invoice.amountDue}</Td>
                   <Td>
                     {link && (
                       <TextLink href={link} isExternal={true}>
@@ -61,7 +51,7 @@ const BillingPage = () => {
               );
             })}
         </Tbody>
-      </Table>
+        </Table>}
     </>
   );
 };

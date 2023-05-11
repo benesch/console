@@ -149,7 +149,6 @@ export function useCurrentOrganization() {
 export function useInvoices() {
   const { user } = useAuth();
   const [invoices, setInvoices] = React.useState<Invoice[] | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(false);
 
   const fetchInvoices = React.useCallback(async () => {
     const { data } = await recentInvoices(
@@ -160,13 +159,9 @@ export function useInvoices() {
   }, [user]);
 
   React.useEffect(() => {
-    try {
-      setLoading(true);
       fetchInvoices();
-    } finally {
-      setLoading(false);
-    }
   }, [fetchInvoices]);
 
+  const loading = invoices == null;
   return { invoices, loading };
 }

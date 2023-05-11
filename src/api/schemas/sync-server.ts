@@ -27,7 +27,7 @@ export interface paths {
   "/api/invoices": {
     /**
      * @description Get recent invoices.
-     *
+     * 
      * This endpoint returns the 20 most recent invoices for the given user,
      * including draft, paid, void, and issued invoices.
      */
@@ -48,12 +48,12 @@ export interface components {
     };
     Subscription: Record<string, never>;
     Invoice: {
-      organizationId: OneOf<[string, null]>;
-      invoiceDate: string;
-      invoicePdf: OneOf<[string, null]>;
+      issueDate: string;
+      pdfUrl: OneOf<[string, null]>;
       total: string;
+      amountDue: string;
       createdAt: string;
-      hostedInvoiceUrl: OneOf<[string, null]>;
+      webUrl: OneOf<[string, null]>;
       status: string;
     };
     InvoiceResponse: {
@@ -98,7 +98,7 @@ export interface operations {
   invoices: {
     /**
      * @description Get recent invoices.
-     *
+     * 
      * This endpoint returns the 20 most recent invoices for the given user,
      * including draft, paid, void, and issued invoices.
      */
