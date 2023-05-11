@@ -6,6 +6,8 @@ export interface Database {
   name: string;
 }
 
+export const DEFAULT_DATABASE_NAME = "materialize";
+
 /**
  * Fetches all databases in the current environment
  */
@@ -27,10 +29,6 @@ ORDER BY name;`
   }
 
   return { ...response, data: databases };
-}
-
-export function isDefaultDatabase(db: Database) {
-  return db.name === "materialize";
 }
 
 export type UseDatabaseResponse = ReturnType<typeof useDatabases>;

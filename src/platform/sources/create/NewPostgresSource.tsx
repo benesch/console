@@ -36,10 +36,7 @@ import {
   Connection,
   useConnectionsFiltered,
 } from "~/api/materialize/useConnections";
-import useDatabases, {
-  Database,
-  isDefaultDatabase,
-} from "~/api/materialize/useDatabases";
+import { Database } from "~/api/materialize/useDatabases";
 import useSchemas, {
   isDefaultSchema,
   Schema,
@@ -56,6 +53,7 @@ import {
 } from "~/components/formComponents";
 import InlayBanner from "~/components/InlayBanner";
 import ObjectNameInput from "~/components/ObjectNameInput";
+import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import useSuccessToast from "~/components/SuccessToast";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
@@ -116,7 +114,6 @@ const NewPostgresSource = () => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   const [queryParams] = useSearchParams();
-  const { data: databases, error: databasesError } = useDatabases();
   const { data: schemas, error: schemasError } = useSchemas();
   const { data: clusterSizes, error: clusterSizesError } =
     useAvailableClusterSizes();
@@ -143,11 +140,7 @@ const NewPostgresSource = () => {
   }, [clusterSizes]);
 
   const loadingError =
-    databasesError ||
-    schemasError ||
-    clusterSizesError ||
-    clustersError ||
-    connectionsError;
+    schemasError || clusterSizesError || clustersError || connectionsError;
 
   const {
     control,
@@ -175,13 +168,6 @@ const NewPostgresSource = () => {
     control,
     name: "connection",
   });
-  const { field: databaseField } = useController({
-    control,
-    name: "database",
-    rules: {
-      required: "Database is required.",
-    },
-  });
   const { field: schemaField } = useController({
     control,
     name: "schema",
@@ -203,7 +189,7 @@ const NewPostgresSource = () => {
       validate: {
         required: (value) => {
           const selectedCluster = getValues("cluster");
-          if (!value && selectedCluster?.id === "0") {
+          if (!value && selectedCluster?.id === NEW_CLUSTER_ID) {
             return "Cluster size is required.";
           }
         },
@@ -217,7 +203,6 @@ const NewPostgresSource = () => {
 
   const { runSql: createSource, loading: isCreating } = useSqlLazy({
     queryBuilder: (values: FormState) => {
-      assert(values.database);
       assert(values.schema);
       assert(values.connection);
       assert(values.cluster);
@@ -227,8 +212,8 @@ const NewPostgresSource = () => {
             // new object to narrow the type
             query: createSourceStatement({
               ...values,
-              database: values.database,
-              schema: values.schema,
+              databaseName: values.schema.databaseName,
+              schemaName: values.schema.name,
               connection: values.connection,
             }),
             params: [],
@@ -323,16 +308,6 @@ WHERE s.name = $1;`,
   }, [connections, getValues, queryParams, setValue]);
 
   React.useEffect(() => {
-    if (!databases) return;
-    if (getValues("database")) return;
-
-    const selected = databases.find(isDefaultDatabase);
-    if (selected) {
-      setValue("database", selected);
-    }
-  }, [databases, getValues, setValue]);
-
-  React.useEffect(() => {
     if (!schemas) return;
     if (getValues("schema")) return;
 
@@ -345,9 +320,6 @@ WHERE s.name = $1;`,
   const sourceName = watch("name");
   const allTables = watch("allTables");
   const selectedCluster = watch("cluster");
-
-  const additionalOptionsError =
-    formState.errors.database || formState.errors.schema;
 
   if (loadingError) {
     return <ErrorBox />;
@@ -390,10 +362,14 @@ WHERE s.name = $1;`,
                 <InlineLabeledInput label="Connection">
                   <SearchableSelect
                     ariaLabel="Select connection"
-                    sectionLabel="Select connection"
                     placeholder="Select one"
                     {...connectionField}
-                    options={connections ?? []}
+                    options={[
+                      {
+                        label: "Select connection",
+                        options: connections ?? [],
+                      },
+                    ]}
                   />
                 </InlineLabeledInput>
               </FormControl>
@@ -411,7 +387,7 @@ WHERE s.name = $1;`,
                       pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                     })}
                     autoFocus
-                    placeholder="My postgres source"
+                    placeholder="My_postgres_source"
                     autoCorrect="off"
                     size="sm"
                     variant={formState.errors.name ? "error" : "default"}
@@ -420,7 +396,7 @@ WHERE s.name = $1;`,
               </FormControl>
               <Accordion
                 allowToggle
-                index={additionalOptionsError ? 0 : undefined}
+                index={formState.errors.schema ? 0 : undefined}
               >
                 <AccordionItem>
                   <AccordionButton
@@ -433,31 +409,14 @@ WHERE s.name = $1;`,
                   <AccordionPanel
                     motionProps={{ style: { overflow: "visible" } }}
                   >
-                    <FormControl isInvalid={!!formState.errors.database} mb="4">
-                      <InlineLabeledInput
-                        label="Database"
-                        error={formState.errors.database?.message}
-                      >
-                        <SearchableSelect
-                          ariaLabel="Select database"
-                          sectionLabel="Select database"
-                          placeholder="Select one"
-                          {...databaseField}
-                          options={databases ?? []}
-                        />
-                      </InlineLabeledInput>
-                    </FormControl>
                     <FormControl isInvalid={!!formState.errors.schema}>
                       <InlineLabeledInput
                         label="Schema"
                         error={formState.errors.schema?.message}
                       >
-                        <SearchableSelect
-                          ariaLabel="Select schema"
-                          sectionLabel="Select schema"
-                          placeholder="Select one"
+                        <SchemaSelect
                           {...schemaField}
-                          options={schemas ?? []}
+                          schemas={schemas ?? []}
                         />
                       </InlineLabeledInput>
                     </FormControl>
@@ -474,12 +433,16 @@ WHERE s.name = $1;`,
                   <Box>
                     <SearchableSelect
                       ariaLabel="Select cluster"
-                      sectionLabel="Select cluster"
                       placeholder="Select one"
                       {...clusterField}
-                      options={clusterOptions}
+                      options={[
+                        {
+                          label: "Select cluster",
+                          options: clusterOptions,
+                        },
+                      ]}
                     />
-                    {selectedCluster?.id === "0" && sourceName && (
+                    {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
                       <Text
                         color={semanticColors.foreground.secondary}
                         mt="2"
@@ -492,7 +455,7 @@ WHERE s.name = $1;`,
                   </Box>
                 </InlineLabeledInput>
               </FormControl>
-              {selectedCluster?.id === "0" && (
+              {selectedCluster?.id === NEW_CLUSTER_ID && (
                 <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
                   <InlineLabeledInput
                     label="Cluster size"
@@ -500,10 +463,14 @@ WHERE s.name = $1;`,
                   >
                     <SearchableSelect
                       ariaLabel="Select cluster size"
-                      sectionLabel="Select cluster size"
                       placeholder="Select one"
                       {...clusterSizeField}
-                      options={clusterSizeOptions}
+                      options={[
+                        {
+                          label: "Select cluster size",
+                          options: clusterSizeOptions,
+                        },
+                      ]}
                     />
                   </InlineLabeledInput>
                 </FormControl>

@@ -185,7 +185,6 @@ describe("NewPostgresSource", () => {
     await user.click(screen.getByText("Create source"));
 
     await waitFor(async () => {
-      expect(await screen.findByText("Database is required.")).toBeVisible();
       expect(await screen.findByText("Schema is required.")).toBeVisible();
     });
   });

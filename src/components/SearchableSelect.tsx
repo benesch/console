@@ -4,6 +4,7 @@ import ReactSelect, {
   GroupBase,
   mergeStyles,
   OptionProps,
+  OptionsOrGroups,
   Props,
   StylesConfig,
 } from "react-select";
@@ -14,11 +15,10 @@ import { MaterializeTheme, ThemeColors, ThemeShadows } from "~/theme";
 
 export type SelectOption = { id: string; name: string; display?: "addItem" };
 
-export interface SearchableSelectProps
-  extends Props<SelectOption, false, GroupBase<SelectOption>> {
+export interface SearchableSelectProps<Option extends SelectOption>
+  extends Props<Option, false, GroupBase<Option>> {
   ariaLabel: string;
-  options: SelectOption[];
-  sectionLabel: string;
+  options: OptionsOrGroups<Option, GroupBase<Option>>;
 }
 
 const buildStyles = <
@@ -163,11 +163,16 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
   );
 };
 
-const SearchableSelect = React.forwardRef(
-  (
-    { options, ariaLabel, sectionLabel, ...props }: SearchableSelectProps,
-    ref: React.Ref<any>
-  ) => {
+export interface SearchableSelectType
+  extends React.ForwardRefExoticComponent<SearchableSelectProps<SelectOption>> {
+  <T extends SelectOption>(
+    props: React.PropsWithoutRef<SearchableSelectProps<T>> &
+      React.RefAttributes<T>
+  ): ReturnType<React.FC<SearchableSelectProps<T>>>;
+}
+
+const SearchableSelect: SearchableSelectType = React.forwardRef(
+  ({ options, ariaLabel, components, ...props }, ref: React.Ref<any>) => {
     const {
       colors: { semanticColors },
       shadows,
@@ -179,18 +184,14 @@ const SearchableSelect = React.forwardRef(
         components={{
           Option: AddButtonOrOption,
           DropdownIndicator: DropdownIndicator,
+          ...components,
         }}
-        formatOptionLabel={(data) => data.name}
-        getOptionValue={(option) => option.name}
+        getOptionLabel={(option) => option.name}
+        getOptionValue={(option) => option.id}
         isMulti={false}
         isSearchable
         ref={ref}
-        options={[
-          {
-            label: sectionLabel,
-            options,
-          },
-        ]}
+        options={options}
         styles={buildStyles(semanticColors, shadows)}
         {...props}
       />
