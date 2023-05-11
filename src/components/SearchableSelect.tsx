@@ -164,14 +164,15 @@ const AddButtonOrOption = (props: OptionProps<SelectOption, false>) => {
 };
 
 export interface SearchableSelectType
-  extends React.FC<SearchableSelectProps<SelectOption>> {
-  <T extends SelectOption>(props: SearchableSelectProps<T>): ReturnType<
-    React.FC<SearchableSelectProps<T>>
-  >;
+  extends React.ForwardRefExoticComponent<SearchableSelectProps<SelectOption>> {
+  <T extends SelectOption>(
+    props: React.PropsWithoutRef<SearchableSelectProps<T>> &
+      React.RefAttributes<T>
+  ): ReturnType<React.FC<SearchableSelectProps<T>>>;
 }
 
 const SearchableSelect: SearchableSelectType = React.forwardRef(
-  ({ options, ariaLabel, ...props }, ref: React.Ref<any>) => {
+  ({ options, ariaLabel, components, ...props }, ref: React.Ref<any>) => {
     const {
       colors: { semanticColors },
       shadows,
@@ -183,6 +184,7 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
         components={{
           Option: AddButtonOrOption,
           DropdownIndicator: DropdownIndicator,
+          ...components,
         }}
         getOptionLabel={(option) => option.name}
         getOptionValue={(option) => option.id}

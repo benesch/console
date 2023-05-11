@@ -27,7 +27,6 @@ import {
   useForm,
 } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createFilter } from "react-select";
 
 import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
@@ -39,7 +38,6 @@ import {
 } from "~/api/materialize/useConnections";
 import { Database } from "~/api/materialize/useDatabases";
 import useSchemas, {
-  buildSchemaSelectOptions,
   isDefaultSchema,
   Schema,
 } from "~/api/materialize/useSchemas";
@@ -55,6 +53,7 @@ import {
 } from "~/components/formComponents";
 import InlayBanner from "~/components/InlayBanner";
 import ObjectNameInput from "~/components/ObjectNameInput";
+import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import useSuccessToast from "~/components/SuccessToast";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
@@ -139,8 +138,6 @@ const NewPostgresSource = () => {
   const clusterSizeOptions = React.useMemo(() => {
     return (clusterSizes ?? []).map((s) => ({ id: s, name: s }));
   }, [clusterSizes]);
-
-  const schemaSelectOptions = buildSchemaSelectOptions(schemas ?? []);
 
   const loadingError =
     schemasError || clusterSizesError || clustersError || connectionsError;
@@ -417,15 +414,9 @@ WHERE s.name = $1;`,
                         label="Schema"
                         error={formState.errors.schema?.message}
                       >
-                        <SearchableSelect<Schema>
-                          ariaLabel="Select schema"
-                          placeholder="Select one"
+                        <SchemaSelect
                           {...schemaField}
-                          options={schemaSelectOptions}
-                          filterOption={createFilter<Schema>({
-                            stringify: (option) =>
-                              `${option.data.databaseName}.${option.data.name}`,
-                          })}
+                          schemas={schemas ?? []}
                         />
                       </InlineLabeledInput>
                     </FormControl>
