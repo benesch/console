@@ -24,6 +24,15 @@ export interface paths {
      */
     get: operations["healthRetrieve"];
   };
+  "/api/invoices": {
+    /**
+     * @description Get recent invoices.
+     * 
+     * This endpoint returns the 20 most recent invoices for the given user,
+     * including draft, paid, void, and issued invoices.
+     */
+    get: operations["invoices"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -34,10 +43,23 @@ export interface components {
       id: string;
       name: string;
       blocked: boolean;
-      subscription: OneOf<[Record<string, never>, null]>;
+      subscription: components["schemas"]["Subscription"] | null;
       trialExpiresAt: OneOf<[string, null]>;
     };
     Subscription: Record<string, never>;
+    Invoice: {
+      issueDate: string;
+      pdfUrl: OneOf<[string, null]>;
+      total: string;
+      amountDue: string;
+      createdAt: string;
+      webUrl: OneOf<[string, null]>;
+      status: string;
+    };
+    InvoiceResponse: {
+      data: (components["schemas"]["Invoice"])[];
+      nextCursor: OneOf<[string, null]>;
+    };
   };
   responses: never;
   parameters: never;
@@ -71,6 +93,21 @@ export interface operations {
     responses: {
       /** @description No response body */
       200: never;
+    };
+  };
+  invoices: {
+    /**
+     * @description Get recent invoices.
+     * 
+     * This endpoint returns the 20 most recent invoices for the given user,
+     * including draft, paid, void, and issued invoices.
+     */
+    responses: {
+      200: {
+        content: {
+          "application/json": components["schemas"]["InvoiceResponse"];
+        };
+      };
     };
   };
 }

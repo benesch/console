@@ -10,7 +10,12 @@ import React from "react";
 
 import config from "~/config";
 
-import { currentOrganization, Organization } from "./syncServer";
+import {
+  currentOrganization,
+  Invoice,
+  Organization,
+  recentInvoices,
+} from "./syncServer";
 
 export type FetchAuthedType = (
   input: RequestInfo,
@@ -139,4 +144,24 @@ export function useCurrentOrganization() {
   }, [fetchOrganization]);
 
   return { organization, loading };
+}
+
+export function useInvoices() {
+  const { user } = useAuth();
+  const [invoices, setInvoices] = React.useState<Invoice[] | null>(null);
+
+  const fetchInvoices = React.useCallback(async () => {
+    const { data } = await recentInvoices(
+      config.syncServerUrl,
+      user.accessToken
+    );
+    setInvoices(data.data);
+  }, [user]);
+
+  React.useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
+
+  const loading = invoices == null;
+  return { invoices, loading };
 }
