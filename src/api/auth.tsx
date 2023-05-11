@@ -159,7 +159,7 @@ export function useInvoices() {
   }, [user]);
 
   React.useEffect(() => {
-      fetchInvoices();
+    fetchInvoices();
   }, [fetchInvoices]);
 
   const loading = invoices == null;

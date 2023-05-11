@@ -13,45 +13,49 @@ const BillingPage = () => {
       <PageHeader>
         <PageHeading>Invoices</PageHeading>
       </PageHeader>
-      {loading ? <Spinner data-testid="loading-spinner" /> : <Table
-        variant="standalone"
-        data-testid="invoices-table"
-        borderRadius="xl"
-      >
-        <Thead>
-          <Tr>
-            <Th>Issue date</Th>
-            <Th>Amount due</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {invoices !== null &&
-            invoices.map((invoice, i) => {
-              // Orb sometimes gives us `hosted_invoice_url` (which the sync server calls `webUrl`)
-              // and sometimes `invoice_pdf` (respecitvely `pdfUrl`).
-              // The former has more detail, so expose it if possible.
-              const link = invoice.webUrl || invoice.pdfUrl;
-              const rendered_date = format(
-                new Date(invoice.issueDate),
-                "MMM d, yyyy"
-              );
-              return (
-                <Tr key={i}>
-                  <Td>{rendered_date}</Td>
-                  <Td>{invoice.amountDue}</Td>
-                  <Td>
-                    {link && (
-                      <TextLink href={link} isExternal={true}>
-                        View invoice →
-                      </TextLink>
-                    )}
-                  </Td>
-                </Tr>
-              );
-            })}
-        </Tbody>
-        </Table>}
+      {loading ? (
+        <Spinner data-testid="loading-spinner" />
+      ) : (
+        <Table
+          variant="standalone"
+          data-testid="invoices-table"
+          borderRadius="xl"
+        >
+          <Thead>
+            <Tr>
+              <Th>Issue date</Th>
+              <Th>Amount due</Th>
+              <Th></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {invoices !== null &&
+              invoices.map((invoice, i) => {
+                // Orb sometimes gives us `hosted_invoice_url` (which the sync server calls `webUrl`)
+                // and sometimes `invoice_pdf` (respecitvely `pdfUrl`).
+                // The former has more detail, so expose it if possible.
+                const link = invoice.webUrl || invoice.pdfUrl;
+                const rendered_date = format(
+                  new Date(invoice.issueDate),
+                  "MMM d, yyyy"
+                );
+                return (
+                  <Tr key={i}>
+                    <Td>{rendered_date}</Td>
+                    <Td>{invoice.amountDue}</Td>
+                    <Td>
+                      {link && (
+                        <TextLink href={link} isExternal={true}>
+                          View invoice →
+                        </TextLink>
+                      )}
+                    </Td>
+                  </Tr>
+                );
+              })}
+          </Tbody>
+        </Table>
+      )}
     </>
   );
 };
