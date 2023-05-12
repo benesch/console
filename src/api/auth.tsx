@@ -84,16 +84,20 @@ export function useAuth() {
   return context;
 }
 
+function hasPermission(user: User, key: string): boolean {
+  return !!user.permissions.find((p) => p.key === key);
+}
+
 export function hasEnvironmentReadPermission(user: User): boolean {
-  return !!user.permissions.find(
-    (p) => p.key === "materialize.environment.read"
-  );
+  return hasPermission(user, "materialize.environment.read");
 }
 
 export function hasEnvironmentWritePermission(user: User): boolean {
-  return !!user.permissions.find(
-    (p) => p.key === "materialize.environment.write"
-  );
+  return hasPermission(user, "materialize.environment.write");
+}
+
+export function hasInvoiceReadPermission(user: User): boolean {
+  return hasPermission(user, "materialize.invoice.read");
 }
 
 export function getCurrentTenant(

@@ -21,7 +21,7 @@ import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
 import PricingPage from "~/access/PricingPage";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
-import { useAuth } from "~/api/auth";
+import { hasInvoiceReadPermission, useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
@@ -76,7 +76,9 @@ const Router = () => {
         <Route path="/access" element={<AppPasswordsPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/editor" element={<Editor />} />
-        <Route path="/billing" element={<BillingPage />} />
+        {user && hasInvoiceReadPermission(user) && (
+          <Route path="/billing" element={<BillingPage />} />
+        )}
         <Route path="*" element={<RedirectToHome />} />
       </ProtectedRoutes>
       <AnalyticsOnEveryPage />
