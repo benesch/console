@@ -25,7 +25,6 @@ import { attachNamespace } from "~/api/materialize";
 import createPostgresConnectionStatement from "~/api/materialize/createConnectionStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useSchemas, {
-  buildSchemaSelectOptions,
   isDefaultSchema,
   Schema,
 } from "~/api/materialize/useSchemas";
@@ -45,6 +44,7 @@ import {
 } from "~/components/formComponents";
 import InlayBanner from "~/components/InlayBanner";
 import ObjectNameInput from "~/components/ObjectNameInput";
+import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import SecretsFormControl, {
   createSecretFieldDefaultValues,
@@ -339,8 +339,6 @@ const NewPostgresConnection = () => {
     }
   };
 
-  const schemaSelectOptions = buildSchemaSelectOptions(schemas ?? []);
-
   useEffect(() => {
     if (!schemas) return;
     if (schemaField.value) return;
@@ -434,11 +432,9 @@ const NewPostgresConnection = () => {
                         label="Schema"
                         error={formState.errors.schema?.message}
                       >
-                        <SearchableSelect
-                          ariaLabel="Select schema"
-                          placeholder="Select one"
+                        <SchemaSelect
                           {...schemaField}
-                          options={schemaSelectOptions}
+                          schemas={schemas ?? []}
                         />
                       </InlineLabeledInput>
                     </FormControl>
