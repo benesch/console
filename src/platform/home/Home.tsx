@@ -42,7 +42,7 @@ const Home = () => {
   if (Array.from(environments.values()).every((e) => e.state === "disabled")) {
     content = (
       <Box textAlign="center">
-        <VStack mb={4} spacing={2} alignItems="flex-start">
+        <VStack my={4} spacing={2} alignItems="flex-start">
           <Text fontSize="2xl" fontWeight={700}>
             Welcome to Materialize!
           </Text>
@@ -74,6 +74,7 @@ const Home = () => {
                 spacing={6}
                 h="full"
                 maxWidth="2xl"
+                my={4}
               >
                 <Heading fontSize="2xl" fontWeight="500" textAlign="center">
                   Connect to Materialize
@@ -92,7 +93,7 @@ const Home = () => {
       case "disabled":
         content = (
           <Box textAlign="center">
-            <VStack mb={8} spacing={6}>
+            <VStack my={8} spacing={6}>
               <Text fontSize="xl">
                 Region {currentEnvironmentId} is not enabled.
               </Text>
