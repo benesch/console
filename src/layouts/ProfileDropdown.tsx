@@ -18,7 +18,11 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 
-import { getCurrentTenant, useAuth } from "~/api/auth";
+import {
+  getCurrentTenant,
+  hasInvoiceReadPermission,
+  useAuth,
+} from "~/api/auth";
 import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
@@ -134,7 +138,7 @@ const ProfileDropdown = (props: ButtonProps) => {
 };
 
 export const ProfileMenuItems = () => {
-  const { routes: authRoutes } = useAuth();
+  const { routes: authRoutes, user } = useAuth();
   const flags = useFlags();
   return (
     <>
@@ -144,7 +148,7 @@ export const ProfileMenuItems = () => {
       <MenuItem fontWeight="medium" onClick={() => AdminPortal.show()}>
         Account settings
       </MenuItem>
-      {flags["billing-and-usage-45"] && (
+      {flags["billing-and-usage-45"] && hasInvoiceReadPermission(user) && (
         <MenuItem as={RouterLink} to="/billing" fontWeight="medium">
           Invoices
         </MenuItem>
