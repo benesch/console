@@ -2,7 +2,8 @@ import { Box, HStack, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { Navigate, Route, useParams } from "react-router-dom";
 
-import { SinksResponse, useShowCreate } from "~/api/materialized";
+import useShowCreate from "~/api/materialize/useShowCreate";
+import { SinksResponse } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
 import StatusPill from "~/components/StatusPill";
