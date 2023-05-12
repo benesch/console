@@ -3,13 +3,16 @@ import { Box, BoxProps, Spinner } from "@chakra-ui/react";
 import React from "react";
 
 import { Source } from "~/api/materialize/useSources";
-import { ConnectorStatus } from "~/api/materialized";
 
 export type StatusPillProps = BoxProps & {
-  status: ConnectorStatus;
+  status: string;
+  backgroundColor?: string;
+  textColor?: string;
+  icon: any;
 };
 
-const getBackgroundColor = (status: Source["status"]) => {
+/** Gets the background color of source/sink status pills. */
+export const getConnectorBackgroundColor = (status: Source["status"]) => {
   switch (status) {
     case "created":
       return "#ECE5FF";
@@ -26,7 +29,8 @@ const getBackgroundColor = (status: Source["status"]) => {
   }
 };
 
-const getTextColor = (status: Source["status"]) => {
+/** Gets the text color of source/sink status pills. */
+export const getConnectorTextColor = (status: Source["status"]) => {
   switch (status) {
     case "created":
       return "#1C1561";
@@ -43,14 +47,25 @@ const getTextColor = (status: Source["status"]) => {
   }
 };
 
-const StatusPill = ({ status, ...boxProps }: StatusPillProps) => {
-  let icon = null;
-  if (status === "starting") {
-    icon = <Spinner width="12px" height="12px" speed="0.75s" />;
+/** Gets the icon to display for a source/sink status pill. */
+export const getSourceIcon = (status: Source["status"]) => {
+  switch (status) {
+    case "starting":
+      return <Spinner width="12px" height="12px" speed="0.75s" />;
+    case "failed":
+      return <WarningIcon />;
+    default:
+      return null;
   }
-  if (status === "failed") {
-    icon = <WarningIcon />;
-  }
+};
+
+const StatusPill = ({
+  status,
+  backgroundColor,
+  textColor,
+  icon,
+  ...boxProps
+}: StatusPillProps) => {
   return (
     <Box
       display="flex"
@@ -62,8 +77,8 @@ const StatusPill = ({ status, ...boxProps }: StatusPillProps) => {
       textAlign="center"
       fontSize="xs"
       fontWeight="500"
-      backgroundColor={getBackgroundColor(status)}
-      color={getTextColor(status)}
+      backgroundColor={backgroundColor}
+      color={textColor}
       width="fit-content"
       {...boxProps}
     >

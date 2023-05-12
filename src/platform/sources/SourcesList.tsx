@@ -25,7 +25,11 @@ import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
-import StatusPill from "~/components/StatusPill";
+import StatusPill, {
+  getConnectorBackgroundColor,
+  getConnectorTextColor,
+  getSourceIcon,
+} from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -234,7 +238,18 @@ const SourceTable = (props: SourceTableProps) => {
                 </Tooltip>
               </Box>
             </Td>
-            <Td>{s.status ? <StatusPill status={s.status} /> : "-"}</Td>
+            <Td>
+              {s.status ? (
+                <StatusPill
+                  status={s.status}
+                  backgroundColor={getConnectorBackgroundColor(s.status)}
+                  textColor={getConnectorTextColor(s.status)}
+                  icon={getSourceIcon(s.status)}
+                />
+              ) : (
+                "-"
+              )}
+            </Td>
             <Td>{s.type}</Td>
             <Td>{s.size || "-"}</Td>
           </Tr>
