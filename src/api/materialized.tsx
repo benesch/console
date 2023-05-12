@@ -200,7 +200,9 @@ export interface ClusterReplicaWithUtilizaton {
   id: string;
   name: string;
   size: string;
+  /** Undefined when a replica is first created */
   cpuPercent?: number;
+  /** Undefined when a replica is first created */
   memoryPercent?: number;
 }
 
