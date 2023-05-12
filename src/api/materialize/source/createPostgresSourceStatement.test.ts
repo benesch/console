@@ -22,7 +22,7 @@ describe("createPostgresSourceStatement", () => {
     expect(statement).toEqual(
       `
 CREATE SOURCE "materialize"."public"."pg_source"
-IN CLUSTER default
+IN CLUSTER "default"
 FROM POSTGRES CONNECTION "materialize"."public"."pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES;`
     );
@@ -52,11 +52,9 @@ FOR ALL TABLES;`
     expect(statement).toEqual(
       `
 CREATE SOURCE "materialize"."public"."pg_source"
-IN CLUSTER default
+IN CLUSTER "default"
 FROM POSTGRES CONNECTION "materialize"."public"."pg_conn" (PUBLICATION 'mz_publication')
-FOR TABLES (
-"first" AS "one",
-"second");`
+FOR TABLES ("first" AS "one", "second");`
     );
   });
 
