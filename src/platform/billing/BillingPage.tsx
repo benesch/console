@@ -1,13 +1,27 @@
-import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useTheme,
+} from "@chakra-ui/react";
 import { format } from "date-fns";
 import React from "react";
 
 import { useInvoices } from "~/api/auth";
+import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
+import { MaterializeTheme } from "~/theme";
 
 const BillingPage = () => {
   const { invoices, loading } = useInvoices();
+  const { colors } = useTheme<MaterializeTheme>();
+
   return (
     <>
       <PageHeader>
@@ -24,6 +38,7 @@ const BillingPage = () => {
           <Thead>
             <Tr>
               <Th>Issue date</Th>
+              <Th>Status</Th>
               <Th>Amount due</Th>
               <Th></Th>
             </Tr>
@@ -39,9 +54,39 @@ const BillingPage = () => {
                   new Date(invoice.issueDate),
                   "MMM d, yyyy"
                 );
+                let bg = undefined;
+                let fg = undefined;
+                switch (invoice.status) {
+                  case "draft":
+                    bg = colors.semanticColors.background.tertiary;
+                    fg = colors.semanticColors.foreground.tertiary;
+                    break;
+                  case "issued":
+                    bg = colors.semanticColors.background.primary;
+                    fg = colors.semanticColors.foreground.primary;
+                    break;
+                  case "paid":
+                    bg = colors.semanticColors.background.info;
+                    fg = colors.semanticColors.foreground.primary;
+                    break;
+                  case "void":
+                    bg = colors.semanticColors.background.inverse;
+                    fg = colors.semanticColors.foreground.inverse;
+                    break;
+                }
                 return (
                   <Tr key={i}>
-                    <Td>{rendered_date}</Td>
+                    <Td>
+                      <Text>{rendered_date}</Text>
+                    </Td>
+                    <Td>
+                      <StatusPill
+                        status={invoice.status}
+                        backgroundColor={bg}
+                        textColor={fg}
+                        icon={null}
+                      />
+                    </Td>
                     <Td>{invoice.amountDue}</Td>
                     <Td>
                       {link && (

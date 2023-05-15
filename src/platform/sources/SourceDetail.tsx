@@ -6,7 +6,11 @@ import useShowCreate from "~/api/materialize/useShowCreate";
 import { SourcesResponse } from "~/api/materialize/useSources";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
-import StatusPill from "~/components/StatusPill";
+import StatusPill, {
+  getConnectorBackgroundColor,
+  getConnectorTextColor,
+  getSourceIcon,
+} from "~/components/StatusPill";
 import {
   Breadcrumb,
   ExpandablePanel,
@@ -47,7 +51,15 @@ const SourceDetail = ({ sourcesResponse }: SourceDetailProps) => {
               <PageBreadcrumbs crumbs={breadcrumbs}>
                 {source?.status && (
                   <Box>
-                    <StatusPill ml={2} status={source.status} />
+                    <StatusPill
+                      ml={2}
+                      status={source.status}
+                      backgroundColor={getConnectorBackgroundColor(
+                        source.status
+                      )}
+                      textColor={getConnectorTextColor(source.status)}
+                      icon={getSourceIcon(source.status)}
+                    />
                   </Box>
                 )}
               </PageBreadcrumbs>

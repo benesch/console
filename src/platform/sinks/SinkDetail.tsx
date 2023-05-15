@@ -6,7 +6,11 @@ import useShowCreate from "~/api/materialize/useShowCreate";
 import { SinksResponse } from "~/api/materialized";
 import ConnectModal from "~/components/ConnectModal";
 import { CopyableBox } from "~/components/copyableComponents";
-import StatusPill from "~/components/StatusPill";
+import StatusPill, {
+  getConnectorBackgroundColor,
+  getConnectorTextColor,
+  getSourceIcon,
+} from "~/components/StatusPill";
 import {
   Breadcrumb,
   ExpandablePanel,
@@ -45,7 +49,13 @@ const SinkDetail = ({ sinksResponse }: SinkDetailProps) => {
               <PageBreadcrumbs crumbs={breadcrumbs}>
                 {sink?.status && (
                   <Box>
-                    <StatusPill ml={2} status={sink.status} />
+                    <StatusPill
+                      ml={2}
+                      status={sink.status}
+                      backgroundColor={getConnectorBackgroundColor(sink.status)}
+                      textColor={getConnectorTextColor(sink.status)}
+                      icon={getSourceIcon(sink.status)}
+                    />
                   </Box>
                 )}
               </PageBreadcrumbs>
