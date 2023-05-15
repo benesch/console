@@ -139,12 +139,14 @@ export function useCurrentOrganization() {
   }, [user]);
 
   React.useEffect(() => {
-    try {
-      setLoading(true);
-      fetchOrganization();
-    } finally {
-      setLoading(false);
-    }
+    (async () => {
+      try {
+        setLoading(true);
+        await fetchOrganization();
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [fetchOrganization]);
 
   return { organization, loading };
