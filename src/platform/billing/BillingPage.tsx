@@ -13,13 +13,16 @@ import { format } from "date-fns";
 import React from "react";
 
 import { useInvoices } from "~/api/auth";
+import ErrorBox from "~/components/ErrorBox";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
 
+import { INVOICE_FETCH_ERROR_MESSAGE } from "./constants";
+
 const BillingPage = () => {
-  const { invoices, loading } = useInvoices();
+  const { invoices, loading, error } = useInvoices();
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
@@ -29,6 +32,8 @@ const BillingPage = () => {
       </PageHeader>
       {loading ? (
         <Spinner data-testid="loading-spinner" />
+      ) : error ? (
+        <ErrorBox message={INVOICE_FETCH_ERROR_MESSAGE} />
       ) : (
         <Table
           variant="standalone"
