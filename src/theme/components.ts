@@ -119,6 +119,7 @@ export const Modal = {
       dialog: {
         minWidth: "100%",
         minHeight: "100vh",
+        overflow: "auto",
         m: 0,
       },
     },

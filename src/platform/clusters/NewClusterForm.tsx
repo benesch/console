@@ -19,7 +19,7 @@ import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
-import { useSqlLazy } from "~/api/materialized";
+import { Results, useSqlLazy } from "~/api/materialized";
 import {
   FormContainer,
   FormInfoBox,
@@ -65,7 +65,7 @@ const replicaErrorMessage = (error: FieldError | undefined) => {
 };
 
 export interface NewClusterFormProps {
-  refetchClusters: () => Promise<void>;
+  refetchClusters: () => Promise<Results[] | null | undefined>;
 }
 const NewClusterForm = ({
   refetchClusters,
@@ -243,6 +243,10 @@ REPLICAS (
                     {...register("name", {
                       required: "Cluster name is required.",
                       pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                      min: {
+                        value: 5,
+                        message: "wow",
+                      },
                     })}
                     autoFocus
                     placeholder="my_production_cluster"

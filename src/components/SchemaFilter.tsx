@@ -25,7 +25,7 @@ const SchemaFilter = ({
 
   const options: GroupBase<Schema>[] = [
     {
-      label: "Filter by schmea",
+      label: "Filter by schema",
       options: [
         { id: "0", name: "All Schemas", databaseId: "0", databaseName: "" },
         ...schemaList,

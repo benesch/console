@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 
 import {
   ConnectionsResponse,
@@ -30,10 +30,13 @@ import {
   EmptyListHeaderContents,
   EmptyListWrapper,
 } from "~/layouts/listPageComponents";
+import { SentryRoutes } from "~/sentry";
 import ConnectionIcon from "~/svg/ConnectionIcon";
 import { MaterializeTheme } from "~/theme";
 import useDelayedLoading from "~/useDelayedLoading";
 import { SchemaObjectFilters } from "~/useSchemaObjectFilters";
+
+import CreateConnectionSuccessModal from "./create/CreateConnectionSuccessModal";
 
 const FiltersEmptyState = () => {
   const {
@@ -147,7 +150,7 @@ export const ConnectionsList = ({
               setHasNameFilterReset(false);
             }}
           />
-          <Button as={Link} variant="primary" size="sm" to="new">
+          <Button as={Link} variant="primary" size="sm" to="new/connection">
             New connection
           </Button>
         </HStack>
@@ -163,6 +166,12 @@ export const ConnectionsList = ({
       ) : (
         <ConnectionsTable connections={connections ?? []} />
       )}
+      <SentryRoutes>
+        <Route
+          path="/showConnectionCreated"
+          element={<CreateConnectionSuccessModal />}
+        />
+      </SentryRoutes>
     </>
   );
 };

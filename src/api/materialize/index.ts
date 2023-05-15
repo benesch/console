@@ -1,4 +1,4 @@
-import { assert, isTruthy } from "~/util";
+import { assert, isTruthy, notNullOrUndefined } from "~/util";
 
 /**
  * Named used to identify ourselves to the server, needs to be kept in sync with
@@ -34,4 +34,21 @@ export function quoteIdentifier(id: string) {
 export function buildWhereConditions(expressions: Array<undefined | string>) {
   expressions = expressions.filter(isTruthy);
   return expressions.length > 0 ? `\nWHERE ${expressions.join("\nAND ")}` : "";
+}
+
+/**
+ * Given an object name, prepend it with a namespace indicating is schema and database
+ */
+export function attachNamespace(
+  name: string,
+  databaseName: string,
+  schemaName: string
+): string {
+  name = quoteIdentifier(name);
+  const namespace = [databaseName, schemaName]
+    .filter(notNullOrUndefined)
+    .map(quoteIdentifier)
+    .join(".");
+
+  return namespace ? `${namespace}.${name}` : name;
 }

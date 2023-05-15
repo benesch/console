@@ -7,10 +7,11 @@ import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import ConnectionsList from "./ConnectionsList";
 import CreateConnectionEntry from "./create/CreateConnectionEntry";
+import NewPostgresConnection from "./create/NewPostgresConnection";
 
 const NAME_FILTER_QUERY_STRING_KEY = "connectionName";
 
-const ConnectionsRoutes = () => {
+const ShowConnectionRoutes = () => {
   const schemaObjectFilters = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
@@ -24,7 +25,7 @@ const ConnectionsRoutes = () => {
   return (
     <SentryRoutes>
       <Route
-        path="/"
+        path="/*"
         element={
           <ConnectionsList
             schemaObjectFilters={schemaObjectFilters}
@@ -32,7 +33,24 @@ const ConnectionsRoutes = () => {
           />
         }
       />
-      <Route path="new" element={<CreateConnectionEntry />} />
+    </SentryRoutes>
+  );
+};
+
+const NewConnectionRoutes = () => {
+  return (
+    <SentryRoutes>
+      <Route path="/connection" element={<CreateConnectionEntry />} />
+      <Route path="/postgres" element={<NewPostgresConnection />} />
+    </SentryRoutes>
+  );
+};
+
+const ConnectionsRoutes = () => {
+  return (
+    <SentryRoutes>
+      <Route path="/new/*" element={<NewConnectionRoutes />} />
+      <Route path="/*" element={<ShowConnectionRoutes />} />
     </SentryRoutes>
   );
 };

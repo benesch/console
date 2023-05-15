@@ -8,10 +8,10 @@ export function alreadyExistsError(errorMessage?: string) {
   }
 
   /**
-   * This regex takes a string and extracts a substring in single quotation marks
+   * This regex takes a string and extracts a substring in single or double quotation marks
    * only if the sentence ends with "already exists".
    */
-  const strInsideQuotesMatch = /'([^']*)'[\s\S]*already exists$/g.exec(
+  const strInsideQuotesMatch = /['"]([^'"]*)['"][\s\S]*already exists$/g.exec(
     errorMessage
   );
 

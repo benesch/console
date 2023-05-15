@@ -21,7 +21,7 @@ describe("createSourceStatement", () => {
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE "materialize"."public".pg_source
+CREATE SOURCE "materialize"."public"."pg_source"
 IN CLUSTER default
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES;`
@@ -51,7 +51,7 @@ FOR ALL TABLES;`
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE "materialize"."public".pg_source
+CREATE SOURCE "materialize"."public"."pg_source"
 IN CLUSTER default
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR TABLES (
@@ -80,7 +80,7 @@ FOR TABLES (
     });
     expect(statement).toEqual(
       `
-CREATE SOURCE "materialize"."public".pg_source
+CREATE SOURCE "materialize"."public"."pg_source"
 FROM POSTGRES CONNECTION "pg_conn" (PUBLICATION 'mz_publication')
 FOR ALL TABLES
 WITH (SIZE = '3xsmall');`

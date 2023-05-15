@@ -28,10 +28,15 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { FieldError, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
+import {
+  createSecretQueryBuilder,
+  ListPageSecret,
+  useSecretsListPage,
+} from "~/api/materialize/useSecrets";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
-import { Secret, useSecrets, useSqlLazy } from "~/api/materialized";
+import { useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
@@ -92,13 +97,6 @@ const EmptyState = () => {
   );
 };
 
-function createSecretQueryBuilder(variables: { name: string; value: string }) {
-  return `
-  CREATE SECRET ${variables.name}
-  AS '${variables.value}'
-`;
-}
-
 const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
   const {
     colors: { semanticColors },
@@ -115,13 +113,6 @@ const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
 
 const NAME_FIELD = "name";
 const VALUE_FIELD = "value";
-
-const secretNameErrorMessage = (error: FieldError | undefined) => {
-  if (!error?.type) return error?.message;
-  if (error.type === "pattern")
-    return "Name must not include special characters";
-  if (error.type === "required") return "Name is required.";
-};
 
 const SecretsCreationModal = ({
   isOpen,
@@ -196,8 +187,11 @@ const SecretsCreationModal = ({
                 <FormLabel fontSize="sm">Name</FormLabel>
                 <ObjectNameInput
                   {...register(NAME_FIELD, {
-                    required: true,
-                    pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                    required: "Name is required.",
+                    pattern: {
+                      value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                      message: "Name must not include special characters",
+                    },
                   })}
                   placeholder="confluent_password"
                   autoFocus={isOpen}
@@ -215,7 +209,7 @@ const SecretsCreationModal = ({
                   </Text>
                 )}
                 <FormErrorMessage>
-                  {secretNameErrorMessage(formState.errors.name)}
+                  {formState.errors.name?.message}
                 </FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formState.errors.value}>
@@ -266,7 +260,7 @@ export const SecretsList = () => {
     refetch,
     isError,
     loading,
-  } = useSecrets({
+  } = useSecretsListPage({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
@@ -321,7 +315,7 @@ export const SecretsList = () => {
 };
 
 type SecretsTableProps = {
-  secrets: Secret[];
+  secrets: ListPageSecret[];
 };
 
 const SecretsTable = ({ secrets }: SecretsTableProps) => {

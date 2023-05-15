@@ -176,6 +176,7 @@ export function useSqlApiRequest() {
           onSuccess?.(result.results);
           setResults(result.results);
           setError(null);
+          return result.results;
         }
       } catch (err) {
         if ((err as Error)?.name === "AbortError") {
@@ -471,56 +472,4 @@ AND i.id LIKE 'u%';`
   }
 
   return { ...response, data: indexes };
-}
-
-export interface Secret {
-  id: string;
-  name: string;
-  createdAt: Date;
-  databaseName: string;
-  schemaName: string;
-}
-
-/**
- * Fetches all secrets in the current environment
- */
-export function useSecrets({
-  databaseId,
-  schemaId,
-  nameFilter,
-}: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
-  // Note: we CAST d.id and sc.id to text because in v0.52 we changed the database ids and schema
-  // ids to be strings, namespaced on either System or User.
-  const secretResponse = useSql(`
-  SELECT 
-    s.id, 
-    s.name, 
-    events.occurred_at as created_at,
-    d.name as database_name, 
-    sc.name as schema_name
-  FROM mz_secrets s
-  INNER JOIN mz_audit_events events ON events.details->>'id' = s.id
-    AND event_type='create' AND object_type='secret'
-  INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-  INNER JOIN mz_databases d ON d.id = sc.database_id
-    ${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
-    ${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
-    ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""}
-  ORDER BY created_at DESC;
-  `);
-  let secrets: Secret[] | null = null;
-  if (secretResponse.data) {
-    const { rows, getColumnByName } = secretResponse.data;
-    assert(getColumnByName);
-
-    secrets = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      createdAt: new Date(parseInt(getColumnByName(row, "created_at"))),
-      databaseName: getColumnByName(row, "database_name"),
-      schemaName: getColumnByName(row, "schema_name"),
-    }));
-  }
-
-  return { ...secretResponse, data: secrets };
 }
