@@ -47,8 +47,8 @@ const FiltersEmptyState = () => {
       <EmptyListHeader>
         <Circle p={2} bg={semanticColors.background.secondary}>
           <ConnectionIcon
-            width={24}
-            height={24}
+            width="6"
+            height="6"
             color={semanticColors.accent.purple}
           />
         </Circle>
@@ -70,8 +70,8 @@ const EmptyState = () => {
       <EmptyListHeader>
         <Circle p={2} bg={semanticColors.background.secondary}>
           <ConnectionIcon
-            width={24}
-            height={24}
+            width="6"
+            height="6"
             color={semanticColors.accent.purple}
           />
         </Circle>
