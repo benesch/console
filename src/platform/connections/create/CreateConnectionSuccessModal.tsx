@@ -20,8 +20,6 @@ const CreateConnectionSuccessModal = () => {
   const [queryParams] = useSearchParams();
   const regionSlug = useRegionSlug();
   const navigate = useNavigate();
-  // debugger;
-  // console.log(connectionId);
 
   function handleClose() {
     onClose();
