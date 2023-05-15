@@ -30,9 +30,10 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import useSecrets, {
+import {
   createSecretQueryBuilder,
-  Secret,
+  ListPageSecret,
+  useSecretsListPage,
 } from "~/api/materialize/useSecrets";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
@@ -259,7 +260,7 @@ export const SecretsList = () => {
     refetch,
     isError,
     loading,
-  } = useSecrets({
+  } = useSecretsListPage({
     databaseId: databaseFilter.selected?.id,
     schemaId: schemaFilter.selected?.id,
     nameFilter: nameFilter.name,
@@ -314,7 +315,7 @@ export const SecretsList = () => {
 };
 
 type SecretsTableProps = {
-  secrets: Secret[];
+  secrets: ListPageSecret[];
 };
 
 const SecretsTable = ({ secrets }: SecretsTableProps) => {

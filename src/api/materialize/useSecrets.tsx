@@ -6,9 +6,21 @@ import { attachNamespace } from ".";
 export interface Secret {
   id: string;
   name: string;
-  createdAt: Date;
   databaseName: string;
   schemaName: string;
+}
+
+export function normalizeSecretsRow(
+  row: unknown[],
+  getColumnByName: Results["getColumnByName"]
+) {
+  assert(getColumnByName);
+  return {
+    id: getColumnByName<unknown, string>(row, "id"),
+    name: getColumnByName<unknown, string>(row, "name"),
+    databaseName: getColumnByName<unknown, string>(row, "database_name"),
+    schemaName: getColumnByName<unknown, string>(row, "schema_name"),
+  };
 }
 
 export function createSecretQueryBuilder(variables: {
@@ -28,24 +40,13 @@ export function createSecretQueryBuilder(variables: {
 `;
 }
 
-export function normalizeSecretRow(
-  row: unknown[],
-  getColumnByName: Results["getColumnByName"]
-) {
-  assert(getColumnByName);
-  return {
-    id: getColumnByName<unknown, string>(row, "id"),
-    name: getColumnByName<unknown, string>(row, "name"),
-    createdAt: new Date(parseInt(getColumnByName(row, "created_at"))),
-    databaseName: getColumnByName<unknown, string>(row, "database_name"),
-    schemaName: getColumnByName<unknown, string>(row, "schema_name"),
-  };
+export interface ListPageSecret extends Secret {
+  createdAt: Date;
 }
-
 /**
  * Fetches all secrets in the current environment
  */
-export function useSecrets({
+export function useSecretsListPage({
   databaseId,
   schemaId,
   nameFilter,
@@ -67,15 +68,44 @@ export function useSecrets({
     ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""}
   ORDER BY created_at DESC;
   `);
-  let secrets: Secret[] | null = null;
+  let secrets: ListPageSecret[] | null = null;
   if (secretResponse.data) {
     const { rows, getColumnByName } = secretResponse.data;
     assert(getColumnByName);
 
-    secrets = rows.map((row) => normalizeSecretRow(row, getColumnByName));
+    secrets = rows.map((row) => {
+      return {
+        ...normalizeSecretsRow(row, getColumnByName),
+        createdAt: new Date(parseInt(getColumnByName(row, "created_at"))),
+      };
+    });
   }
 
   return { ...secretResponse, data: secrets };
 }
 
-export default useSecrets;
+/**
+ * Fetches all secrets for for selects in creation flow
+ */
+export function useSecretsCreationFlow() {
+  const secretResponse = useSql(`
+  SELECT 
+    s.id, 
+    s.name, 
+    d.name as database_name, 
+    sc.name as schema_name
+  FROM mz_secrets s
+  INNER JOIN mz_schemas sc ON sc.id = s.schema_id
+  INNER JOIN mz_databases d ON d.id = sc.database_id
+  ;
+  `);
+  let secrets: Secret[] | null = null;
+  if (secretResponse.data) {
+    const { rows, getColumnByName } = secretResponse.data;
+    secrets = rows.map((row) => normalizeSecretsRow(row, getColumnByName));
+  }
+
+  return { ...secretResponse, data: secrets };
+}
+
+export default useSecretsListPage;

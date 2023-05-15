@@ -28,10 +28,11 @@ import useSchemas, {
   isDefaultSchema,
   Schema,
 } from "~/api/materialize/useSchemas";
-import useSecrets, {
+import {
   createSecretQueryBuilder,
-  normalizeSecretRow,
+  normalizeSecretsRow,
   Secret,
+  useSecretsCreationFlow,
 } from "~/api/materialize/useSecrets";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { executeSql } from "~/api/materialized";
@@ -48,6 +49,7 @@ import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import SecretsFormControl, {
   createSecretFieldDefaultValues,
+  isSecretField,
   SecretField,
 } from "~/components/SecretsFormControl";
 import useSuccessToast from "~/components/SuccessToast";
@@ -83,10 +85,6 @@ const defaultFormState = {
   sslCertificateAuthority: createSecretFieldDefaultValues(),
 };
 
-function isSecretField(field?: unknown): field is SecretField {
-  return !!field && typeof field === "object" && "mode" in field;
-}
-
 const SSL_MODE_OPTIONS = ["require", "verify-ca", "verify-full"].map((val) => ({
   id: val,
   name: val,
@@ -107,7 +105,7 @@ const NewPostgresConnection = () => {
     data: secrets,
     error: secretsError,
     refetch: refetchSecrets,
-  } = useSecrets();
+  } = useSecretsCreationFlow();
 
   const {
     user: { accessToken },
@@ -222,7 +220,7 @@ const NewPostgresConnection = () => {
 
         setValue(fieldName, {
           ...createSecretFieldDefaultValues("select"),
-          selected: normalizeSecretRow(createdSecret, getColumnByName),
+          selected: normalizeSecretsRow(createdSecret, getColumnByName),
         });
       });
 

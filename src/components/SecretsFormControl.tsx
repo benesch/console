@@ -317,4 +317,8 @@ export function createSecretFieldDefaultValues(initialMode?: Mode) {
   };
 }
 
+export function isSecretField(field?: unknown): field is SecretField {
+  return !!field && typeof field === "object" && "mode" in field;
+}
+
 export default SecretsFormControl;
