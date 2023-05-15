@@ -168,7 +168,7 @@ export const ConnectionsList = ({
       )}
       <SentryRoutes>
         <Route
-          path="/showConnectionCreated"
+          path="/show-connections-created"
           element={<CreateConnectionSuccessModal />}
         />
       </SentryRoutes>

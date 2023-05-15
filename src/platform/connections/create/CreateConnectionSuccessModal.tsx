@@ -19,6 +19,9 @@ import { useRegionSlug } from "~/region";
 import ConnectionIcon from "~/svg/ConnectionIcon";
 import { MaterializeTheme } from "~/theme";
 
+// semanticColors.accent.green with 0.12 opacity
+const SEMANTIC_GREEN_WITH_OPACITY = "rgba(7, 164, 74, 0.12)";
+
 const CreateConnectionSuccessModal = () => {
   const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
   const [queryParams] = useSearchParams();
@@ -50,7 +53,7 @@ const CreateConnectionSuccessModal = () => {
         <ModalBody pt="4" pb="6">
           <VStack align="stretch" spacing="14">
             <VStack spacing="6">
-              <Circle p={3} bg="rgba(7, 164, 74, 0.12)">
+              <Circle p={3} bg={SEMANTIC_GREEN_WITH_OPACITY}>
                 <ConnectionIcon
                   color={semanticColors.accent.green}
                   height="8"
