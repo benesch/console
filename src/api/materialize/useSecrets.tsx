@@ -19,8 +19,8 @@ export function createSecretQueryBuilder(variables: {
 }) {
   const name = attachNamespace(
     variables.name,
-    variables.databaseName,
-    variables.schemaName
+    variables.databaseName ?? "",
+    variables.schemaName ?? ""
   );
   return `
   CREATE SECRET ${name}
@@ -50,8 +50,6 @@ export function useSecrets({
   schemaId,
   nameFilter,
 }: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
-  // Note: we CAST d.id and sc.id to text because in v0.52 we changed the database ids and schema
-  // ids to be strings, namespaced on either System or User.
   const secretResponse = useSql(`
   SELECT 
     s.id, 
@@ -64,8 +62,8 @@ export function useSecrets({
     AND event_type='create' AND object_type='secret'
   INNER JOIN mz_schemas sc ON sc.id = s.schema_id
   INNER JOIN mz_databases d ON d.id = sc.database_id
-    ${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
-    ${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
+    ${databaseId ? `AND d.id = '${databaseId}'` : ""}
+    ${schemaId ? `AND sc.id = '${schemaId}'` : ""}
     ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""}
   ORDER BY created_at DESC;
   `);

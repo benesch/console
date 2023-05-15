@@ -317,11 +317,50 @@ export function createSecretFieldDefaultValues(initialMode?: Mode) {
   };
 }
 
-// Returns the key used to register each input depending on the mode
-export const MODE_FIELD_KEY = {
-  text: "text" as const,
-  select: "selected" as const,
-  create: "key" as const,
+type SelectModeSecretField<Option extends SelectOption> = {
+  mode: "select";
+  selected: Option;
 };
+
+type TextModeSecretField = {
+  mode: "text";
+  text: string;
+};
+
+type CreateModeSecretField = {
+  mode: "create";
+  key: string;
+  value: string;
+};
+
+export function isSelectMode<Option extends SelectOption>(
+  field: SecretField<Option>
+): field is SelectModeSecretField<Option> {
+  return field.mode === "select";
+}
+
+export function isCreateMode(
+  field: SecretField<Option>
+): field is CreateModeSecretField {
+  return field.mode === "create";
+}
+
+export function isTextMode<Option extends SelectOption>(
+  field: SecretField<Option>
+): field is TextModeSecretField {
+  return field.mode === "text";
+}
+
+export function getSecretFieldValueByMode<Option extends SelectOption>(
+  field: SecretField<Option>
+) {
+  if (isSelectMode(field)) {
+    return field;
+  } else if (isCreateMode(field)) {
+    return field;
+  } else if (isTextMode(field)) {
+    return field;
+  }
+}
 
 export default SecretsFormControl;

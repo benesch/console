@@ -41,15 +41,10 @@ export function buildWhereConditions(expressions: Array<undefined | string>) {
  */
 export function attachNamespace(
   name: string,
-  databaseName?: string,
-  schemaName?: string
+  databaseName: string,
+  schemaName: string
 ): string {
   name = quoteIdentifier(name);
-
-  if (!schemaName || !databaseName) {
-    return name;
-  }
-
   const namespace = [databaseName, schemaName]
     .filter(notNullOrUndefined)
     .map(quoteIdentifier)

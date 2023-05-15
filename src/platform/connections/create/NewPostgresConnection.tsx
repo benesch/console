@@ -48,6 +48,10 @@ import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import SecretsFormControl, {
   createSecretFieldDefaultValues,
+  getSecretFieldValueByMode,
+  isCreateMode,
+  isSelectMode,
+  isTextMode,
   SecretField,
 } from "~/components/SecretsFormControl";
 import useSuccessToast from "~/components/SuccessToast";
@@ -231,34 +235,30 @@ const NewPostgresConnection = () => {
       }
 
       const getSecretFieldValue = (field: SecretField<Secret>) => {
-        if (field.mode === "text") {
+        if (isTextMode(field)) {
           return {
             isText: true,
             secretValue: field.text,
           };
         }
 
-        if (field.mode === "select") {
+        if (isSelectMode(field)) {
           return {
-            secretValue: field.selected?.name
-              ? attachNamespace(
-                  field.selected?.name,
-                  field.selected.databaseName,
-                  field.selected.schemaName
-                )
-              : undefined,
+            secretValue: attachNamespace(
+              field.selected.name,
+              field.selected.databaseName,
+              field.selected.schemaName
+            ),
           };
         }
 
-        if (field.mode === "create") {
+        if (isCreateMode(field)) {
           return {
-            secretValue: field.key
-              ? attachNamespace(
-                  field.key,
-                  schemaField.value.databaseName,
-                  schemaField.value.name
-                )
-              : undefined,
+            secretValue: attachNamespace(
+              field.key,
+              schemaField.value.databaseName,
+              schemaField.value.name
+            ),
           };
         }
       };

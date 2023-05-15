@@ -28,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { FieldError, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import useSecrets, {
   createSecretQueryBuilder,
@@ -113,13 +113,6 @@ const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
 const NAME_FIELD = "name";
 const VALUE_FIELD = "value";
 
-const secretNameErrorMessage = (error: FieldError | undefined) => {
-  if (!error?.type) return error?.message;
-  if (error.type === "pattern")
-    return "Name must not include special characters";
-  if (error.type === "required") return "Name is required.";
-};
-
 const SecretsCreationModal = ({
   isOpen,
   onClose,
@@ -193,8 +186,11 @@ const SecretsCreationModal = ({
                 <FormLabel fontSize="sm">Name</FormLabel>
                 <ObjectNameInput
                   {...register(NAME_FIELD, {
-                    required: true,
-                    pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                    required: "Name is required.",
+                    pattern: {
+                      value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                      message: "Name must not include special characters",
+                    },
                   })}
                   placeholder="confluent_password"
                   autoFocus={isOpen}
@@ -212,7 +208,7 @@ const SecretsCreationModal = ({
                   </Text>
                 )}
                 <FormErrorMessage>
-                  {secretNameErrorMessage(formState.errors.name)}
+                  {formState.errors.name?.message}
                 </FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formState.errors.value}>
