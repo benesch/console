@@ -129,6 +129,7 @@ export function useCurrentOrganization() {
     null
   );
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const fetchOrganization = React.useCallback(async () => {
     const { data } = await currentOrganization(
@@ -140,21 +141,26 @@ export function useCurrentOrganization() {
 
   React.useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         await fetchOrganization();
+      } catch (err) {
+        setOrganization(null);
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     })();
   }, [fetchOrganization]);
 
-  return { organization, loading };
+  return { organization, loading, error };
 }
 
 export function useInvoices() {
   const { user } = useAuth();
   const [invoices, setInvoices] = React.useState<Invoice[] | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const fetchInvoices = React.useCallback(async () => {
     const { data } = await recentInvoices(
@@ -165,9 +171,18 @@ export function useInvoices() {
   }, [user]);
 
   React.useEffect(() => {
-    fetchInvoices();
+    (async () => {
+      setLoading(true);
+      try {
+        await fetchInvoices();
+      } catch (err) {
+        setInvoices(null);
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [fetchInvoices]);
 
-  const loading = invoices == null;
-  return { invoices, loading };
+  return { invoices, loading, error };
 }
