@@ -1,7 +1,8 @@
+import { Icon, IconProps } from "@chakra-ui/react";
 import React from "react";
 
-const ConnectionIcon = (props: React.SVGAttributes<SVGElement>) => (
-  <svg
+const ConnectionIcon = (props: IconProps) => (
+  <Icon
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +38,7 @@ const ConnectionIcon = (props: React.SVGAttributes<SVGElement>) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-  </svg>
+  </Icon>
 );
 
 export default ConnectionIcon;

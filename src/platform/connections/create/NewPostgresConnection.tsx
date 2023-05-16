@@ -326,7 +326,7 @@ const NewPostgresConnection = () => {
       });
 
       navigate(
-        `../../showConnectionCreated?connectionType=postgres&connectionId=${connectionId}`
+        `../../show-connections-created?connectionType=postgres&connectionId=${connectionId}`
       );
     } catch (e) {
       if (e instanceof Error) {
