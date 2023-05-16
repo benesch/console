@@ -1,0 +1,318 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
+import React, { ReactElement } from "react";
+import { Route, Routes } from "react-router-dom";
+
+import {
+  buildSqlQueryHandler,
+  buildUseSqlQueryHandler,
+} from "~/api/mocks/buildSqlQueryHandler";
+import server from "~/api/mocks/server";
+import {
+  createProviderWrapper,
+  healthyEnvironment,
+  setFakeEnvironment,
+} from "~/test/utils";
+
+import NewPostgresConnection from "./NewPostgresConnection";
+
+jest.mock("~/api/auth");
+
+jest.setTimeout(20_000);
+
+const Wrapper = createProviderWrapper({
+  initializeState: ({ set }) =>
+    setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+});
+
+const renderComponent = (element: ReactElement) => {
+  return render(
+    <Wrapper>
+      <Routes>
+        <Route path="connections/*">
+          <Route
+            path="show-connections-created"
+            element={<div>Connection List</div>}
+          />
+          <Route path="new/*">
+            <Route path="postgres" element={element} />
+          </Route>
+        </Route>
+      </Routes>
+    </Wrapper>
+  );
+};
+
+async function fillRequiredFields(user: UserEvent) {
+  const connectionNameInput = screen.getByLabelText("Name");
+
+  await user.type(connectionNameInput, "pg_connection");
+  const hostInput = screen.getByLabelText("Host");
+  await user.type(hostInput, "host.com");
+  const databaseInput = screen.getByLabelText("Database");
+  await user.type(databaseInput, "test_database");
+  const userInput = screen.getByLabelText("User");
+  await user.type(userInput, "test_user");
+}
+
+describe("NewPostgresConnection", () => {
+  beforeEach(() => {
+    server.use(
+      // useSchemas
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_id", "database_name"],
+        rows: [["u1", "public", "u1", "materialize"]],
+      }),
+      // useSecretsCreationFlow
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_name", "schema_name"],
+        rows: [["u1", "secret_1", "materialize", "public"]],
+      })
+    );
+    history.pushState(undefined, "", "/connections/new/postgres");
+  });
+
+  it("creates a connection successfully and redirects to connections list page", async () => {
+    // createSecret
+    server.use(buildSqlQueryHandler([{ type: "CREATE" as const }]));
+
+    // createConnection
+    server.use(
+      buildSqlQueryHandler([
+        { type: "CREATE" as const },
+        {
+          type: "SELECT" as const,
+          columns: ["id"],
+          rows: [["u3"]],
+        },
+      ])
+    );
+
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByText("Create connection"));
+
+    expect(await screen.findByText("Connection List")).toBeVisible();
+
+    expect(location.pathname).toEqual("/connections/show-connections-created");
+
+    expect(location.search).toEqual("?connectionType=postgres&connectionId=u3");
+  });
+
+  it("changes select value to created secret secret creation succeeds but connection creation fails", async () => {
+    // createSecret
+    server.use(buildSqlQueryHandler([{ type: "CREATE" as const }]));
+
+    // createConnection
+    server.use(
+      buildSqlQueryHandler([
+        { type: "CREATE" as const, error: "Something went wrong" },
+        {
+          type: "SELECT" as const,
+          columns: ["id"],
+          rows: [["u5"]],
+        },
+      ])
+    );
+
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+
+    await fillRequiredFields(user);
+
+    await user.click(screen.getByLabelText("Password"));
+    await user.click(screen.getByText("Create new secret"));
+    const createSecretKeyInput = screen.getByLabelText("Password secret key");
+    const createSecretValueInput = screen.getByLabelText(
+      "Password secret value"
+    );
+
+    await user.type(createSecretKeyInput, "secret_2");
+    await user.type(createSecretValueInput, "some_value");
+
+    // intercept refetch to include new secret
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_name", "schema_name"],
+        rows: [
+          ["u1", "secret_1", "materialize", "public"],
+          ["u3", "secret_2", "materialize", "public"],
+        ],
+      })
+    );
+
+    await user.click(screen.getByText("Create connection"));
+    // Ensure the field goes from create mode to select mode
+    expect(
+      await screen.findByRole("combobox", { name: "Password" })
+    ).toBeVisible();
+    expect(screen.getByText("secret_2")).toBeVisible();
+  });
+
+  it("shows an error state when secrets fail to load", async () => {
+    // useSecrets
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_id", "database_name"],
+        rows: [],
+        error: "secrets failed to load",
+      })
+    );
+
+    renderComponent(<NewPostgresConnection />);
+    expect(
+      await screen.findByText("An unexpected error has occured")
+    ).toBeVisible();
+  });
+
+  it("shows an error state when schemas fail to load", async () => {
+    // useSchemas
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_id", "database_name"],
+        rows: [],
+        error: "schemas failed to load",
+      })
+    );
+
+    renderComponent(<NewPostgresConnection />);
+    expect(
+      await screen.findByText("An unexpected error has occured")
+    ).toBeVisible();
+  });
+
+  it("shows required validation messages", async () => {
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    await user.click(screen.getByText("Create connection"));
+    expect(
+      await screen.findByText("Connection name is required.")
+    ).toBeVisible();
+    expect(await screen.findByText("Host is required.")).toBeVisible();
+    expect(
+      await screen.findByText("Database username is required.")
+    ).toBeVisible();
+  });
+
+  it("shows required validation messages when using certificate authentication", async () => {
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    await user.click(screen.getByLabelText("Certificate Authentication"));
+    await user.click(screen.getByText("Create connection"));
+
+    expect(await screen.findByText("SSL key is required.")).toBeVisible();
+    expect(await screen.findByText("Certificate is required.")).toBeVisible();
+    expect(await screen.findByText("SSL Mode is required.")).toBeVisible();
+  });
+
+  it("shows certificate authority field when SSL mode is verify-ca or verify-full", async () => {
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    expect(screen.queryByLabelText("SSL Certificate Authority")).toBeNull();
+
+    await user.click(screen.getByLabelText("SSL Mode"));
+    await user.click(screen.getByText("verify-ca"));
+
+    expect(screen.getByLabelText("SSL Certificate Authority")).toBeVisible();
+
+    await user.click(screen.getByLabelText("SSL Mode"));
+    await user.click(screen.getByText("verify-full"));
+
+    expect(screen.getByLabelText("SSL Certificate Authority")).toBeVisible();
+  });
+
+  it("requires SSL mode when using certification authentication", async () => {
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    await user.click(screen.getByLabelText("Certificate Authentication"));
+
+    await user.click(screen.getByText("Create connection"));
+
+    expect(await screen.findByText("SSL Mode is required.")).toBeVisible();
+  });
+
+  it("shows validation errors for schema if the defaults are missing", async () => {
+    server.use(
+      // useSchemas
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: ["id", "name", "database_id", "database_name"],
+        rows: [["u1", "custom_schema", "u1", "big_co"]],
+      })
+    );
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    await user.click(screen.getByText("Create connection"));
+
+    await waitFor(async () => {
+      expect(await screen.findByText("Schema is required.")).toBeVisible();
+    });
+  });
+
+  it("shows the error when an unexpected connection creation error occurs", async () => {
+    server.use(
+      // createConnection
+      buildSqlQueryHandler([
+        {
+          type: "CREATE" as const,
+          error: "Some unexpected connection creation error",
+        },
+        {
+          type: "SELECT" as const,
+          columns: ["id"],
+          rows: [],
+        },
+      ])
+    );
+
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByText("Create connection"));
+    expect(
+      await screen.findByText("Some unexpected connection creation error")
+    ).toBeVisible();
+  });
+
+  it("shows the error when an unexpected secret creation error occurs", async () => {
+    // createSecret
+    server.use(
+      buildSqlQueryHandler([
+        {
+          type: "CREATE" as const,
+          error: "some unexpected secret creation error",
+        },
+      ])
+    );
+    const user = userEvent.setup();
+    renderComponent(<NewPostgresConnection />);
+    await fillRequiredFields(user);
+
+    await user.click(screen.getByLabelText("Password"));
+
+    await user.click(screen.getByText("Create new secret"));
+    const createSecretKeyInput = screen.getByLabelText("Password secret key");
+    const createSecretValueInput = screen.getByLabelText(
+      "Password secret value"
+    );
+
+    await user.type(createSecretKeyInput, "test_secret_1");
+    await user.type(createSecretValueInput, "some_value");
+    await user.click(screen.getByText("Create connection"));
+
+    await waitFor(async () => {
+      expect(
+        await screen.findByText("some unexpected secret creation error")
+      ).toBeVisible();
+    });
+  });
+});

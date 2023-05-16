@@ -252,7 +252,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
             render={({ field }) => (
               <SearchableSelect
                 {...field}
-                ariaLabel="Select a secret"
+                ariaLabel={fieldLabel ?? ""}
                 placeholder="Select one"
                 options={selectOptions ?? []}
                 displayAddNewItem
@@ -275,6 +275,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
                 },
                 shouldUnregister: true,
               })}
+              aria-label={`${fieldLabel} secret key`}
               placeholder="Key"
               autoCorrect="off"
               size="sm"
@@ -286,6 +287,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
                 required: "Value is required.",
                 shouldUnregister: true,
               })}
+              aria-label={`${fieldLabel} secret value`}
               placeholder="Value"
               autoCorrect="off"
               size="sm"

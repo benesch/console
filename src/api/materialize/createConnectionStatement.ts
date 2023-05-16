@@ -2,7 +2,7 @@ import { attachNamespace } from ".";
 
 type Secret = {
   isText?: boolean;
-  secretValue?: string;
+  secretValue: string;
 };
 
 export interface CreatePostgresConnectionParameters {
@@ -42,17 +42,7 @@ const createPostgresConnectionStatement = (
   ];
 
   const optionsString = options
-    .filter(([_, val]) => {
-      if (!val) {
-        return false;
-      }
-
-      if (typeof val === "string") {
-        return true;
-      }
-
-      return "secretValue" in val && val.secretValue !== undefined;
-    })
+    .filter((option): option is [string, string | Secret] => !!option[1])
     .map(([key, val]) => {
       // PORT is an integer and we shouldn't have quotations around it
       if (key === "PORT") {
@@ -61,7 +51,7 @@ const createPostgresConnectionStatement = (
       if (typeof val === "string") {
         return `${key} '${val}'`;
       }
-      if (val && "secretValue" in val) {
+      if ("secretValue" in val) {
         if (val.isText) {
           return `${key} '${val.secretValue}'`;
         } else {
@@ -70,14 +60,13 @@ const createPostgresConnectionStatement = (
       }
       return "";
     })
-    .join(",");
+    .join(",\n");
 
   return `
-    CREATE CONNECTION ${name} TO POSTGRES
-    (
-      ${optionsString}
-    );
-  `;
+CREATE CONNECTION ${name} TO POSTGRES
+(
+${optionsString}
+);`;
 };
 
 export default createPostgresConnectionStatement;

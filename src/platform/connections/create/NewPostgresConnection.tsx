@@ -230,34 +230,36 @@ const NewPostgresConnection = () => {
 
       const getSecretFieldValue = (field: SecretField<Secret>) => {
         if (field.mode === "text") {
-          return {
-            isText: true,
-            secretValue: field.text,
-          };
+          return field.text
+            ? {
+                isText: true,
+                secretValue: field.text,
+              }
+            : undefined;
         }
 
         if (field.mode === "select") {
-          return {
-            secretValue: field.selected
-              ? attachNamespace(
+          return field.selected
+            ? {
+                secretValue: attachNamespace(
                   field.selected.name,
                   field.selected.databaseName,
                   field.selected.schemaName
-                )
-              : undefined,
-          };
+                ),
+              }
+            : undefined;
         }
 
         if (field.mode === "create") {
-          return {
-            secretValue: field.key
-              ? attachNamespace(
+          return field.key
+            ? {
+                secretValue: attachNamespace(
                   field.key,
                   schemaField.value.databaseName,
                   schemaField.value.name
-                )
-              : undefined,
-          };
+                ),
+              }
+            : undefined;
         }
       };
 
@@ -587,7 +589,7 @@ const NewPostgresConnection = () => {
                         error={fieldState.error?.message}
                       >
                         <SearchableSelect
-                          ariaLabel="Select SSL Mode"
+                          ariaLabel="SSL Mode"
                           placeholder="Select one"
                           options={SSL_MODE_OPTIONS}
                           isSearchable={false}
