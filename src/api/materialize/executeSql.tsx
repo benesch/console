@@ -24,7 +24,7 @@ export interface Results {
 }
 
 interface ExecuteSqlSuccess {
-  results: Results[] | null;
+  results: Results[];
 }
 interface ExecuteSqlError {
   status?: number;

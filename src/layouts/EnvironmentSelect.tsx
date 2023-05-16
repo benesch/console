@@ -101,7 +101,7 @@ const Dot = ({ environment }: DotProps) => {
   let health;
   switch (environment.state) {
     case "enabled": {
-      switch (environment.health) {
+      switch (environment.status.health) {
         case "pending":
           // This state never shows, we don't render this until the data is loaded
           color = "yellow.400";

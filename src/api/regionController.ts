@@ -1,6 +1,6 @@
 import { Fetcher } from "openapi-typescript-fetch";
 
-import { versionHeaders } from "../version/api";
+import { consoleVersionHeaders } from "../version/api";
 import { components, paths } from "./schemas/region-controller";
 
 export type EnvironmentAssignment =
@@ -21,7 +21,7 @@ export const environmentAssignmentList = (
     baseUrl: regionControllerUrl,
     init: {
       headers: {
-        ...versionHeaders(),
+        ...consoleVersionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
     },
@@ -43,7 +43,7 @@ export const createEnvironmentAssignment = (
     baseUrl: regionControllerUrl,
     init: {
       headers: {
-        ...versionHeaders(),
+        ...consoleVersionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
     },

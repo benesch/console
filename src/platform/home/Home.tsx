@@ -59,7 +59,7 @@ const Home = () => {
     const currentEnvironment = environments.get(currentEnvironmentId)!;
     switch (currentEnvironment.state) {
       case "enabled":
-        switch (currentEnvironment.health) {
+        switch (currentEnvironment.status.health) {
           case "pending":
             break;
           case "booting":

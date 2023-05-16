@@ -1,4 +1,5 @@
 import { extractData, useSql } from "~/api/materialized";
+import { useEnvironmentGate } from "~/recoil/environments";
 
 export interface ClusterHistoryEntry {
   replicaId: string;
@@ -25,7 +26,15 @@ function useClusterHistory(since?: Date) {
   } else {
     dropped_at_filter = "false";
   }
-  const query = `SELECT mcrh.replica_id, mcrh.size, mcrh.created_at, mcrh.dropped_at, mcrh.credits_per_hour
+  const newStyle = useEnvironmentGate("0.55.0-dev");
+
+  let replicaIdKey: string;
+  if (newStyle) {
+    replicaIdKey = "internal_replica_id";
+  } else {
+    replicaIdKey = "replica_id";
+  }
+  const query = `SELECT mcrh.${replicaIdKey}, mcrh.size, mcrh.created_at, mcrh.dropped_at, mcrh.credits_per_hour
 FROM mz_internal.mz_cluster_replica_history mcrh
 WHERE mcrh.dropped_at IS NULL OR ${dropped_at_filter}`;
   const result = useSql(query);
@@ -36,9 +45,7 @@ WHERE mcrh.dropped_at IS NULL OR ${dropped_at_filter}`;
     history = extractData(result.data, (x) => {
       const droppedAtStr = x("dropped_at");
       return {
-        // TODO[btv] - Change to `internal_replica_id` if
-        // https://github.com/MaterializeInc/materialize/pull/19300 lands.
-        replicaId: x("replica_id"),
+        replicaId: x(replicaIdKey),
         size: x("size"),
         createdAt: new Date(x("created_at")),
         droppedAt: droppedAtStr && new Date(droppedAtStr),

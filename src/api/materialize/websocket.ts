@@ -128,14 +128,14 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
     if (
       accessToken &&
       currentEnvironment?.state === "enabled" &&
-      currentEnvironment.health === "crashed"
+      currentEnvironment.status.health === "crashed"
     ) {
       setSocketError("Region unavailable");
     }
     if (
       accessToken &&
       currentEnvironment?.state === "enabled" &&
-      currentEnvironment.health === "healthy"
+      currentEnvironment.status.health === "healthy"
     ) {
       ws = new WebSocket(
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`

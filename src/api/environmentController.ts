@@ -1,6 +1,6 @@
 import { Fetcher } from "openapi-typescript-fetch";
 
-import { versionHeaders } from "../version/api";
+import { consoleVersionHeaders } from "../version/api";
 import { components, paths } from "./schemas/environment-controller";
 
 export type Environment = components["schemas"]["Environment"];
@@ -14,7 +14,7 @@ export const environmentList = (
     baseUrl: environmentControllerUrl,
     init: {
       headers: {
-        ...versionHeaders(),
+        ...consoleVersionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
     },

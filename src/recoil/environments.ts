@@ -7,11 +7,15 @@ import {
   selector,
   selectorFamily,
   useRecoilState_TRANSITION_SUPPORT_UNSTABLE,
+  useRecoilValue_TRANSITION_SUPPORT_UNSTABLE,
   useSetRecoilState,
 } from "recoil";
+import { gte as semverGte, parse as semverParse, SemVer } from "semver";
 
 import { getRegionId } from "~/cloudRegions";
 import useForegroundInterval from "~/useForegroundInterval";
+import { assert } from "~/util";
+import { DbVersion, parseDbVersion } from "~/version/api";
 
 import {
   Environment as ApiEnvironment,
@@ -49,8 +53,7 @@ export interface DisabledEnvironment {
 /** Represents an environment that is known to exist. */
 export interface EnabledEnvironment extends ApiEnvironment {
   state: "enabled";
-  health: EnvironmentHealth;
-  errors: EnvironmentError[];
+  status: EnvironmentStatus;
 }
 
 export type Environment =
@@ -157,20 +160,15 @@ export const fetchEnvironmentsWithHealth = async (accessToken: string) => {
       });
     }
 
-    const envResult = {
+    const envResult: EnabledEnvironment = {
       ...envs[0],
       state: "enabled",
-      health: "pending",
-      errors: [],
-    } as EnabledEnvironment;
-    const { health, errors: healthErrors } = await fetchEnvironmentHealth(
-      envResult,
-      accessToken
-    );
+      status: { health: "pending" },
+    };
+    const health = await fetchEnvironmentHealth(envResult, accessToken);
     result.set(regionId, {
       ...envResult,
-      health,
-      errors: errors.concat(healthErrors),
+      status: health,
     });
   }
   return result;
@@ -266,17 +264,41 @@ export const useEnvironmentsWithHealth = (
 const defaultTimeout = 10_000; // 10 seconds
 const maxBootDuration = { minutes: 5 };
 
+export interface HealthyStatus {
+  health: "healthy";
+  version: DbVersion;
+}
+
+export interface UnhealthyStatus {
+  health: "crashed";
+  errors: EnvironmentError[];
+}
+
+export interface BootingStatus {
+  health: "booting";
+}
+
+export interface PendingStatus {
+  health: "pending";
+}
+
+export type EnvironmentStatus =
+  | HealthyStatus
+  | UnhealthyStatus
+  | BootingStatus
+  | PendingStatus;
+
 export const fetchEnvironmentHealth = async (
   environment: EnabledEnvironment,
   accessToken: string,
   timeoutMs: number = defaultTimeout,
   maxBoot: Duration = maxBootDuration
-) => {
+): Promise<EnvironmentStatus> => {
   // Determine if the environment is healthy by issuing a basic SQL query.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
-  let health: EnvironmentHealth = "pending";
-  const errors: EnvironmentError[] = [];
+  let version: DbVersion | undefined = undefined;
+  let healthResult: EnvironmentStatus | null = null;
   try {
     if (!environment.resolvable) {
       throw new Error(`environment unresolvable`);
@@ -284,40 +306,59 @@ export const fetchEnvironmentHealth = async (
     const result = await executeSql(
       environment,
       {
-        queries: [{ query: "SELECT 1", params: [] }],
+        queries: [{ query: "SELECT mz_version()", params: [] }],
         cluster: "mz_introspection",
       },
       accessToken,
       { signal: controller.signal }
     );
     if ("errorMessage" in result) {
+      const errors: EnvironmentError[] = [];
       errors.push({
         message: "Environmentd health check failed",
       });
       errors.push({
         message: result.errorMessage,
       });
-      health = "crashed";
+      healthResult = { health: "crashed", errors };
     } else {
-      health = "healthy";
+      const versionString = result.results[0].rows[0][0] as string;
+      version = parseDbVersion(versionString);
+      healthResult = { health: "healthy", version };
     }
   } catch (e) {
     // Threshold for considering an environment to be stuck / crashed
     const cutoff = add(new Date(environment.creationTimestamp), maxBoot);
     if (new Date() > cutoff) {
+      const errors: EnvironmentError[] = [];
       errors.push({
         message: `Environment not healthy for more than ${formatDuration(
           maxBoot
         )} after creation`,
         details: e as Error,
       });
-      health = "crashed";
+      healthResult = { health: "crashed", errors };
     } else {
-      health = "booting";
+      healthResult = { health: "booting" };
     }
   }
   clearTimeout(timeout);
-  return { health, errors };
+  return healthResult;
+};
+
+export const environmentErrors = (
+  env: LoadedEnvironment
+): EnvironmentError[] => {
+  switch (env.state) {
+    case "disabled":
+      return env.errors;
+    case "enabled":
+      switch (env.status.health) {
+        case "crashed":
+          return env.status.errors;
+      }
+  }
+  return [];
 };
 
 export const defaultRegion = () => {
@@ -358,4 +399,35 @@ export const useSetCurrentEnvironment = () => {
       window.localStorage.setItem(SELECTED_REGION_KEY, newEnvironmentId);
     }
   };
+};
+
+/**
+ * Gate code on the current version being greater than or equal to a specified version.
+ * The tri-state return-value is true if the current environment version
+ * is greater than or equal to the supplied version,
+ * false if it is less than the supplied version, and undefined
+ * if it can't be found (because there is no current environment or because the current
+ * environment is unhealthy).
+ *
+ * It is recommended to call this function with pre-release semver strings. For example,
+ * `useEnvironmentGate("0.55.0-dev")` will return true on v0.55.x and their pre-release builds,
+ * but false on v0.54.x
+ */
+export const useEnvironmentGate = (
+  version: string | SemVer
+): boolean | null => {
+  const suppliedVersion = semverParse(version);
+  assert(suppliedVersion);
+  const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    currentEnvironmentState
+  );
+  if (
+    environment &&
+    environment.state === "enabled" &&
+    environment.status.health === "healthy"
+  ) {
+    const actualVersion = environment.status.version;
+    return semverGte(actualVersion.crateVersion, suppliedVersion);
+  }
+  return null;
 };
