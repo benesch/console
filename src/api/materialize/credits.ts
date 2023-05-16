@@ -16,9 +16,9 @@ export interface ClusterHistoryEntry {
   creditsPerHour: number;
 }
 
-// A `null` since means get all the clusters that are still
+// An undefined `since` means get all the clusters that are still
 // running.
-function useClusterHistory(since: Date | null) {
+function useClusterHistory(since?: Date) {
   let dropped_at_filter: string;
   if (since) {
     dropped_at_filter = `dropped_at >= '${since.toISOString()}'`;
@@ -36,6 +36,8 @@ WHERE mcrh.dropped_at IS NULL OR ${dropped_at_filter}`;
     history = extractData(result.data, (x) => {
       const droppedAtStr = x("dropped_at");
       return {
+        // TODO[btv] - Change to `internal_replica_id` if
+        // https://github.com/MaterializeInc/materialize/pull/19300 lands.
         replicaId: x("replica_id"),
         size: x("size"),
         createdAt: new Date(x("created_at")),
@@ -52,8 +54,8 @@ WHERE mcrh.dropped_at IS NULL OR ${dropped_at_filter}`;
  * Gets the number of compute credits per hour
  * that are currently being consumed
  */
-export function useInstantCreditsConsumed() {
-  const result = useClusterHistory(null);
+export function useCurrentCreditConsumption() {
+  const result = useClusterHistory();
 
   let value = null;
   if (result.history) {
