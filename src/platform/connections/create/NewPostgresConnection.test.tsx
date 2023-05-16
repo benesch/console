@@ -155,7 +155,7 @@ describe("NewPostgresConnection", () => {
     expect(screen.getByText("secret_2")).toBeVisible();
   });
 
-  it("shows an error state when secrets fail to load", async () => {
+  it("shows an error when secrets fail to load", async () => {
     // useSecrets
     server.use(
       buildUseSqlQueryHandler({
@@ -202,10 +202,10 @@ describe("NewPostgresConnection", () => {
     ).toBeVisible();
   });
 
-  it("shows required validation messages when using certificate authentication", async () => {
+  it("shows required validation messages when using SSL authentication", async () => {
     const user = userEvent.setup();
     renderComponent(<NewPostgresConnection />);
-    await user.click(screen.getByLabelText("Certificate Authentication"));
+    await user.click(screen.getByLabelText("SSL Authentication"));
     await user.click(screen.getByText("Create connection"));
 
     expect(await screen.findByText("SSL key is required.")).toBeVisible();
@@ -232,14 +232,14 @@ describe("NewPostgresConnection", () => {
   it("requires SSL mode when using certification authentication", async () => {
     const user = userEvent.setup();
     renderComponent(<NewPostgresConnection />);
-    await user.click(screen.getByLabelText("Certificate Authentication"));
+    await user.click(screen.getByLabelText("SSL Authentication"));
 
     await user.click(screen.getByText("Create connection"));
 
     expect(await screen.findByText("SSL Mode is required.")).toBeVisible();
   });
 
-  it("shows validation errors for schema if the defaults are missing", async () => {
+  it("shows validation errors for schema field if the default schema is missing", async () => {
     server.use(
       // useSchemas
       buildUseSqlQueryHandler({
@@ -257,7 +257,7 @@ describe("NewPostgresConnection", () => {
     });
   });
 
-  it("shows the error when an unexpected connection creation error occurs", async () => {
+  it("shows an error when an unexpected connection creation error occurs", async () => {
     server.use(
       // createConnection
       buildSqlQueryHandler([
@@ -283,7 +283,7 @@ describe("NewPostgresConnection", () => {
     ).toBeVisible();
   });
 
-  it("shows the error when an unexpected secret creation error occurs", async () => {
+  it("shows an error when an unexpected secret creation error occurs", async () => {
     // createSecret
     server.use(
       buildSqlQueryHandler([

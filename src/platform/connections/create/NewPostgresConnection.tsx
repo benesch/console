@@ -504,7 +504,7 @@ const NewPostgresConnection = () => {
                     isChecked={enableCertAuth}
                   />
                   <FormLabel m="0" ml="2" lineHeight="16px">
-                    Certificate Authentication
+                    SSL Authentication
                   </FormLabel>
                 </FormControl>
                 <FormControl isInvalid={!!formState.errors.user}>
