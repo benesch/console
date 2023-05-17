@@ -17,6 +17,7 @@ import {
 } from "~/recoil/environments";
 import { SentryRoutes } from "~/sentry";
 import { lightTheme } from "~/theme";
+import { parseDbVersion } from "~/version/api";
 
 export const healthyEnvironment: LoadedEnvironment = {
   environmentdPgwireAddress:
@@ -26,8 +27,7 @@ export const healthyEnvironment: LoadedEnvironment = {
   resolvable: true,
   creationTimestamp: "2023-01-10T01:59:37Z",
   state: "enabled",
-  health: "healthy",
-  errors: [],
+  status: { health: "healthy", version: parseDbVersion("v0.99.0 (ea0d129f)") },
 };
 
 export const RenderWithPathname = ({

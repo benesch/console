@@ -53,7 +53,9 @@ export const NAV_HOVER_STYLES = {
 export const NAV_LOGO_HEIGHT = "80px";
 
 function isEnvironmentHealthy(environment?: LoadedEnvironment) {
-  return environment?.state === "enabled" && environment.health === "healthy";
+  return (
+    environment?.state === "enabled" && environment.status.health === "healthy"
+  );
 }
 
 export const HideIfEnvironmentUnhealthy = ({

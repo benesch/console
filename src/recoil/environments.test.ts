@@ -1,13 +1,16 @@
 import { rest } from "msw";
 
 import server from "../api/mocks/server";
-import { EnabledEnvironment, fetchEnvironmentHealth } from "./environments";
+import {
+  EnabledEnvironment,
+  EnvironmentError,
+  fetchEnvironmentHealth,
+} from "./environments";
 
 const accessToken = "fake-access-token";
 const enabledEnvironment: EnabledEnvironment = {
   state: "enabled",
-  health: "pending",
-  errors: [],
+  status: { health: "pending" },
   environmentdPgwireAddress:
     "bq8fty4m0jkx79hdw3zh8ers3.us-east-1.aws.staging.materialize.cloud:6875",
   environmentdHttpsAddress:
@@ -24,7 +27,6 @@ describe("recoil/environments", () => {
         accessToken
       );
       expect(result.health).toEqual("healthy");
-      expect(result.errors).toEqual([]);
     });
 
     it("should return crashed when there is an error", async () => {
@@ -38,7 +40,8 @@ describe("recoil/environments", () => {
         accessToken
       );
       expect(result.health).toEqual("crashed");
-      expect(result.errors).toEqual([
+      const { errors } = result as { errors?: EnvironmentError[] };
+      expect(errors).toEqual([
         {
           message: "Environmentd health check failed",
         },
@@ -62,7 +65,6 @@ describe("recoil/environments", () => {
         1 // 1ms timeout
       );
       expect(result.health).toEqual("booting");
-      expect(result.errors).toEqual([]);
     });
 
     it("should return crashed when not responsive for longer than max boot time", async () => {
@@ -80,7 +82,8 @@ describe("recoil/environments", () => {
         { seconds: 0.001 } // 1ms max boot time
       );
       expect(result.health).toEqual("crashed");
-      expect(result.errors).toEqual([
+      const { errors } = result as { errors?: EnvironmentError[] };
+      expect(errors).toEqual([
         {
           details: expect.objectContaining({
             name: "AbortError",

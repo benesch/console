@@ -1,10 +1,10 @@
 import { Tag } from "@chakra-ui/react";
 import * as React from "react";
 
-import { currentVersion } from "~/version/api";
+import { currentConsoleVersion } from "~/version/api";
 
-const Version = () => {
-  if (!currentVersion || currentVersion.length === 0) return null;
+const ConsoleVersionTag = () => {
+  if (!currentConsoleVersion || currentConsoleVersion.length === 0) return null;
   return (
     <Tag
       size="sm"
@@ -13,9 +13,9 @@ const Version = () => {
       fontSize="80%"
       css={{ overflowWrap: "anywhere" }}
     >
-      Release {currentVersion}
+      Release {currentConsoleVersion}
     </Tag>
   );
 };
 
-export default Version;
+export default ConsoleVersionTag;

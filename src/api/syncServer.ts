@@ -1,6 +1,6 @@
 import { Fetcher } from "openapi-typescript-fetch";
 
-import { versionHeaders } from "../version/api";
+import { consoleVersionHeaders } from "../version/api";
 import { components, paths } from "./schemas/sync-server";
 
 export type Organization = components["schemas"]["Organization"];
@@ -15,7 +15,7 @@ export const currentOrganization = (
     baseUrl: syncServerUrl,
     init: {
       headers: {
-        ...versionHeaders(),
+        ...consoleVersionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
     },
@@ -30,7 +30,7 @@ export const recentInvoices = (syncServerUrl: string, accessToken: string) => {
     baseUrl: syncServerUrl,
     init: {
       headers: {
-        ...versionHeaders(),
+        ...consoleVersionHeaders(),
         authorization: `Bearer ${accessToken}`,
       },
     },

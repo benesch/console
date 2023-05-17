@@ -10,7 +10,7 @@ import React from "react";
 import TextLink from "~/components/TextLink";
 import Org from "~/layouts/Org";
 import { MaterializeTheme } from "~/theme";
-import Version from "~/version/Version";
+import ConsoleVersionTag from "~/version/Version";
 
 /**
  * the current year as four digit
@@ -51,7 +51,7 @@ const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
       <TextLink href="https://status.materialize.com/" target="_blank">
         System Status
       </TextLink>
-      <Version />
+      <ConsoleVersionTag />
       <Org />
     </HStack>
   );

@@ -8,6 +8,7 @@ import AlertBox from "~/components/AlertBox";
 import {
   currentEnvironmentIdState,
   currentEnvironmentState,
+  environmentErrors,
 } from "~/recoil/environments";
 
 import SupportLink from "./SupportLink";
@@ -22,7 +23,8 @@ const ContentOrEnvironmentErrors = (props: { children: React.ReactNode }) => {
   );
 
   const showDetails = flags["layout-environment-health-details"];
-  if (!environment || environment.errors.length === 0) {
+  const errors = environment ? environmentErrors(environment) : [];
+  if (errors.length === 0) {
     return <>{props.children}</>;
   }
   return (
@@ -34,7 +36,7 @@ const ContentOrEnvironmentErrors = (props: { children: React.ReactNode }) => {
             {currentEnvironmentId}
           </Text>
           {showDetails &&
-            environment.errors.map((error, i) => {
+            errors.map((error, i) => {
               return (
                 <Text
                   as="div"
@@ -59,7 +61,7 @@ const ContentOrEnvironmentErrors = (props: { children: React.ReactNode }) => {
               );
             })}
           <Text>
-            {environment.state === "enabled" &&
+            {environment?.state === "enabled" &&
               environment.resolvable &&
               "Double check that your internet connection is healthy. "}
             Visit our <SupportLink>help center</SupportLink> if the issue
