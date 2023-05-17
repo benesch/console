@@ -27,7 +27,7 @@ const PricingPage = () => {
 
   const capacityPricingNotice = (
     <Td
-      rowSpan={3}
+      rowSpan={4}
       borderLeftStyle="solid"
       borderLeftWidth="1px"
       borderLeftColor={semanticColors.border.primary}
@@ -64,7 +64,7 @@ const PricingPage = () => {
         <Table variant="rounded" width="100%" shadow={shadows.level2}>
           <Thead>
             <Tr>
-              <Th colSpan={4}>
+              <Th colSpan={3}>
                 <Text
                   fontWeight={500}
                   fontSize="md"
@@ -75,6 +75,16 @@ const PricingPage = () => {
                 >
                   On Demand Terms
                 </Text>
+              </Th>
+              <Th
+                fontWeight={500}
+                fontSize="md"
+                lineHeight="20px"
+                py={4}
+                textTransform="none"
+                color={semanticColors.foreground.primary}
+              >
+                Capacity
               </Th>
             </Tr>
             <Tr>
@@ -93,13 +103,11 @@ const PricingPage = () => {
                 </Th>
               ))}
               <Th
-                textAlign="center"
-                fontWeight={500}
-                color={semanticColors.foreground.secondary}
-                textTransform="none"
-              >
-                Capacity
-              </Th>
+                borderBottom="none"
+                borderLeftStyle="solid"
+                borderLeftWidth="1px"
+                borderLeftColor={semanticColors.border.primary}
+              ></Th>
             </Tr>
           </Thead>
           <Tbody>
