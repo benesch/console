@@ -10,7 +10,7 @@ export interface Schema {
   databaseName: string;
 }
 
-const DEFAULT_SCHEMA_NAME = "public";
+export const DEFAULT_SCHEMA_NAME = "public";
 
 /**
  * Fetches all schemas, optionally filtered by database

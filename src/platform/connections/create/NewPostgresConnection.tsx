@@ -164,8 +164,8 @@ const NewPostgresConnection = () => {
                   query: createSecretQueryBuilder({
                     name: fieldValue.key,
                     value: fieldValue.value,
-                    schemaName: schemaField.value.name,
-                    databaseName: schemaField.value.databaseName,
+                    schemaName: values.schema.name,
+                    databaseName: values.schema.databaseName,
                   }),
                   params: [],
                 },
@@ -209,8 +209,8 @@ const NewPostgresConnection = () => {
 
           return (
             fieldValue.key === name &&
-            schemaName === schemaField.value.name &&
-            databaseName === schemaField.value.databaseName
+            schemaName === values.schema.name &&
+            databaseName === values.schema.databaseName
           );
         });
 
@@ -230,34 +230,36 @@ const NewPostgresConnection = () => {
 
       const getSecretFieldValue = (field: SecretField<Secret>) => {
         if (field.mode === "text") {
-          return {
-            isText: true,
-            secretValue: field.text,
-          };
+          return field.text
+            ? {
+                isText: true,
+                secretValue: field.text,
+              }
+            : undefined;
         }
 
         if (field.mode === "select") {
-          return {
-            secretValue: field.selected
-              ? attachNamespace(
+          return field.selected
+            ? {
+                secretValue: attachNamespace(
                   field.selected.name,
                   field.selected.databaseName,
                   field.selected.schemaName
-                )
-              : undefined,
-          };
+                ),
+              }
+            : undefined;
         }
 
         if (field.mode === "create") {
-          return {
-            secretValue: field.key
-              ? attachNamespace(
+          return field.key
+            ? {
+                secretValue: attachNamespace(
                   field.key,
-                  schemaField.value.databaseName,
-                  schemaField.value.name
-                )
-              : undefined,
-          };
+                  values.schema.databaseName,
+                  values.schema.name
+                ),
+              }
+            : undefined;
         }
       };
 
@@ -289,8 +291,8 @@ const NewPostgresConnection = () => {
                           AND d.name=$3;`,
               params: [
                 values.name,
-                schemaField.value.name,
-                schemaField.value.databaseName,
+                values.schema.name,
+                values.schema.databaseName,
               ],
             },
           ],
@@ -502,7 +504,7 @@ const NewPostgresConnection = () => {
                     isChecked={enableCertAuth}
                   />
                   <FormLabel m="0" ml="2" lineHeight="16px">
-                    Certificate Authentication
+                    SSL Authentication
                   </FormLabel>
                 </FormControl>
                 <FormControl isInvalid={!!formState.errors.user}>
@@ -587,7 +589,7 @@ const NewPostgresConnection = () => {
                         error={fieldState.error?.message}
                       >
                         <SearchableSelect
-                          ariaLabel="Select SSL Mode"
+                          ariaLabel="SSL Mode"
                           placeholder="Select one"
                           options={SSL_MODE_OPTIONS}
                           isSearchable={false}
