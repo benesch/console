@@ -30,6 +30,8 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { DEFAULT_DATABASE_NAME } from "~/api/materialize/useDatabases";
+import { DEFAULT_SCHEMA_NAME } from "~/api/materialize/useSchemas";
 import {
   createSecretQueryBuilder,
   ListPageSecret,
@@ -145,7 +147,13 @@ const SecretsCreationModal = ({
 
   const handleValidSubmit = async (formValues: FormValues) => {
     setShowGenericQueryError(false);
-    createSecret(formValues, {
+    const variables = {
+      ...formValues,
+      // TODO: Add a schema filter select instead of using default values
+      schemaName: DEFAULT_SCHEMA_NAME,
+      databaseName: DEFAULT_DATABASE_NAME,
+    };
+    createSecret(variables, {
       onSuccess: () => {
         onPrimaryButtonAction();
         toast({
