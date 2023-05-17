@@ -12,7 +12,10 @@ const AnalyticsOnEveryPage = () => {
   const location = useLocation();
 
   React.useEffect(() => {
-    segment.page();
+    // Sends location hash to segment for Frontegg admin portal routes
+    segment.page(undefined, undefined, {
+      hash: location.hash,
+    });
   }, [location]);
 
   // once we have valid auth, identify the further analytics events
