@@ -164,8 +164,8 @@ const NewPostgresConnection = () => {
                   query: createSecretQueryBuilder({
                     name: fieldValue.key,
                     value: fieldValue.value,
-                    schemaName: schemaField.value.name,
-                    databaseName: schemaField.value.databaseName,
+                    schemaName: values.schema.name,
+                    databaseName: values.schema.databaseName,
                   }),
                   params: [],
                 },
@@ -209,8 +209,8 @@ const NewPostgresConnection = () => {
 
           return (
             fieldValue.key === name &&
-            schemaName === schemaField.value.name &&
-            databaseName === schemaField.value.databaseName
+            schemaName === values.schema.name &&
+            databaseName === values.schema.databaseName
           );
         });
 
@@ -255,8 +255,8 @@ const NewPostgresConnection = () => {
             ? {
                 secretValue: attachNamespace(
                   field.key,
-                  schemaField.value.databaseName,
-                  schemaField.value.name
+                  values.schema.databaseName,
+                  values.schema.name
                 ),
               }
             : undefined;
@@ -291,8 +291,8 @@ const NewPostgresConnection = () => {
                           AND d.name=$3;`,
               params: [
                 values.name,
-                schemaField.value.name,
-                schemaField.value.databaseName,
+                values.schema.name,
+                values.schema.databaseName,
               ],
             },
           ],
