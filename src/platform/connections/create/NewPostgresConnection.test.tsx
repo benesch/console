@@ -4,6 +4,7 @@ import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { ErrorCode } from "~/api/materialize/types";
 import {
   buildSqlQueryHandler,
   buildUseSqlQueryHandler,
@@ -111,7 +112,10 @@ describe("NewPostgresConnection", () => {
     // createConnection
     server.use(
       buildSqlQueryHandler([
-        { type: "CREATE" as const, error: "Something went wrong" },
+        {
+          type: "CREATE" as const,
+          error: { message: "Something went wrong", code: "XX000" },
+        },
         {
           type: "SELECT" as const,
           columns: ["id"],
@@ -162,7 +166,10 @@ describe("NewPostgresConnection", () => {
         type: "SELECT" as const,
         columns: ["id", "name", "database_id", "database_name"],
         rows: [],
-        error: "secrets failed to load",
+        error: {
+          message: "secrets failed to load",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       })
     );
 
@@ -179,7 +186,10 @@ describe("NewPostgresConnection", () => {
         type: "SELECT" as const,
         columns: ["id", "name", "database_id", "database_name"],
         rows: [],
-        error: "schemas failed to load",
+        error: {
+          message: "schemas failed to load",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       })
     );
 
@@ -263,7 +273,10 @@ describe("NewPostgresConnection", () => {
       buildSqlQueryHandler([
         {
           type: "CREATE" as const,
-          error: "Some unexpected connection creation error",
+          error: {
+            message: "Some unexpected connection creation error",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         },
         {
           type: "SELECT" as const,
@@ -289,7 +302,10 @@ describe("NewPostgresConnection", () => {
       buildSqlQueryHandler([
         {
           type: "CREATE" as const,
-          error: "some unexpected secret creation error",
+          error: {
+            message: "some unexpected secret creation error",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         },
       ])
     );

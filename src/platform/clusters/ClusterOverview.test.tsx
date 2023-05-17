@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import React from "react";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { ClustersProvider } from "~/api/materialize/useClusters";
 import useClusterUtilization from "~/api/materialize/useClusterUtilization";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
@@ -73,7 +74,10 @@ describe("ClusterOverview", () => {
         type: "SELECT" as const,
         columns: ["id", "cluster_name", "replica_id", "replica_name", "size"],
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       })
     );
 

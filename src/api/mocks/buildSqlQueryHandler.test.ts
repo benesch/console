@@ -1,5 +1,6 @@
 import server from "~/api/mocks/server";
 
+import { ErrorCode } from "../materialize/types";
 import {
   buildSqlQueryHandler,
   extractSQLSelectColumnNames,
@@ -332,7 +333,10 @@ describe("buildSqlQueryHandler", () => {
   it("should set a custom 'error' object in the API call's response if sent in the mock query", async () => {
     const mockCommitQuery = {
       type: "COMMIT" as const,
-      error: "Commit unsuccessful.",
+      error: {
+        message: "Commit unsuccessful.",
+        code: ErrorCode.INTERNAL_ERROR,
+      },
     };
     const requestQueries = [{ query: `COMMIT;`, params: [] }];
     server.use(buildSqlQueryHandler([mockCommitQuery]));

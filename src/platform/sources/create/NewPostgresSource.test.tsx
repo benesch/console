@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { ErrorCode } from "~/api/materialize/types";
 import {
   buildSqlQueryHandler,
   buildUseSqlQueryHandler,
@@ -192,7 +193,13 @@ describe("NewPostgresSource", () => {
   it("shows the database error when an unexpected error occurs ", async () => {
     server.use(
       buildSqlQueryHandler([
-        { type: "CREATE" as const, error: "some unexpected database error" },
+        {
+          type: "CREATE" as const,
+          error: {
+            message: "some unexpected database error",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
+        },
         {
           type: "SELECT" as const,
           columns: ["id", "database_name", "schema_name"],
