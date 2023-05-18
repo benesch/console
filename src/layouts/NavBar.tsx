@@ -29,6 +29,7 @@ import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
+import AnalyticsSegment from "~/analytics/segment";
 import FreeTrialNotice from "~/components/FreeTrialNotice";
 import { SUPPORT_HREF } from "~/components/SupportLink";
 import SwitchStackModal from "~/components/SwitchStackModal";
@@ -171,12 +172,18 @@ type NavItemType = {
   href: string;
   isInternal?: boolean;
   hideIfEnvironmentUnhealthy?: boolean;
+  onClick?: () => void;
 };
 
 const getNavItems = (
   regionSlug: string,
   flags: ReturnType<typeof useFlags>
 ): NavItemType[] => {
+  const docsNavItemProperties = {
+    label: "Docs",
+    href: "//materialize.com/docs/get-started/",
+  };
+
   return [
     {
       label: "Connect",
@@ -213,8 +220,13 @@ const getNavItems = (
       : []),
     // { label: "Editor", href: "/editor" },
     {
-      label: "Docs",
-      href: "//materialize.com/docs/get-started/",
+      ...docsNavItemProperties,
+      onClick: () => {
+        AnalyticsSegment.track("Link Click", {
+          label: docsNavItemProperties.label,
+          href: docsNavItemProperties.href,
+        });
+      },
     },
   ];
 };
@@ -236,13 +248,13 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {navItems.map(({ label, href, hideIfEnvironmentUnhealthy }) =>
+      {navItems.map(({ label, href, hideIfEnvironmentUnhealthy, onClick }) =>
         hideIfEnvironmentUnhealthy ? (
           <HideIfEnvironmentUnhealthy key={label}>
-            <NavItem label={label} href={href} />
+            <NavItem label={label} href={href} onClick={onClick} />
           </HideIfEnvironmentUnhealthy>
         ) : (
-          <NavItem key={label} label={label} href={href} />
+          <NavItem key={label} label={label} href={href} onClick={onClick} />
         )
       )}
     </VStack>
@@ -271,15 +283,15 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
       />
       <MenuList>
         {navItems.map(
-          ({ label, href, isInternal, hideIfEnvironmentUnhealthy }) =>
+          ({ label, href, isInternal, hideIfEnvironmentUnhealthy, onClick }) =>
             hideIfEnvironmentUnhealthy ? (
               <HideIfEnvironmentUnhealthy key={label}>
-                <MenuItem as={RouterLink} to={href}>
+                <MenuItem as={RouterLink} to={href} onClick={onClick}>
                   {`${label}${isInternal ? " (internal)" : ""}`}
                 </MenuItem>
               </HideIfEnvironmentUnhealthy>
             ) : (
-              <MenuItem as={RouterLink} key={label} to={href}>
+              <MenuItem as={RouterLink} key={label} to={href} onClick={onClick}>
                 {`${label}${isInternal ? " (internal)" : ""}`}
               </MenuItem>
             )
@@ -341,13 +353,13 @@ const NavItem = (props: NavItemType) => {
   /* react-router-dom doesn't support external links, amazingly */
   if (href.search("//") === -1) {
     return (
-      <HStack as={RouterLink} to={href}>
+      <HStack as={RouterLink} to={href} onClick={props.onClick}>
         {linkContents}
       </HStack>
     );
   }
   return (
-    <a href={href} target="_blank" rel="noreferrer">
+    <a href={href} target="_blank" rel="noreferrer" onClick={props.onClick}>
       {linkContents}
     </a>
   );
