@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { ClustersProvider } from "~/api/materialize/useClusters";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
@@ -50,7 +51,10 @@ describe("Indexes", () => {
         type: "SELECT" as const,
         columns: useIndexesColumns,
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       })
     );
     renderComponent(<IndexesWithSetup />, {

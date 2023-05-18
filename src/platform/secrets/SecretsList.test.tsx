@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { format } from "date-fns";
 import React from "react";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
@@ -32,7 +33,10 @@ describe("SecretsList", () => {
         type: "SELECT" as const,
         columns: ["id", "name", "created_at", "database_name", "schema_name"],
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       });
       server.use(useSecretsHandler);
       renderComponent(<SecretsList />, {
@@ -108,7 +112,10 @@ describe("SecretsList", () => {
     it("should show an error when trying to create a secret and the secret already exists", async () => {
       const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
-        error: "catalog item 'test_1' already exists",
+        error: {
+          message: "catalog item 'test_1' already exists",
+          code: ErrorCode.DUPLICATE_OBJECT,
+        },
       });
 
       server.use(createSecretHandler);
@@ -138,7 +145,10 @@ describe("SecretsList", () => {
     it("should show the inlay error banner when an error occurs while trying to create a secret", async () => {
       const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
-        error: "Something went wrong.",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.DUPLICATE_OBJECT,
+        },
       });
 
       server.use(createSecretHandler);

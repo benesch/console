@@ -1,3 +1,5 @@
+import { PostgresError } from "pg-error-enum";
+
 import config from "~/config";
 import { EnabledEnvironment } from "~/recoil/environments";
 import { assert } from "~/util";
@@ -15,8 +17,6 @@ export interface SqlRequest {
   replica?: string;
 }
 
-type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
-
 export interface Results {
   columns: Array<string>;
   rows: Array<any>;
@@ -26,10 +26,23 @@ export interface Results {
 interface ExecuteSqlSuccess {
   results: Results[];
 }
-interface ExecuteSqlError {
-  status?: number;
-  errorMessage: string;
-}
+
+type GenericError = { errorMessage: string };
+
+type NetworkError = GenericError & {
+  status: number;
+};
+
+type MaterializeError = GenericError & {
+  /* Postgres error code from https://www.postgresql.org/docs/current/errcodes-appendix.html */
+  code: PostgresError;
+  detail?: string;
+  hint?: string;
+};
+
+type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
+
+type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
 
 const executeSql = async (
   environment: EnabledEnvironment,
@@ -97,7 +110,12 @@ const executeSql = async (
         };
       }
       if (resultsError) {
-        return { errorMessage: resultsError };
+        return {
+          errorMessage: resultsError.message,
+          code: resultsError.code,
+          detail: resultsError.detail,
+          hint: resultsError.hint,
+        };
       } else {
         outResults.push({
           rows: rows,

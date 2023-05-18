@@ -1,6 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import React from "react";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
@@ -40,7 +41,10 @@ describe("ConnectionsRoutes", () => {
         type: "SELECT" as const,
         columns: useConnectionsColumns,
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       });
       server.use(useConnectionsHandler);
 

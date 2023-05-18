@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import {
@@ -54,7 +55,10 @@ describe("ClusterReplicas", () => {
         type: "SELECT" as const,
         columns: useClusterReplicasWithUtilizationColumns,
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       })
     );
     renderComponent(<ClusterReplicasWithRoute />, {

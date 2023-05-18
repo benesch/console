@@ -2,6 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { format } from "date-fns";
 import React from "react";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import * as SourceDetail from "~/platform/sources/SourceDetail";
@@ -97,7 +98,10 @@ describe("SourceRoutes", () => {
           type: "SELECT" as const,
           columns: useSourcesColumns,
           rows: [],
-          error: "Something went wrong.",
+          error: {
+            message: "Something went wrong",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         })
       );
       renderComponent(<SourceRoutes />, {
@@ -169,7 +173,10 @@ describe("SourceRoutes", () => {
           type: "SELECT" as const,
           columns: useSourceErrorsColumns,
           rows: [],
-          error: "Something went wrong",
+          error: {
+            message: "Something went wrong",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         });
 
         server.use(useSourcesErrorsHandler);

@@ -2,6 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { format } from "date-fns";
 import React from "react";
 
+import { ErrorCode } from "~/api/materialize/types";
 import { buildUseSqlQueryHandler } from "~/api/mocks/buildSqlQueryHandler";
 import server from "~/api/mocks/server";
 import * as SinkDetail from "~/platform/sinks/SinkDetail";
@@ -100,7 +101,10 @@ describe("SinkRoutes", () => {
           type: "SELECT" as const,
           columns: useSinksColumns,
           rows: [],
-          error: "Something went wrong",
+          error: {
+            message: "Something went wrong",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         })
       );
       renderComponent(<SinkRoutes />, {
@@ -172,7 +176,10 @@ describe("SinkRoutes", () => {
         type: "SELECT" as const,
         columns: useSinkErrorsColumns,
         rows: [],
-        error: "Something went wrong",
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
       });
 
       server.use(useSinkErrorsHandler);

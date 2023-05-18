@@ -1,11 +1,11 @@
 import { rest } from "msw";
 
-import { SqlResult } from "~/api/materialize/types";
+import { Error, SqlResult } from "~/api/materialize/types";
 import { SqlStatement } from "~/api/materialized";
 
 type ISQLQuery = {
   ok?: string;
-  error?: string;
+  error?: Error;
 };
 
 type SQLSelectQuery = ISQLQuery & {
