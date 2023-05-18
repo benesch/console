@@ -131,7 +131,7 @@ export const FormInfoBox = ({ children }: React.PropsWithChildren) => {
       flex="1"
       borderLeft={`1px solid ${semanticColors.border.primary}`}
       px="6"
-      py="2"
+      py="4"
       as="aside"
       mr="20"
     >
