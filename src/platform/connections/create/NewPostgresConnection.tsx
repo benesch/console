@@ -10,7 +10,6 @@ import {
   HStack,
   Image,
   Input,
-  Link,
   Modal,
   ModalContent,
   Switch,
@@ -407,24 +406,28 @@ const NewPostgresConnection = () => {
                 </Text>
                 <HStack>
                   <Button
-                    as={Link}
-                    variant="secondary"
+                    as="a"
+                    variant="outline"
                     size="sm"
                     height="10"
+                    px="4"
                     leftIcon={<Image src={postgresLogo} height="4" width="4" />}
                     href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/"
                     target="_blank"
+                    flexShrink={0}
                   >
                     PostgreSQL CDC
                   </Button>
                   <Button
-                    as={Link}
-                    variant="secondary"
+                    as="a"
+                    variant="outline"
                     size="sm"
                     height="10"
+                    px="4"
                     leftIcon={<Image src={awsLogo} height="4" width="4" />}
                     href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/#aws-rds-t0"
                     target="_blank"
+                    flexShrink={0}
                   >
                     AWS RDS
                   </Button>
