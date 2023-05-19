@@ -129,11 +129,16 @@ export const FormInfoBox = ({ children }: React.PropsWithChildren) => {
   return (
     <Box
       flex="1"
-      borderLeft={`1px solid ${semanticColors.border.primary}`}
-      px="6"
-      py="4"
+      borderLeft={{
+        base: "none",
+        lg: `1px solid ${semanticColors.border.primary}`,
+      }}
+      px={{ base: "0", lg: "6" }}
+      py={{ base: "0", lg: "4" }}
       as="aside"
-      mr="20"
+      mr={{ base: "0", lg: "20" }}
+      gridColumnStart={{ base: "2", lg: "auto" }}
+      gridRowStart={{ base: "2", lg: "auto" }}
     >
       {children}
     </Box>
