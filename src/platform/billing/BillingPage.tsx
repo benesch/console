@@ -13,7 +13,6 @@ import { format } from "date-fns";
 import React from "react";
 
 import { useInvoices } from "~/api/auth";
-import { useCurrentCreditConsumption } from "~/api/materialize/credits";
 import ErrorBox from "~/components/ErrorBox";
 import StatusPill from "~/components/StatusPill";
 import TextLink from "~/components/TextLink";
@@ -25,7 +24,6 @@ import { INVOICE_FETCH_ERROR_MESSAGE } from "./constants";
 const BillingPage = () => {
   const { invoices, loading, error } = useInvoices();
   const { colors } = useTheme<MaterializeTheme>();
-  const instantCreds = useCurrentCreditConsumption();
   return (
     <>
       <PageHeader>
@@ -107,12 +105,6 @@ const BillingPage = () => {
           </Tbody>
         </Table>
       )}
-      <Text>
-        {" "}
-        {
-          instantCreds.value // environment && environment.state === "enabled" && environmentVersion(environment)?.toString()
-        }
-      </Text>
     </>
   );
 };
