@@ -18,7 +18,7 @@ export interface DbVersion {
 
 const parseDbVersionInner = (versionStr: string): DbVersion | null => {
   const parsed = versionStr.match(
-    /^v(?<crateVersion>[^()]*)\((?<sha>[0-9a-fA-F]*)\)$/
+    /^v(?<crateVersion>[^() ]*) \((?<sha>[0-9a-fA-F]*)\)$/
   );
   if (parsed?.groups) {
     const { crateVersion, sha } = parsed.groups;
