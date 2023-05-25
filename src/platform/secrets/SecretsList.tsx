@@ -31,8 +31,8 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
 import {
-  createSecretQueryBuilder,
   ListPageSecret,
   useSecretsListPage,
 } from "~/api/materialize/secret/useSecrets";

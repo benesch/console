@@ -26,8 +26,8 @@ import { useAuth } from "~/api/auth";
 import { attachNamespace } from "~/api/materialize";
 import createPostgresConnectionStatement from "~/api/materialize/connection/createPostgresConnection";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
+import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
 import {
-  createSecretQueryBuilder,
   normalizeSecretsRow,
   Secret,
   useSecretsCreationFlow,
