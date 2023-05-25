@@ -7,6 +7,7 @@ import colors from "./colors";
 
 export { Accordion } from "~/theme/components/Accordion";
 export { Button } from "~/theme/components/Button";
+export { FormError } from "~/theme/components/FormError";
 export { FormLabel } from "~/theme/components/FormLabel";
 
 export const Badge = {
