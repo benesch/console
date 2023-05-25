@@ -83,7 +83,7 @@ const BillingPage = () => {
                 return (
                   <Tr
                     key={i}
-                    height="48px"
+                    height={12}
                     sx={{
                       _hover: {
                         bg: semanticColors.background.primary,
@@ -110,7 +110,7 @@ const BillingPage = () => {
                           py={2}
                           px={2}
                           fontWeight="500"
-                          borderRadius="8px"
+                          borderRadius={2}
                           sx={{
                             _hover: {
                               bg: semanticColors.background.secondary,
