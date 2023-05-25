@@ -40,7 +40,7 @@ type MaterializeError = GenericError & {
   hint?: string;
 };
 
-type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
+export type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
 
 type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
 
