@@ -107,7 +107,16 @@ describe("NewPostgresConnection", () => {
 
   it("changes select value to created secret secret creation succeeds but connection creation fails", async () => {
     // createSecret
-    server.use(buildSqlQueryHandler([{ type: "CREATE" as const }]));
+    server.use(
+      buildSqlQueryHandler([
+        { type: "CREATE" as const },
+        {
+          type: "SELECT" as const,
+          columns: ["id", "name", "database_name", "schema_name"],
+          rows: [["u3", "secret_2", "materialize", "public"]],
+        },
+      ])
+    );
 
     // createConnection
     server.use(
@@ -304,6 +313,15 @@ describe("NewPostgresConnection", () => {
           type: "CREATE" as const,
           error: {
             message: "some unexpected secret creation error",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
+        },
+        {
+          type: "SELECT" as const,
+          columns: ["id", "name", "database_name", "schema_name"],
+          rows: [],
+          error: {
+            message: "secret does not exist",
             code: ErrorCode.INTERNAL_ERROR,
           },
         },

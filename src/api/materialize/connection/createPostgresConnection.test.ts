@@ -1,4 +1,4 @@
-import createPostgresConnectionStatement from "./createPostgresConnection";
+import { createPostgresConnectionStatement } from "./createPostgresConnection";
 
 describe("createPostgresConnectionStatement", () => {
   it("generates a valid statement", () => {
@@ -11,18 +11,21 @@ describe("createPostgresConnectionStatement", () => {
       user: "user",
       port: "5432",
       password: {
-        secretValue: '"materialize"."public"."secret_1"',
+        secretName: "secret_1",
+        databaseName: "materialize",
+        schemaName: "public",
       },
       sslMode: "require",
       sslKey: {
-        secretValue: '"materialize"."public"."secret_1"',
+        secretName: "secret_1",
+        databaseName: "materialize",
+        schemaName: "public",
       },
-      sslCertificate: {
-        isText: true,
-        secretValue: "MIICzjCCAbeg...",
-      },
+      sslCertificate: "MIICzjCCAbeg...",
       sslCertificateAuthority: {
-        secretValue: '"materialize"."public"."secret_1"',
+        secretName: "secret_1",
+        databaseName: "materialize",
+        schemaName: "public",
       },
     });
     expect(statement).toEqual(`

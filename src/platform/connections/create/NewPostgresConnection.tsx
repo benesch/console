@@ -23,12 +23,10 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
-import { attachNamespace } from "~/api/materialize";
-import createPostgresConnectionStatement from "~/api/materialize/connection/createPostgresConnection";
+import createPostgresConnection from "~/api/materialize/connection/createPostgresConnection";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
-import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
+import createSecrets from "~/api/materialize/secret/createSecrets";
 import {
-  normalizeSecretsRow,
   Secret,
   useSecretsCreationFlow,
 } from "~/api/materialize/secret/useSecrets";
@@ -37,7 +35,6 @@ import useSchemas, {
   Schema,
 } from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
-import { executeSql } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
@@ -52,10 +49,14 @@ import SchemaSelect from "~/components/SchemaSelect";
 import SearchableSelect, { SelectOption } from "~/components/SearchableSelect";
 import SecretsFormControl, {
   createSecretFieldDefaultValues,
-  isSecretField,
+  getCreateModeSecretFields,
   SecretField,
 } from "~/components/SecretsFormControl";
 import useSuccessToast from "~/components/SuccessToast";
+import {
+  getSecretOrTextFromField,
+  setSecretFieldsFromServerData,
+} from "~/forms/secretsFormControlUtils";
 import awsLogo from "~/img/aws-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
 import { currentEnvironmentState } from "~/recoil/environments";
@@ -147,180 +148,91 @@ const NewPostgresConnection = () => {
   const handleValidSubmit = async (values: FormState) => {
     setGeneralFormError(undefined);
 
-    type CreateModeSecretField = Required<
-      Pick<SecretField, "mode" | "key" | "value">
-    >;
-
-    const secretsToBeCreated = Object.entries(values).filter(
-      ([_, field]) => isSecretField(field) && field.mode === "create"
-    ) as [keyof FormState, CreateModeSecretField][];
-
     try {
       setIsCreating(true);
 
       assert(environment?.state === "enabled");
-      const responses = await Promise.all(
-        secretsToBeCreated.map(([_, fieldValue]) => {
-          return executeSql(
-            environment,
-            {
-              queries: [
-                {
-                  query: createSecretQueryBuilder({
-                    name: fieldValue.key,
-                    value: fieldValue.value,
-                    schemaName: values.schema.name,
-                    databaseName: values.schema.databaseName,
-                  }),
-                  params: [],
-                },
-              ],
-              cluster: "mz_introspection",
-            },
-            accessToken
-          );
-        })
+      const schemaName = values.schema.name;
+      const databaseName = values.schema.databaseName;
+
+      const createModeSecretFields = getCreateModeSecretFields(values);
+
+      const secretsToBeCreated = createModeSecretFields.map(
+        ([_, fieldValue]) => {
+          return {
+            name: fieldValue.key,
+            value: fieldValue.value,
+            databaseName,
+            schemaName,
+          };
+        }
       );
 
-      const refetchedSecrets = await refetchSecrets();
-
-      assert(refetchedSecrets);
-
-      let errorCreatingSecrets = false;
-
-      responses.forEach((response, i) => {
-        const [fieldName, fieldValue] = secretsToBeCreated[i];
-        if ("errorMessage" in response) {
-          let errorMessage = response.errorMessage;
-          if (alreadyExistsError(response.errorMessage)) {
-            errorMessage = "A secret with that name already exists.";
-          }
-
-          setError(`${fieldName}.key` as keyof FormState, {
-            message: errorMessage,
-          });
-          errorCreatingSecrets = true;
-          return;
-        }
-
-        const [refetchedSecretsResults] = refetchedSecrets;
-        const { getColumnByName } = refetchedSecretsResults;
-        assert(getColumnByName);
-
-        const createdSecret = refetchedSecretsResults.rows.find((row) => {
-          const name = getColumnByName(row, "name");
-          const schemaName = getColumnByName(row, "schema_name");
-          const databaseName = getColumnByName(row, "database_name");
-
-          return (
-            fieldValue.key === name &&
-            schemaName === values.schema.name &&
-            databaseName === values.schema.databaseName
-          );
+      const { errors: createSecretsErrors, data: createSecretsData } =
+        await createSecrets({
+          environment,
+          accessToken,
+          secrets: secretsToBeCreated,
         });
 
-        if (!createdSecret) {
-          return;
-        }
+      await refetchSecrets();
 
-        setValue(fieldName, {
-          ...createSecretFieldDefaultValues("select"),
-          selected: normalizeSecretsRow(createdSecret, getColumnByName),
-        });
-      });
+      setSecretFieldsFromServerData(
+        createSecretsData,
+        createSecretsErrors,
+        createModeSecretFields,
+        setValue,
+        setError
+      );
 
-      if (errorCreatingSecrets) {
+      if (createSecretsErrors.length > 0) {
         return;
       }
 
-      const getSecretFieldValue = (field: SecretField<Secret>) => {
-        if (field.mode === "text") {
-          return field.text
-            ? {
-                isText: true,
-                secretValue: field.text,
-              }
-            : undefined;
-        }
+      const { error: createConnectionError, data: createConnectionData } =
+        await createPostgresConnection({
+          params: {
+            ...values,
+            password: getSecretOrTextFromField(
+              values.password,
+              databaseName,
+              schemaName
+            ),
+            sslMode: values.sslMode?.name,
+            sslKey: getSecretOrTextFromField(
+              values.sslKey,
+              databaseName,
+              schemaName
+            ),
+            sslCertificate: getSecretOrTextFromField(
+              values.sslCertificate,
+              databaseName,
+              schemaName
+            ),
+            sslCertificateAuthority: getSecretOrTextFromField(
+              values.sslCertificateAuthority,
+              databaseName,
+              schemaName
+            ),
+            databaseName,
+            schemaName,
+          },
+          environment,
+          accessToken,
+        });
 
-        if (field.mode === "select") {
-          return field.selected
-            ? {
-                secretValue: attachNamespace(
-                  field.selected.name,
-                  field.selected.databaseName,
-                  field.selected.schemaName
-                ),
-              }
-            : undefined;
-        }
-
-        if (field.mode === "create") {
-          return field.key
-            ? {
-                secretValue: attachNamespace(
-                  field.key,
-                  values.schema.databaseName,
-                  values.schema.name
-                ),
-              }
-            : undefined;
-        }
-      };
-
-      const createConnectionQuery = createPostgresConnectionStatement({
-        ...values,
-        password: getSecretFieldValue(values.password),
-        sslMode: values.sslMode?.name,
-        sslKey: getSecretFieldValue(values.sslKey),
-        sslCertificate: getSecretFieldValue(values.sslCertificate),
-        sslCertificateAuthority: getSecretFieldValue(
-          values.sslCertificateAuthority
-        ),
-        databaseName: values.schema.databaseName,
-        schemaName: values.schema.name,
-      });
-
-      const createConnectionResponses = await executeSql(
-        environment,
-        {
-          queries: [
-            { query: createConnectionQuery, params: [] },
-            {
-              query: `SELECT c.id
-                          FROM mz_connections c
-                          INNER JOIN mz_schemas sc ON sc.id = c.schema_id
-                          INNER JOIN mz_databases d ON d.id = sc.database_id
-                          WHERE c.name = $1
-                          AND sc.name=$2
-                          AND d.name=$3;`,
-              params: [
-                values.name,
-                values.schema.name,
-                values.schema.databaseName,
-              ],
-            },
-          ],
-          cluster: "mz_introspection",
-        },
-        accessToken
-      );
-
-      if ("errorMessage" in createConnectionResponses) {
-        if (alreadyExistsError(createConnectionResponses.errorMessage)) {
+      if (createConnectionError) {
+        if (alreadyExistsError(createConnectionError.errorMessage)) {
           setError("name", {
             message: "A connection with that name already exists.",
           });
         } else {
-          setGeneralFormError(createConnectionResponses.errorMessage);
+          setGeneralFormError(createConnectionError.errorMessage);
         }
         return;
       }
 
-      assert(createConnectionResponses.results);
-
-      const [_, selectConnectionResponse] = createConnectionResponses.results;
-      const [connectionId] = selectConnectionResponse.rows[0];
+      const { connectionId } = createConnectionData;
       toast({
         description: (
           <>

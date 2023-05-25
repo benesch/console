@@ -1,9 +1,8 @@
-import { attachNamespace } from "..";
+import { EnabledEnvironment } from "~/recoil/environments";
 
-type Secret = {
-  isText?: boolean;
-  secretValue: string;
-};
+import { attachNamespace } from "..";
+import createConnection from "./createConnection";
+import { Secret } from "./types";
 
 export interface CreatePostgresConnectionParameters {
   name: string;
@@ -13,14 +12,14 @@ export interface CreatePostgresConnectionParameters {
   pgDatabaseName: string;
   user: string;
   port?: string;
-  password?: Secret;
+  password?: Secret | string;
   sslMode?: string;
-  sslKey?: Secret;
-  sslCertificate?: Secret;
-  sslCertificateAuthority?: Secret;
+  sslKey?: Secret | string;
+  sslCertificate?: Secret | string;
+  sslCertificateAuthority?: Secret | string;
 }
 
-const createPostgresConnectionStatement = (
+export const createPostgresConnectionStatement = (
   params: CreatePostgresConnectionParameters
 ) => {
   const name = attachNamespace(
@@ -51,12 +50,13 @@ const createPostgresConnectionStatement = (
       if (typeof val === "string") {
         return `${key} '${val}'`;
       }
-      if ("secretValue" in val) {
-        if (val.isText) {
-          return `${key} '${val.secretValue}'`;
-        } else {
-          return `${key} SECRET ${val.secretValue}`;
-        }
+      if ("secretName" in val) {
+        const secret = attachNamespace(
+          val.secretName,
+          val.databaseName,
+          val.schemaName
+        );
+        return `${key} SECRET ${secret}`;
       }
       return "";
     })
@@ -69,4 +69,25 @@ ${optionsString}
 );`;
 };
 
-export default createPostgresConnectionStatement;
+export async function createPostgresConnection({
+  params,
+  environment,
+  accessToken,
+}: {
+  params: CreatePostgresConnectionParameters;
+  environment: EnabledEnvironment;
+  accessToken: string;
+}) {
+  const createConnectionQuery = createPostgresConnectionStatement(params);
+
+  return createConnection({
+    connectionName: params.name,
+    schemaName: params.schemaName,
+    databaseName: params.databaseName,
+    createConnectionQuery,
+    environment,
+    accessToken,
+  });
+}
+
+export default createPostgresConnection;
