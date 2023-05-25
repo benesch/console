@@ -24,7 +24,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
 import { attachNamespace } from "~/api/materialize";
-import createPostgresConnectionStatement from "~/api/materialize/connection/createPostgresConnectionStatement";
+import createPostgresConnectionStatement from "~/api/materialize/connection/createPostgresConnection";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import {
   createSecretQueryBuilder,

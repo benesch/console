@@ -1,4 +1,4 @@
-import createPostgresConnectionStatement from "./createPostgresConnectionStatement";
+import createPostgresConnectionStatement from "./createPostgresConnection";
 
 describe("createPostgresConnectionStatement", () => {
   it("generates a valid statement", () => {
