@@ -23,7 +23,9 @@ import { INVOICE_FETCH_ERROR_MESSAGE } from "./constants";
 
 const BillingPage = () => {
   const { invoices, loading, error } = useInvoices();
-  const { colors } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   return (
     <>
       <PageHeader>
@@ -62,26 +64,34 @@ const BillingPage = () => {
                 let fg = undefined;
                 switch (invoice.status) {
                   case "draft":
-                    bg = colors.semanticColors.background.tertiary;
-                    fg = colors.semanticColors.foreground.tertiary;
+                    bg = semanticColors.background.tertiary;
+                    fg = semanticColors.foreground.secondary;
                     break;
                   case "issued":
-                    bg = colors.semanticColors.background.primary;
-                    fg = colors.semanticColors.foreground.primary;
+                    bg = semanticColors.accent.green;
+                    fg = semanticColors.foreground.inverse;
                     break;
                   case "paid":
-                    bg = colors.semanticColors.background.info;
-                    fg = colors.semanticColors.foreground.primary;
+                    bg = semanticColors.background.info;
+                    fg = semanticColors.foreground.secondary;
                     break;
                   case "void":
-                    bg = colors.semanticColors.background.inverse;
-                    fg = colors.semanticColors.foreground.inverse;
+                    bg = semanticColors.background.inverse;
+                    fg = semanticColors.foreground.inverse;
                     break;
                 }
                 return (
-                  <Tr key={i}>
+                  <Tr
+                    key={i}
+                    height={12}
+                    sx={{
+                      _hover: {
+                        bg: semanticColors.background.primary,
+                      },
+                    }}
+                  >
                     <Td>
-                      <Text>{rendered_date}</Text>
+                      <Text textStyle="text-ui-med">{rendered_date}</Text>
                     </Td>
                     <Td>
                       <StatusPill
@@ -92,9 +102,21 @@ const BillingPage = () => {
                       />
                     </Td>
                     <Td>{invoice.amountDue}</Td>
-                    <Td>
+                    <Td textAlign="right">
                       {link && (
-                        <TextLink href={link} isExternal={true}>
+                        <TextLink
+                          href={link}
+                          isExternal={true}
+                          py={2}
+                          px={2}
+                          fontWeight="500"
+                          borderRadius={2}
+                          sx={{
+                            _hover: {
+                              bg: semanticColors.background.secondary,
+                            },
+                          }}
+                        >
                           View invoice →
                         </TextLink>
                       )}
