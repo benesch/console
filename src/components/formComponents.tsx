@@ -222,7 +222,7 @@ export const InlineLabeledInput = ({
             {!error && message}
           </Text>
         )}
-        <FormErrorMessage fontSize="xs">{error}</FormErrorMessage>
+        <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>
   );
