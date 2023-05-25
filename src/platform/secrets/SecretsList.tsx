@@ -31,13 +31,13 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { DEFAULT_DATABASE_NAME } from "~/api/materialize/useDatabases";
-import { DEFAULT_SCHEMA_NAME } from "~/api/materialize/useSchemas";
 import {
   createSecretQueryBuilder,
   ListPageSecret,
   useSecretsListPage,
-} from "~/api/materialize/useSecrets";
+} from "~/api/materialize/secret/useSecrets";
+import { DEFAULT_DATABASE_NAME } from "~/api/materialize/useDatabases";
+import { DEFAULT_SCHEMA_NAME } from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";

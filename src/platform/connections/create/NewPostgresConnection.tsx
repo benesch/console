@@ -24,18 +24,18 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { useAuth } from "~/api/auth";
 import { attachNamespace } from "~/api/materialize";
-import createPostgresConnectionStatement from "~/api/materialize/createConnectionStatement";
+import createPostgresConnectionStatement from "~/api/materialize/connection/createPostgresConnectionStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
-import useSchemas, {
-  isDefaultSchema,
-  Schema,
-} from "~/api/materialize/useSchemas";
 import {
   createSecretQueryBuilder,
   normalizeSecretsRow,
   Secret,
   useSecretsCreationFlow,
-} from "~/api/materialize/useSecrets";
+} from "~/api/materialize/secret/useSecrets";
+import useSchemas, {
+  isDefaultSchema,
+  Schema,
+} from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { executeSql } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";

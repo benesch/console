@@ -1,4 +1,4 @@
-import { attachNamespace } from ".";
+import { attachNamespace } from "..";
 
 type Secret = {
   isText?: boolean;

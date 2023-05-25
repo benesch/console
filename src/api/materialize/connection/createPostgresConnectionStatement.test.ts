@@ -1,8 +1,8 @@
-import createConnectionStatement from "./createConnectionStatement";
+import createPostgresConnectionStatement from "./createPostgresConnectionStatement";
 
-describe("createConnectionStatement", () => {
+describe("createPostgresConnectionStatement", () => {
   it("generates a valid statement", () => {
-    const statement = createConnectionStatement({
+    const statement = createPostgresConnectionStatement({
       name: "pg_connection",
       databaseName: "materialize",
       schemaName: "public",
@@ -41,7 +41,7 @@ SSL CERTIFICATE AUTHORITY SECRET "materialize"."public"."secret_1"
   });
 
   it("filters out undefined connection creation parameters", () => {
-    const statement = createConnectionStatement({
+    const statement = createPostgresConnectionStatement({
       name: "pg_connection",
       databaseName: "materialize",
       schemaName: "public",

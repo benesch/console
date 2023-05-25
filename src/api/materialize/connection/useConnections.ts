@@ -1,7 +1,7 @@
 import { SchemaObject, useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
-import { buildWhereConditions } from ".";
+import { buildWhereConditions } from "..";
 
 export type ConnectionType = "postgres" | "kafka";
 

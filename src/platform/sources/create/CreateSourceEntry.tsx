@@ -17,7 +17,7 @@ import React from "react";
 import {
   Connection,
   useConnectionsFiltered,
-} from "~/api/materialize/useConnections";
+} from "~/api/materialize/connection/useConnections";
 import ErrorBox from "~/components/ErrorBox";
 import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";

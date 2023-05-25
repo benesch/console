@@ -1,7 +1,7 @@
 import { assert } from "~/util";
 
-import { Results, useSql } from "../materialized";
-import { attachNamespace } from ".";
+import { Results, useSql } from "../../materialized";
+import { attachNamespace } from "..";
 
 export interface Secret {
   id: string;
