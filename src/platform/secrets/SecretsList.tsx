@@ -3,6 +3,7 @@ import {
   Circle,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   HStack,
   Input,
@@ -208,13 +209,9 @@ const SecretsCreationModal = ({
                   variant={formState.errors.name ? "error" : "default"}
                 />
                 {!formState.errors.name && (
-                  <Text
-                    mt="2"
-                    textStyle="text-ui-reg"
-                    color="semanticColors.foreground.secondary"
-                  >
+                  <FormHelperText>
                     Alphanumeric characters and underscores only.
-                  </Text>
+                  </FormHelperText>
                 )}
                 <FormErrorMessage>
                   {formState.errors.name?.message}

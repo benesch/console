@@ -4,6 +4,7 @@ import {
   CloseButton,
   Flex,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Grid,
   Text,
@@ -212,16 +213,7 @@ export const InlineLabeledInput = ({
       </FormLabel>
       {children}
       <Box gridColumn="2">
-        {message && (
-          <Text
-            mt="2"
-            textStyle="text-ui-reg"
-            color="semanticColors.foreground.secondary"
-            fontSize="xs"
-          >
-            {!error && message}
-          </Text>
-        )}
+        {message && <FormHelperText>{!error && message}</FormHelperText>}
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>
