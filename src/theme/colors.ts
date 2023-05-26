@@ -19,7 +19,7 @@ const colors = {
     /**
      * Light / Background Tertiary
      */
-    100: "#F1F1F3",
+    100: "#ECECEF",
     /**
      * Light / Border Primary
      */

@@ -412,7 +412,7 @@ const NavItem = (props: NavItemType) => {
       color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
-        bg: "#E9E9EC",
+        bg: colors.semanticColors.background.tertiary,
         color: colors.semanticColors.foreground.primary,
       }}
     >
