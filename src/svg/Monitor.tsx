@@ -13,7 +13,7 @@ const MonitorIcon = (props: IconProps) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g clipPath="url(#clip0_185_547)">
+      <g>
         <rect
           x="1"
           y="2"
@@ -33,11 +33,6 @@ const MonitorIcon = (props: IconProps) => {
           strokeLinecap="round"
         />
       </g>
-      <defs>
-        <clipPath id="clip0_185_547">
-          <rect width="16" height="16" fill="white" />
-        </clipPath>
-      </defs>
     </Icon>
   );
 };

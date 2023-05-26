@@ -46,6 +46,7 @@ import {
 } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
 import { ClustersIcon } from "~/svg/nav/ClustersIcon";
+import { ConnectIcon } from "~/svg/nav/ConnectIcon";
 import { ConnectionsIcon } from "~/svg/nav/ConnectionsIcon";
 import { SecretsIcon } from "~/svg/nav/SecretsIcon";
 import { SinksIcon } from "~/svg/nav/SinksIcon";
@@ -196,10 +197,16 @@ const getNavItems = (
   /* }; */
 
   return [
-    /* { */
-    /*   label: "Connect", */
-    /*   href: `/regions/${regionSlug}/connect`, */
-    /* }, */
+    {
+      title: "", // No title since this is temporary and doesn't fit cleanly into the taxonomy
+      items: [
+        {
+          label: "Connect",
+          href: `/regions/${regionSlug}/connect`,
+          icon: <ConnectIcon />,
+        },
+      ],
+    },
     {
       title: "Compute",
       items: [
@@ -311,17 +318,19 @@ const NavMenu = (props: BoxProps) => {
       {navItems.map(({ title, items }: NavItemGroupType) => {
         return (
           <VStack key={title} spacing="0" alignItems="start">
-            <Text
-              px={2}
-              py={2}
-              width="100%"
-              textStyle="text-small"
-              fontWeight="600"
-              textTransform="uppercase"
-              color={semanticColors.foreground.secondary}
-            >
-              {title}
-            </Text>
+            {title && (
+              <Text
+                px={2}
+                py={2}
+                width="100%"
+                textStyle="text-small"
+                fontWeight="600"
+                textTransform="uppercase"
+                color={semanticColors.foreground.secondary}
+              >
+                {title}
+              </Text>
+            )}
             <NavGroupItems navItems={items} />
           </VStack>
         );
