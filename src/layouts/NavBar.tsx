@@ -191,11 +191,6 @@ const getNavItems = (
   regionSlug: string,
   flags: ReturnType<typeof useFlags>
 ): NavItemGroupType[] => {
-  /* const docsNavItemProperties = { */
-  /*   label: "Docs", */
-  /*   href: "//materialize.com/docs/get-started/", */
-  /* }; */
-
   return [
     {
       title: "", // No title since this is temporary and doesn't fit cleanly into the taxonomy
@@ -257,15 +252,6 @@ const getNavItems = (
       ],
     },
     // { label: "Editor", href: "/editor" },
-    /* { */
-    /*   ...docsNavItemProperties, */
-    /*   onClick: () => { */
-    /*     AnalyticsSegment.track("Link Click", { */
-    /*       label: docsNavItemProperties.label, */
-    /*       href: docsNavItemProperties.href, */
-    /*     }); */
-    /*   }, */
-    /* }, */
   ];
 };
 
@@ -492,7 +478,15 @@ const HelpDropdown = () => {
         </HStack>
       </MenuButton>
       <MenuList>
-        <HelpDropdownLink href="https://materialize.com/docs/">
+        <HelpDropdownLink
+          href="https://materialize.com/docs/"
+          onClick={() => {
+            AnalyticsSegment.track("Link Click", {
+              label: "Docs",
+              href: "https://materialize.com/docs/",
+            });
+          }}
+        >
           Documentation
         </HelpDropdownLink>
         <HelpDropdownLink href="https://materialize.com/s/chat">
@@ -507,6 +501,7 @@ const HelpDropdown = () => {
 interface HelpDropdownLinkProps {
   href: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
 const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
