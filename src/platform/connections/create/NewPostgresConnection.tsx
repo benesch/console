@@ -7,6 +7,8 @@ import {
   Button,
   FormControl,
   FormLabel,
+  HStack,
+  Image,
   Input,
   Modal,
   ModalContent,
@@ -39,6 +41,7 @@ import { executeSql } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
+  FormInfoBox,
   FormSection,
   FormTopBar,
   InlineLabeledInput,
@@ -53,6 +56,8 @@ import SecretsFormControl, {
   SecretField,
 } from "~/components/SecretsFormControl";
 import useSuccessToast from "~/components/SuccessToast";
+import awsLogo from "~/img/aws-logo.svg";
+import postgresLogo from "~/img/postgres-logo.svg";
 import { currentEnvironmentState } from "~/recoil/environments";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
@@ -379,7 +384,57 @@ const NewPostgresConnection = () => {
               Create connection
             </Button>
           </FormTopBar>
-          <FormContainer title="Connection information">
+          <FormContainer
+            title="Connection information"
+            aside={
+              <FormInfoBox>
+                <Text
+                  textStyle="text-ui-med"
+                  color={semanticColors.foreground.primary}
+                  mb={2}
+                >
+                  Need help connecting to Postgres?
+                </Text>
+                <Text
+                  textStyle="text-base"
+                  color={semanticColors.foreground.secondary}
+                  maxW={{ md: "40ch" }}
+                  mb={6}
+                >
+                  Check out our step-by-step guides or reach out to the team for
+                  help with setting up your Postgres connection.
+                </Text>
+                <HStack>
+                  <Button
+                    as="a"
+                    variant="outline"
+                    size="sm"
+                    height="10"
+                    px="4"
+                    leftIcon={<Image src={postgresLogo} height="4" width="4" />}
+                    href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/"
+                    target="_blank"
+                    flexShrink={0}
+                  >
+                    PostgreSQL CDC
+                  </Button>
+                  <Button
+                    as="a"
+                    variant="outline"
+                    size="sm"
+                    height="10"
+                    px="4"
+                    leftIcon={<Image src={awsLogo} height="4" width="4" />}
+                    href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/#aws-rds-t0"
+                    target="_blank"
+                    flexShrink={0}
+                  >
+                    AWS RDS
+                  </Button>
+                </HStack>
+              </FormInfoBox>
+            }
+          >
             {generalFormError && (
               <InlayBanner
                 variant="error"

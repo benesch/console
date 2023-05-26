@@ -47,6 +47,9 @@ export const Button = {
         },
       },
     },
+    outline: {
+      transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
+    },
     "gradient-1": {
       color: "offWhite",
       backgroundColor: gradients.accentDark1.fallback,

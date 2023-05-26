@@ -129,11 +129,16 @@ export const FormInfoBox = ({ children }: React.PropsWithChildren) => {
   return (
     <Box
       flex="1"
-      borderLeft={`1px solid ${semanticColors.border.primary}`}
-      px="6"
-      py="2"
+      borderLeft={{
+        base: "none",
+        md: `1px solid ${semanticColors.border.primary}`,
+      }}
+      px={{ base: "0", md: "6" }}
+      py={{ base: "0", md: "4" }}
       as="aside"
-      mr="20"
+      mr={{ base: "0", md: "20" }}
+      gridColumnStart={{ base: "2", md: "auto" }}
+      gridRowStart={{ base: "2", md: "auto" }}
     >
       {children}
     </Box>
@@ -153,8 +158,8 @@ export const FormContainer = ({
   return (
     <Box mt={10}>
       <Grid
-        templateColumns="1fr 420px 1fr"
-        templateRows="auto 1fr"
+        templateColumns={{ md: "1fr 420px 1fr", base: "0 1fr 0" }}
+        templateRows={{ md: "auto 1fr", base: "auto auto 1fr " }}
         columnGap={`${FORM_COLUMN_GAP}px`}
         rowGap="10"
         alignItems="start"
