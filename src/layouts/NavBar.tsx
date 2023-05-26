@@ -45,6 +45,11 @@ import {
   LoadedEnvironment,
 } from "~/recoil/environments";
 import { useRegionSlug } from "~/region";
+import { ClustersIcon } from "~/svg/nav/ClustersIcon";
+import { ConnectionsIcon } from "~/svg/nav/ConnectionsIcon";
+import { SecretsIcon } from "~/svg/nav/SecretsIcon";
+import { SinksIcon } from "~/svg/nav/SinksIcon";
+import { SourcesIcon } from "~/svg/nav/SourcesIcon";
 import { MaterializeTheme } from "~/theme";
 
 export const NAV_HORIZONTAL_SPACING = 4;
@@ -173,65 +178,119 @@ type NavItemType = {
   isInternal?: boolean;
   hideIfEnvironmentUnhealthy?: boolean;
   onClick?: () => void;
+  icon: JSX.Element;
+};
+
+type NavItemGroupType = {
+  title: string;
+  items: NavItemType[];
 };
 
 const getNavItems = (
   regionSlug: string,
   flags: ReturnType<typeof useFlags>
-): NavItemType[] => {
-  const docsNavItemProperties = {
-    label: "Docs",
-    href: "//materialize.com/docs/get-started/",
-  };
+): NavItemGroupType[] => {
+  /* const docsNavItemProperties = { */
+  /*   label: "Docs", */
+  /*   href: "//materialize.com/docs/get-started/", */
+  /* }; */
 
   return [
+    /* { */
+    /*   label: "Connect", */
+    /*   href: `/regions/${regionSlug}/connect`, */
+    /* }, */
     {
-      label: "Connect",
-      href: `/regions/${regionSlug}/connect`,
+      title: "Compute",
+      items: [
+        {
+          label: "Clusters",
+          href: `/regions/${regionSlug}/clusters`,
+          hideIfEnvironmentUnhealthy: true,
+          icon: <ClustersIcon />,
+        },
+      ],
     },
     {
-      label: "Clusters",
-      href: `/regions/${regionSlug}/clusters`,
-      hideIfEnvironmentUnhealthy: true,
+      title: "Data",
+      items: [
+        {
+          label: "Sources",
+          href: `/regions/${regionSlug}/sources`,
+          hideIfEnvironmentUnhealthy: true,
+          icon: <SourcesIcon />,
+        },
+        {
+          label: "Sinks",
+          href: `/regions/${regionSlug}/sinks`,
+          hideIfEnvironmentUnhealthy: true,
+          icon: <SinksIcon />,
+        },
+      ],
     },
     {
-      label: "Sources",
-      href: `/regions/${regionSlug}/sources`,
-      hideIfEnvironmentUnhealthy: true,
+      title: "Configuration",
+      items: [
+        ...(flags["source-creation-41"]
+          ? [
+              {
+                label: "Secrets",
+                href: `/regions/${regionSlug}/secrets`,
+                hideIfEnvironmentUnhealthy: true,
+                icon: <SecretsIcon />,
+              },
+              {
+                label: "Connections",
+                href: `/regions/${regionSlug}/connections`,
+                hideIfEnvironmentUnhealthy: true,
+                icon: <ConnectionsIcon />,
+              },
+            ]
+          : []),
+      ],
     },
-    {
-      label: "Sinks",
-      href: `/regions/${regionSlug}/sinks`,
-      hideIfEnvironmentUnhealthy: true,
-    },
-    ...(flags["source-creation-41"]
-      ? [
-          {
-            label: "Secrets",
-            href: `/regions/${regionSlug}/secrets`,
-            hideIfEnvironmentUnhealthy: true,
-          },
-          {
-            label: "Connections",
-            href: `/regions/${regionSlug}/connections`,
-            hideIfEnvironmentUnhealthy: true,
-          },
-        ]
-      : []),
     // { label: "Editor", href: "/editor" },
-    {
-      ...docsNavItemProperties,
-      onClick: () => {
-        AnalyticsSegment.track("Link Click", {
-          label: docsNavItemProperties.label,
-          href: docsNavItemProperties.href,
-        });
-      },
-    },
+    /* { */
+    /*   ...docsNavItemProperties, */
+    /*   onClick: () => { */
+    /*     AnalyticsSegment.track("Link Click", { */
+    /*       label: docsNavItemProperties.label, */
+    /*       href: docsNavItemProperties.href, */
+    /*     }); */
+    /*   }, */
+    /* }, */
   ];
 };
 
+const NavGroupItems = ({ navItems }: { navItems: NavItemType[] }) => {
+  return (
+    <VStack width="100%" alignItems="start" spacing={0}>
+      {navItems.map(
+        ({
+          label,
+          href,
+          isInternal,
+          hideIfEnvironmentUnhealthy,
+          onClick,
+          icon,
+        }) => (
+          <NavItem
+            label={label}
+            href={href}
+            onClick={onClick}
+            key={label}
+            icon={icon}
+          />
+        )
+      )}
+    </VStack>
+  );
+};
+
 const NavMenu = (props: BoxProps) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const flags = useFlags();
   const regionSlug = useRegionSlug();
 
@@ -240,7 +299,8 @@ const NavMenu = (props: BoxProps) => {
   return (
     <VStack
       data-test-id="nav-lg"
-      spacing="0"
+      mx={4}
+      spacing={2}
       flex="2"
       alignSelf="stretch"
       alignItems="stretch"
@@ -248,15 +308,24 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {navItems.map(({ label, href, hideIfEnvironmentUnhealthy, onClick }) =>
-        hideIfEnvironmentUnhealthy ? (
-          <HideIfEnvironmentUnhealthy key={label}>
-            <NavItem label={label} href={href} onClick={onClick} />
-          </HideIfEnvironmentUnhealthy>
-        ) : (
-          <NavItem key={label} label={label} href={href} onClick={onClick} />
-        )
-      )}
+      {navItems.map(({ title, items }: NavItemGroupType) => {
+        return (
+          <VStack key={title} spacing="0" alignItems="start">
+            <Text
+              px={2}
+              py={2}
+              width="100%"
+              textStyle="text-small"
+              fontWeight="600"
+              textTransform="uppercase"
+              color={semanticColors.foreground.secondary}
+            >
+              {title}
+            </Text>
+            <NavGroupItems navItems={items} />
+          </VStack>
+        );
+      })}
     </VStack>
   );
 };
@@ -264,10 +333,10 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
-  const flags = useFlags();
-  const regionSlug = useRegionSlug();
-
-  const navItems = getNavItems(regionSlug, flags);
+  /* const flags = useFlags(); */
+  /* const regionSlug = useRegionSlug(); */
+  /**/
+  /* const navItems = getNavItems(regionSlug, flags); */
 
   return (
     <Menu data-test-id="nav-sm">
@@ -282,20 +351,20 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         {...props}
       />
       <MenuList>
-        {navItems.map(
-          ({ label, href, isInternal, hideIfEnvironmentUnhealthy, onClick }) =>
-            hideIfEnvironmentUnhealthy ? (
-              <HideIfEnvironmentUnhealthy key={label}>
-                <MenuItem as={RouterLink} to={href} onClick={onClick}>
-                  {`${label}${isInternal ? " (internal)" : ""}`}
-                </MenuItem>
-              </HideIfEnvironmentUnhealthy>
-            ) : (
-              <MenuItem as={RouterLink} key={label} to={href} onClick={onClick}>
-                {`${label}${isInternal ? " (internal)" : ""}`}
-              </MenuItem>
-            )
-        )}
+        {/* {navItems.map( */}
+        {/*   ({ label, href, isInternal, hideIfEnvironmentUnhealthy, onClick }) => */}
+        {/*     hideIfEnvironmentUnhealthy ? ( */}
+        {/*       <HideIfEnvironmentUnhealthy key={label}> */}
+        {/*         <MenuItem as={RouterLink} to={href} onClick={onClick}> */}
+        {/*           {`${label}${isInternal ? " (internal)" : ""}`} */}
+        {/*         </MenuItem> */}
+        {/*       </HideIfEnvironmentUnhealthy> */}
+        {/*     ) : ( */}
+        {/*       <MenuItem as={RouterLink} key={label} to={href} onClick={onClick}> */}
+        {/*         {`${label}${isInternal ? " (internal)" : ""}`} */}
+        {/*       </MenuItem> */}
+        {/*     ) */}
+        {/* )} */}
         <ProfileMenuItems />
       </MenuList>
     </Menu>
@@ -321,27 +390,22 @@ const NavItem = (props: NavItemType) => {
 
   const linkContents = (
     <HStack
+      width="100%"
       aria-current={active ? "page" : undefined}
       spacing="2"
-      width="full"
-      px={NAV_HORIZONTAL_SPACING}
+      px={2}
       py={2}
       transition="all 0.2s"
+      borderRadius="lg"
       color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
-        bg: colors.semanticColors.background.tertiary,
+        bg: "#E9E9EC",
         color: colors.semanticColors.foreground.primary,
-        paddingLeft: "4px",
-        borderRightWidth: { base: "0px", lg: "2px" },
-        borderRightColor: {
-          base: "transparent",
-          lg: colors.semanticColors.accent.purple,
-        },
-        px: 4,
       }}
     >
-      <Box fontWeight="semibold">{props.label}</Box>
+      {props.icon}
+      <Box textStyle="text-ui-med">{props.label}</Box>
       {props.isInternal && (
         <Tag size="sm" colorScheme="purple">
           internal
@@ -353,7 +417,7 @@ const NavItem = (props: NavItemType) => {
   /* react-router-dom doesn't support external links, amazingly */
   if (href.search("//") === -1) {
     return (
-      <HStack as={RouterLink} to={href} onClick={props.onClick}>
+      <HStack as={RouterLink} to={href} onClick={props.onClick} width="100%">
         {linkContents}
       </HStack>
     );
