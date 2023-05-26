@@ -200,7 +200,7 @@ REPLICAS (
                   fontSize="14px"
                   lineHeight="20px"
                   color={semanticColors.foreground.secondary}
-                  maxW="40ch"
+                  maxW={{ md: "40ch" }}
                   mb={4}
                 >
                   View the documentation to learn how clusters and cluster

@@ -398,7 +398,7 @@ const NewPostgresConnection = () => {
                 <Text
                   textStyle="text-base"
                   color={semanticColors.foreground.secondary}
-                  maxW="40ch"
+                  maxW={{ md: "40ch" }}
                   mb={6}
                 >
                   Check out our step-by-step guides or reach out to the team for
