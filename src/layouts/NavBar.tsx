@@ -234,16 +234,16 @@ const getNavItems = (
         ...(flags["source-creation-41"]
           ? [
               {
-                label: "Secrets",
-                href: `/regions/${regionSlug}/secrets`,
-                hideIfEnvironmentUnhealthy: true,
-                icon: <SecretsIcon />,
-              },
-              {
                 label: "Connections",
                 href: `/regions/${regionSlug}/connections`,
                 hideIfEnvironmentUnhealthy: true,
                 icon: <ConnectionsIcon />,
+              },
+              {
+                label: "Secrets",
+                href: `/regions/${regionSlug}/secrets`,
+                hideIfEnvironmentUnhealthy: true,
+                icon: <SecretsIcon />,
               },
             ]
           : []),
@@ -333,10 +333,13 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
-  /* const flags = useFlags(); */
-  /* const regionSlug = useRegionSlug(); */
-  /**/
-  /* const navItems = getNavItems(regionSlug, flags); */
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  const flags = useFlags();
+  const regionSlug = useRegionSlug();
+
+  const navItems = getNavItems(regionSlug, flags);
 
   return (
     <Menu data-test-id="nav-sm">
@@ -351,21 +354,35 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         {...props}
       />
       <MenuList>
-        {/* {navItems.map( */}
-        {/*   ({ label, href, isInternal, hideIfEnvironmentUnhealthy, onClick }) => */}
-        {/*     hideIfEnvironmentUnhealthy ? ( */}
-        {/*       <HideIfEnvironmentUnhealthy key={label}> */}
-        {/*         <MenuItem as={RouterLink} to={href} onClick={onClick}> */}
-        {/*           {`${label}${isInternal ? " (internal)" : ""}`} */}
-        {/*         </MenuItem> */}
-        {/*       </HideIfEnvironmentUnhealthy> */}
-        {/*     ) : ( */}
-        {/*       <MenuItem as={RouterLink} key={label} to={href} onClick={onClick}> */}
-        {/*         {`${label}${isInternal ? " (internal)" : ""}`} */}
-        {/*       </MenuItem> */}
-        {/*     ) */}
-        {/* )} */}
-        <ProfileMenuItems />
+        <VStack w="100%">
+          {navItems.map(({ title, items }: NavItemGroupType) => {
+            return (
+              <VStack
+                key={title}
+                spacing={0}
+                alignItems="start"
+                borderBottom="1px solid"
+                borderBottomColor={semanticColors.border.primary}
+                w="100%"
+                pb={2}
+              >
+                <Text
+                  px={2}
+                  py={2}
+                  width="100%"
+                  textStyle="text-small"
+                  fontWeight="600"
+                  textTransform="uppercase"
+                  color={semanticColors.foreground.secondary}
+                >
+                  {title}
+                </Text>
+                <NavGroupItems navItems={items} />
+              </VStack>
+            );
+          })}
+          <ProfileMenuItems />
+        </VStack>
       </MenuList>
     </Menu>
   );
@@ -396,7 +413,7 @@ const NavItem = (props: NavItemType) => {
       px={2}
       py={2}
       transition="all 0.2s"
-      borderRadius="lg"
+      borderRadius={{ lg: "lg", md: "none" }}
       color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
