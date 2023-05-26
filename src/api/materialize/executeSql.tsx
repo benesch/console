@@ -44,7 +44,7 @@ export type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
 
 type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
 
-export function isError(error: unknown): error is ExecuteSqlError {
+export function isExecuteSqlError(error: unknown): error is ExecuteSqlError {
   return error != null && typeof error === "object" && "errorMessage" in error;
 }
 

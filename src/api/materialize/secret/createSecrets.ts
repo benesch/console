@@ -1,6 +1,6 @@
 import executeSql, {
   ExecuteSqlError,
-  isError,
+  isExecuteSqlError,
 } from "~/api/materialize/executeSql";
 import { Secret } from "~/api/materialize/secret/useSecrets";
 import { EnabledEnvironment } from "~/recoil/environments";
@@ -106,7 +106,7 @@ export async function createSecrets({
   );
 
   responses.forEach((response, i) => {
-    if (isError(response)) {
+    if (isExecuteSqlError(response)) {
       errors.push({
         error: response,
         payloadIndex: i,

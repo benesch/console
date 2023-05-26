@@ -1,4 +1,4 @@
-import { executeSql, isError } from "~/api/materialized";
+import { executeSql, isExecuteSqlError } from "~/api/materialized";
 import { EnabledEnvironment } from "~/recoil/environments";
 
 async function createConnection({
@@ -39,7 +39,7 @@ async function createConnection({
 
   let response;
 
-  if (isError(createConnectionResponse)) {
+  if (isExecuteSqlError(createConnectionResponse)) {
     response = {
       error: createConnectionResponse,
     };
