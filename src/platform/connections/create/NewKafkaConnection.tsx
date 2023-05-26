@@ -525,9 +525,11 @@ const NewKafkaConnection = () => {
             </FormSection>
             <FormSection title="Authentication">
               <Tabs
+                variant="soft-rounded"
                 isLazy
                 index={authMode}
                 onChange={(newTab) => setAuthMode(newTab)}
+                size="sm"
               >
                 <TabList>
                   <Tab>SASL</Tab>
