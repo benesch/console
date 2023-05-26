@@ -8,7 +8,8 @@ export const ClustersIcon = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clipPath="url(#clip0_221_2399)">
+    {/* <g clipPath="url(#clip0_221_2399)"> */}
+    <g>
       <path
         d="M7.99967 1.33313L1.33301 4.66646L7.99967 7.9998L14.6663 4.66646L7.99967 1.33313Z"
         stroke="#949197"
@@ -31,10 +32,10 @@ export const ClustersIcon = () => (
         strokeLinejoin="round"
       />
     </g>
-    <defs>
-      <clipPath id="clip0_221_2399">
-        <rect width="16" height="16" fill="white" />
-      </clipPath>
-    </defs>
+    {/* <defs> */}
+    {/*   <clipPath id="clip0_221_2399"> */}
+    {/*     <rect width="16" height="16" fill="white" /> */}
+    {/*   </clipPath> */}
+    {/* </defs> */}
   </svg>
 );
