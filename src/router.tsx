@@ -56,10 +56,16 @@ const Router = () => {
     if (!ldClient || !user) return;
 
     ldClient.identify({
-      key: user.id,
-      email: user.email,
-      custom: {
-        orgId: user.tenantId,
+      kind: "multi",
+      user: {
+        key: user.id,
+        email: user.email,
+        custom: {
+          orgId: user.tenantId,
+        },
+      },
+      organization: {
+        key: user.tenantId,
       },
     });
   }, [ldClient, user]);
