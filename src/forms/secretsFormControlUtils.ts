@@ -51,8 +51,8 @@ export function getSecretOrTextFromField(
   databaseName: string,
   schemaName: string
 ) {
-  if (field.mode === "text") {
-    return field.text;
+  if (field.mode === "text" && !!field.text) {
+    return { secretTextValue: field.text };
   }
 
   return getSecretFromField(field, databaseName, schemaName);

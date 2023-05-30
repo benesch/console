@@ -2,7 +2,7 @@ import { EnabledEnvironment } from "~/recoil/environments";
 
 import { attachNamespace } from "..";
 import createConnection from "./createConnection";
-import { Secret } from "./types";
+import { Secret, TextSecret } from "./types";
 
 export interface CreatePostgresConnectionParameters {
   name: string;
@@ -12,11 +12,11 @@ export interface CreatePostgresConnectionParameters {
   pgDatabaseName: string;
   user: string;
   port?: string;
-  password?: Secret | string;
+  password?: Secret | TextSecret;
   sslMode?: string;
-  sslKey?: Secret | string;
-  sslCertificate?: Secret | string;
-  sslCertificateAuthority?: Secret | string;
+  sslKey?: Secret | TextSecret;
+  sslCertificate?: Secret | TextSecret;
+  sslCertificateAuthority?: Secret | TextSecret;
 }
 
 export const createPostgresConnectionStatement = (
@@ -28,7 +28,7 @@ export const createPostgresConnectionStatement = (
     params.schemaName
   );
 
-  const options: [string, string | Secret | undefined][] = [
+  const options: [string, string | Secret | TextSecret | undefined][] = [
     ["HOST", params.host],
     ["DATABASE", params.pgDatabaseName],
     ["USER", params.user],
@@ -41,7 +41,9 @@ export const createPostgresConnectionStatement = (
   ];
 
   const optionsString = options
-    .filter((option): option is [string, string | Secret] => !!option[1])
+    .filter(
+      (option): option is [string, string | Secret | TextSecret] => !!option[1]
+    )
     .map(([key, val]) => {
       // PORT is an integer and we shouldn't have quotations around it
       if (key === "PORT") {
@@ -50,6 +52,11 @@ export const createPostgresConnectionStatement = (
       if (typeof val === "string") {
         return `${key} '${val}'`;
       }
+
+      if ("secretTextValue" in val) {
+        return `${key} '${val.secretTextValue}'`;
+      }
+
       if ("secretName" in val) {
         const secret = attachNamespace(
           val.secretName,

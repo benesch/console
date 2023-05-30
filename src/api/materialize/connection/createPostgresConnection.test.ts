@@ -21,7 +21,7 @@ describe("createPostgresConnectionStatement", () => {
         databaseName: "materialize",
         schemaName: "public",
       },
-      sslCertificate: "MIICzjCCAbeg...",
+      sslCertificate: { secretTextValue: "MIICzjCCAbeg..." },
       sslCertificateAuthority: {
         secretName: "secret_1",
         databaseName: "materialize",
