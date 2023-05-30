@@ -1,8 +1,8 @@
 import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
 
 import { attachNamespace, quoteIdentifier } from ".";
+import { Connection } from "./connection/useConnections";
 import { Cluster } from "./useClusters";
-import { Connection } from "./useConnections";
 
 export interface CreateSourceParameters {
   name: string;

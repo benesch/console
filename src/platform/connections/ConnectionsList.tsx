@@ -18,7 +18,7 @@ import { Link, Route } from "react-router-dom";
 import {
   ConnectionsResponse,
   ConnectionWithDetails,
-} from "~/api/materialize/useConnections";
+} from "~/api/materialize/connection/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";

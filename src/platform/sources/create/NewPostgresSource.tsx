@@ -28,14 +28,14 @@ import {
 } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import {
+  Connection,
+  useConnectionsFiltered,
+} from "~/api/materialize/connection/useConnections";
 import createSourceStatement from "~/api/materialize/createSourceStatement";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
-import {
-  Connection,
-  useConnectionsFiltered,
-} from "~/api/materialize/useConnections";
 import { Database } from "~/api/materialize/useDatabases";
 import useSchemas, {
   isDefaultSchema,

@@ -40,9 +40,13 @@ type MaterializeError = GenericError & {
   hint?: string;
 };
 
-type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
+export type ExecuteSqlError = MaterializeError | NetworkError | GenericError;
 
 type ExecuteSqlOutput = ExecuteSqlSuccess | ExecuteSqlError;
+
+export function isExecuteSqlError(error: unknown): error is ExecuteSqlError {
+  return error != null && typeof error === "object" && "errorMessage" in error;
+}
 
 const executeSql = async (
   environment: EnabledEnvironment,

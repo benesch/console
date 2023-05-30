@@ -1,7 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 
-import useConnections from "~/api/materialize/useConnections";
+import useConnections from "~/api/materialize/connection/useConnections";
 import { SentryRoutes } from "~/sentry";
 import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 

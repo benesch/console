@@ -309,18 +309,34 @@ export const SecretsFormControl = <FormState extends FieldValues>(
   );
 };
 
-export function createSecretFieldDefaultValues(initialMode?: Mode) {
+export type CreateModeSecretField = Required<
+  Pick<SecretField, "mode" | "key" | "value">
+>;
+
+export function createSecretFieldDefaultValues<
+  Option extends SelectOption = SelectOption
+>(defaultValues?: Partial<SecretField<Option>>) {
+  const { selected, key, value, text, mode } = defaultValues || {};
+
   return {
-    selected: undefined,
-    key: undefined,
-    value: undefined,
-    text: undefined,
-    mode: initialMode ?? "select",
+    selected,
+    key,
+    value,
+    text,
+    mode: mode ?? "select",
   };
 }
 
 export function isSecretField(field?: unknown): field is SecretField {
   return !!field && typeof field === "object" && "mode" in field;
+}
+
+export function getCreateModeSecretFields<FormState extends FieldValues>(
+  values: FormState
+) {
+  return Object.entries(values).filter(
+    ([_, field]) => isSecretField(field) && field.mode === "create"
+  ) as [Path<FormState>, CreateModeSecretField][];
 }
 
 export default SecretsFormControl;

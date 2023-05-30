@@ -1,7 +1,6 @@
 import { assert } from "~/util";
 
-import { Results, useSql } from "../materialized";
-import { attachNamespace } from ".";
+import { Results, useSql } from "../../materialized";
 
 export interface Secret {
   id: string;
@@ -21,23 +20,6 @@ export function normalizeSecretsRow(
     databaseName: getColumnByName<unknown, string>(row, "database_name"),
     schemaName: getColumnByName<unknown, string>(row, "schema_name"),
   };
-}
-
-export function createSecretQueryBuilder(variables: {
-  name: string;
-  value: string;
-  databaseName: string;
-  schemaName: string;
-}) {
-  const name = attachNamespace(
-    variables.name,
-    variables.databaseName,
-    variables.schemaName
-  );
-  return `
-  CREATE SECRET ${name}
-  AS '${variables.value}'
-`;
 }
 
 export interface ListPageSecret extends Secret {
