@@ -8,7 +8,6 @@ import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
 import segment from "~/analytics/segment";
 
 jest.mock("~/config");
-jest.mock("~/analytics/segment");
 
 const setupRenderTree = () => {
   const Home = () => {

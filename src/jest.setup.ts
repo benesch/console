@@ -7,6 +7,9 @@ import server from "./api/mocks/server";
 
 const debugMz = debug("mz");
 
+// Mocks
+jest.mock("~/analytics/segment");
+
 // Establish API mocking before all tests.
 beforeAll(() => {
   mockFlags({});
