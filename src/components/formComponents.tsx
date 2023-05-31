@@ -108,11 +108,9 @@ export const FormSection = ({
     <Box mb="10" {...props}>
       <Text
         as="legend"
-        fontWeight="500"
-        fontSize="14px"
-        lineHeight="16px"
+        textStyle="heading-xs"
         color={semanticColors.foreground.tertiary}
-        mb="6"
+        mb="4"
       >
         {title}
       </Text>

@@ -464,7 +464,7 @@ const NewPostgresConnection = () => {
               </VStack>
             </FormSection>
             <FormSection title="Authentication">
-              <VStack spacing="6" alignItems="start">
+              <VStack mt="2" spacing="6" alignItems="start">
                 <FormControl flexDir="row" display="flex">
                   <Switch
                     onChange={() => setEnableCertAuth((prev) => !prev)}
