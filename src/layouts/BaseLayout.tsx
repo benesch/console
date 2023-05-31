@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import AccountStatusAlert from "~/components/AccountStatusAlert";
-import ContentOrEnvironmentErrors from "~/components/ContentOrEnvironmentErrors";
+import EnvironmentError from "~/components/EnvironmentError";
 import ErrorBox from "~/components/ErrorBox";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
@@ -92,13 +92,13 @@ export const BaseLayout = ({ overflowY, ...props }: BaseLayoutProps) => {
                     </Center>
                   }
                 >
-                  {hideContentOnEnvironmentError ? (
-                    <ContentOrEnvironmentErrors>
-                      {props.children}
-                    </ContentOrEnvironmentErrors>
-                  ) : (
-                    props.children
-                  )}
+                  <EnvironmentError
+                    hideContentOnEnvironmentError={
+                      hideContentOnEnvironmentError
+                    }
+                  >
+                    {props.children}
+                  </EnvironmentError>
                 </React.Suspense>
               </ErrorBoundary>
             </Flex>
