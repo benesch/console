@@ -78,12 +78,47 @@ const Router = () => {
           element={<RedirectToEnvironment />}
         />
         <Route path="/regions/:regionSlug/*" element={<EnvironmentRoutes />} />
-        <Route path="/access/cli" element={<CLI />} />
-        <Route path="/access" element={<AppPasswordsPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/editor" element={<Editor />} />
+        <Route
+          path="/access/cli"
+          element={
+            <BaseLayout>
+              <CLI />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/access"
+          element={
+            <BaseLayout>
+              <AppPasswordsPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <BaseLayout hideContentOnEnvironmentError={false}>
+              <PricingPage />
+            </BaseLayout>
+          }
+        />
+        <Route
+          path="/editor"
+          element={
+            <BaseLayout overflowY="hidden">
+              <Editor />
+            </BaseLayout>
+          }
+        />
         {user && hasInvoiceReadPermission(user) && (
-          <Route path="/billing" element={<BillingPage />} />
+          <Route
+            path="/billing"
+            element={
+              <BaseLayout hideContentOnEnvironmentError={false}>
+                <BillingPage />
+              </BaseLayout>
+            }
+          />
         )}
         <Route path="*" element={<RedirectToHome />} />
       </ProtectedRoutes>
@@ -143,15 +178,56 @@ const EnvironmentRoutes = () => {
   }
   return (
     <Routes>
-      <Route path="/connect/*" element={<Home />} />
-      <Route path="/clusters/*" element={<ClusterRoutes />} />
-      <Route path="/sources/*" element={<SourceRoutes />} />
-      <Route path="/sinks/*" element={<SinkRoutes />} />
-      {/* TODO: Connect Secrets page to route */}
+      <Route
+        path="/connect/*"
+        element={
+          <BaseLayout>
+            <Home />
+          </BaseLayout>
+        }
+      />
+      <Route
+        path="/clusters/*"
+        element={
+          <BaseLayout>
+            <ClusterRoutes />
+          </BaseLayout>
+        }
+      />
+      <Route
+        path="/sources/*"
+        element={
+          <BaseLayout>
+            <SourceRoutes />
+          </BaseLayout>
+        }
+      />
+      <Route
+        path="/sinks/*"
+        element={
+          <BaseLayout>
+            <SinkRoutes />
+          </BaseLayout>
+        }
+      />
       {flags["source-creation-41"] && (
         <>
-          <Route path="/secrets" element={<SecretsList />} />
-          <Route path="/connections/*" element={<ConnectionsRoutes />} />
+          <Route
+            path="/secrets"
+            element={
+              <BaseLayout>
+                <SecretsList />
+              </BaseLayout>
+            }
+          />
+          <Route
+            path="/connections/*"
+            element={
+              <BaseLayout>
+                <ConnectionsRoutes />
+              </BaseLayout>
+            }
+          />
         </>
       )}
 
@@ -184,7 +260,6 @@ const RedirectToHome = () => {
 
 const ProtectedRoutes = (props: RoutesProps) => {
   const location = useLocation();
-  const layoutOverflow = location.pathname === "/editor" ? "hidden" : "auto";
   // Consume Frontegg authentication state.
   const {
     isAuthenticated,
@@ -225,9 +300,7 @@ const ProtectedRoutes = (props: RoutesProps) => {
   return (
     <AuthProvider user={user}>
       <React.Suspense fallback={<LoadingScreen />}>
-        <BaseLayout overflowY={layoutOverflow}>
-          <SentryRoutes {...props} />
-        </BaseLayout>
+        <SentryRoutes {...props} />
       </React.Suspense>
     </AuthProvider>
   );

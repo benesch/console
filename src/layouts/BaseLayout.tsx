@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import AccountStatusAlert from "~/components/AccountStatusAlert";
-import ContentOrEnvironmentErrors from "~/components/ContentOrEnvironmentErrors";
+import EnvironmentError from "~/components/EnvironmentError";
 import ErrorBox from "~/components/ErrorBox";
 import NavBar from "~/layouts/NavBar";
 import PageFooter from "~/layouts/PageFooter";
@@ -38,6 +38,8 @@ import { MaterializeTheme } from "~/theme";
 export interface BaseLayoutProps {
   children?: React.ReactNode;
   overflowY?: CSS.Property.Overflow;
+  /** Hides content and displays the environment error when the current environment is unhealthy. Defaults to true. */
+  hideContentOnEnvironmentError?: boolean;
 }
 
 export const MAIN_CONTENT_MARGIN = 10;
@@ -59,7 +61,9 @@ export const MAIN_CONTENT_MARGIN = 10;
  * </BaseLayout>
  * ```
  */
-export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
+export const BaseLayout = ({ overflowY, ...props }: BaseLayoutProps) => {
+  const hideContentOnEnvironmentError =
+    props.hideContentOnEnvironmentError ?? true;
   return (
     <Flex direction="column" minHeight="100vh">
       <AccountStatusAlert />
@@ -88,9 +92,13 @@ export const BaseLayout = ({ overflowY, children }: BaseLayoutProps) => {
                     </Center>
                   }
                 >
-                  <ContentOrEnvironmentErrors>
-                    {children}
-                  </ContentOrEnvironmentErrors>
+                  <EnvironmentError
+                    hideContentOnEnvironmentError={
+                      hideContentOnEnvironmentError
+                    }
+                  >
+                    {props.children}
+                  </EnvironmentError>
                 </React.Suspense>
               </ErrorBoundary>
             </Flex>
