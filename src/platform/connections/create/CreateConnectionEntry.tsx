@@ -47,7 +47,7 @@ const CreateConnectionEntry = () => {
               <IconNavLink
                 icon={<KafkaLogoIcon width="6" height="6" />}
                 width="100%"
-                to="kafka"
+                to="../kafka"
               >
                 Apache Kafka
               </IconNavLink>

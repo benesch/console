@@ -7,6 +7,7 @@ import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import ConnectionsList from "./ConnectionsList";
 import CreateConnectionEntry from "./create/CreateConnectionEntry";
+import NewKafkaConnection from "./create/NewKafkaConnection";
 import NewPostgresConnection from "./create/NewPostgresConnection";
 
 const NAME_FILTER_QUERY_STRING_KEY = "connectionName";
@@ -41,6 +42,7 @@ const NewConnectionRoutes = () => {
   return (
     <SentryRoutes>
       <Route path="/connection" element={<CreateConnectionEntry />} />
+      <Route path="/kafka" element={<NewKafkaConnection />} />
       <Route path="/postgres" element={<NewPostgresConnection />} />
     </SentryRoutes>
   );
