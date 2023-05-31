@@ -2,7 +2,6 @@ import { inputAnatomy, selectAnatomy, switchAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 import { mode, StyleFunctionProps } from "@chakra-ui/theme-tools";
 
-import { MaterializeTheme } from ".";
 import colors from "./colors";
 
 export { Accordion } from "~/theme/components/Accordion";
@@ -10,6 +9,7 @@ export { Button } from "~/theme/components/Button";
 export { FormControl as Form } from "~/theme/components/FormControl";
 export { FormError } from "~/theme/components/FormError";
 export { FormLabel } from "~/theme/components/FormLabel";
+export { tabsTheme as Tabs } from "~/theme/components/Tabs";
 
 export const Badge = {
   defaultProps: {
@@ -290,38 +290,6 @@ export const Table = defineMultiStyleConfig({
     },
   },
 });
-
-export const Tabs = {
-  variants: {
-    line: ({ theme }: StyleFunctionProps) => {
-      const {
-        colors: { semanticColors },
-      } = theme as MaterializeTheme;
-      return {
-        tab: {
-          _active: {
-            borderBottomColor: semanticColors.accent.purple,
-          },
-          borderBottomWidth: "1px",
-          marginBottom: "-1px",
-          px: 0,
-          mr: 10,
-        },
-        tablist: {
-          borderBottomColor: semanticColors.border.primary,
-          borderBottomWidth: "1px",
-        },
-        tabpanel: {
-          px: 0,
-          py: 0,
-        },
-      };
-    },
-  },
-  defaultProps: {
-    variant: "line",
-  },
-};
 
 const menuListBase = (props: StyleFunctionProps) => {
   const { colorScheme: c } = props;
