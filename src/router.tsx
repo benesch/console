@@ -97,7 +97,7 @@ const Router = () => {
         <Route
           path="/pricing"
           element={
-            <BaseLayout>
+            <BaseLayout hideContentOnEnvironmentError={false}>
               <PricingPage />
             </BaseLayout>
           }
@@ -114,7 +114,7 @@ const Router = () => {
           <Route
             path="/billing"
             element={
-              <BaseLayout>
+              <BaseLayout hideContentOnEnvironmentError={false}>
                 <BillingPage />
               </BaseLayout>
             }
