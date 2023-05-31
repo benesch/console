@@ -20,21 +20,6 @@ export { default as executeSql } from "./materialize/executeSql";
 export type onSuccess = (data?: Results[] | null) => void;
 export type onError = (error?: string) => void;
 
-export interface ExplainTimestampResult {
-  determination: {
-    timestamp_context: { TimelineTimestamp: Array<number | string> };
-    since: { elements: number[] };
-    upper: { elements: number[] };
-    largest_not_in_advance_of_upper: number;
-    oracle_read_ts: number;
-  };
-  sources: {
-    name: string;
-    read_frontier: number[];
-    write_frontier: number[];
-  }[];
-}
-
 export function buildSqlRequest(sql?: string, cluster = "mz_introspection") {
   return sql
     ? // Run all queries on the `mz_introspection` cluster, as it's
