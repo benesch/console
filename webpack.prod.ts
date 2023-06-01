@@ -56,21 +56,7 @@ const scriptSrc = [
 const cspPolicy = {
   "base-uri": ["'self'"],
   "child-src": ["'none'"],
-  "connect-src": [
-    "'self'",
-    "https://o561021.ingest.sentry.io",
-    "https://api.segment.io",
-    "https://api.segment.materialize.com",
-    "https://cdn.segment.com",
-    "https://assets.frontegg.com/",
-    "https://*.g.doubleclick.net",
-    "https://*.googletagmanager.com",
-    "https://*.google.com",
-    "https://*.launchdarkly.com",
-    "https://*.cloud.materialize.com",
-    "https://*.materialize.cloud",
-    "wss://*.materialize.cloud",
-  ],
+  "connect-src": ["*"],
   "default-src": ["'self'"],
   "font-src": [
     "'self'",
