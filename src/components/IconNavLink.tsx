@@ -17,8 +17,14 @@ const IconNavLink = ({ icon, children, ...props }: IconNavLinkProps) => {
       justifyContent="left"
       {...props}
     >
-      {icon && <Box mr="4">{icon}</Box>}
-      <Text textStyle="text-ui-med">{children}</Text>
+      {icon && (
+        <Box mr="4" flexShrink="0">
+          {icon}
+        </Box>
+      )}
+      <Text textStyle="text-ui-med" textOverflow="ellipsis" overflow="hidden">
+        {children}
+      </Text>
     </Button>
   );
 };
