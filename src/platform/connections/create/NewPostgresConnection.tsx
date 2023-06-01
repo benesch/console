@@ -56,7 +56,7 @@ import useSuccessToast from "~/components/SuccessToast";
 import {
   getSecretOrTextFromField,
   setSecretFieldsFromServerData,
-} from "~/forms/secretsFormControlUtils";
+} from "~/forms/secretsFormControlAccessors";
 import awsLogo from "~/img/aws-logo.svg";
 import postgresLogo from "~/img/postgres-logo.svg";
 import { currentEnvironmentState } from "~/recoil/environments";

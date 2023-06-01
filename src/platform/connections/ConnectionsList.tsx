@@ -137,7 +137,7 @@ export const ConnectionsList = ({
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFilter} />
           <SearchInput
-            name="sink"
+            name="connection"
             value={nameFilter.name ?? ""}
             onChange={(e) => {
               const newName = e.target.value;

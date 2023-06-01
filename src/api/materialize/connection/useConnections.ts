@@ -1,9 +1,20 @@
-import { SchemaObject, useSql } from "~/api/materialized";
+import { Results, SchemaObject, useSql } from "~/api/materialized";
 import { assert } from "~/util";
 
 import { buildWhereConditions } from "..";
 
-export type ConnectionType = "postgres" | "kafka";
+export type ConnectionType =
+  | "postgres"
+  | "kafka"
+  | "confluent-schema-registry"
+  | "private-link"
+  | "ssh";
+
+export const dataConnectionTypes: ConnectionType[] = ["postgres", "kafka"];
+export const networkSecurityConnectionTypes: ConnectionType[] = [
+  "private-link",
+  "ssh",
+];
 
 export interface ConnectionWithDetails extends SchemaObject {
   type: ConnectionType;
@@ -67,6 +78,20 @@ GROUP BY connections.id, connections.name, connections.type, schema_name, databa
 
 export type ConnectionsResponse = ReturnType<typeof useConnections>;
 
+export function normalizeConnectionRow(
+  row: unknown[],
+  getColumnByName: Results["getColumnByName"]
+): Connection {
+  assert(getColumnByName);
+  return {
+    id: getColumnByName(row, "id"),
+    name: getColumnByName(row, "name"),
+    schemaName: getColumnByName(row, "schema_name"),
+    databaseName: getColumnByName(row, "database_name"),
+    type: getColumnByName(row, "type"),
+  };
+}
+
 /**
  * Fetches all connections, filter by any of the following:
  * * type
@@ -75,10 +100,14 @@ export type ConnectionsResponse = ReturnType<typeof useConnections>;
 export function useConnectionsFiltered({
   nameFilter,
   type,
-}: { nameFilter?: string; type?: ConnectionType } = {}) {
+}: { nameFilter?: string; type?: ConnectionType | ConnectionType[] } = {}) {
   const filters = [
     nameFilter ? `connections.name ILIKE '%${nameFilter}%'` : undefined,
-    type ? `connections.type = '${type}'` : undefined,
+    type
+      ? type instanceof Array
+        ? `connections.type in (${type.map((t) => `'${t}'`).join(", ")})`
+        : `connections.type = '${type}'`
+      : undefined,
   ];
   const connectionResponse = useSql(`
 SELECT
@@ -98,13 +127,9 @@ INNER JOIN mz_databases databases ON databases.id = schemas.database_id${buildWh
     const { rows, getColumnByName } = connectionResponse.data;
     assert(getColumnByName);
 
-    connections = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      schemaName: getColumnByName(row, "schema_name"),
-      databaseName: getColumnByName(row, "database_name"),
-      type: getColumnByName(row, "type"),
-    }));
+    connections = rows.map((row) =>
+      normalizeConnectionRow(row, getColumnByName)
+    );
   }
 
   return { ...connectionResponse, data: connections };

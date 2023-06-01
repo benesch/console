@@ -2,6 +2,9 @@ import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
   FormControl,
+  FormErrorMessage,
+  FormHelperText,
+  FormLabel,
   HStack,
   Input,
   InputProps,
@@ -130,6 +133,7 @@ export type SecretsFormControlProps<
   canFieldBeText?: boolean;
   textInputProps?: Partial<InputProps>;
   textInputRules?: RegisterOptions;
+  variant?: "inline" | "vertical";
 };
 
 export type Mode = "text" | "select" | "create";
@@ -156,6 +160,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
     selectProps,
     selectRules,
     canFieldBeText = false,
+    variant = "inline",
   } = props;
   const { errors } = useFormState({
     control,
@@ -225,86 +230,103 @@ export const SecretsFormControl = <FormState extends FieldValues>(
 
   const { isInvalid, error, message } = getFieldPropsByMode()[mode] ?? {};
 
-  return (
-    <FormControl isInvalid={isInvalid}>
-      <InlineLabeledInput
-        label={fieldLabel ?? ""}
-        error={error}
-        message={message}
-      >
-        {mode === "text" ? (
-          <Input
-            {...register(`${fieldKey}.text` as Path<FormState>, {
+  const inputChildren = (
+    <>
+      {mode === "text" ? (
+        <Input
+          {...register(`${fieldKey}.text` as Path<FormState>, {
+            shouldUnregister: true,
+            ...textInputRules,
+          })}
+          autoCorrect="off"
+          size="sm"
+          variant={fieldError?.text ? "error" : "default"}
+          {...textInputProps}
+        />
+      ) : mode === "select" ? (
+        <Controller
+          control={control}
+          name={`${fieldKey}.selected` as Path<FormState>}
+          rules={{ ...selectRules }}
+          shouldUnregister={true}
+          render={({ field }) => (
+            <SearchableSelect
+              {...field}
+              ariaLabel={fieldLabel ?? ""}
+              placeholder="Select one"
+              options={selectOptions ?? []}
+              displayAddNewItem
+              addNewItemLabel="Create new secret"
+              onAddNewItem={() => {
+                setMode("create");
+              }}
+              {...selectProps}
+            />
+          )}
+        />
+      ) : mode === "create" ? (
+        <HStack alignItems="start">
+          <ObjectNameInput
+            {...register(`${fieldKey}.key` as Path<FormState>, {
+              required: "Key is required.",
+              pattern: {
+                value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                message: "Key must not include special characters.",
+              },
               shouldUnregister: true,
-              ...textInputRules,
             })}
+            aria-label={`${fieldLabel} secret key`}
+            placeholder="Key"
             autoCorrect="off"
             size="sm"
-            variant={fieldError?.text ? "error" : "default"}
-            {...textInputProps}
+            variant={fieldError?.key ? "error" : "default"}
           />
-        ) : mode === "select" ? (
-          <Controller
-            control={control}
-            name={`${fieldKey}.selected` as Path<FormState>}
-            rules={{ ...selectRules }}
-            shouldUnregister={true}
-            render={({ field }) => (
-              <SearchableSelect
-                {...field}
-                ariaLabel={fieldLabel ?? ""}
-                placeholder="Select one"
-                options={selectOptions ?? []}
-                displayAddNewItem
-                addNewItemLabel="Create new secret"
-                onAddNewItem={() => {
-                  setMode("create");
-                }}
-                {...selectProps}
-              />
-            )}
-          />
-        ) : mode === "create" ? (
-          <HStack alignItems="start">
-            <ObjectNameInput
-              {...register(`${fieldKey}.key` as Path<FormState>, {
-                required: "Key is required.",
-                pattern: {
-                  value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                  message: "Key must not include special characters.",
-                },
-                shouldUnregister: true,
-              })}
-              aria-label={`${fieldLabel} secret key`}
-              placeholder="Key"
-              autoCorrect="off"
-              size="sm"
-              variant={fieldError?.key ? "error" : "default"}
-            />
 
-            <Input
-              {...register(`${fieldKey}.value` as Path<FormState>, {
-                required: "Value is required.",
-                shouldUnregister: true,
-              })}
-              aria-label={`${fieldLabel} secret value`}
-              placeholder="Value"
-              autoCorrect="off"
-              size="sm"
-              variant={fieldError?.value ? "error" : "default"}
-            />
-            <Button
-              variant="borderless"
-              height="8"
-              minWidth="8"
-              width="8"
-              onClick={() => setMode("select")}
-            >
-              <CloseIcon height="8px" width="8px" />
-            </Button>
-          </HStack>
-        ) : null}
-      </InlineLabeledInput>
+          <Input
+            {...register(`${fieldKey}.value` as Path<FormState>, {
+              required: "Value is required.",
+              shouldUnregister: true,
+            })}
+            aria-label={`${fieldLabel} secret value`}
+            placeholder="Value"
+            autoCorrect="off"
+            size="sm"
+            variant={fieldError?.value ? "error" : "default"}
+          />
+          <Button
+            variant="borderless"
+            height="8"
+            minWidth="8"
+            width="8"
+            onClick={() => setMode("select")}
+          >
+            <CloseIcon height="8px" width="8px" />
+          </Button>
+        </HStack>
+      ) : null}
+    </>
+  );
+
+  return (
+    <FormControl isInvalid={isInvalid}>
+      {variant === "inline" ? (
+        <InlineLabeledInput
+          label={fieldLabel ?? ""}
+          error={error}
+          message={message}
+        >
+          {inputChildren}
+        </InlineLabeledInput>
+      ) : (
+        <>
+          <FormLabel htmlFor="name" fontSize="sm">
+            {fieldLabel}
+          </FormLabel>
+          {inputChildren}
+          {message && <FormHelperText mt="2">{message}</FormHelperText>}
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </>
+      )}
     </FormControl>
   );
 };

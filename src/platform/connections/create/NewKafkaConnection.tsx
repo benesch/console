@@ -64,7 +64,7 @@ import {
   getSecretFromField,
   getSecretOrTextFromField,
   setSecretFieldsFromServerData,
-} from "~/forms/secretsFormControlUtils";
+} from "~/forms/secretsFormControlAccessors";
 import { currentEnvironmentState } from "~/recoil/environments";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
 import { MaterializeTheme } from "~/theme";

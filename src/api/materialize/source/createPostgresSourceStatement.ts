@@ -1,8 +1,8 @@
+import { Connection } from "~/api/materialize/connection/useConnections";
+import { Cluster } from "~/api/materialize/useClusters";
 import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
 
-import { attachNamespace, quoteIdentifier } from ".";
-import { Connection } from "./connection/useConnections";
-import { Cluster } from "./useClusters";
+import { attachNamespace, quoteIdentifier } from "..";
 
 export interface CreateSourceParameters {
   name: string;
@@ -19,7 +19,7 @@ export interface CreateSourceParameters {
   }[];
 }
 
-const createSourceStatement = (params: CreateSourceParameters) => {
+const createPostgresSourceStatement = (params: CreateSourceParameters) => {
   if (!params.cluster && !params.clusterSize) {
     throw new Error("You must specify either a cluster or a cluster size");
   }
@@ -30,13 +30,17 @@ const createSourceStatement = (params: CreateSourceParameters) => {
   );
   const createNewCluster = params.cluster?.id === NEW_CLUSTER_ID;
 
+  const connectionName = attachNamespace(
+    params.connection.name,
+    params.connection.databaseName,
+    params.connection.schemaName
+  );
+
   return `
 CREATE SOURCE ${name}${
     createNewCluster ? "" : `\nIN CLUSTER ${params.cluster?.name}`
   }
-FROM POSTGRES CONNECTION ${quoteIdentifier(
-    params.connection.name
-  )} (PUBLICATION '${params.publication}')
+FROM POSTGRES CONNECTION ${connectionName} (PUBLICATION '${params.publication}')
 ${
   params.allTables
     ? "FOR ALL TABLES"
@@ -52,4 +56,4 @@ ${params.tables
 }${createNewCluster ? `\nWITH (SIZE = '${params.clusterSize?.name}')` : ""};`;
 };
 
-export default createSourceStatement;
+export default createPostgresSourceStatement;

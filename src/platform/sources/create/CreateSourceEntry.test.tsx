@@ -36,7 +36,6 @@ const renderComponent = (element: ReactElement) => {
 describe("NewPostgresSource", () => {
   beforeEach(() => {
     server.use(
-      // useConnectionsFiltered
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
         columns: ["id", "name", "schema_name", "database_name", "type"],
