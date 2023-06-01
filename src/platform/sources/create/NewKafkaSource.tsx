@@ -102,7 +102,7 @@ const NEW_CLUSTER_ID_OPTION = {
 const requiresSchemaRegistry = (format?: KafkaFormat) =>
   format === "avro" || format === "protobuf";
 
-const NewKafkaSource = () => {
+export const NewKafkaSourceForm = () => {
   const [generalFormError, setGeneralFormError] = React.useState<
     string | undefined
   >(undefined);
@@ -371,268 +371,268 @@ const NewKafkaSource = () => {
   }
   return (
     <>
-      <Modal
-        isOpen
-        onClose={() => {
-          navigate("../connection");
-        }}
-        variant="fullscreen"
-        closeOnEsc={false}
-        // Allows us to scroll within CsrConnectionModal
-        blockScrollOnMount={!isCsrConnectionModalOpen}
-      >
-        <ModalContent>
-          <form onSubmit={handleSubmit(handleValidSubmit)}>
-            <FormTopBar
-              title="Create a Kafka source"
-              backButtonHref="../connection"
-            >
-              <Button
-                variant="primary"
-                size="sm"
-                type="submit"
-                isDisabled={isCreating}
-              >
-                Create source
-              </Button>
-            </FormTopBar>
-            <FormContainer title="Source information">
-              {generalFormError && (
-                <InlayBanner
-                  variant="error"
-                  label="Error"
-                  message={generalFormError}
-                  mb="10"
+      <form onSubmit={handleSubmit(handleValidSubmit)}>
+        <FormTopBar
+          title="Create a Kafka source"
+          backButtonHref="../connection"
+        >
+          <Button
+            variant="primary"
+            size="sm"
+            type="submit"
+            isDisabled={isCreating}
+          >
+            Create source
+          </Button>
+        </FormTopBar>
+        <FormContainer title="Source information">
+          {generalFormError && (
+            <InlayBanner
+              variant="error"
+              label="Error"
+              message={generalFormError}
+              mb="10"
+            />
+          )}
+          <FormSection title="Data connection">
+            <FormControl>
+              <InlineLabeledInput label="Connection">
+                <SearchableSelect
+                  ariaLabel="Select connection"
+                  placeholder="Select one"
+                  {...connectionField}
+                  options={[
+                    {
+                      label: "Select connection",
+                      options: connections ?? [],
+                    },
+                  ]}
                 />
-              )}
-              <FormSection title="Data connection">
-                <FormControl>
-                  <InlineLabeledInput label="Connection">
-                    <SearchableSelect
-                      ariaLabel="Select connection"
-                      placeholder="Select one"
-                      {...connectionField}
-                      options={[
-                        {
-                          label: "Select connection",
-                          options: connections ?? [],
-                        },
-                      ]}
-                    />
-                  </InlineLabeledInput>
-                </FormControl>
-              </FormSection>
-              <FormSection title="General">
-                <FormControl isInvalid={!!formState.errors.name} mb="4">
-                  <InlineLabeledInput
-                    label="Name"
-                    error={formState.errors.name?.message}
-                    message="Alphanumeric characters and underscores only."
-                  >
-                    <ObjectNameInput
-                      {...register("name", {
-                        required: "Source name is required.",
-                        pattern: {
-                          message:
-                            "Source name must not include special characters.",
-                          value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                        },
-                      })}
-                      autoFocus
-                      placeholder="my_kafka_source"
-                      autoCorrect="off"
-                      size="sm"
-                      variant={formState.errors.name ? "error" : "default"}
-                    />
-                  </InlineLabeledInput>
-                </FormControl>
-                <Accordion
-                  allowToggle
-                  index={formState.errors.schema ? 0 : undefined}
+              </InlineLabeledInput>
+            </FormControl>
+          </FormSection>
+          <FormSection title="General">
+            <FormControl isInvalid={!!formState.errors.name} mb="4">
+              <InlineLabeledInput
+                label="Name"
+                error={formState.errors.name?.message}
+                message="Alphanumeric characters and underscores only."
+              >
+                <ObjectNameInput
+                  {...register("name", {
+                    required: "Source name is required.",
+                    pattern: {
+                      message:
+                        "Source name must not include special characters.",
+                      value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                    },
+                  })}
+                  autoFocus
+                  placeholder="my_kafka_source"
+                  autoCorrect="off"
+                  size="sm"
+                  variant={formState.errors.name ? "error" : "default"}
+                />
+              </InlineLabeledInput>
+            </FormControl>
+            <Accordion
+              allowToggle
+              index={formState.errors.schema ? 0 : undefined}
+            >
+              <AccordionItem>
+                <AccordionButton
+                  color={semanticColors.accent.brightPurple}
+                  py="2"
                 >
-                  <AccordionItem>
-                    <AccordionButton
-                      color={semanticColors.accent.brightPurple}
-                      py="2"
-                    >
-                      <Text textStyle="text-ui-med">Additional Options</Text>
-                      <AccordionIcon ml="2" />
-                    </AccordionButton>
-                    <AccordionPanel
-                      motionProps={{ style: { overflow: "visible" } }}
-                    >
-                      <FormControl isInvalid={!!formState.errors.schema}>
-                        <InlineLabeledInput
-                          label="Schema"
-                          error={formState.errors.schema?.message}
-                        >
-                          <SchemaSelect
-                            {...schemaField}
-                            schemas={schemas ?? []}
-                          />
-                        </InlineLabeledInput>
-                      </FormControl>
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
-              </FormSection>
-              <FormSection title="Compute cluster">
-                <FormControl isInvalid={!!formState.errors.cluster}>
-                  <InlineLabeledInput
-                    label="Cluster"
-                    error={formState.errors.cluster?.message}
-                  >
-                    <Box>
-                      <SearchableSelect
-                        ariaLabel="Select cluster"
-                        placeholder="Select one"
-                        {...clusterField}
-                        displayAddNewItem
-                        addNewItemLabel="Create new cluster"
-                        onAddNewItem={() => {
-                          clusterField.onChange(NEW_CLUSTER_ID_OPTION);
-                        }}
-                        options={[
-                          {
-                            label: "Select cluster",
-                            options: clusters,
-                          },
-                        ]}
-                      />
-                      {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
-                        <Text
-                          color={semanticColors.foreground.secondary}
-                          mt="2"
-                          maxWidth="260px"
-                          textStyle="text-ui-reg"
-                        >
-                          Cluster name: {sourceName}_linked_cluster.
-                        </Text>
-                      )}
-                    </Box>
-                  </InlineLabeledInput>
-                </FormControl>
-                {selectedCluster?.id === NEW_CLUSTER_ID && (
-                  <FormControl
-                    isInvalid={!!formState.errors.clusterSize}
-                    mt="4"
-                  >
+                  <Text textStyle="text-ui-med">Additional Options</Text>
+                  <AccordionIcon ml="2" />
+                </AccordionButton>
+                <AccordionPanel
+                  motionProps={{ style: { overflow: "visible" } }}
+                >
+                  <FormControl isInvalid={!!formState.errors.schema}>
                     <InlineLabeledInput
-                      label="Cluster size"
-                      error={formState.errors.clusterSize?.message}
+                      label="Schema"
+                      error={formState.errors.schema?.message}
                     >
-                      <SearchableSelect
-                        ariaLabel="Select cluster size"
-                        placeholder="Select one"
-                        {...clusterSizeField}
-                        options={[
-                          {
-                            label: "Select cluster size",
-                            options: clusterSizeOptions ?? [],
-                          },
-                        ]}
-                      />
+                      <SchemaSelect {...schemaField} schemas={schemas ?? []} />
                     </InlineLabeledInput>
                   </FormControl>
-                )}
-              </FormSection>
-              <FormSection title="Configuration">
-                <VStack spacing="6" alignItems="start">
-                  <FormControl isInvalid={!!formState.errors.topic}>
-                    <InlineLabeledInput
-                      label="Topic"
-                      error={formState.errors.topic?.message}
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </FormSection>
+          <FormSection title="Compute cluster">
+            <FormControl isInvalid={!!formState.errors.cluster}>
+              <InlineLabeledInput
+                label="Cluster"
+                error={formState.errors.cluster?.message}
+              >
+                <Box>
+                  <SearchableSelect
+                    ariaLabel="Select cluster"
+                    placeholder="Select one"
+                    {...clusterField}
+                    displayAddNewItem
+                    addNewItemLabel="Create new cluster"
+                    onAddNewItem={() => {
+                      clusterField.onChange(NEW_CLUSTER_ID_OPTION);
+                    }}
+                    options={[
+                      {
+                        label: "Select cluster",
+                        options: clusters,
+                      },
+                    ]}
+                  />
+                  {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
+                    <Text
+                      color={semanticColors.foreground.secondary}
+                      mt="2"
+                      maxWidth="260px"
+                      textStyle="text-ui-reg"
                     >
-                      <ObjectNameInput
-                        {...register("topic", {
-                          required: "Topic is required.",
-                        })}
-                        placeholder="topic_1"
-                        autoCorrect="off"
-                        size="sm"
-                        variant={formState.errors.topic ? "error" : "default"}
-                      />
-                    </InlineLabeledInput>
-                  </FormControl>
-                  <FormControl isInvalid={!!formState.errors.format}>
-                    <InlineLabeledInput
-                      label="Format"
-                      error={formState.errors.format?.message}
-                    >
-                      <SearchableSelect
-                        ariaLabel="Select format"
-                        placeholder="Select one"
-                        {...formatField}
-                        options={[
-                          {
-                            label: "Select format",
-                            options: formatOptions ?? [],
-                          },
-                        ]}
-                        menuPlacement="top"
-                      />
-                    </InlineLabeledInput>
-                  </FormControl>
-                  {requiresSchemaRegistry(format?.id) && (
-                    <FormControl isInvalid={!!formState.errors.csrConnection}>
-                      <Flex ml="100px">
-                        <Box
-                          backgroundColor={semanticColors.border.primary}
-                          width="4px"
-                          borderRadius="16px"
-                          mr="4"
-                        />
-                        <Box width="100%">
-                          <SearchableSelect
-                            ariaLabel="Choose connection"
-                            placeholder="Choose connection"
-                            {...csrConnectionField}
-                            options={csrConnections ?? []}
-                            displayAddNewItem
-                            onAddNewItem={() => {
-                              openCsrConnectionModal();
-                            }}
-                            addNewItemLabel="New schema registry connection"
-                            menuPlacement="top"
-                          />
-                          <FormErrorMessage>
-                            {formState.errors.csrConnection?.message}
-                          </FormErrorMessage>
-                        </Box>
-                      </Flex>
-                    </FormControl>
+                      Cluster name: {sourceName}_linked_cluster.
+                    </Text>
                   )}
-                  <FormControl isInvalid={!!formState.errors.envelope}>
-                    <InlineLabeledInput
-                      label="Envelope"
-                      error={formState.errors.envelope?.message}
-                    >
+                </Box>
+              </InlineLabeledInput>
+            </FormControl>
+            {selectedCluster?.id === NEW_CLUSTER_ID && (
+              <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
+                <InlineLabeledInput
+                  label="Cluster size"
+                  error={formState.errors.clusterSize?.message}
+                >
+                  <SearchableSelect
+                    ariaLabel="Select cluster size"
+                    placeholder="Select one"
+                    {...clusterSizeField}
+                    options={[
+                      {
+                        label: "Select cluster size",
+                        options: clusterSizeOptions ?? [],
+                      },
+                    ]}
+                  />
+                </InlineLabeledInput>
+              </FormControl>
+            )}
+          </FormSection>
+          <FormSection title="Configuration">
+            <VStack spacing="6" alignItems="start">
+              <FormControl isInvalid={!!formState.errors.topic}>
+                <InlineLabeledInput
+                  label="Topic"
+                  error={formState.errors.topic?.message}
+                >
+                  <ObjectNameInput
+                    {...register("topic", {
+                      required: "Topic is required.",
+                    })}
+                    placeholder="topic_1"
+                    autoCorrect="off"
+                    size="sm"
+                    variant={formState.errors.topic ? "error" : "default"}
+                  />
+                </InlineLabeledInput>
+              </FormControl>
+              <FormControl isInvalid={!!formState.errors.format}>
+                <InlineLabeledInput
+                  label="Format"
+                  error={formState.errors.format?.message}
+                >
+                  <SearchableSelect
+                    ariaLabel="Select format"
+                    placeholder="Select one"
+                    {...formatField}
+                    options={[
+                      {
+                        label: "Select format",
+                        options: formatOptions ?? [],
+                      },
+                    ]}
+                    menuPlacement="top"
+                  />
+                </InlineLabeledInput>
+              </FormControl>
+              {requiresSchemaRegistry(format?.id) && (
+                <FormControl isInvalid={!!formState.errors.csrConnection}>
+                  <Flex ml="100px">
+                    <Box
+                      backgroundColor={semanticColors.border.primary}
+                      width="4px"
+                      borderRadius="16px"
+                      mr="4"
+                    />
+                    <Box width="100%">
                       <SearchableSelect
-                        ariaLabel="Select envelope"
-                        placeholder="Select one"
-                        {...envelopeField}
-                        options={[
-                          {
-                            label: "Select envelope",
-                            options: envelopeOptionsByFormat[format?.id],
-                          },
-                        ]}
+                        ariaLabel="Choose connection"
+                        placeholder="Choose connection"
+                        {...csrConnectionField}
+                        options={csrConnections ?? []}
+                        displayAddNewItem
+                        onAddNewItem={() => {
+                          openCsrConnectionModal();
+                        }}
+                        addNewItemLabel="New schema registry connection"
                         menuPlacement="top"
                       />
-                    </InlineLabeledInput>
-                  </FormControl>
-                </VStack>
-              </FormSection>
-            </FormContainer>
-          </form>
-        </ModalContent>
-      </Modal>
+                      <FormErrorMessage>
+                        {formState.errors.csrConnection?.message}
+                      </FormErrorMessage>
+                    </Box>
+                  </Flex>
+                </FormControl>
+              )}
+              <FormControl isInvalid={!!formState.errors.envelope}>
+                <InlineLabeledInput
+                  label="Envelope"
+                  error={formState.errors.envelope?.message}
+                >
+                  <SearchableSelect
+                    ariaLabel="Select envelope"
+                    placeholder="Select one"
+                    {...envelopeField}
+                    options={[
+                      {
+                        label: "Select envelope",
+                        options: envelopeOptionsByFormat[format?.id],
+                      },
+                    ]}
+                    menuPlacement="top"
+                  />
+                </InlineLabeledInput>
+              </FormControl>
+            </VStack>
+          </FormSection>
+        </FormContainer>
+      </form>
       <NewConfluentSchemaRegistryConnection
         isOpen={isCsrConnectionModalOpen}
         onClose={closeCsrConnectionModal}
         onSuccess={handleCsrConnectionCreated}
       />
     </>
+  );
+};
+
+const NewKafkaSource = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Modal
+      isOpen
+      onClose={() => {
+        navigate("../connection");
+      }}
+      variant="fullscreen"
+      closeOnEsc={false}
+    >
+      <ModalContent>
+        <NewKafkaSourceForm />
+      </ModalContent>
+    </Modal>
   );
 };
 

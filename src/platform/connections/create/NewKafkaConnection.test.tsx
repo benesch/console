@@ -16,11 +16,9 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
-import NewKafkaConnection from "./NewKafkaConnection";
+import { NewKafkaConnectionForm } from "./NewKafkaConnection";
 
 jest.mock("~/api/auth");
-
-jest.setTimeout(30_000);
 
 const Wrapper = createProviderWrapper({
   initializeState: ({ set }) =>
@@ -58,7 +56,7 @@ async function fillRequiredFields(user: UserEvent) {
   await user.click(screen.getByText("secret_1"));
 }
 
-describe("NewKafkaConnection", () => {
+describe("NewKafkaConnectionForm", () => {
   beforeEach(() => {
     server.use(
       // useSchemas
@@ -94,7 +92,7 @@ describe("NewKafkaConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
 
     await fillRequiredFields(user);
     await user.click(screen.getByText("Create connection"));
@@ -138,7 +136,7 @@ describe("NewKafkaConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
 
     await fillRequiredFields(user);
 
@@ -186,7 +184,7 @@ describe("NewKafkaConnection", () => {
       })
     );
 
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     expect(
       await screen.findByText("An unexpected error has occured")
     ).toBeVisible();
@@ -206,7 +204,7 @@ describe("NewKafkaConnection", () => {
       })
     );
 
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     expect(
       await screen.findByText("An unexpected error has occured")
     ).toBeVisible();
@@ -214,7 +212,7 @@ describe("NewKafkaConnection", () => {
 
   it("shows required validation messages when using SASL authentication", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     await user.click(screen.getByText("Create connection"));
     expect(
       await screen.findByText("Connection name is required.")
@@ -226,7 +224,7 @@ describe("NewKafkaConnection", () => {
 
   it("shows required validation messages when using SSL authentication", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     await user.click(screen.getByRole("tab", { name: "SSL" }));
     await user.click(screen.getByText("Create connection"));
 
@@ -236,7 +234,7 @@ describe("NewKafkaConnection", () => {
 
   it("shows required validation messages when using no authentication", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     await user.click(screen.getByText("Create connection"));
     expect(
       await screen.findByText("Connection name is required.")
@@ -254,7 +252,7 @@ describe("NewKafkaConnection", () => {
       })
     );
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     await user.click(screen.getByText("Create connection"));
 
     await waitFor(async () => {
@@ -282,7 +280,7 @@ describe("NewKafkaConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
 
     await fillRequiredFields(user);
     await user.click(screen.getByText("Create connection"));
@@ -314,7 +312,7 @@ describe("NewKafkaConnection", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewKafkaConnection />);
+    renderComponent(<NewKafkaConnectionForm />);
     await fillRequiredFields(user);
 
     await user.click(screen.getByLabelText("Password"));

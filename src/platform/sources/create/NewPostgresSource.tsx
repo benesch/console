@@ -105,7 +105,7 @@ function tableAliasErrorMessage(
 
 export const NEW_CLUSTER_ID = "0";
 
-const NewPostgresSource = () => {
+export const NewPostgresSourceForm = () => {
   const [generalFormError, setGeneralFormError] = React.useState<
     string | undefined
   >(undefined);
@@ -320,6 +320,309 @@ const NewPostgresSource = () => {
     return <ErrorBox />;
   }
   return (
+    <form onSubmit={handleSubmit(handleValidSubmit)}>
+      <FormTopBar
+        title="Create a Postgres source"
+        backButtonHref="../connection"
+      >
+        <Button
+          variant="primary"
+          size="sm"
+          type="submit"
+          isDisabled={isCreating}
+        >
+          Create source
+        </Button>
+      </FormTopBar>
+      <FormContainer title="Source information">
+        {generalFormError && (
+          <InlayBanner
+            variant="error"
+            label="Error"
+            message={generalFormError}
+            mb="10"
+          />
+        )}
+        <FormSection title="Data connection">
+          <FormControl>
+            <InlineLabeledInput label="Connection">
+              <SearchableSelect
+                ariaLabel="Select connection"
+                placeholder="Select one"
+                {...connectionField}
+                options={[
+                  {
+                    label: "Select connection",
+                    options: connections ?? [],
+                  },
+                ]}
+              />
+            </InlineLabeledInput>
+          </FormControl>
+        </FormSection>
+        <FormSection title="General">
+          <FormControl isInvalid={!!formState.errors.name} mb="4">
+            <InlineLabeledInput
+              label="Name"
+              error={sourceNameErrorMessage(formState.errors.name)}
+              message="Alphanumeric characters and underscores only."
+            >
+              <ObjectNameInput
+                {...register("name", {
+                  required: true,
+                  pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                })}
+                autoFocus
+                placeholder="My_postgres_source"
+                autoCorrect="off"
+                size="sm"
+                variant={formState.errors.name ? "error" : "default"}
+              />
+            </InlineLabeledInput>
+          </FormControl>
+          <Accordion
+            allowToggle
+            index={formState.errors.schema ? 0 : undefined}
+          >
+            <AccordionItem>
+              <AccordionButton
+                color={semanticColors.accent.brightPurple}
+                py="2"
+              >
+                <Text textStyle="text-ui-med">Additional Options</Text>
+                <AccordionIcon ml="2" />
+              </AccordionButton>
+              <AccordionPanel motionProps={{ style: { overflow: "visible" } }}>
+                <FormControl isInvalid={!!formState.errors.schema}>
+                  <InlineLabeledInput
+                    label="Schema"
+                    error={formState.errors.schema?.message}
+                  >
+                    <SchemaSelect {...schemaField} schemas={schemas ?? []} />
+                  </InlineLabeledInput>
+                </FormControl>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </FormSection>
+        <FormSection title="Compute cluster">
+          <FormControl isInvalid={!!formState.errors.cluster}>
+            <InlineLabeledInput
+              label="Cluster"
+              error={formState.errors.cluster?.message}
+            >
+              <Box>
+                <SearchableSelect
+                  ariaLabel="Select cluster"
+                  placeholder="Select one"
+                  {...clusterField}
+                  options={[
+                    {
+                      label: "Select cluster",
+                      options: clusters ?? [],
+                    },
+                  ]}
+                  displayAddNewItem
+                  addNewItemLabel="Create new cluster"
+                  onAddNewItem={() => {
+                    clusterField.onChange(NEW_CLUSTER_ID_OPTION);
+                  }}
+                />
+                {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
+                  <Text
+                    color={semanticColors.foreground.secondary}
+                    mt="2"
+                    maxWidth="260px"
+                    textStyle="text-ui-reg"
+                  >
+                    Cluster name: {sourceName}_linked_cluster.
+                  </Text>
+                )}
+              </Box>
+            </InlineLabeledInput>
+          </FormControl>
+          {selectedCluster?.id === NEW_CLUSTER_ID && (
+            <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
+              <InlineLabeledInput
+                label="Cluster size"
+                error={formState.errors.clusterSize?.message}
+              >
+                <SearchableSelect
+                  ariaLabel="Select cluster size"
+                  placeholder="Select one"
+                  {...clusterSizeField}
+                  options={[
+                    {
+                      label: "Select cluster size",
+                      options: clusterSizeOptions,
+                    },
+                  ]}
+                />
+              </InlineLabeledInput>
+            </FormControl>
+          )}
+        </FormSection>
+        <FormSection title="Configuration">
+          <VStack spacing="6" alignItems="start">
+            <FormControl isInvalid={!!formState.errors.publication}>
+              <InlineLabeledInput
+                label="Publication"
+                error={formState.errors.publication?.message}
+              >
+                <ObjectNameInput
+                  {...register("publication", {
+                    required: "Publication is required.",
+                  })}
+                  placeholder="postgres"
+                  autoCorrect="off"
+                  size="sm"
+                  variant={formState.errors.publication ? "error" : "default"}
+                />
+              </InlineLabeledInput>
+            </FormControl>
+            <FormControl flexDir="row" display="flex">
+              <Switch {...register("allTables" as const)} />
+              <FormLabel m="0" ml="2" lineHeight="16px">
+                For all tables
+              </FormLabel>
+            </FormControl>
+            {!allTables && (
+              <>
+                <VStack spacing="4" width="100%">
+                  {fields.map((field, index) => (
+                    <InlineLabeledInput
+                      key={field.id}
+                      label={`Table ${index + 1}`}
+                    >
+                      <HStack alignItems="start">
+                        <FormControl
+                          isInvalid={!!formState.errors.tables?.[index]}
+                        >
+                          <Input
+                            {...register(`tables.${index}.name` as const, {
+                              onChange: () => {
+                                for (let i = 0; i < fields.length; i++) {
+                                  trigger(`tables.${i}.name`);
+                                }
+                              },
+                              required: true,
+                              pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                              validate: {
+                                unique: (value) => {
+                                  const count = getValues()
+                                    .tables.map((r) => r.name)
+                                    .filter((name) => name === value).length;
+                                  return count <= 1;
+                                },
+                              },
+                            })}
+                            placeholder="table name"
+                            autoCorrect="off"
+                            spellCheck="false"
+                            size="sm"
+                            variant={
+                              formState.errors.tables?.[index]?.name
+                                ? "error"
+                                : "default"
+                            }
+                          />
+                          <FormErrorMessage>
+                            {tableNameErrorMessage(
+                              formState.errors.tables?.[index]?.name
+                            )}
+                          </FormErrorMessage>
+                        </FormControl>
+                        <FormControl
+                          isInvalid={!!formState.errors.tables?.[index]?.alias}
+                        >
+                          <Input
+                            {...register(`tables.${index}.alias` as const, {
+                              onChange: () => {
+                                for (let i = 0; i < fields.length; i++) {
+                                  trigger(`tables.${i}.alias`);
+                                }
+                              },
+                              pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                              validate: {
+                                unique: (value) => {
+                                  // alias is not required
+                                  if (!value) return true;
+                                  const count = getValues()
+                                    .tables.map((r) => r.alias)
+                                    .filter((name) => name === value).length;
+                                  return count <= 1;
+                                },
+                              },
+                            })}
+                            placeholder="alias"
+                            autoCorrect="off"
+                            spellCheck="false"
+                            size="sm"
+                            variant={
+                              formState.errors.tables?.[index]?.alias
+                                ? "error"
+                                : "default"
+                            }
+                          />
+                          <FormErrorMessage>
+                            {tableAliasErrorMessage(
+                              formState.errors.tables?.[index]?.alias
+                            )}
+                          </FormErrorMessage>
+                        </FormControl>
+                      </HStack>
+                      {index > 0 && (
+                        <GutterContainer>
+                          <Button
+                            variant="borderless"
+                            height="8"
+                            minWidth="8"
+                            width="8"
+                            onClick={() => remove(index)}
+                          >
+                            <CloseIcon height="8px" width="8px" />
+                          </Button>
+                        </GutterContainer>
+                      )}
+                    </InlineLabeledInput>
+                  ))}
+                </VStack>
+                <Button
+                  p="0"
+                  height={8}
+                  background="none"
+                  sx={{
+                    _hover: {
+                      background: "none",
+                    },
+                  }}
+                  variant="borderless"
+                  width="auto"
+                  onClick={() =>
+                    append({
+                      name: "",
+                      alias: "",
+                    })
+                  }
+                >
+                  <Box mr="2">
+                    <PlusCircleIcon />
+                  </Box>
+                  Add table
+                </Button>
+              </>
+            )}
+          </VStack>
+        </FormSection>
+      </FormContainer>
+    </form>
+  );
+};
+
+const NewPostgresSource = () => {
+  const navigate = useNavigate();
+
+  return (
     <Modal
       isOpen
       onClose={() => {
@@ -329,317 +632,7 @@ const NewPostgresSource = () => {
       closeOnEsc={false}
     >
       <ModalContent>
-        <form onSubmit={handleSubmit(handleValidSubmit)}>
-          <FormTopBar
-            title="Create a Postgres source"
-            backButtonHref="../connection"
-          >
-            <Button
-              variant="primary"
-              size="sm"
-              type="submit"
-              isDisabled={isCreating}
-            >
-              Create source
-            </Button>
-          </FormTopBar>
-          <FormContainer title="Source information">
-            {generalFormError && (
-              <InlayBanner
-                variant="error"
-                label="Error"
-                message={generalFormError}
-                mb="10"
-              />
-            )}
-            <FormSection title="Data connection">
-              <FormControl>
-                <InlineLabeledInput label="Connection">
-                  <SearchableSelect
-                    ariaLabel="Select connection"
-                    placeholder="Select one"
-                    {...connectionField}
-                    options={[
-                      {
-                        label: "Select connection",
-                        options: connections ?? [],
-                      },
-                    ]}
-                  />
-                </InlineLabeledInput>
-              </FormControl>
-            </FormSection>
-            <FormSection title="General">
-              <FormControl isInvalid={!!formState.errors.name} mb="4">
-                <InlineLabeledInput
-                  label="Name"
-                  error={sourceNameErrorMessage(formState.errors.name)}
-                  message="Alphanumeric characters and underscores only."
-                >
-                  <ObjectNameInput
-                    {...register("name", {
-                      required: true,
-                      pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                    })}
-                    autoFocus
-                    placeholder="My_postgres_source"
-                    autoCorrect="off"
-                    size="sm"
-                    variant={formState.errors.name ? "error" : "default"}
-                  />
-                </InlineLabeledInput>
-              </FormControl>
-              <Accordion
-                allowToggle
-                index={formState.errors.schema ? 0 : undefined}
-              >
-                <AccordionItem>
-                  <AccordionButton
-                    color={semanticColors.accent.brightPurple}
-                    py="2"
-                  >
-                    <Text textStyle="text-ui-med">Additional Options</Text>
-                    <AccordionIcon ml="2" />
-                  </AccordionButton>
-                  <AccordionPanel
-                    motionProps={{ style: { overflow: "visible" } }}
-                  >
-                    <FormControl isInvalid={!!formState.errors.schema}>
-                      <InlineLabeledInput
-                        label="Schema"
-                        error={formState.errors.schema?.message}
-                      >
-                        <SchemaSelect
-                          {...schemaField}
-                          schemas={schemas ?? []}
-                        />
-                      </InlineLabeledInput>
-                    </FormControl>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            </FormSection>
-            <FormSection title="Compute cluster">
-              <FormControl isInvalid={!!formState.errors.cluster}>
-                <InlineLabeledInput
-                  label="Cluster"
-                  error={formState.errors.cluster?.message}
-                >
-                  <Box>
-                    <SearchableSelect
-                      ariaLabel="Select cluster"
-                      placeholder="Select one"
-                      {...clusterField}
-                      options={[
-                        {
-                          label: "Select cluster",
-                          options: clusters ?? [],
-                        },
-                      ]}
-                      displayAddNewItem
-                      addNewItemLabel="Create new cluster"
-                      onAddNewItem={() => {
-                        clusterField.onChange(NEW_CLUSTER_ID_OPTION);
-                      }}
-                    />
-                    {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
-                      <Text
-                        color={semanticColors.foreground.secondary}
-                        mt="2"
-                        maxWidth="260px"
-                        textStyle="text-ui-reg"
-                      >
-                        Cluster name: {sourceName}_linked_cluster.
-                      </Text>
-                    )}
-                  </Box>
-                </InlineLabeledInput>
-              </FormControl>
-              {selectedCluster?.id === NEW_CLUSTER_ID && (
-                <FormControl isInvalid={!!formState.errors.clusterSize} mt="4">
-                  <InlineLabeledInput
-                    label="Cluster size"
-                    error={formState.errors.clusterSize?.message}
-                  >
-                    <SearchableSelect
-                      ariaLabel="Select cluster size"
-                      placeholder="Select one"
-                      {...clusterSizeField}
-                      options={[
-                        {
-                          label: "Select cluster size",
-                          options: clusterSizeOptions,
-                        },
-                      ]}
-                    />
-                  </InlineLabeledInput>
-                </FormControl>
-              )}
-            </FormSection>
-            <FormSection title="Configuration">
-              <VStack spacing="6" alignItems="start">
-                <FormControl isInvalid={!!formState.errors.publication}>
-                  <InlineLabeledInput
-                    label="Publication"
-                    error={formState.errors.publication?.message}
-                  >
-                    <ObjectNameInput
-                      {...register("publication", {
-                        required: "Publication is required.",
-                      })}
-                      placeholder="postgres"
-                      autoCorrect="off"
-                      size="sm"
-                      variant={
-                        formState.errors.publication ? "error" : "default"
-                      }
-                    />
-                  </InlineLabeledInput>
-                </FormControl>
-                <FormControl flexDir="row" display="flex">
-                  <Switch {...register("allTables" as const)} />
-                  <FormLabel m="0" ml="2" lineHeight="16px">
-                    For all tables
-                  </FormLabel>
-                </FormControl>
-                {!allTables && (
-                  <>
-                    <VStack spacing="4" width="100%">
-                      {fields.map((field, index) => (
-                        <InlineLabeledInput
-                          key={field.id}
-                          label={`Table ${index + 1}`}
-                        >
-                          <HStack alignItems="start">
-                            <FormControl
-                              isInvalid={!!formState.errors.tables?.[index]}
-                            >
-                              <Input
-                                {...register(`tables.${index}.name` as const, {
-                                  onChange: () => {
-                                    for (let i = 0; i < fields.length; i++) {
-                                      trigger(`tables.${i}.name`);
-                                    }
-                                  },
-                                  required: true,
-                                  pattern:
-                                    MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                                  validate: {
-                                    unique: (value) => {
-                                      const count = getValues()
-                                        .tables.map((r) => r.name)
-                                        .filter(
-                                          (name) => name === value
-                                        ).length;
-                                      return count <= 1;
-                                    },
-                                  },
-                                })}
-                                placeholder="table name"
-                                autoCorrect="off"
-                                spellCheck="false"
-                                size="sm"
-                                variant={
-                                  formState.errors.tables?.[index]?.name
-                                    ? "error"
-                                    : "default"
-                                }
-                              />
-                              <FormErrorMessage>
-                                {tableNameErrorMessage(
-                                  formState.errors.tables?.[index]?.name
-                                )}
-                              </FormErrorMessage>
-                            </FormControl>
-                            <FormControl
-                              isInvalid={
-                                !!formState.errors.tables?.[index]?.alias
-                              }
-                            >
-                              <Input
-                                {...register(`tables.${index}.alias` as const, {
-                                  onChange: () => {
-                                    for (let i = 0; i < fields.length; i++) {
-                                      trigger(`tables.${i}.alias`);
-                                    }
-                                  },
-                                  pattern:
-                                    MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                                  validate: {
-                                    unique: (value) => {
-                                      // alias is not required
-                                      if (!value) return true;
-                                      const count = getValues()
-                                        .tables.map((r) => r.alias)
-                                        .filter(
-                                          (name) => name === value
-                                        ).length;
-                                      return count <= 1;
-                                    },
-                                  },
-                                })}
-                                placeholder="alias"
-                                autoCorrect="off"
-                                spellCheck="false"
-                                size="sm"
-                                variant={
-                                  formState.errors.tables?.[index]?.alias
-                                    ? "error"
-                                    : "default"
-                                }
-                              />
-                              <FormErrorMessage>
-                                {tableAliasErrorMessage(
-                                  formState.errors.tables?.[index]?.alias
-                                )}
-                              </FormErrorMessage>
-                            </FormControl>
-                          </HStack>
-                          {index > 0 && (
-                            <GutterContainer>
-                              <Button
-                                variant="borderless"
-                                height="8"
-                                minWidth="8"
-                                width="8"
-                                onClick={() => remove(index)}
-                              >
-                                <CloseIcon height="8px" width="8px" />
-                              </Button>
-                            </GutterContainer>
-                          )}
-                        </InlineLabeledInput>
-                      ))}
-                    </VStack>
-                    <Button
-                      p="0"
-                      height={8}
-                      background="none"
-                      sx={{
-                        _hover: {
-                          background: "none",
-                        },
-                      }}
-                      variant="borderless"
-                      width="auto"
-                      onClick={() =>
-                        append({
-                          name: "",
-                          alias: "",
-                        })
-                      }
-                    >
-                      <Box mr="2">
-                        <PlusCircleIcon />
-                      </Box>
-                      Add table
-                    </Button>
-                  </>
-                )}
-              </VStack>
-            </FormSection>
-          </FormContainer>
-        </form>
+        <NewPostgresSourceForm />
       </ModalContent>
     </Modal>
   );

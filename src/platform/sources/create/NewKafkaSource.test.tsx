@@ -15,12 +15,9 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
-import NewKafkaSource from "./NewKafkaSource";
+import { NewKafkaSourceForm } from "./NewKafkaSource";
 
 jest.mock("~/api/auth");
-
-// For some reason the user interactions are very slow, it would be great if we could improve this
-jest.setTimeout(20_000);
 
 const Wrapper = createProviderWrapper({
   initializeState: ({ set }) =>
@@ -45,7 +42,7 @@ const renderComponent = (element: ReactElement) => {
   );
 };
 
-describe("NewKafkaSource", () => {
+describe("NewKafkaSourceForm", () => {
   beforeEach(() => {
     server.use(
       // useDatabases
@@ -100,7 +97,7 @@ describe("NewKafkaSource", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "kafka_source");
@@ -132,7 +129,7 @@ describe("NewKafkaSource", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "kafka_source");
@@ -158,7 +155,7 @@ describe("NewKafkaSource", () => {
 
   it("shows validation messages for all fields", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     await user.click(screen.getByText("Create source"));
 
@@ -175,7 +172,7 @@ describe("NewKafkaSource", () => {
 
   it("requires schema registry connection for avro format", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     await user.click(screen.getByText("Create source"));
 
@@ -186,7 +183,7 @@ describe("NewKafkaSource", () => {
 
   it("requires schema registry connnection for protobuf format", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     await user.click(screen.getByLabelText("Select format"));
     await user.click(screen.getByText("Protobuf"));
@@ -213,7 +210,7 @@ describe("NewKafkaSource", () => {
       })
     );
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     await user.click(screen.getByText("Create source"));
 
@@ -241,7 +238,7 @@ describe("NewKafkaSource", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "kafka_source");
@@ -265,7 +262,7 @@ describe("NewKafkaSource", () => {
 
   it("allows debezium envelope only on avro format", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewKafkaSource />);
+    renderComponent(<NewKafkaSourceForm />);
 
     await user.click(screen.getByLabelText("Select envelope"));
     await user.click(screen.getByText("Debezium"));

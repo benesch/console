@@ -15,12 +15,9 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
-import NewPostgresSource from "./NewPostgresSource";
+import { NewPostgresSourceForm } from "./NewPostgresSource";
 
 jest.mock("~/api/auth");
-
-// For some reason the user interactions are very slow, it would be great if we could improve this
-jest.setTimeout(20_000);
 
 const Wrapper = createProviderWrapper({
   initializeState: ({ set }) =>
@@ -45,7 +42,7 @@ const renderComponent = (element: ReactElement) => {
   );
 };
 
-describe("NewPostgresSource", () => {
+describe("NewPostgresSourceForm", () => {
   beforeEach(() => {
     server.use(
       // useDatabases
@@ -94,7 +91,7 @@ describe("NewPostgresSource", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewPostgresSource />);
+    renderComponent(<NewPostgresSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "pg_source");
@@ -125,7 +122,7 @@ describe("NewPostgresSource", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewPostgresSource />);
+    renderComponent(<NewPostgresSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "pg_source");
@@ -149,7 +146,7 @@ describe("NewPostgresSource", () => {
 
   it("shows validation messages for all fields", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewPostgresSource />);
+    renderComponent(<NewPostgresSourceForm />);
 
     await user.click(screen.getByText("Create source"));
 
@@ -181,7 +178,7 @@ describe("NewPostgresSource", () => {
       })
     );
     const user = userEvent.setup();
-    renderComponent(<NewPostgresSource />);
+    renderComponent(<NewPostgresSourceForm />);
 
     await user.click(screen.getByText("Create source"));
 
@@ -209,7 +206,7 @@ describe("NewPostgresSource", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewPostgresSource />);
+    renderComponent(<NewPostgresSourceForm />);
 
     const sourceNameInput = screen.getByLabelText("Name");
     await user.type(sourceNameInput, "pg_source");
