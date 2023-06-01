@@ -2,7 +2,7 @@
 
 This is the web console interface for Materialize.
 
-See [Architecture](/docs/architecture.md) for a general overview of how Console
+See [Architecture](/doc/architecture.md) for a general overview of how Console
 talks to the rest of the Materialize.
 
 ## Running the app locally
