@@ -14,7 +14,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn eslint
       - run: yarn typecheck
-      - run: yarn test:unit
+      - run: yarn test:unit --maxWorkers=100%
 
   e2e-tests:
     runs-on: ubuntu-20.04-16core
