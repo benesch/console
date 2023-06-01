@@ -10,9 +10,11 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tooltip,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { Link, useParams } from "react-router-dom";
 
 import {
   Connection,
@@ -44,6 +46,7 @@ const CreateSourceEntry = () => {
     error,
     loading,
   } = useConnectionsFiltered({ nameFilter });
+  const { regionSlug } = useParams();
 
   if (error) {
     return <ErrorBox />;
@@ -59,7 +62,13 @@ const CreateSourceEntry = () => {
           onChange={(e) => setNameFilter(e.target.value)}
           value={nameFilter}
         />
-        <Button variant="primary" size="sm" minWidth="auto">
+        <Button
+          as={Link}
+          variant="primary"
+          size="sm"
+          minWidth="auto"
+          to={`/regions/${regionSlug}/connections/new/connection`}
+        >
           New connection
         </Button>
       </HStack>
@@ -70,7 +79,7 @@ const CreateSourceEntry = () => {
         </TabList>
         <TabPanels>
           <TabPanel mt="8">
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="4">
+            <Grid gridTemplateColumns="minmax(0,1fr) minmax(0,1fr)" gridGap="4">
               {loading ? (
                 <GridItem
                   display="flex"
@@ -82,15 +91,22 @@ const CreateSourceEntry = () => {
                 </GridItem>
               ) : (
                 connections?.map((connection) => (
-                  <GridItem key={connection.id}>
-                    <IconNavLink
-                      icon={connectionIcon(connection)}
-                      width="100%"
-                      to={`../${connection.type}?connectionId=${connection.id}`}
-                    >
-                      {connection.name}
-                    </IconNavLink>
-                  </GridItem>
+                  <Tooltip
+                    key={connection.id}
+                    label={`${connection.databaseName}.${connection.schemaName}.${connection.name}`}
+                    placement="top"
+                    fontSize="xs"
+                  >
+                    <GridItem key={connection.id}>
+                      <IconNavLink
+                        icon={connectionIcon(connection)}
+                        width="100%"
+                        to={`../${connection.type}?connectionId=${connection.id}`}
+                      >
+                        {connection.name}
+                      </IconNavLink>
+                    </GridItem>
+                  </Tooltip>
                 ))
               )}
             </Grid>
