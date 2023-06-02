@@ -1,9 +1,12 @@
 import { AddIcon } from "@chakra-ui/icons";
 import { Button, ButtonProps, Spinner } from "@chakra-ui/react";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
+import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
 import { hasEnvironmentWritePermission, useAuth } from "~/api/auth";
 import { CreateRegion } from "~/platform/tutorial/useCreateEnvironment";
+import { numEnabledEnvironmentsState } from "~/recoil/environments";
 
 interface Props extends ButtonProps {
   regionId: string;
@@ -20,7 +23,11 @@ interface Props extends ButtonProps {
  */
 const CreateEnvironmentButton = (props: Props) => {
   const { user } = useAuth();
+  const flags = useFlags();
   const canWriteEnvironments = hasEnvironmentWritePermission(user);
+  const numEnabledEnvironments = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
+    numEnabledEnvironmentsState
+  );
   const {
     regionId,
     creatingRegionId,
@@ -30,6 +37,9 @@ const CreateEnvironmentButton = (props: Props) => {
   } = props;
 
   const creatingThisRegion = creatingRegionId === regionId;
+  const exceededMaxEnvironments =
+    numEnabledEnvironments !== undefined &&
+    numEnabledEnvironments >= flags["max-environments"];
   return (
     <Button
       leftIcon={creatingThisRegion ? <Spinner size="sm" /> : <AddIcon />}
@@ -38,12 +48,17 @@ const CreateEnvironmentButton = (props: Props) => {
       float="right"
       onClick={() => createRegion(regionId)}
       isDisabled={
-        !canWriteEnvironments || !!creatingThisRegion || !!tenantIsBlocked
+        !canWriteEnvironments ||
+        !!creatingThisRegion ||
+        !!tenantIsBlocked ||
+        exceededMaxEnvironments
       }
       title={
-        canWriteEnvironments
-          ? `Enable ${regionId}`
-          : "Only admins can enable new regions."
+        !canWriteEnvironments
+          ? "Only admins can enable new regions."
+          : exceededMaxEnvironments
+          ? "You have already enabled the maximum allowed number of regions for your account. Contact support to raise your limit."
+          : `Enable ${regionId}`
       }
       {...buttonProps}
     >

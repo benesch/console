@@ -431,3 +431,14 @@ export const useEnvironmentGate = (
   }
   return null;
 };
+
+/** The number of enabled environments. */
+export const numEnabledEnvironmentsState = selector<number | undefined>({
+  key: keys.NUM_ENABLED_ENVIRONMENTS,
+  get: ({ get }) => {
+    const envs = get(environmentsWithHealth);
+    if (!envs) return undefined;
+    return Array.from(envs.values()).filter((env) => env.state === "enabled")
+      .length;
+  },
+});
