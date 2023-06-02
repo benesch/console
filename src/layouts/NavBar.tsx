@@ -257,7 +257,7 @@ const getNavItems = (
 
 const NavGroupItems = ({ navItems }: { navItems: NavItemType[] }) => {
   return (
-    <VStack width="100%" alignItems="start" spacing={0}>
+    <VStack width="100%" alignItems="start" spacing={1}>
       {navItems.map(
         ({
           label,
@@ -303,22 +303,24 @@ const NavMenu = (props: BoxProps) => {
     >
       {navItems.map(({ title, items }: NavItemGroupType) => {
         return (
-          <VStack key={title} spacing="0" alignItems="start">
-            {title && (
-              <Text
-                px={2}
-                py={2}
-                width="100%"
-                textStyle="text-small"
-                fontWeight="600"
-                textTransform="uppercase"
-                color={semanticColors.foreground.secondary}
-              >
-                {title}
-              </Text>
-            )}
-            <NavGroupItems navItems={items} />
-          </VStack>
+          <HideIfEnvironmentUnhealthy key={title}>
+            <VStack key={title} spacing="0" alignItems="start">
+              {title && (
+                <Text
+                  px={2}
+                  py={2}
+                  width="100%"
+                  textStyle="text-small"
+                  fontWeight="600"
+                  textTransform="uppercase"
+                  color={semanticColors.foreground.secondary}
+                >
+                  {title}
+                </Text>
+              )}
+              <NavGroupItems navItems={items} />
+            </VStack>
+          </HideIfEnvironmentUnhealthy>
         );
       })}
     </VStack>
