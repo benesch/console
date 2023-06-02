@@ -1,10 +1,20 @@
-import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  HStack,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import React from "react";
 import { useParams } from "react-router-dom";
 
 import { MaterializedView, useMaterializedViews } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
+import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -64,7 +74,12 @@ const MaterializedViews = () => {
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       ) : (
-        <MaterializedViewTable materializedViews={materializedViews ?? []} />
+        <>
+          <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
+            <PageHeading>Materialized Views</PageHeading>
+          </HStack>
+          <MaterializedViewTable materializedViews={materializedViews ?? []} />
+        </>
       )}
     </>
   );
