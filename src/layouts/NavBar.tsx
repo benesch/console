@@ -262,17 +262,19 @@ const NavItemsGroup = (props: NavItemsGroupType) => {
   return (
     <VStack width="100%" alignItems="start" spacing={1}>
       <HideIfEnvironmentUnhealthy key={props.title}>
-        <Text
-          px={2}
-          py={2}
-          width="100%"
-          textStyle="text-small"
-          fontWeight="600"
-          textTransform="uppercase"
-          color={semanticColors.foreground.secondary}
-        >
-          {props.title && props.title}
-        </Text>
+        {props.title && (
+          <Text
+            px={2}
+            py={2}
+            width="100%"
+            textStyle="text-small"
+            fontWeight="600"
+            textTransform="uppercase"
+            color={semanticColors.foreground.secondary}
+          >
+            {props.title}
+          </Text>
+        )}
       </HideIfEnvironmentUnhealthy>
       {props.navItems.map(
         ({
