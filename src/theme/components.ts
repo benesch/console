@@ -125,6 +125,13 @@ export const Modal = {
         m: 0,
       },
     },
+    "shrink-to-fit": {
+      dialog: {
+        maxWidth: "none",
+        width: "auto",
+        borderRadius: "lg",
+      },
+    },
   },
 };
 

@@ -17,6 +17,7 @@ import { DEFAULT_QUERY_ERROR } from "./materialize";
 export * from "./materialize/executeSql";
 export { default as executeSql } from "./materialize/executeSql";
 
+export type onSettled = (data?: Results[] | null, error?: string) => void;
 export type onSuccess = (data?: Results[] | null) => void;
 export type onError = (error?: string) => void;
 
@@ -56,11 +57,13 @@ export function useSqlLazy<TVariables>({
   queryBuilder,
   onSuccess,
   onError,
+  onSettled,
   timeout,
 }: {
   queryBuilder: (variables: TVariables) => string | SqlRequest;
   onSuccess?: onSuccess;
   onError?: onError;
+  onSettled?: onSettled;
   timeout?: number;
 }) {
   const {
@@ -73,7 +76,11 @@ export function useSqlLazy<TVariables>({
   const runSql = React.useCallback(
     (
       variables: TVariables,
-      options?: { onSuccess?: onSuccess; onError?: onError }
+      options?: {
+        onSuccess?: onSuccess;
+        onError?: onError;
+        onSettled?: onSettled;
+      }
     ) => {
       const queryOrQueries = queryBuilder(variables);
       if (typeof queryOrQueries === "string") {
@@ -81,17 +88,19 @@ export function useSqlLazy<TVariables>({
         runSqlInner(
           request,
           options?.onSuccess ?? onSuccess,
-          options?.onError ?? onError
+          options?.onError ?? onError,
+          options?.onSettled ?? onSettled
         );
       } else {
         runSqlInner(
           queryOrQueries,
           options?.onSuccess ?? onSuccess,
-          options?.onError ?? onError
+          options?.onError ?? onError,
+          options?.onSettled ?? onSettled
         );
       }
     },
-    [queryBuilder, runSqlInner, onSuccess, onError]
+    [queryBuilder, runSqlInner, onSuccess, onError, onSettled]
   );
 
   return { data, error, loading, runSql };
@@ -143,7 +152,12 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
   const [error, setError] = useState<string | null>(null);
   const { timeout = 5_000 } = options ?? {};
   const runSql = React.useCallback(
-    async (request?: SqlRequest, onSuccess?: onSuccess, onError?: onError) => {
+    async (
+      request?: SqlRequest,
+      onSuccess?: onSuccess,
+      onError?: onError,
+      onSettled?: onSettled
+    ) => {
       if (environment?.state !== "enabled" || !request) {
         setResults(null);
         return;
@@ -169,10 +183,12 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
         }
         if ("errorMessage" in result) {
           onError?.(result.errorMessage);
+          onSettled?.(undefined, result.errorMessage);
           setResults(null);
           setError(result.errorMessage);
         } else {
           onSuccess?.(result.results);
+          onSettled?.(result.results);
           setResults(result.results);
           setError(null);
           return result.results;
@@ -181,7 +197,8 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
         if ((err as Error)?.name === "AbortError") {
           return;
         }
-
+        onSettled?.(undefined, DEFAULT_QUERY_ERROR);
+        onError?.(DEFAULT_QUERY_ERROR);
         setError(DEFAULT_QUERY_ERROR);
       } finally {
         clearTimeout(timeoutId);
