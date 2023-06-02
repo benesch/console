@@ -272,12 +272,11 @@ export class TestContext {
     );
   }
 
-  async deleteRegionEnvironmentAssignment(region: string): Promise<any> {
-    let attempts = 1;
+  async executeDeleteEnvironmentAssignment(
+    region: string,
+    attempts: number
+  ): Promise<unknown> {
     const regionControllerUrl = getRegionControllerUrl(region);
-    console.log(
-      `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
-    );
     try {
       return await this.apiRequest(
         `${regionControllerUrl}/api/environmentassignment`,
@@ -293,18 +292,27 @@ export class TestContext {
           return;
         } else if (e.message.includes("API Error 504")) {
           // If we get a 504, the ALB most likely timed out
-          // we will try 3 times total
           if (attempts < 5) {
             attempts += 1;
             console.log(
               `Retrying delete environment assignment for ${region}, attempt ${attempts}`
             );
-            return this.deleteRegionEnvironmentAssignment(region);
+            return this.executeDeleteEnvironmentAssignment(region, attempts);
+          } else {
+            throw e;
           }
         }
       }
       throw e;
     }
+  }
+
+  async deleteRegionEnvironmentAssignment(region: string): Promise<any> {
+    const regionControllerUrl = getRegionControllerUrl(region);
+    console.log(
+      `Deleting EnvironmentAssignment from ${regionControllerUrl}, this may take up to 5min...`
+    );
+    return this.executeDeleteEnvironmentAssignment(region, 1);
   }
 
   async getCurrentUser(): Promise<{ id: string; tenantId: string }> {
