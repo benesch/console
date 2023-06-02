@@ -53,6 +53,9 @@ import { assert } from "~/util";
 
 import { relativeSourceErrorsPath } from "../SourceRoutes";
 import NewConfluentSchemaRegistryConnection from "./NewConfluentSchemaRegistryConnection";
+import ProlongedKafkaSourceCreationModal from "./ProlongedKafkaSourceCreationModal";
+
+const PROLONGED_MODAL_DELAY = 1_500;
 
 const formatOptions = [
   { id: "avro" as const, name: "Avro" },
@@ -143,6 +146,12 @@ export const NewKafkaSourceForm = () => {
     isOpen: isCsrConnectionModalOpen,
     onOpen: openCsrConnectionModal,
     onClose: closeCsrConnectionModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isCreationProlonged,
+    onClose: onProlongedCreationModalClose,
+    onOpen: onProlongedCreationModalOpen,
   } = useDisclosure();
   const {
     control,
@@ -286,6 +295,10 @@ export const NewKafkaSourceForm = () => {
 
   const handleValidSubmit = (values: FormState) => {
     setGeneralFormError(undefined);
+    const timeoutId = setTimeout(() => {
+      onProlongedCreationModalOpen();
+    }, PROLONGED_MODAL_DELAY);
+
     createSource(values, {
       onSuccess: async (response) => {
         assert(response);
@@ -327,6 +340,10 @@ export const NewKafkaSourceForm = () => {
           return;
         }
         setGeneralFormError(errorMessage);
+      },
+      onSettled: () => {
+        onProlongedCreationModalClose();
+        clearTimeout(timeoutId);
       },
     });
   };
@@ -613,6 +630,7 @@ export const NewKafkaSourceForm = () => {
         onClose={closeCsrConnectionModal}
         onSuccess={handleCsrConnectionCreated}
       />
+      <ProlongedKafkaSourceCreationModal isOpen={isCreationProlonged} />
     </>
   );
 };
