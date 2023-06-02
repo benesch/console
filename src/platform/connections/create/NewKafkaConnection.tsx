@@ -178,7 +178,7 @@ function getAuthParamFromFormState(authMode: number, values: FormState) {
   }
 }
 
-const NewKafkaConnection = () => {
+export const NewKafkaConnectionForm = () => {
   const [generalFormError, setGeneralFormError] = useState<
     string | undefined
   >();
@@ -352,6 +352,303 @@ const NewKafkaConnection = () => {
   }
 
   return (
+    <form onSubmit={handleSubmit(handleValidSubmit)}>
+      <FormTopBar
+        title="Create a Kafka connection"
+        backButtonHref="../connection"
+      >
+        <Button
+          variant="primary"
+          size="sm"
+          type="submit"
+          isDisabled={isCreating}
+        >
+          Create connection
+        </Button>
+      </FormTopBar>
+      <FormContainer title="Connection information">
+        {generalFormError && (
+          <InlayBanner
+            variant="error"
+            label="Error"
+            message={generalFormError}
+            mb="10"
+          />
+        )}
+        <FormSection title="General">
+          <FormControl isInvalid={!!formState.errors.name}>
+            <InlineLabeledInput
+              label="Name"
+              error={formState.errors.name?.message}
+              message="Alphanumeric characters and underscores only."
+            >
+              <ObjectNameInput
+                {...register("name", {
+                  required: "Connection name is required.",
+                  pattern: {
+                    value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
+                    message:
+                      "Connection name must not include special characters.",
+                  },
+                })}
+                autoFocus
+                placeholder="My new connection"
+                autoCorrect="off"
+                size="sm"
+                variant={formState.errors.name ? "error" : "default"}
+              />
+            </InlineLabeledInput>
+          </FormControl>
+          <Accordion
+            allowToggle
+            index={formState.errors.schema ? 0 : undefined}
+          >
+            <AccordionItem>
+              <AccordionButton
+                color={semanticColors.accent.brightPurple}
+                py="2"
+              >
+                <Text textStyle="text-ui-med">Additional Options</Text>
+                <AccordionIcon ml="2" />
+              </AccordionButton>
+              <AccordionPanel motionProps={{ style: { overflow: "visible" } }}>
+                <FormControl isInvalid={!!formState.errors.schema}>
+                  <InlineLabeledInput
+                    label="Schema"
+                    error={formState.errors.schema?.message}
+                  >
+                    <SchemaSelect {...schemaField} schemas={schemas ?? []} />
+                  </InlineLabeledInput>
+                </FormControl>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </FormSection>
+
+        <FormSection title="Connection details">
+          <VStack spacing="4" width="100%">
+            {brokerFields.map((field, index) => (
+              <InlineLabeledInput
+                key={field.id}
+                label={
+                  brokerFields.length > 1 ? `Broker ${index + 1}` : "Broker"
+                }
+              >
+                <HStack alignItems="start">
+                  <FormControl
+                    isInvalid={!!formState.errors.brokers?.[index]?.hostPort}
+                  >
+                    <Input
+                      {...register(`brokers.${index}.hostPort` as const, {
+                        required: "Broker is required.",
+                        validate: {
+                          unique: (value, { brokers }) => {
+                            const count = brokers.filter(
+                              ({ hostPort }) => hostPort === value
+                            ).length;
+
+                            return count <= 1 || "Brokers must be unique";
+                          },
+                        },
+                      })}
+                      aria-label={`Broker host ${index + 1}`}
+                      placeholder="broker1:9092"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      size="sm"
+                      variant={
+                        formState.errors.brokers?.[index]?.hostPort
+                          ? "error"
+                          : "default"
+                      }
+                    />
+                    <FormErrorMessage>
+                      {formState.errors.brokers?.[index]?.hostPort?.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                </HStack>
+                {index > 0 && (
+                  <GutterContainer>
+                    <Button
+                      variant="borderless"
+                      height="8"
+                      minWidth="8"
+                      width="8"
+                      onClick={() => remove(index)}
+                    >
+                      <CloseIcon height="8px" width="8px" />
+                    </Button>
+                  </GutterContainer>
+                )}
+              </InlineLabeledInput>
+            ))}
+          </VStack>
+          <Button
+            p="0"
+            leftIcon={<PlusCircleIcon />}
+            height={8}
+            background="none"
+            sx={{
+              _hover: {
+                background: "none",
+              },
+            }}
+            variant="borderless"
+            width="auto"
+            onClick={() =>
+              append({
+                hostPort: "",
+                availabilityZone: "",
+                port: "",
+              })
+            }
+            mt="2"
+          >
+            Add Broker
+          </Button>
+        </FormSection>
+        <FormSection title="Authentication">
+          <Tabs
+            variant="soft-rounded"
+            isLazy
+            index={authMode}
+            onChange={(newTab) => setAuthMode(newTab)}
+            size="sm"
+          >
+            <TabList>
+              <Tab>SASL</Tab>
+              <Tab>SSL</Tab>
+              <Tab>None</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <VStack spacing="6" alignItems="start">
+                  <FormControl>
+                    <InlineLabeledInput label="Mechanism">
+                      <SearchableSelect
+                        ariaLabel="Select SASL mechanism"
+                        options={saslMechanismOptions}
+                        isSearchable={false}
+                        {...saslMechanismField}
+                      />
+                    </InlineLabeledInput>
+                  </FormControl>
+
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="saslUsername"
+                    fieldLabel="Username"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                    }}
+                    textInputProps={{
+                      placeholder: "user",
+                    }}
+                    textInputRules={{
+                      required: "Username is required.",
+                    }}
+                    selectRules={{
+                      required: "Username is required.",
+                    }}
+                    canFieldBeText
+                  />
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="saslPassword"
+                    fieldLabel="Password"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                      isClearable: true,
+                    }}
+                    selectRules={{
+                      required: "Password is required.",
+                    }}
+                  />
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="sslCertificateAuthority"
+                    fieldLabel="SSL Certificate Authority"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                      isClearable: true,
+                    }}
+                    textInputProps={{
+                      placeholder: "-----BEGIN CERTIFICATE...",
+                    }}
+                    canFieldBeText
+                  />
+                </VStack>
+              </TabPanel>
+              <TabPanel>
+                <VStack spacing="6" alignItems="start">
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="sslKey"
+                    fieldLabel="SSL Key"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                    }}
+                    selectRules={{
+                      required: "Key is required.",
+                    }}
+                  />
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="sslCertificate"
+                    fieldLabel="SSL Certificate"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                    }}
+                    textInputProps={{
+                      placeholder: "-----BEGIN CERTIFICATE...",
+                    }}
+                    textInputRules={{
+                      required: "Certificate is required.",
+                    }}
+                    selectRules={{
+                      required: "Certificate is required.",
+                    }}
+                    canFieldBeText
+                  />
+                  <SecretsFormControl
+                    control={control}
+                    register={register}
+                    fieldKey="sslCertificateAuthority"
+                    fieldLabel="SSL Certificate Authority"
+                    selectOptions={secrets ?? []}
+                    selectProps={{
+                      menuPlacement: "top",
+                      isClearable: true,
+                    }}
+                    textInputProps={{
+                      placeholder: "-----BEGIN CERTIFICATE...",
+                    }}
+                    canFieldBeText
+                  />
+                </VStack>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </FormSection>
+      </FormContainer>
+    </form>
+  );
+};
+
+const NewKafkaConnection = () => {
+  const navigate = useNavigate();
+
+  return (
     <Modal
       isOpen
       onClose={() => {
@@ -361,303 +658,7 @@ const NewKafkaConnection = () => {
       closeOnEsc={false}
     >
       <ModalContent>
-        <form onSubmit={handleSubmit(handleValidSubmit)}>
-          <FormTopBar
-            title="Create a Kafka connection"
-            backButtonHref="../connection"
-          >
-            <Button
-              variant="primary"
-              size="sm"
-              type="submit"
-              isDisabled={isCreating}
-            >
-              Create connection
-            </Button>
-          </FormTopBar>
-          <FormContainer title="Connection information">
-            {generalFormError && (
-              <InlayBanner
-                variant="error"
-                label="Error"
-                message={generalFormError}
-                mb="10"
-              />
-            )}
-            <FormSection title="General">
-              <FormControl isInvalid={!!formState.errors.name}>
-                <InlineLabeledInput
-                  label="Name"
-                  error={formState.errors.name?.message}
-                  message="Alphanumeric characters and underscores only."
-                >
-                  <ObjectNameInput
-                    {...register("name", {
-                      required: "Connection name is required.",
-                      pattern: {
-                        value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                        message:
-                          "Connection name must not include special characters.",
-                      },
-                    })}
-                    autoFocus
-                    placeholder="My new connection"
-                    autoCorrect="off"
-                    size="sm"
-                    variant={formState.errors.name ? "error" : "default"}
-                  />
-                </InlineLabeledInput>
-              </FormControl>
-              <Accordion
-                allowToggle
-                index={formState.errors.schema ? 0 : undefined}
-              >
-                <AccordionItem>
-                  <AccordionButton
-                    color={semanticColors.accent.brightPurple}
-                    py="2"
-                  >
-                    <Text textStyle="text-ui-med">Additional Options</Text>
-                    <AccordionIcon ml="2" />
-                  </AccordionButton>
-                  <AccordionPanel
-                    motionProps={{ style: { overflow: "visible" } }}
-                  >
-                    <FormControl isInvalid={!!formState.errors.schema}>
-                      <InlineLabeledInput
-                        label="Schema"
-                        error={formState.errors.schema?.message}
-                      >
-                        <SchemaSelect
-                          {...schemaField}
-                          schemas={schemas ?? []}
-                        />
-                      </InlineLabeledInput>
-                    </FormControl>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            </FormSection>
-
-            <FormSection title="Connection details">
-              <VStack spacing="4" width="100%">
-                {brokerFields.map((field, index) => (
-                  <InlineLabeledInput
-                    key={field.id}
-                    label={
-                      brokerFields.length > 1 ? `Broker ${index + 1}` : "Broker"
-                    }
-                  >
-                    <HStack alignItems="start">
-                      <FormControl
-                        isInvalid={
-                          !!formState.errors.brokers?.[index]?.hostPort
-                        }
-                      >
-                        <Input
-                          {...register(`brokers.${index}.hostPort` as const, {
-                            required: "Broker is required.",
-                            validate: {
-                              unique: (value, { brokers }) => {
-                                const count = brokers.filter(
-                                  ({ hostPort }) => hostPort === value
-                                ).length;
-
-                                return count <= 1 || "Brokers must be unique";
-                              },
-                            },
-                          })}
-                          aria-label={`Broker host ${index + 1}`}
-                          placeholder="broker1:9092"
-                          autoCorrect="off"
-                          spellCheck="false"
-                          size="sm"
-                          variant={
-                            formState.errors.brokers?.[index]?.hostPort
-                              ? "error"
-                              : "default"
-                          }
-                        />
-                        <FormErrorMessage>
-                          {formState.errors.brokers?.[index]?.hostPort?.message}
-                        </FormErrorMessage>
-                      </FormControl>
-                    </HStack>
-                    {index > 0 && (
-                      <GutterContainer>
-                        <Button
-                          variant="borderless"
-                          height="8"
-                          minWidth="8"
-                          width="8"
-                          onClick={() => remove(index)}
-                        >
-                          <CloseIcon height="8px" width="8px" />
-                        </Button>
-                      </GutterContainer>
-                    )}
-                  </InlineLabeledInput>
-                ))}
-              </VStack>
-              <Button
-                p="0"
-                leftIcon={<PlusCircleIcon />}
-                height={8}
-                background="none"
-                sx={{
-                  _hover: {
-                    background: "none",
-                  },
-                }}
-                variant="borderless"
-                width="auto"
-                onClick={() =>
-                  append({
-                    hostPort: "",
-                    availabilityZone: "",
-                    port: "",
-                  })
-                }
-                mt="2"
-              >
-                Add Broker
-              </Button>
-            </FormSection>
-            <FormSection title="Authentication">
-              <Tabs
-                variant="soft-rounded"
-                isLazy
-                index={authMode}
-                onChange={(newTab) => setAuthMode(newTab)}
-                size="sm"
-              >
-                <TabList>
-                  <Tab>SASL</Tab>
-                  <Tab>SSL</Tab>
-                  <Tab>None</Tab>
-                </TabList>
-                <TabPanels>
-                  <TabPanel>
-                    <VStack spacing="6" alignItems="start">
-                      <FormControl>
-                        <InlineLabeledInput label="Mechanism">
-                          <SearchableSelect
-                            ariaLabel="Select SASL mechanism"
-                            options={saslMechanismOptions}
-                            isSearchable={false}
-                            {...saslMechanismField}
-                          />
-                        </InlineLabeledInput>
-                      </FormControl>
-
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="saslUsername"
-                        fieldLabel="Username"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                        }}
-                        textInputProps={{
-                          placeholder: "user",
-                        }}
-                        textInputRules={{
-                          required: "Username is required.",
-                        }}
-                        selectRules={{
-                          required: "Username is required.",
-                        }}
-                        canFieldBeText
-                      />
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="saslPassword"
-                        fieldLabel="Password"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                          isClearable: true,
-                        }}
-                        selectRules={{
-                          required: "Password is required.",
-                        }}
-                      />
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="sslCertificateAuthority"
-                        fieldLabel="SSL Certificate Authority"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                          isClearable: true,
-                        }}
-                        textInputProps={{
-                          placeholder: "-----BEGIN CERTIFICATE...",
-                        }}
-                        canFieldBeText
-                      />
-                    </VStack>
-                  </TabPanel>
-                  <TabPanel>
-                    <VStack spacing="6" alignItems="start">
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="sslKey"
-                        fieldLabel="SSL Key"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                        }}
-                        selectRules={{
-                          required: "Key is required.",
-                        }}
-                      />
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="sslCertificate"
-                        fieldLabel="SSL Certificate"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                        }}
-                        textInputProps={{
-                          placeholder: "-----BEGIN CERTIFICATE...",
-                        }}
-                        textInputRules={{
-                          required: "Certificate is required.",
-                        }}
-                        selectRules={{
-                          required: "Certificate is required.",
-                        }}
-                        canFieldBeText
-                      />
-                      <SecretsFormControl
-                        control={control}
-                        register={register}
-                        fieldKey="sslCertificateAuthority"
-                        fieldLabel="SSL Certificate Authority"
-                        selectOptions={secrets ?? []}
-                        selectProps={{
-                          menuPlacement: "top",
-                          isClearable: true,
-                        }}
-                        textInputProps={{
-                          placeholder: "-----BEGIN CERTIFICATE...",
-                        }}
-                        canFieldBeText
-                      />
-                    </VStack>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            </FormSection>
-          </FormContainer>
-        </form>
+        <NewKafkaConnectionForm />
       </ModalContent>
     </Modal>
   );

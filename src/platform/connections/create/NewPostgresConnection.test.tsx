@@ -16,11 +16,9 @@ import {
   setFakeEnvironment,
 } from "~/test/utils";
 
-import NewPostgresConnection from "./NewPostgresConnection";
+import { NewPostgresConnectionForm } from "./NewPostgresConnection";
 
 jest.mock("~/api/auth");
-
-jest.setTimeout(20_000);
 
 const Wrapper = createProviderWrapper({
   initializeState: ({ set }) =>
@@ -57,7 +55,7 @@ async function fillRequiredFields(user: UserEvent) {
   await user.type(userInput, "test_user");
 }
 
-describe("NewPostgresConnection", () => {
+describe("NewPostgresConnectionForm", () => {
   beforeEach(() => {
     server.use(
       // useSchemas
@@ -93,7 +91,7 @@ describe("NewPostgresConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
 
     await fillRequiredFields(user);
     await user.click(screen.getByText("Create connection"));
@@ -134,7 +132,7 @@ describe("NewPostgresConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
 
     await fillRequiredFields(user);
 
@@ -182,7 +180,7 @@ describe("NewPostgresConnection", () => {
       })
     );
 
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     expect(
       await screen.findByText("An unexpected error has occured")
     ).toBeVisible();
@@ -202,7 +200,7 @@ describe("NewPostgresConnection", () => {
       })
     );
 
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     expect(
       await screen.findByText("An unexpected error has occured")
     ).toBeVisible();
@@ -210,7 +208,7 @@ describe("NewPostgresConnection", () => {
 
   it("shows required validation messages", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     await user.click(screen.getByText("Create connection"));
     expect(
       await screen.findByText("Connection name is required.")
@@ -223,7 +221,7 @@ describe("NewPostgresConnection", () => {
 
   it("shows required validation messages when using SSL authentication", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     await user.click(screen.getByLabelText("SSL Authentication"));
     await user.click(screen.getByText("Create connection"));
 
@@ -234,7 +232,7 @@ describe("NewPostgresConnection", () => {
 
   it("shows certificate authority field when SSL mode is verify-ca or verify-full", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     expect(screen.queryByLabelText("SSL Certificate Authority")).toBeNull();
 
     await user.click(screen.getByLabelText("SSL Mode"));
@@ -250,7 +248,7 @@ describe("NewPostgresConnection", () => {
 
   it("requires SSL mode when using certification authentication", async () => {
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     await user.click(screen.getByLabelText("SSL Authentication"));
 
     await user.click(screen.getByText("Create connection"));
@@ -268,7 +266,7 @@ describe("NewPostgresConnection", () => {
       })
     );
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     await user.click(screen.getByText("Create connection"));
 
     await waitFor(async () => {
@@ -296,7 +294,7 @@ describe("NewPostgresConnection", () => {
     );
 
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
 
     await fillRequiredFields(user);
     await user.click(screen.getByText("Create connection"));
@@ -328,7 +326,7 @@ describe("NewPostgresConnection", () => {
       ])
     );
     const user = userEvent.setup();
-    renderComponent(<NewPostgresConnection />);
+    renderComponent(<NewPostgresConnectionForm />);
     await fillRequiredFields(user);
 
     await user.click(screen.getByLabelText("Password"));
