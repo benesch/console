@@ -76,7 +76,7 @@ root.render(
         <ChakraProviderWrapper>
           <Sentry.ErrorBoundary fallback={<ErrorBox h="100vh" />}>
             <FronteggProviderWrapper baseUrl={config.fronteggUrl}>
-              <IntercomProvider appId="ezykn80d">
+              <IntercomProvider appId={config.intercomAppId}>
                 <RecoilRoot>
                   <Router />
                 </RecoilRoot>

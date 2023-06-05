@@ -5,7 +5,11 @@ import { DefinePlugin } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
 
-import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
+import base, {
+  IDefinePluginOptions,
+  intercomAppId,
+  statuspageId,
+} from "./webpack.config";
 
 function requireEnv(name: string | string[]) {
   if (typeof name === "string") {
@@ -36,6 +40,7 @@ const DefinePluginOptions: IDefinePluginOptions = {
   __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "production"),
   __FORCE_OVERRIDE_STACK__: JSON.stringify(process.env.FORCE_OVERRIDE_STACK),
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: JSON.stringify(false),
+  __INTERCOM_APP_ID__: JSON.stringify(intercomAppId),
   __SEGMENT_API_KEY__: JSON.stringify(process.env.SEGMENT_API_KEY || null),
   __SENTRY_DSN__: JSON.stringify(sentryDsn),
   __SENTRY_ENVIRONMENT__: JSON.stringify(sentryEnvironment),
@@ -45,12 +50,15 @@ const DefinePluginOptions: IDefinePluginOptions = {
 
 const scriptSrc = [
   "'self'",
+  "'unsafe-inline'",
   "'wasm-unsafe-eval'",
   "https://js.stripe.com",
   "https://www.recaptcha.net/recaptcha/",
   "https://*.googletagmanager.com",
   "https://assets.frontegg.com",
   "https://cdn.segment.com",
+  `https://widget.intercom.io/widget/${intercomAppId}`,
+  "https://js.intercomcdn.com/",
 ];
 
 const cspPolicy = {
@@ -63,6 +71,7 @@ const cspPolicy = {
     "data:",
     "fonts.gstatic.com/",
     "fonts.googleapis.com/",
+    "https://fonts.intercomcdn.com",
   ],
   "frame-ancestors": ["'none'"],
   "frame-src": [
@@ -76,9 +85,10 @@ const cspPolicy = {
     "data:",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
     "https://www.gravatar.com",
-    "https://i0.wp.com",
     "https://fronteggprodeustorage.blob.core.windows.net",
+    "https://i0.wp.com",
     "https://avatars.githubusercontent.com",
+    "https://static.intercomassets.com",
     "https://lh3.googleusercontent.com",
     "https://*.googletagmanager.com",
     "https://*.g.doubleclick.net",

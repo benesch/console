@@ -4,6 +4,7 @@ import path from "path";
 import { Configuration } from "webpack";
 
 export const statuspageId = "qf52z1jnw4q8";
+export const intercomAppId = "ezykn80d";
 
 const HtmlWebpackPluginOptions: HtmlWebpackPlugin.Options = {
   favicon: "public/favicon.ico",
@@ -19,6 +20,7 @@ export interface IDefinePluginOptions
   __STATUSPAGE_ID__: string;
   __DEFAULT_STACK__: string;
   __FORCE_OVERRIDE_STACK__: string | undefined;
+  __INTERCOM_APP_ID__: string;
   __RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED__: string;
 }
 

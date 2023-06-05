@@ -2,6 +2,7 @@ import type { GlobalConfig } from "../config";
 
 const globalConfigStub: GlobalConfig = {
   fronteggUrl: "https://frontegg.com",
+  intercomAppId: "fake-intercom-id",
   launchDarklyKey: "launchdarkly-dummy-key",
   segmentApiKey: "segment-api-key",
   sentryDsn: null,
