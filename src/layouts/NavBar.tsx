@@ -328,9 +328,6 @@ const NavMenu = (props: BoxProps) => {
 type NavMenuCompactProps = MenuButtonProps;
 
 const NavMenuCompact = (props: NavMenuCompactProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
   const flags = useFlags();
   const regionSlug = useRegionSlug();
 
