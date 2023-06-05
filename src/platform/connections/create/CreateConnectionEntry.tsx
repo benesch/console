@@ -1,19 +1,11 @@
-import {
-  Flex,
-  Grid,
-  GridItem,
-  Image,
-  Text,
-  useTheme,
-  VStack,
-} from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Text, useTheme, VStack } from "@chakra-ui/react";
 import React from "react";
 
 import IconNavLink from "~/components/IconNavLink";
 import TextLink from "~/components/TextLink";
-import awsLogo from "~/img/aws-logo.svg";
-import postgresLogo from "~/img/postgres-logo.svg";
+import AwsLogoIcon from "~/svg/AwsLogoIcon";
 import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
+import PostgresLogoIcon from "~/svg/PostgresLogoIcon";
 import TerminalIcon from "~/svg/Terminal";
 import { MaterializeTheme } from "~/theme";
 
@@ -54,7 +46,7 @@ const CreateConnectionEntry = () => {
             </GridItem>
             <GridItem>
               <IconNavLink
-                icon={<Image height="6" width="6" src={postgresLogo} />}
+                icon={<PostgresLogoIcon height="6" width="6" />}
                 width="100%"
                 to="../postgres"
               >
@@ -79,7 +71,7 @@ const CreateConnectionEntry = () => {
             </GridItem>
             <GridItem>
               <IconNavLink
-                icon={<Image height="6" width="6" src={awsLogo} />}
+                icon={<AwsLogoIcon height="6" width="6" />}
                 width="100%"
                 to="aws"
               >

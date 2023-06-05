@@ -8,7 +8,6 @@ import {
   FormControl,
   FormLabel,
   HStack,
-  Image,
   Input,
   Modal,
   ModalContent,
@@ -57,9 +56,9 @@ import {
   getSecretOrTextFromField,
   setSecretFieldsFromServerData,
 } from "~/forms/secretsFormControlAccessors";
-import awsLogo from "~/img/aws-logo.svg";
-import postgresLogo from "~/img/postgres-logo.svg";
 import { currentEnvironmentState } from "~/recoil/environments";
+import AwsLogoIcon from "~/svg/AwsLogoIcon";
+import PostgresLogoIcon from "~/svg/PostgresLogoIcon";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
@@ -314,7 +313,7 @@ export const NewPostgresConnectionForm = () => {
                 size="sm"
                 height="10"
                 px="4"
-                leftIcon={<Image src={postgresLogo} height="4" width="4" />}
+                leftIcon={<PostgresLogoIcon height="4" width="4" />}
                 href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/"
                 target="_blank"
                 flexShrink={0}
@@ -327,7 +326,7 @@ export const NewPostgresConnectionForm = () => {
                 size="sm"
                 height="10"
                 px="4"
-                leftIcon={<Image src={awsLogo} height="4" width="4" />}
+                leftIcon={<AwsLogoIcon height="4" width="4" />}
                 href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/#aws-rds-t0"
                 target="_blank"
                 flexShrink={0}
