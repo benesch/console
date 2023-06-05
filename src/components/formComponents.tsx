@@ -121,7 +121,10 @@ export const FormSection = ({
   );
 };
 
-export const FormInfoBox = ({ children }: React.PropsWithChildren) => {
+export const FormInfoBox = ({
+  children,
+  ...props
+}: React.PropsWithChildren<BoxProps>) => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
@@ -139,6 +142,7 @@ export const FormInfoBox = ({ children }: React.PropsWithChildren) => {
       mr={{ base: "0", md: "20" }}
       gridColumnStart={{ base: "2", md: "auto" }}
       gridRowStart={{ base: "2", md: "auto" }}
+      {...props}
     >
       {children}
     </Box>
