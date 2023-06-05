@@ -1,3 +1,5 @@
+import { sql } from "kysely";
+
 import { assert, isTruthy, notNullOrUndefined } from "~/util";
 
 /**
@@ -51,4 +53,20 @@ export function attachNamespace(
     .join(".");
 
   return namespace ? `${namespace}.${name}` : name;
+}
+
+export function escapedLiteral(literal: string) {
+  // Materialize never allows any identifiers to be used whose name contains the null byte,
+  // so this assert should never fire unless this function is called with arbitrary user input.
+  assert(literal.search("\0") === -1);
+
+  return sql.lit(literal.replace("'", "''"));
+}
+
+export function escapedIdentifier(identifier: string) {
+  // Materialize never allows any identifiers to be used whose name contains the null byte,
+  // so this assert should never fire unless this function is called with arbitrary user input.
+  assert(identifier.search("\0") === -1);
+
+  return sql.id(identifier.replace("'", "''"));
 }

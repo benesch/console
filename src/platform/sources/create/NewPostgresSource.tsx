@@ -207,9 +207,10 @@ export const NewPostgresSourceForm = () => {
             // new object to narrow the type
             query: createPostgresSourceStatement({
               ...values,
+              cluster: values.cluster,
+              connection: values.connection,
               databaseName: values.schema.databaseName,
               schemaName: values.schema.name,
-              connection: values.connection,
             }),
             params: [],
           },

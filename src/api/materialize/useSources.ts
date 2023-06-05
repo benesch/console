@@ -1,12 +1,7 @@
-import { ConnectorStatus, SchemaObject, useSql } from "~/api/materialized";
-import { assert } from "~/util";
+import React from "react";
 
-export interface Source extends SchemaObject {
-  type: string;
-  size?: string;
-  status?: ConnectorStatus;
-  error?: string;
-}
+import { queryBuilder } from "./db";
+import useSqlTyped from "./useSqlTyped";
 
 /**
  * Fetches all sources in the current environment
@@ -16,36 +11,33 @@ function useSources({
   schemaId,
   nameFilter,
 }: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
-  // Note: we CAST d.id and sc.id to text because in v0.52 we changed the database ids and schema
-  // ids to be strings, namespaced on either System or User.
-  const sourceResponse =
-    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
-FROM mz_sources s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-LEFT OUTER JOIN mz_internal.mz_source_statuses st ON st.id = s.id
-WHERE s.id LIKE 'u%'
-AND s.type <> 'subsource'
-${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
-${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
-${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
+  const query = React.useMemo(() => {
+    const qb = queryBuilder
+      .selectFrom("mz_catalog.mz_sources as s")
+      .select(["s.id", "s.name", "s.type", "s.size"])
+      .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "s.schema_id")
+      .select("sc.name as schemaName")
+      .innerJoin("mz_catalog.mz_databases as d", "d.id", "sc.database_id")
+      .select("d.name as databaseName")
+      .leftJoin("mz_internal.mz_source_statuses as st", "st.id", "s.id")
+      .select(["st.status", "st.error"])
+      .where("s.id", "like", "u%")
+      .where("s.type", "<>", "subsource");
+    if (databaseId) {
+      qb.where("d.id", "=", databaseId);
+    }
+    if (schemaId) {
+      qb.where("sc.id", "=", schemaId);
+    }
+    if (nameFilter) {
+      qb.where("s.name", "like", `%${nameFilter}%`);
+    }
+    return qb.compile();
+  }, [databaseId, nameFilter, schemaId]);
 
-  let sources: Source[] | null = null;
-  if (sourceResponse.data) {
-    const { rows, getColumnByName } = sourceResponse.data;
-    assert(getColumnByName);
+  const sourceResponse = useSqlTyped(query);
 
-    sources = rows.map((row) => ({
-      id: getColumnByName(row, "id"),
-      name: getColumnByName(row, "name"),
-      schemaName: getColumnByName(row, "schema_name"),
-      databaseName: getColumnByName(row, "database_name"),
-      type: getColumnByName(row, "type"),
-      size: getColumnByName(row, "size"),
-      status: getColumnByName(row, "status"),
-      error: getColumnByName(row, "error"),
-    }));
-  }
+  const sources = sourceResponse.results;
 
   const getSourceById = (sourceId?: string) =>
     sources?.find((s) => s.id === sourceId) ?? null;
@@ -54,5 +46,7 @@ ${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
 }
 
 export type SourcesResponse = ReturnType<typeof useSources>;
+
+export type Source = SourcesResponse["data"][0];
 
 export default useSources;

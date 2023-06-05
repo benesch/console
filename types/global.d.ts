@@ -1,7 +1,3 @@
-/** Global configuration parameters. */
-
-export {};
-
 declare global {
   const __DEFAULT_STACK__: string;
   const __FORCE_OVERRIDE_STACK__: string;
@@ -12,3 +8,5 @@ declare global {
   const __SENTRY_RELEASE__: string | null;
   const __STATUSPAGE_ID__: string;
 }
+
+export {};

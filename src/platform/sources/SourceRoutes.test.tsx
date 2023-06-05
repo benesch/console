@@ -26,11 +26,11 @@ jest.mock("~/platform/sources/SourceErrorsGraph", () => {
 
 const useSourcesColumns = [
   "id",
-  "database_name",
-  "schema_name",
   "name",
   "type",
   "size",
+  "schemaName",
+  "databaseName",
   "status",
   "error",
 ];
@@ -48,11 +48,11 @@ const emptyUseSourcesHandler = buildUseSqlQueryHandler({
 function setupSourceDetailPage() {
   const source = {
     id: "u4",
-    database_name: "default",
-    schema_name: "public",
     name: "test_source",
     type: "postgres",
     size: "xsmall",
+    schemaName: "public",
+    databaseName: "default",
     status: "stalled",
     error: "reached maximum WAL lag",
   };
@@ -77,7 +77,7 @@ function setupSourceDetailPage() {
   server.use(emptyUseSourceErrorsHandler);
   server.use(validUseShowCreateHandler);
 
-  return `/${source.id}/${source.database_name}/${source.schema_name}/${source.name}/errors`;
+  return `/${source.id}/${source.databaseName}/${source.schemaName}/${source.name}/errors`;
 }
 
 describe("SourceRoutes", () => {
@@ -131,11 +131,11 @@ describe("SourceRoutes", () => {
           rows: [
             [
               "u4",
-              "default",
-              "public",
               "test_source",
               "postgres",
               "xsmall",
+              "public",
+              "default",
               "stalled",
               "reached maximum WAL lag",
             ],
@@ -191,7 +191,7 @@ describe("SourceRoutes", () => {
         ).toBeVisible();
       });
 
-      it("renders an empty state when there are no sink errors", async () => {
+      it("renders an empty state when there are no source errors", async () => {
         const initialRoute = setupSourceDetailPage();
 
         renderComponent(<SourceRoutes />, {

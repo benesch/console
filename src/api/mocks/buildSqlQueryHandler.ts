@@ -104,15 +104,15 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
 
       if (asCount > 1) {
         // The column's name is 'as' and has an alias
-        return words[words.length - 1];
+        return words[words.length - 1].replaceAll('"', "");
       }
 
       if (asCount === 1 && words.length === 1) {
         // The column's name is 'as' and has no alias
-        return words[0];
+        return words[0].replaceAll('"', "");
       }
 
-      return words[asPosition + 1];
+      return words[asPosition + 1].replaceAll('"', "");
     }
 
     /* Case where the column name is just a function call (i.e. COUNT(...)) */
@@ -120,7 +120,10 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
     const matches = wordInParensRegex.exec(targetElemToken);
     if (matches && matches.length > 0) {
       const firstParensPosition = targetElemToken.indexOf("(");
-      return targetElemToken.substring(0, firstParensPosition).toLowerCase();
+      return targetElemToken
+        .substring(0, firstParensPosition)
+        .toLowerCase()
+        .replaceAll('"', "");
     }
 
     // When a column is prefixed by a table name
@@ -128,7 +131,7 @@ export function extractSQLSelectColumnNames(selectQueryStr: string) {
     if (columnName === undefined) {
       throw new Error("Failed to parse column name");
     }
-    return columnName;
+    return columnName.replaceAll('"', "");
   });
 
   return colNames;

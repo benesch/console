@@ -74,8 +74,13 @@ const SinkOrRedirect: React.FC<{ sinksResponse: SinksResponse }> = ({
   sinksResponse,
 }) => {
   const params = useParams<SchemaObjectRouteParams>();
-  const { data: sinks } = sinksResponse;
-  const result = objectOrRedirect(params, sinks, relativeSinkErrorsPath);
+  const { data: sinks, isInitiallyLoading } = sinksResponse;
+  const result = objectOrRedirect({
+    params,
+    objects: sinks,
+    loading: isInitiallyLoading,
+    relativePathFn: relativeSinkErrorsPath,
+  });
   if (result.type === "redirect") {
     return result.redirect;
   } else {

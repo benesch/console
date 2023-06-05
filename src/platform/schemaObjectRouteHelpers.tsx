@@ -104,13 +104,19 @@ export type RelativePathFn = (o: SchemaObject) => string;
  *
  * @returns ObjectOrRedirectResult
  * */
-export const objectOrRedirect = <T extends SchemaObject>(
-  params: Readonly<Partial<SchemaObjectRouteParams>>,
-  objects: T[] | null,
-  relativePathFn: RelativePathFn
-): ObjectOrRedirectResult<T> => {
+export const objectOrRedirect = <T extends SchemaObject>({
+  params,
+  objects,
+  loading,
+  relativePathFn,
+}: {
+  params: Readonly<Partial<SchemaObjectRouteParams>>;
+  objects: T[] | null;
+  loading: boolean;
+  relativePathFn: RelativePathFn;
+}): ObjectOrRedirectResult<T> => {
   // If objects haven't loaded, show the loading state
-  if (!objects) {
+  if (loading || !objects) {
     return { type: "object" };
   }
   const schemaObject = objects?.find((s) => s.id == params.id);
