@@ -3,7 +3,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Image,
   Spinner,
   Tab,
   TabList,
@@ -24,9 +23,9 @@ import {
 import ErrorBox from "~/components/ErrorBox";
 import IconNavLink from "~/components/IconNavLink";
 import SearchInput from "~/components/SearchInput";
-import postgresLogo from "~/img/postgres-logo.svg";
 import { PageHeading } from "~/layouts/BaseLayout";
 import KafkaLogoIcon from "~/svg/KafkaLogoIcon";
+import PostgresLogoIcon from "~/svg/PostgresLogoIcon";
 import { useQueryStringState } from "~/useQueryString";
 
 const connectionIcon = (connection: Connection) => {
@@ -34,7 +33,7 @@ const connectionIcon = (connection: Connection) => {
     case "kafka":
       return <KafkaLogoIcon height="6" width="6" />;
     case "postgres":
-      return <Image height="6" width="6" src={postgresLogo} />;
+      return <PostgresLogoIcon height="6" width="6" />;
     default:
       return null;
   }

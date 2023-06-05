@@ -20,6 +20,8 @@ import {
   Text,
   useTheme,
   VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useController, useFieldArray, useForm } from "react-hook-form";
@@ -45,6 +47,7 @@ import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validat
 import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
+  FormInfoBox,
   FormSection,
   FormTopBar,
   GutterContainer,
@@ -66,7 +69,11 @@ import {
   setSecretFieldsFromServerData,
 } from "~/forms/secretsFormControlAccessors";
 import { currentEnvironmentState } from "~/recoil/environments";
+import AwsLogoIcon from "~/svg/AwsLogoIcon";
+import ConfluentLogoIcon from "~/svg/ConfluentLogoIcon";
 import PlusCircleIcon from "~/svg/PlusCircleIcon";
+import RedpandaLogoIcon from "~/svg/RedpandaLogoIcon";
+import UpstashLogoIcon from "~/svg/UpstashLogoIcon";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
@@ -177,6 +184,91 @@ function getAuthParamFromFormState(authMode: number, values: FormState) {
     };
   }
 }
+
+const FormAside = () => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+
+  return (
+    <FormInfoBox maxW={{ md: "40ch" }}>
+      <Text
+        textStyle="text-ui-med"
+        color={semanticColors.foreground.primary}
+        mb={2}
+      >
+        Need help connecting to Kafka?
+      </Text>
+      <Text
+        textStyle="text-base"
+        color={semanticColors.foreground.secondary}
+        mb={6}
+      >
+        Check out our step-by-step guides or reach out to the team for help with
+        setting up your Kafka connection.
+      </Text>
+      <Wrap spacing="2">
+        <WrapItem>
+          <Button
+            as="a"
+            variant="outline"
+            size="sm"
+            height="10"
+            px="4"
+            leftIcon={<ConfluentLogoIcon height="4" width="4" />}
+            href="https://materialize.com/docs/connect-sources/confluent-cloud/"
+            target="_blank"
+          >
+            Confluent
+          </Button>
+        </WrapItem>
+        <WrapItem>
+          <Button
+            as="a"
+            variant="outline"
+            size="sm"
+            height="10"
+            px="4"
+            leftIcon={<RedpandaLogoIcon height="4" width="4" />}
+            href="https://materialize.com/docs/connect-sources/redpanda-cloud/"
+            target="_blank"
+          >
+            Redpanda
+          </Button>
+        </WrapItem>
+
+        <WrapItem>
+          <Button
+            as="a"
+            variant="outline"
+            size="sm"
+            height="10"
+            px="4"
+            leftIcon={<UpstashLogoIcon height="4" width="4" />}
+            href="https://materialize.com/docs/connect-sources/upstash-kafka/"
+            target="_blank"
+          >
+            Upstash
+          </Button>
+        </WrapItem>
+        <WrapItem>
+          <Button
+            as="a"
+            variant="outline"
+            size="sm"
+            height="10"
+            px="4"
+            leftIcon={<AwsLogoIcon height="4" width="4" />}
+            href="https://materialize.com/docs/connect-sources/amazon-msk/"
+            target="_blank"
+          >
+            Amazon MSK
+          </Button>
+        </WrapItem>
+      </Wrap>
+    </FormInfoBox>
+  );
+};
 
 export const NewKafkaConnectionForm = () => {
   const [generalFormError, setGeneralFormError] = useState<
@@ -366,7 +458,7 @@ export const NewKafkaConnectionForm = () => {
           Create connection
         </Button>
       </FormTopBar>
-      <FormContainer title="Connection information">
+      <FormContainer title="Connection information" aside={<FormAside />}>
         {generalFormError && (
           <InlayBanner
             variant="error"
