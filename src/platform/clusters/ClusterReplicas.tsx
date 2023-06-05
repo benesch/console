@@ -16,6 +16,7 @@ import {
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import {
   ClusterReplicaWithUtilizaton,
@@ -124,7 +125,14 @@ const ClusterReplicasPage = () => {
           <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
             <PageHeading>Replicas</PageHeading>
             {replicas && maxReplicas && replicas.length < maxReplicas && (
-              <Button variant="primary" size="sm" onClick={onOpen}>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  onOpen();
+                  segment.track("New Replica Clicked");
+                }}
+              >
                 New Replica
               </Button>
             )}

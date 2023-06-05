@@ -31,6 +31,7 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import segment from "~/analytics/segment";
 import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
 import {
   ListPageSecret,
@@ -244,6 +245,7 @@ const SecretsCreationModal = ({
                 variant="primary"
                 size="sm"
                 isDisabled={isCreationInFlight}
+                onClick={() => segment.track("Create Secret Clicked")}
               >
                 Create secret
               </Button>
@@ -296,7 +298,14 @@ export const SecretsList = () => {
               nameFilter.setName(e.target.value);
             }}
           />
-          <Button variant="primary" size="sm" onClick={onOpen}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              onOpen();
+              segment.track("New Secret Clicked");
+            }}
+          >
             New secret
           </Button>
         </HStack>

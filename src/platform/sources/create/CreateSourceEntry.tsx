@@ -15,6 +15,7 @@ import {
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import {
   Connection,
   dataConnectionTypes,
@@ -69,6 +70,7 @@ const CreateSourceEntry = () => {
           size="sm"
           minWidth="auto"
           to={`/regions/${regionSlug}/connections/new/connection`}
+          onClick={() => segment.track("New Connection Clicked")}
         >
           New connection
         </Button>
