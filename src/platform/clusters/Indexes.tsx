@@ -1,4 +1,13 @@
-import { Spinner, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  HStack,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Route, useNavigate, useParams } from "react-router-dom";
@@ -7,6 +16,7 @@ import { Replica, useClusters } from "~/api/materialize/useClusters";
 import { Index, useIndexes } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
+import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -71,10 +81,15 @@ const Indexes = () => {
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       ) : (
-        <IndexTable
-          indexes={indexes ?? []}
-          replicas={cluster?.replicas ?? []}
-        />
+        <>
+          <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
+            <PageHeading>Indexes</PageHeading>
+          </HStack>
+          <IndexTable
+            indexes={indexes ?? []}
+            replicas={cluster?.replicas ?? []}
+          />
+        </>
       )}
     </>
   );

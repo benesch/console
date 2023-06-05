@@ -1,4 +1,5 @@
 import {
+  Button,
   HStack,
   Spinner,
   Table,
@@ -8,12 +9,14 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import {
   ClusterReplicaWithUtilizaton,
   useClusterReplicasWithUtilization,
@@ -22,6 +25,7 @@ import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
 import TextLink from "~/components/TextLink";
+import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -35,8 +39,10 @@ import { ClusterParams } from "~/platform/clusters/ClusterRoutes";
 import ClustersIcon from "~/svg/Clusters";
 import { MaterializeTheme } from "~/theme";
 import useForegroundInterval from "~/useForegroundInterval";
+import { assert } from "~/util";
 
 import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
+import NewReplicaModal from "./NewReplicaModal";
 
 const createReplicaSuggestion = {
   title: "Create a cluster replica",
@@ -71,7 +77,16 @@ const ClusterReplicasPage = () => {
   } = useClusterReplicasWithUtilization(clusterId);
   useForegroundInterval(refetch);
 
+  const { data: maxReplicas } = useMaxReplicasPerCluster();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleCreateReplica = () => {
+    onClose();
+    refetch();
+  };
+
   const isEmpty = replicas && replicas.length === 0;
+  assert(clusterName);
 
   return (
     <>
@@ -105,35 +120,51 @@ const ClusterReplicasPage = () => {
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       ) : (
-        <HStack spacing={6} alignItems="flex-start">
-          <ReplicaTable replicas={replicas ?? []} />
-          <Card flex={0} minW="384px" maxW="384px">
-            <CardHeader>Interacting with cluster replicas</CardHeader>
-            <CardContent pb={8}>
-              <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={colors.semanticColors.foreground.secondary}>
-                  Cluster replicas are where Materialize creates and maintains
-                  dataflows.
-                </Text>
-                <Text color={colors.semanticColors.foreground.secondary}>
-                  Having trouble?{" "}
-                  <TextLink
-                    href="https://materialize.com/docs/overview/key-concepts/#clusters"
-                    target="_blank"
-                  >
-                    View the documentation.
-                  </TextLink>
-                </Text>
-                {getReplicasSuggestions(clusterName!).map((suggestion) => (
-                  <SQLSuggestionBox
-                    key={`suggestion-${suggestion.title}`}
-                    {...suggestion}
-                  />
-                ))}
-              </VStack>
-            </CardContent>
-          </Card>
-        </HStack>
+        <>
+          <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
+            <PageHeading>Replicas</PageHeading>
+            {replicas && maxReplicas && replicas.length < maxReplicas && (
+              <Button variant="primary" size="sm" onClick={onOpen}>
+                New Replica
+              </Button>
+            )}
+          </HStack>
+          <HStack spacing={6} alignItems="flex-start">
+            <ReplicaTable replicas={replicas ?? []} />
+            <Card flex={0} minW="384px" maxW="384px">
+              <CardHeader>Interacting with cluster replicas</CardHeader>
+              <CardContent pb={8}>
+                <VStack spacing={4} alignItems="stretch" fontSize="sm">
+                  <Text color={colors.semanticColors.foreground.secondary}>
+                    Cluster replicas are where Materialize creates and maintains
+                    dataflows.
+                  </Text>
+                  <Text color={colors.semanticColors.foreground.secondary}>
+                    Having trouble?{" "}
+                    <TextLink
+                      href="https://materialize.com/docs/overview/key-concepts/#clusters"
+                      target="_blank"
+                    >
+                      View the documentation.
+                    </TextLink>
+                  </Text>
+                  {getReplicasSuggestions(clusterName).map((suggestion) => (
+                    <SQLSuggestionBox
+                      key={`suggestion-${suggestion.title}`}
+                      {...suggestion}
+                    />
+                  ))}
+                </VStack>
+              </CardContent>
+            </Card>
+          </HStack>
+          <NewReplicaModal
+            isOpen={isOpen}
+            onClose={onClose}
+            clusterName={clusterName}
+            onSubmit={handleCreateReplica}
+          />
+        </>
       )}
     </>
   );
