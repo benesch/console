@@ -23,6 +23,7 @@ import PricingPage from "~/access/PricingPage";
 import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
 import { hasInvoiceReadPermission, useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
+import useBootIntercom from "~/hooks/useBootIntercom";
 import { BaseLayout } from "~/layouts/BaseLayout";
 import LoadingScreen from "~/loading";
 import BillingPage from "~/platform/billing/BillingPage";
@@ -48,6 +49,7 @@ const Editor = React.lazy(() => import("~/platform/editor/Editor"));
 /** The root router for the application. */
 const Router = () => {
   useTrackFocus();
+  useBootIntercom();
 
   const ldClient = useLDClient();
   const { user } = useFronteggAuth();

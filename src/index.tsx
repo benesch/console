@@ -25,6 +25,7 @@ import { LDProvider } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { IntercomProvider } from "react-use-intercom";
 import { RecoilEnv, RecoilRoot } from "recoil";
 
 import ErrorBox from "~/components/ErrorBox";
@@ -75,9 +76,11 @@ root.render(
         <ChakraProviderWrapper>
           <Sentry.ErrorBoundary fallback={<ErrorBox h="100vh" />}>
             <FronteggProviderWrapper baseUrl={config.fronteggUrl}>
-              <RecoilRoot>
-                <Router />
-              </RecoilRoot>
+              <IntercomProvider appId="ezykn80d">
+                <RecoilRoot>
+                  <Router />
+                </RecoilRoot>
+              </IntercomProvider>
             </FronteggProviderWrapper>
           </Sentry.ErrorBoundary>
         </ChakraProviderWrapper>
