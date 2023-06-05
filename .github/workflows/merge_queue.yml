@@ -11,9 +11,9 @@ jobs:
         with:
           node-version: 18
       - run: yarn install
-      - run: yarn eslint
+      - run: yarn lint
       - run: yarn typecheck
-      - run: yarn test:unit --maxWorkers=100%
+      - run: yarn test --maxWorkers=100%
 
   e2e-tests:
     concurrency: merge_queue
