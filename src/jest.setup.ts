@@ -8,7 +8,20 @@ import server from "./api/mocks/server";
 const debugMz = debug("mz");
 
 // Mocks
-jest.mock("~/analytics/segment");
+
+jest.mock("~/analytics/segment", () => {
+  // No official mock of segment. Methods copied from https://segment.com/docs/connections/spec/
+  return {
+    identify: jest.fn(),
+    page: jest.fn(),
+    track: jest.fn(),
+    screen: jest.fn(),
+    group: jest.fn(),
+    alias: jest.fn(),
+    load: jest.fn(),
+    reset: jest.fn(),
+  };
+});
 
 // Establish API mocking before all tests.
 beforeAll(() => {
