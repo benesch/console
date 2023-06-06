@@ -362,7 +362,7 @@ export const SecretsList = () => {
     <>
       <PageHeader>
         <PageHeading>Secrets</PageHeading>
-        <HStack>
+        <HStack spacing="4">
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFilter} />
           <SearchInput

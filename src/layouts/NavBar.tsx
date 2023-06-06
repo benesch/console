@@ -108,7 +108,7 @@ const NavBar = () => {
         <HStack
           as={RouterLink}
           to="/"
-          mx={0}
+          ml={2}
           flex={0}
           width="full"
           justifyContent="flex-start"
@@ -357,7 +357,6 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
         icon={<HamburgerIcon />}
         display={{ base: "block", xl: "none" }}
         variant="outline"
-        mr={2}
         {...props}
       />
       <MenuList>

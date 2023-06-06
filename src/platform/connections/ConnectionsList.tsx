@@ -136,7 +136,7 @@ export const ConnectionsList = ({
     <>
       <PageHeader>
         <PageHeading>Connections</PageHeading>
-        <HStack>
+        <HStack spacing="4">
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFilter} />
           <SearchInput
