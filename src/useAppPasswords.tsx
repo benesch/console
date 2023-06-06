@@ -12,7 +12,8 @@ const useAppPasswords = () => {
   const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =
     useApiTokensActions();
   const tokensState = useApiTokensState();
-  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
+  // In my testing, this value is undefined when loading, and false when loading is complete
+  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS !== false;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
 
   React.useEffect(() => {
