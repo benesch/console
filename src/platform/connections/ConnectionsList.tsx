@@ -15,6 +15,7 @@ import {
 import React, { useState } from "react";
 import { Link, Route } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import {
   ConnectionsResponse,
   ConnectionWithDetails,
@@ -150,7 +151,13 @@ export const ConnectionsList = ({
               setHasNameFilterReset(false);
             }}
           />
-          <Button as={Link} variant="primary" size="sm" to="new/connection">
+          <Button
+            as={Link}
+            variant="primary"
+            size="sm"
+            to="new/connection"
+            onClick={() => segment.track("New Connection Clicked")}
+          >
             New connection
           </Button>
         </HStack>

@@ -16,6 +16,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
@@ -73,7 +74,13 @@ const ClustersListPage = () => {
       <PageHeader>
         <PageHeading>Clusters</PageHeading>
         {flags["source-creation-41"] && (
-          <Button variant="primary" size="sm" as={NavLink} to="new">
+          <Button
+            variant="primary"
+            size="sm"
+            as={NavLink}
+            to="new"
+            onClick={() => segment.track("New Cluster Clicked")}
+          >
             New cluster
           </Button>
         )}

@@ -29,7 +29,7 @@ import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import AnalyticsSegment from "~/analytics/segment";
+import segment from "~/analytics/segment";
 import FreeTrialNotice from "~/components/FreeTrialNotice";
 import { SUPPORT_HREF } from "~/components/SupportLink";
 import SwitchStackModal from "~/components/SwitchStackModal";
@@ -273,17 +273,15 @@ const NavItemsGroup = (props: NavItemsGroupType) => {
           {props.title}
         </Text>
       )}
-      {props.navItems.map(
-        ({ label, href, isInternal, onClick, icon }: NavItemType) => (
-          <NavItem
-            label={label}
-            href={href}
-            onClick={onClick}
-            key={label}
-            icon={icon}
-          />
-        )
-      )}
+      {props.navItems.map(({ label, href, onClick, icon }: NavItemType) => (
+        <NavItem
+          label={label}
+          href={href}
+          onClick={onClick}
+          key={label}
+          icon={icon}
+        />
+      ))}
     </VStack>
   );
 };
@@ -376,7 +374,7 @@ export function isSubroute(route: string, potentialSubroute: string) {
     .filter(Boolean);
 
   return routeSegments.every(
-    (segment, index) => segment === potentialSubrouteSegments[index]
+    (routeSegment, index) => routeSegment === potentialSubrouteSegments[index]
   );
 }
 
@@ -467,7 +465,7 @@ const HelpDropdown = () => {
         <HelpDropdownLink
           href="https://materialize.com/docs/"
           onClick={() => {
-            AnalyticsSegment.track("Link Click", {
+            segment.track("Link Click", {
               label: "Docs",
               href: "https://materialize.com/docs/",
             });
@@ -492,7 +490,7 @@ interface HelpDropdownLinkProps {
 
 const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
   return (
-    <MenuItem as="a" href={props.href} target="_blank" fontWeight="medium">
+    <MenuItem as="a" target="_blank" fontWeight="medium" {...props}>
       {props.children}
     </MenuItem>
   );

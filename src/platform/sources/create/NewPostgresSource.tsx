@@ -28,6 +28,7 @@ import {
 } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import {
   Connection,
   useConnectionsFiltered,
@@ -331,6 +332,9 @@ export const NewPostgresSourceForm = () => {
           size="sm"
           type="submit"
           isDisabled={isCreating}
+          onClick={() =>
+            segment.track("Create Source Clicked", { type: "postgres" })
+          }
         >
           Create source
         </Button>

@@ -18,6 +18,7 @@ import {
 import React from "react";
 import { useForm } from "react-hook-form";
 
+import segment from "~/analytics/segment";
 import createClusterReplicaStatement from "~/api/materialize/cluster/createClusterReplicaStatement";
 import { duplicateReplicaName } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
@@ -156,6 +157,7 @@ const NewReplicaForm = ({
             variant="primary"
             size="sm"
             isDisabled={isCreationInFlight}
+            onClick={() => segment.track("Create Replica Clicked")}
           >
             Create replica
           </Button>

@@ -18,6 +18,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import segment from "~/analytics/segment";
 import { Source, SourcesResponse } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
@@ -118,7 +119,13 @@ const SourcesListPage = ({
             }}
           />
           {flags["source-creation-41"] && (
-            <Button variant="primary" size="sm" as={Link} to="new/connection">
+            <Button
+              variant="primary"
+              size="sm"
+              as={Link}
+              to="new/connection"
+              onClick={() => segment.track("New Source Clicked")}
+            >
               New Source
             </Button>
           )}
