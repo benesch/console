@@ -4,7 +4,11 @@ import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import { DefinePlugin } from "webpack";
 import { merge } from "webpack-merge";
 
-import base, { IDefinePluginOptions, statuspageId } from "./webpack.config";
+import base, {
+  IDefinePluginOptions,
+  intercomAppId,
+  statuspageId,
+} from "./webpack.config";
 
 const definePluginOptions: IDefinePluginOptions = {
   __DEFAULT_STACK__: JSON.stringify(process.env.DEFAULT_STACK || "staging"),
@@ -17,6 +21,7 @@ const definePluginOptions: IDefinePluginOptions = {
   ),
   __SENTRY_RELEASE__: JSON.stringify(process.env.SENTRY_RELEASE || null),
   __STATUSPAGE_ID__: JSON.stringify(statuspageId),
+  __INTERCOM_APP_ID__: JSON.stringify(intercomAppId),
 };
 
 module.exports = merge(base, {

@@ -7,6 +7,7 @@ declare global {
   const __SENTRY_ENVIRONMENT__: string | null;
   const __SENTRY_RELEASE__: string | null;
   const __STATUSPAGE_ID__: string;
+  const __INTERCOM_APP_ID__: string;
 }
 
 export {};

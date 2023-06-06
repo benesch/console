@@ -90,6 +90,7 @@ const config = {
   sentryEnvironment: __SENTRY_ENVIRONMENT__,
   sentryRelease: __SENTRY_RELEASE__,
   statuspageId: __STATUSPAGE_ID__,
+  intercomAppId: __INTERCOM_APP_ID__,
   syncServerUrl: getSyncServerUrl(currentStack),
 };
 

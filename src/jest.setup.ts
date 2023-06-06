@@ -22,6 +22,7 @@ jest.mock("~/analytics/segment", () => {
     reset: jest.fn(),
   };
 });
+jest.mock("~/hooks/useBootIntercom");
 
 // Establish API mocking before all tests.
 beforeAll(() => {
