@@ -12,9 +12,9 @@ jobs:
           node-version: 18
           cache: "yarn"
       - run: yarn install --frozen-lockfile
-      - run: yarn eslint
+      - run: yarn lint
       - run: yarn typecheck
-      - run: yarn test:unit --maxWorkers=100%
+      - run: yarn test --maxWorkers=100%
 
   e2e-tests:
     runs-on: ubuntu-20.04-16core

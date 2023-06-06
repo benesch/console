@@ -57,7 +57,7 @@ bin/mzadmin k8s setup
 
 ### Running tests
 
-Run the jest test with `yarn test:unit` or `yarn test:unit --watch`.
+Run the jest test with `yarn test` or `yarn test --watch`.
 
 The playwright end-to-end tests require a cloud stack to run, generally using
 Kind is simplest locally.
