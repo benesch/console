@@ -1,5 +1,12 @@
-import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/modal";
-import { HStack, Spinner, Text, useTheme } from "@chakra-ui/react";
+import {
+  HStack,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Text,
+  useTheme,
+} from "@chakra-ui/react";
 import React from "react";
 
 import { MaterializeTheme } from "~/theme";

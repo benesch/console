@@ -6,7 +6,7 @@ import {
   useTheme,
   useToast,
 } from "@chakra-ui/react";
-import { RenderProps } from "@chakra-ui/toast";
+import { UseToastOptions } from "@chakra-ui/toast";
 import React from "react";
 
 import { CheckmarkIconWithCircle } from "~/svg/CheckmarkIcon";
@@ -62,7 +62,7 @@ const TOAST_DURATION = 2000;
  * Wraps useToast to use a custom render function and expose our own API
  */
 export const useSuccessToast = (options?: SuccessToastOptions) => {
-  const render = (props: RenderProps) => (
+  const render = (props: UseToastOptions) => (
     <SuccessToastComponent icon={<CheckmarkIconWithCircle />} {...props} />
   );
 

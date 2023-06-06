@@ -1,4 +1,4 @@
-import { useToast } from "@chakra-ui/toast";
+import { useToast } from "@chakra-ui/react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";

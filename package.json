@@ -21,10 +21,8 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.14",
-    "@chakra-ui/modal": "^2.2.9",
-    "@chakra-ui/popover": "^2.1.8",
-    "@chakra-ui/react": "^2.4.9",
-    "@chakra-ui/toast": "^4.0.1",
+    "@chakra-ui/react": "^2.7.0",
+    "@chakra-ui/toast": "^6.1.4",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto-mono": "^4.5.8",
