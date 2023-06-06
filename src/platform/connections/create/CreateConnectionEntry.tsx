@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
+import segment from "~/analytics/segment";
 import IconNavLink from "~/components/IconNavLink";
 import TextLink from "~/components/TextLink";
 import AwsLogoIcon from "~/svg/AwsLogoIcon";
@@ -85,7 +86,10 @@ const CreateConnectionEntry = () => {
                 icon={<TerminalIcon width="6" height="6" />}
                 width="100%"
                 to="."
-                onClick={openSshModal}
+                onClick={() => {
+                  openSshModal();
+                  segment.track("Create SSH Connection Clicked");
+                }}
               >
                 SSH Tunnel
               </IconNavLink>
@@ -95,7 +99,10 @@ const CreateConnectionEntry = () => {
                 icon={<AwsLogoIcon height="6" width="6" />}
                 width="100%"
                 to="."
-                onClick={openPrivateLinkModal}
+                onClick={() => {
+                  openPrivateLinkModal();
+                  segment.track("Create PrivateLink Connection Clicked");
+                }}
               >
                 PrivateLink
               </IconNavLink>
