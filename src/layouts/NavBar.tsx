@@ -490,7 +490,7 @@ interface HelpDropdownLinkProps {
 
 const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
   return (
-    <MenuItem as="a" href={props.href} target="_blank" fontWeight="medium">
+    <MenuItem as="a" target="_blank" fontWeight="medium" {...props}>
       {props.children}
     </MenuItem>
   );
