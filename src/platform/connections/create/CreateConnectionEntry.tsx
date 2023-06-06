@@ -1,4 +1,12 @@
-import { Flex, Grid, GridItem, Text, useTheme, VStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Grid,
+  GridItem,
+  Text,
+  useDisclosure,
+  useTheme,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 
 import IconNavLink from "~/components/IconNavLink";
@@ -9,12 +17,24 @@ import PostgresLogoIcon from "~/svg/PostgresLogoIcon";
 import TerminalIcon from "~/svg/Terminal";
 import { MaterializeTheme } from "~/theme";
 
+import CreatePrivateLinkConnectionModal from "./CreatePrivateLinkConnectionModal";
+import CreateSshConnectionModal from "./CreateSshConnectionModal";
 import InviteBox from "./InviteBox";
 
 const CreateConnectionEntry = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const {
+    onOpen: openPrivateLinkModal,
+    isOpen: isPrivateLinkModalOpen,
+    onClose: closePrivateLinkModal,
+  } = useDisclosure();
+  const {
+    onOpen: openSshModal,
+    isOpen: isSshModalOpen,
+    onClose: closeSshModal,
+  } = useDisclosure();
   return (
     <Flex justifyContent="center">
       <VStack mt="20" width="460px" spacing="10" alignItems="stretch">
@@ -64,7 +84,8 @@ const CreateConnectionEntry = () => {
               <IconNavLink
                 icon={<TerminalIcon width="6" height="6" />}
                 width="100%"
-                to="ssh"
+                to="."
+                onClick={openSshModal}
               >
                 SSH Tunnel
               </IconNavLink>
@@ -73,7 +94,8 @@ const CreateConnectionEntry = () => {
               <IconNavLink
                 icon={<AwsLogoIcon height="6" width="6" />}
                 width="100%"
-                to="aws"
+                to="."
+                onClick={openPrivateLinkModal}
               >
                 PrivateLink
               </IconNavLink>
@@ -91,6 +113,14 @@ const CreateConnectionEntry = () => {
         </Text>
         <InviteBox alignItems="stretch" />
       </VStack>
+      <CreatePrivateLinkConnectionModal
+        isOpen={isPrivateLinkModalOpen}
+        onClose={closePrivateLinkModal}
+      />
+      <CreateSshConnectionModal
+        isOpen={isSshModalOpen}
+        onClose={closeSshModal}
+      />
     </Flex>
   );
 };
