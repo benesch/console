@@ -138,10 +138,13 @@ const ProfileDropdown = (props: ButtonProps) => {
 };
 
 export const ProfileMenuItems = () => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const { routes: authRoutes, user } = useAuth();
   const flags = useFlags();
   return (
-    <>
+    <VStack spacing={0} width="100%">
       <MenuItem as={RouterLink} to="/access" fontWeight="medium">
         App passwords
       </MenuItem>
@@ -156,11 +159,17 @@ export const ProfileMenuItems = () => {
       <MenuItem as={RouterLink} to="/pricing" fontWeight="medium">
         Pricing
       </MenuItem>
-      <MenuDivider />
-      <MenuItem fontWeight="medium" as="a" href={authRoutes.logoutUrl}>
+      <MenuItem
+        fontWeight="medium"
+        as="a"
+        href={authRoutes.logoutUrl}
+        color={semanticColors.accent.red}
+        borderTop="1px solid"
+        borderTopColor={semanticColors.border.primary}
+      >
         Sign out
       </MenuItem>
-    </>
+    </VStack>
   );
 };
 
