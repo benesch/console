@@ -24,15 +24,6 @@ const useAppPasswords = () => {
     // Reset token state when switching orgs, otherwise we continue to display stale app passwords
   }, [resetApiTokensState, user?.tenantId]);
 
-  React.useEffect(() => {
-    if (
-      loadingInProgress === false &&
-      tokensState.apiTokensDataUser.length === 0
-    ) {
-      addUserApiToken({ description: NEW_USER_DEFAULT_PASSWORD_NAME });
-    }
-  }, [tokensState.apiTokensDataUser, loadingInProgress, addUserApiToken]);
-
   const newPassword = React.useMemo(() => {
     if (createInProgress) {
       return null;
