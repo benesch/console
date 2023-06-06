@@ -234,13 +234,13 @@ const getNavItems = (
         },
       ],
     },
-    {
-      id: "configuration",
-      title: "Configuration",
-      hideIfEnvironmentUnhealthy: true,
-      navItems: [
-        ...(flags["source-creation-41"]
-          ? [
+    ...(flags["source-creation-41"]
+      ? [
+          {
+            id: "configuration",
+            title: "Configuration",
+            hideIfEnvironmentUnhealthy: true,
+            navItems: [
               {
                 label: "Connections",
                 href: `/regions/${regionSlug}/connections`,
@@ -251,10 +251,10 @@ const getNavItems = (
                 href: `/regions/${regionSlug}/secrets`,
                 icon: <SecretsIcon />,
               },
-            ]
-          : []),
-      ],
-    },
+            ],
+          },
+        ]
+      : []),
     // { label: "Editor", href: "/editor" },
   ];
 };
