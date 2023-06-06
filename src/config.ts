@@ -19,9 +19,12 @@ export const getCurrentStack = (
       return stack;
     }
   }
-  if (hostname.startsWith("staging") || hostname.match(/^.*\.preview/)) {
+  if (hostname.startsWith("staging.") || hostname.match(/^.*\.preview/)) {
     // matches staging.console.materialize.com or *.preview.console.materialize.com
     return "staging";
+  }
+  if (hostname.startsWith("loadtest.")) {
+    return "loadtest";
   }
   const personalStackMatch = hostname.match(/^\w*\.(staging|dev)/);
   if (personalStackMatch) {

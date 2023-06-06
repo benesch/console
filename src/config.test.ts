@@ -16,6 +16,11 @@ describe("getCurrentStack", () => {
     expect(stack).toEqual("local");
   });
 
+  it("should return loadtest if the there is no local storage value and the url is loadtest", () => {
+    const stack = getCurrentStack("loadtest.console.materialize.com");
+    expect(stack).toEqual("loadtest");
+  });
+
   it("should return staging if the there is no local storage value and the url is staging", () => {
     const stack = getCurrentStack("staging.console.materialize.com");
     expect(stack).toEqual("staging");
