@@ -12,7 +12,7 @@ function useSources({
   nameFilter,
 }: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
   const query = React.useMemo(() => {
-    const qb = queryBuilder
+    let qb = queryBuilder
       .selectFrom("mz_catalog.mz_sources as s")
       .select(["s.id", "s.name", "s.type", "s.size"])
       .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "s.schema_id")
@@ -24,13 +24,13 @@ function useSources({
       .where("s.id", "like", "u%")
       .where("s.type", "<>", "subsource");
     if (databaseId) {
-      qb.where("d.id", "=", databaseId);
+      qb = qb.where("d.id", "=", databaseId);
     }
     if (schemaId) {
-      qb.where("sc.id", "=", schemaId);
+      qb = qb.where("sc.id", "=", schemaId);
     }
     if (nameFilter) {
-      qb.where("s.name", "like", `%${nameFilter}%`);
+      qb = qb.where("s.name", "like", `%${nameFilter}%`);
     }
     return qb.compile();
   }, [databaseId, nameFilter, schemaId]);
