@@ -182,6 +182,7 @@ type NavItemType = {
 };
 
 type NavItemsGroupType = {
+  id: string;
   title: string;
   navItems: NavItemType[];
   hideIfEnvironmentUnhealthy?: boolean;
@@ -193,6 +194,7 @@ const getNavItems = (
 ): NavItemsGroupType[] => {
   return [
     {
+      id: "connect",
       title: "", // No title since this is temporary and doesn't fit cleanly into the taxonomy
       hideIfEnvironmentUnhealthy: false,
       navItems: [
@@ -204,6 +206,7 @@ const getNavItems = (
       ],
     },
     {
+      id: "compute",
       title: "Compute",
       hideIfEnvironmentUnhealthy: true,
       navItems: [
@@ -215,6 +218,7 @@ const getNavItems = (
       ],
     },
     {
+      id: "data",
       title: "Data",
       hideIfEnvironmentUnhealthy: true,
       navItems: [
@@ -230,12 +234,13 @@ const getNavItems = (
         },
       ],
     },
-    {
-      title: "Configuration",
-      hideIfEnvironmentUnhealthy: true,
-      navItems: [
-        ...(flags["source-creation-41"]
-          ? [
+    ...(flags["source-creation-41"]
+      ? [
+          {
+            id: "configuration",
+            title: "Configuration",
+            hideIfEnvironmentUnhealthy: true,
+            navItems: [
               {
                 label: "Connections",
                 href: `/regions/${regionSlug}/connections`,
@@ -246,10 +251,10 @@ const getNavItems = (
                 href: `/regions/${regionSlug}/secrets`,
                 icon: <SecretsIcon />,
               },
-            ]
-          : []),
-      ],
-    },
+            ],
+          },
+        ]
+      : []),
     // { label: "Editor", href: "/editor" },
   ];
 };
@@ -304,21 +309,15 @@ const NavMenu = (props: BoxProps) => {
       mb={{ base: 0.5, xl: 1 }}
       {...props}
     >
-      {navGroups.map(
-        ({
-          title,
-          hideIfEnvironmentUnhealthy,
-          navItems,
-        }: NavItemsGroupType) => {
-          return hideIfEnvironmentUnhealthy ? (
-            <HideIfEnvironmentUnhealthy key={props.title}>
-              <NavItemsGroup title={title} navItems={navItems} />
-            </HideIfEnvironmentUnhealthy>
-          ) : (
-            <NavItemsGroup title={title} navItems={navItems} />
-          );
-        }
-      )}
+      {navGroups.map((group) => {
+        return group.hideIfEnvironmentUnhealthy ? (
+          <HideIfEnvironmentUnhealthy key={group.id}>
+            <NavItemsGroup key={group.id} {...group} />
+          </HideIfEnvironmentUnhealthy>
+        ) : (
+          <NavItemsGroup key={group.id} {...group} />
+        );
+      })}
     </VStack>
   );
 };
@@ -345,21 +344,15 @@ const NavMenuCompact = (props: NavMenuCompactProps) => {
       />
       <MenuList>
         <VStack w="100%">
-          {navGroups.map(
-            ({
-              title,
-              hideIfEnvironmentUnhealthy,
-              navItems,
-            }: NavItemsGroupType) => {
-              return hideIfEnvironmentUnhealthy ? (
-                <HideIfEnvironmentUnhealthy key={props.title}>
-                  <NavItemsGroup title={title} navItems={navItems} />
-                </HideIfEnvironmentUnhealthy>
-              ) : (
-                <NavItemsGroup title={title} navItems={navItems} />
-              );
-            }
-          )}
+          {navGroups.map((group) => {
+            return group.hideIfEnvironmentUnhealthy ? (
+              <HideIfEnvironmentUnhealthy key={group.id}>
+                <NavItemsGroup key={group.id} {...group} />
+              </HideIfEnvironmentUnhealthy>
+            ) : (
+              <NavItemsGroup key={group.id} {...group} />
+            );
+          })}
           <ProfileMenuItems />
         </VStack>
       </MenuList>
