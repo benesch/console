@@ -78,7 +78,6 @@ const CreateSourceEntry = () => {
       <Tabs width="100%">
         <TabList>
           <Tab>Data</Tab>
-          <Tab>Network security</Tab>
         </TabList>
         <TabPanels>
           <TabPanel mt="8">

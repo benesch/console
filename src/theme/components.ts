@@ -107,8 +107,8 @@ export const Modal = {
   variants: {
     "2xl": {
       dialog: {
-        minWidth: "400px",
-        maxWidth: "400px",
+        minWidth: "500px",
+        maxWidth: "500px",
       },
     },
     "3xl": {
