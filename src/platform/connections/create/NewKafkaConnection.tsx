@@ -513,7 +513,11 @@ export const NewKafkaConnectionForm = () => {
                     label="Schema"
                     error={formState.errors.schema?.message}
                   >
-                    <SchemaSelect {...schemaField} schemas={schemas ?? []} />
+                    <SchemaSelect
+                      {...schemaField}
+                      schemas={schemas ?? []}
+                      variant={formState.errors.schema ? "error" : "default"}
+                    />
                   </InlineLabeledInput>
                 </FormControl>
               </AccordionPanel>
@@ -626,6 +630,9 @@ export const NewKafkaConnectionForm = () => {
                         options={saslMechanismOptions}
                         isSearchable={false}
                         {...saslMechanismField}
+                        variant={
+                          formState.errors.saslMechanism ? "error" : "default"
+                        }
                       />
                     </InlineLabeledInput>
                   </FormControl>

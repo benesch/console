@@ -51,7 +51,7 @@ export const Input = defineInputStyleConfig({
         _focus: {
           backgroundColor: "semanticColors.background.primary",
           borderColor: "semanticColors.accent.brightPurple",
-          boxShadow: "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)", // accent.brightPurple,
+          boxShadow: "input.focus",
         },
       },
     }),
@@ -59,7 +59,7 @@ export const Input = defineInputStyleConfig({
       field: {
         borderRadius: "lg",
         borderColor: "semanticColors.accent.red",
-        boxShadow: "0px 0px 0px 2px hsla(343, 95%, 46%, 0.24)", // accent.red,
+        boxShadow: "input.error",
         _focus: {
           backgroundColor: "semanticColors.background.primary",
         },

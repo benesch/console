@@ -16,6 +16,18 @@ import { DropdownIndicator } from "~/components/reactSelectComponents";
 import plus from "~/img/plus.svg";
 import { MaterializeTheme, ThemeColors, ThemeShadows } from "~/theme";
 
+declare module "react-select/dist/declarations/src/Select" {
+  export interface Props<
+    Option,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    IsMulti extends boolean,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Group extends GroupBase<Option>
+  > {
+    variant?: "default" | "error";
+  }
+}
+
 export type SelectOption = {
   id: string;
   name: string;
@@ -66,30 +78,45 @@ const buildStyles = <
       ...base,
       padding: "0",
     }),
-    control: (base, state) => ({
-      ...base,
-      cursor: "pointer",
-      color: semanticColors.foreground.secondary,
-      fontSize: "14px",
-      lineHeight: "16px",
-      minHeight: "32px",
-      padding: "0px",
-      borderRadius: "8px",
-      borderColor: semanticColors.border.secondary,
-      boxShadow:
-        "0px 0px 0.5px rgba(0, 0, 0, 0.16), 0px 0.5px 2px rgba(0, 0, 0, 0.12);",
-      background: state.isFocused
-        ? semanticColors.background.secondary
-        : semanticColors.background.primary,
-      ":hover": {
-        boxShadow: state.isFocused
-          ? "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)" // accent.brightPurple
-          : "",
-        borderColor: state.isFocused
+    control: (base, state) => {
+      const isError = state.selectProps.variant === "error";
+
+      return {
+        ...base,
+        cursor: "pointer",
+        color: semanticColors.foreground.secondary,
+        fontSize: "14px",
+        lineHeight: "16px",
+        minHeight: "32px",
+        padding: "0px",
+        borderRadius: "8px",
+        borderColor: isError
+          ? semanticColors.accent.red
+          : state.isFocused
           ? semanticColors.accent.brightPurple
-          : "inherit",
-      },
-    }),
+          : semanticColors.border.secondary,
+        boxShadow: isError
+          ? shadows.input.error
+          : state.isFocused
+          ? shadows.input.focus
+          : "0px 0px 0.5px rgba(0, 0, 0, 0.16), 0px 0.5px 2px rgba(0, 0, 0, 0.12);",
+        background: state.isFocused
+          ? semanticColors.background.secondary
+          : semanticColors.background.primary,
+        ":hover": {
+          boxShadow: isError
+            ? shadows.input.error
+            : state.isFocused
+            ? shadows.input.focus
+            : "",
+          borderColor: isError
+            ? semanticColors.accent.red
+            : state.isFocused
+            ? semanticColors.accent.brightPurple
+            : "inherit",
+        },
+      };
+    },
     dropdownIndicator: (base) => ({
       ...base,
       color: semanticColors.foreground.secondary,
@@ -225,7 +252,10 @@ export interface SearchableSelectType
 }
 
 const SearchableSelect: SearchableSelectType = React.forwardRef(
-  ({ options, ariaLabel, components, ...props }, ref: React.Ref<any>) => {
+  (
+    { options, ariaLabel, components, variant = "default", ...props },
+    ref: React.Ref<any>
+  ) => {
     const {
       colors: { semanticColors },
       shadows,
@@ -248,6 +278,7 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
         ref={ref}
         options={options}
         styles={buildStyles(semanticColors, shadows)}
+        variant={variant}
         {...props}
       />
     );

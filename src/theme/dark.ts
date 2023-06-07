@@ -67,4 +67,8 @@ export const darkShadows: ThemeShadows = {
       box-shadow: 0px 12px 20px 0px rgba(0, 0, 0, 0.24);
       box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.24);
     `,
+  input: {
+    error: "0px 0px 0px 2px hsla(343, 95%, 46%, 0.24)",
+    focus: "0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)",
+  },
 };

@@ -361,6 +361,7 @@ export const NewPostgresSourceForm = () => {
                     options: connections ?? [],
                   },
                 ]}
+                variant={formState.errors.connection ? "error" : "default"}
               />
             </InlineLabeledInput>
           </FormControl>
@@ -403,7 +404,11 @@ export const NewPostgresSourceForm = () => {
                     label="Schema"
                     error={formState.errors.schema?.message}
                   >
-                    <SchemaSelect {...schemaField} schemas={schemas ?? []} />
+                    <SchemaSelect
+                      {...schemaField}
+                      schemas={schemas ?? []}
+                      variant={formState.errors.schema ? "error" : "default"}
+                    />
                   </InlineLabeledInput>
                 </FormControl>
               </AccordionPanel>
@@ -432,6 +437,7 @@ export const NewPostgresSourceForm = () => {
                   onAddNewItem={() => {
                     clusterField.onChange(NEW_CLUSTER_ID_OPTION);
                   }}
+                  variant={formState.errors.cluster ? "error" : "default"}
                 />
                 {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
                   <Text
@@ -462,6 +468,7 @@ export const NewPostgresSourceForm = () => {
                       options: clusterSizeOptions,
                     },
                   ]}
+                  variant={formState.errors.clusterSize ? "error" : "default"}
                 />
               </InlineLabeledInput>
             </FormControl>
