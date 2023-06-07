@@ -198,6 +198,8 @@ export const NewPostgresSourceForm = () => {
   });
 
   const { runSql: createSource, loading: isCreating } = useSqlLazy({
+    // Materialize has a 30 second timeout for attempting to connect to postgres
+    timeout: 35_000,
     queryBuilder: (values: FormState) => {
       assert(values.schema);
       assert(values.connection);
