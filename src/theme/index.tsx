@@ -64,6 +64,10 @@ export interface ThemeShadows {
   level2: string;
   level3: string;
   level4: string;
+  input: {
+    error: string;
+    focus: string;
+  };
 }
 
 const fontDefault = "Inter, Arial, sans-serif";
