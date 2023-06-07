@@ -249,7 +249,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
           name={`${fieldKey}.selected` as Path<FormState>}
           rules={{ ...selectRules }}
           shouldUnregister={true}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <SearchableSelect
               {...field}
               ariaLabel={fieldLabel ?? ""}
@@ -260,6 +260,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
               onAddNewItem={() => {
                 setMode("create");
               }}
+              variant={fieldState.error ? "error" : "default"}
               {...selectProps}
             />
           )}

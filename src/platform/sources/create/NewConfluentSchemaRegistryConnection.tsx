@@ -360,6 +360,9 @@ const NewConfluentSchemaRegistryConnection = ({
                         <SchemaSelect
                           {...schemaField}
                           schemas={schemas ?? []}
+                          variant={
+                            formState.errors.schema ? "error" : "default"
+                          }
                         />
                         <FormErrorMessage>
                           {formState.errors.schema?.message}

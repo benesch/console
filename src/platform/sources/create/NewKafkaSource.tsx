@@ -476,7 +476,11 @@ export const NewKafkaSourceForm = () => {
                       label="Schema"
                       error={formState.errors.schema?.message}
                     >
-                      <SchemaSelect {...schemaField} schemas={schemas ?? []} />
+                      <SchemaSelect
+                        {...schemaField}
+                        schemas={schemas ?? []}
+                        variant={formState.errors.schema ? "error" : "default"}
+                      />
                     </InlineLabeledInput>
                   </FormControl>
                 </AccordionPanel>
@@ -505,6 +509,7 @@ export const NewKafkaSourceForm = () => {
                         options: clusters,
                       },
                     ]}
+                    variant={formState.errors.cluster ? "error" : "default"}
                   />
                   {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
                     <Text
@@ -535,6 +540,7 @@ export const NewKafkaSourceForm = () => {
                         options: clusterSizeOptions ?? [],
                       },
                     ]}
+                    variant={formState.errors.clusterSize ? "error" : "default"}
                   />
                 </InlineLabeledInput>
               </FormControl>
@@ -574,6 +580,7 @@ export const NewKafkaSourceForm = () => {
                       },
                     ]}
                     menuPlacement="top"
+                    variant={formState.errors.format ? "error" : "default"}
                   />
                 </InlineLabeledInput>
               </FormControl>
@@ -601,6 +608,9 @@ export const NewKafkaSourceForm = () => {
                         }}
                         addNewItemLabel="New schema registry connection"
                         menuPlacement="top"
+                        variant={
+                          formState.errors.csrConnection ? "error" : "default"
+                        }
                       />
                       <FormErrorMessage>
                         {formState.errors.csrConnection?.message}
@@ -625,6 +635,7 @@ export const NewKafkaSourceForm = () => {
                       },
                     ]}
                     menuPlacement="top"
+                    variant={formState.errors.envelope ? "error" : "default"}
                   />
                 </InlineLabeledInput>
               </FormControl>
