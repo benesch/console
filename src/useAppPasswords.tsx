@@ -12,7 +12,8 @@ const useAppPasswords = () => {
   const { loadUserApiTokens, addUserApiToken, resetApiTokensState } =
     useApiTokensActions();
   const tokensState = useApiTokensState();
-  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS;
+  // In my testing, this value is undefined when loading, and false when loading is complete
+  const loadingInProgress = tokensState.loaders.LOAD_API_TOKENS !== false;
   const createInProgress = tokensState.loaders.ADD_API_TOKEN;
 
   React.useEffect(() => {
@@ -23,15 +24,6 @@ const useAppPasswords = () => {
     resetApiTokensState();
     // Reset token state when switching orgs, otherwise we continue to display stale app passwords
   }, [resetApiTokensState, user?.tenantId]);
-
-  React.useEffect(() => {
-    if (
-      loadingInProgress === false &&
-      tokensState.apiTokensDataUser.length === 0
-    ) {
-      addUserApiToken({ description: NEW_USER_DEFAULT_PASSWORD_NAME });
-    }
-  }, [tokensState.apiTokensDataUser, loadingInProgress, addUserApiToken]);
 
   const newPassword = React.useMemo(() => {
     if (createInProgress) {
