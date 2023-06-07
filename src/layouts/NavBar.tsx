@@ -48,6 +48,7 @@ import { useRegionSlug } from "~/region";
 import { ClustersIcon } from "~/svg/nav/ClustersIcon";
 import { ConnectIcon } from "~/svg/nav/ConnectIcon";
 import { ConnectionsIcon } from "~/svg/nav/ConnectionsIcon";
+import { HomeIcon } from "~/svg/nav/HomeIcon";
 import { SecretsIcon } from "~/svg/nav/SecretsIcon";
 import { SinksIcon } from "~/svg/nav/SinksIcon";
 import { SourcesIcon } from "~/svg/nav/SourcesIcon";
@@ -178,6 +179,7 @@ type NavItemType = {
   href: string;
   isInternal?: boolean;
   onClick?: () => void;
+  hideIfEnvironmentUnhealthy?: boolean;
   icon: JSX.Element;
 };
 
@@ -194,15 +196,24 @@ const getNavItems = (
 ): NavItemsGroupType[] => {
   return [
     {
-      id: "connect",
+      id: "default",
       title: "", // No title since this is temporary and doesn't fit cleanly into the taxonomy
-      hideIfEnvironmentUnhealthy: false,
       navItems: [
         {
           label: "Connect",
           href: `/regions/${regionSlug}/connect`,
-          icon: <ConnectIcon />,
+          icon: flags["console-shell-221"] ? <HomeIcon /> : <ConnectIcon />,
         },
+        ...(flags["console-shell-221"]
+          ? [
+              {
+                label: "SQL Shell",
+                href: `/regions/${regionSlug}/shell`,
+                icon: <ConnectIcon />,
+                hideIfEnvironmentUnhealthy: true,
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -277,15 +288,34 @@ const NavItemsGroup = (props: NavItemsGroupType) => {
           {props.title}
         </Text>
       )}
-      {props.navItems.map(({ label, href, onClick, icon }: NavItemType) => (
-        <NavItem
-          label={label}
-          href={href}
-          onClick={onClick}
-          key={label}
-          icon={icon}
-        />
-      ))}
+      {props.navItems.map(
+        ({
+          label,
+          href,
+          onClick,
+          icon,
+          hideIfEnvironmentUnhealthy,
+        }: NavItemType) =>
+          hideIfEnvironmentUnhealthy ? (
+            <HideIfEnvironmentUnhealthy key={label}>
+              <NavItem
+                label={label}
+                href={href}
+                onClick={onClick}
+                key={label}
+                icon={icon}
+              />
+            </HideIfEnvironmentUnhealthy>
+          ) : (
+            <NavItem
+              label={label}
+              href={href}
+              onClick={onClick}
+              key={label}
+              icon={icon}
+            />
+          )
+      )}
     </VStack>
   );
 };

@@ -36,6 +36,7 @@ import { SentryRoutes } from "~/sentry";
 import { assert } from "~/util";
 
 import ConnectionsRoutes from "./platform/connections/ConnectionsRoutes";
+import ShellRoutes from "./platform/shell/ShellRoutes";
 import {
   currentEnvironmentIdState,
   defaultRegion,
@@ -202,6 +203,16 @@ const EnvironmentRoutes = () => {
           </BaseLayout>
         }
       />
+      {flags["console-shell-221"] && (
+        <Route
+          path="/shell/*"
+          element={
+            <BaseLayout>
+              <ShellRoutes />
+            </BaseLayout>
+          }
+        />
+      )}
       {flags["source-creation-41"] && (
         <>
           <Route
