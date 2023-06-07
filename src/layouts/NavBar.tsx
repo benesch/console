@@ -301,7 +301,7 @@ const NavMenu = (props: BoxProps) => {
     <VStack
       data-test-id="nav-lg"
       mx={4}
-      spacing={2}
+      spacing={4}
       flex="2"
       alignSelf="stretch"
       alignItems="stretch"
