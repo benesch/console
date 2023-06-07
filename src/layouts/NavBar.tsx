@@ -255,7 +255,6 @@ const getNavItems = (
           },
         ]
       : []),
-    // { label: "Editor", href: "/editor" },
   ];
 };
 

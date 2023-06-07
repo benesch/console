@@ -44,8 +44,6 @@ import {
 import { useTrackFocus } from "./recoil/focus";
 import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 
-const Editor = React.lazy(() => import("~/platform/editor/Editor"));
-
 /** The root router for the application. */
 const Router = () => {
   useTrackFocus();
@@ -101,14 +99,6 @@ const Router = () => {
           element={
             <BaseLayout hideContentOnEnvironmentError={false}>
               <PricingPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/editor"
-          element={
-            <BaseLayout overflowY="hidden">
-              <Editor />
             </BaseLayout>
           }
         />
