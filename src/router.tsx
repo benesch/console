@@ -36,6 +36,7 @@ import { SentryRoutes } from "~/sentry";
 import { assert } from "~/util";
 
 import ConnectionsRoutes from "./platform/connections/ConnectionsRoutes";
+import ShellRoutes from "./platform/shell/ShellRoutes";
 import {
   currentEnvironmentIdState,
   defaultRegion,
@@ -43,8 +44,6 @@ import {
 } from "./recoil/environments";
 import { useTrackFocus } from "./recoil/focus";
 import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
-
-const Editor = React.lazy(() => import("~/platform/editor/Editor"));
 
 /** The root router for the application. */
 const Router = () => {
@@ -101,14 +100,6 @@ const Router = () => {
           element={
             <BaseLayout hideContentOnEnvironmentError={false}>
               <PricingPage />
-            </BaseLayout>
-          }
-        />
-        <Route
-          path="/editor"
-          element={
-            <BaseLayout overflowY="hidden">
-              <Editor />
             </BaseLayout>
           }
         />
@@ -212,6 +203,16 @@ const EnvironmentRoutes = () => {
           </BaseLayout>
         }
       />
+      {flags["console-shell-221"] && (
+        <Route
+          path="/shell/*"
+          element={
+            <BaseLayout>
+              <ShellRoutes />
+            </BaseLayout>
+          }
+        />
+      )}
       {flags["source-creation-41"] && (
         <>
           <Route
