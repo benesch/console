@@ -50,8 +50,6 @@ const DefinePluginOptions: IDefinePluginOptions = {
 
 const scriptSrc = [
   "'self'",
-  "'unsafe-inline'",
-  "'wasm-unsafe-eval'",
   "https://js.stripe.com",
   "https://www.recaptcha.net/recaptcha/",
   "https://*.googletagmanager.com",
@@ -73,7 +71,6 @@ const cspPolicy = {
     "fonts.googleapis.com/",
     "https://fonts.intercomcdn.com",
   ],
-  "frame-ancestors": ["'none'"],
   "frame-src": [
     "https://js.stripe.com",
     "https://calendly.com",
@@ -96,7 +93,7 @@ const cspPolicy = {
     "http://unpkg.com",
   ],
   "object-src": ["'none'"],
-  "script-src": scriptSrc,
+  "script-src": ["'wasm-unsafe-eval'", ...scriptSrc],
   "script-src-elem": scriptSrc,
   "style-src": [
     "'self'",
@@ -107,7 +104,6 @@ const cspPolicy = {
     "http://unpkg.com",
   ],
   "worker-src": ["'none'"],
-  "report-to": "sentry",
 };
 
 const plugins = [
