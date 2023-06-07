@@ -40,6 +40,7 @@
     "@types/mini-css-extract-plugin": "^2.4.0",
     "@types/react-table": "^7.7.12",
     "@types/webpack-bundle-analyzer": "^4.6.0",
+    "@uiw/react-textarea-code-editor": "^2.1.1",
     "codemirror": "^5.65.11",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
