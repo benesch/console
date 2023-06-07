@@ -217,7 +217,7 @@ const FormAside = () => {
             height="10"
             px="4"
             leftIcon={<ConfluentLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/connect-sources/confluent-cloud/"
+            href="https://materialize.com/docs/ingest-data/confluent-cloud/"
             target="_blank"
           >
             Confluent
@@ -231,7 +231,7 @@ const FormAside = () => {
             height="10"
             px="4"
             leftIcon={<RedpandaLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/connect-sources/redpanda-cloud/"
+            href="https://materialize.com/docs/ingest-data/redpanda-cloud/"
             target="_blank"
           >
             Redpanda
@@ -246,7 +246,7 @@ const FormAside = () => {
             height="10"
             px="4"
             leftIcon={<UpstashLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/connect-sources/upstash-kafka/"
+            href="https://materialize.com/docs/ingest-data/upstash-kafka/"
             target="_blank"
           >
             Upstash
@@ -260,7 +260,7 @@ const FormAside = () => {
             height="10"
             px="4"
             leftIcon={<AwsLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/connect-sources/amazon-msk/"
+            href="https://materialize.com/docs/ingest-data/amazon-msk/"
             target="_blank"
           >
             Amazon MSK
