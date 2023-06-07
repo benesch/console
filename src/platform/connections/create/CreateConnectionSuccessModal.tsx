@@ -84,7 +84,7 @@ const CreateConnectionSuccessModal = () => {
               to={`/regions/${regionSlug}/sources/new/${connectionType}?connectionId=${connectionId}`}
               height="10"
             >
-              Create a data source
+              Create a source
             </Button>
           </VStack>
         </ModalBody>
