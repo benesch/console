@@ -561,7 +561,18 @@ export const NewKafkaConnectionForm = () => {
             variant="soft-rounded"
             isLazy
             index={authMode}
-            onChange={(newTab) => setAuthMode(newTab)}
+            onChange={(newTab) => {
+              setAuthMode(newTab);
+              if (newTab !== AUTH_MODE.SASL) {
+                setValue("saslUsername", { mode: "text" });
+                setValue("saslPassword", { mode: "select" });
+              }
+              if (newTab !== AUTH_MODE.SSL) {
+                setValue("sslKey", { mode: "select" });
+                setValue("sslCertificate", { mode: "select" });
+                setValue("sslCertificateAuthority", { mode: "select" });
+              }
+            }}
             size="sm"
           >
             <TabList>

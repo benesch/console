@@ -313,6 +313,12 @@ export const NewPostgresConnectionForm = () => {
 
   const selectedSSLMode = watch("sslMode")?.name;
 
+  React.useEffect(() => {
+    if (selectedSSLMode !== "verify-ca" && selectedSSLMode !== "verify-full") {
+      setValue("sslCertificateAuthority", { mode: "select" });
+    }
+  }, [selectedSSLMode, setValue]);
+
   if (loadingError) {
     return <ErrorBox />;
   }
@@ -455,7 +461,11 @@ export const NewPostgresConnectionForm = () => {
           <VStack mt="2" spacing="6" alignItems="start">
             <FormControl flexDir="row" display="flex">
               <Switch
-                onChange={() => setEnableCertAuth((prev) => !prev)}
+                onChange={() => {
+                  setEnableCertAuth((prev) => !prev);
+                  setValue("sslKey", { mode: "select" });
+                  setValue("sslCertificate", { mode: "select" });
+                }}
                 isChecked={enableCertAuth}
               />
               <FormLabel m="0" ml="2" lineHeight="16px">
