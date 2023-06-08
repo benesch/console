@@ -203,6 +203,7 @@ export const darkTheme = extendTheme(baseTheme, {
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": darkColors.foreground.secondary,
+      "chakra-body-text": darkColors.foreground.primary,
     },
   },
   shadows: darkShadows,
@@ -215,6 +216,7 @@ export const lightTheme = extendTheme(baseTheme, {
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": lightColors.foreground.secondary,
+      "chakra-body-text": lightColors.foreground.primary,
     },
   },
   shadows: lightShadows,
