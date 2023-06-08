@@ -126,7 +126,7 @@ const NewConfluentSchemaRegistryConnection = ({
       name: "",
       url: "",
       useSsl: false,
-      username: createSecretFieldDefaultValues(),
+      username: createSecretFieldDefaultValues({ mode: "text" }),
       password: createSecretFieldDefaultValues(),
       sslCertificateAuthority: createSecretFieldDefaultValues(),
       sslCertificate: createSecretFieldDefaultValues(),
