@@ -484,7 +484,7 @@ export const NewKafkaConnectionForm = () => {
                   pattern: {
                     value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                     message:
-                      "Connection name must not include special characters.",
+                      "Connection name can only contain alphanumeric characters (A-Z) and underscores.",
                   },
                 })}
                 autoFocus
@@ -547,7 +547,7 @@ export const NewKafkaConnectionForm = () => {
                               ({ hostPort }) => hostPort === value
                             ).length;
 
-                            return count <= 1 || "Brokers must be unique";
+                            return count <= 1 || "Brokers must be unique.";
                           },
                         },
                       })}
