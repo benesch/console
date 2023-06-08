@@ -522,6 +522,7 @@ export const NewPostgresConnectionForm = () => {
                   textInputRules={{
                     required: "SSL key is required.",
                   }}
+                  required
                 />
                 <SecretsFormControl
                   control={control}
