@@ -437,12 +437,28 @@ export interface MaterializedView {
 /**
  * Fetches all materialized views for a given cluster
  */
-export function useMaterializedViews(clusterId?: string) {
+export function useMaterializedViews({
+  clusterId,
+  databaseId,
+  schemaId,
+  nameFilter,
+}: {
+  clusterId?: string;
+  databaseId?: string;
+  schemaId?: string;
+  nameFilter?: string;
+} = {}) {
   const response = useSql(
     clusterId
-      ? `SELECT id, name, definition
-FROM mz_materialized_views
-WHERE cluster_id = '${clusterId}';`
+      ? `SELECT mv.id, mv.name, mv.definition
+FROM mz_materialized_views mv
+INNER JOIN mz_schemas sc ON sc.id = mv.schema_id
+INNER JOIN mz_databases d ON d.id = sc.database_id
+WHERE cluster_id = '${clusterId}'
+${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
+${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
+${nameFilter ? `AND mv.name LIKE '%${nameFilter}%'` : ""}
+;`
       : undefined
   );
   let views: MaterializedView[] | null = null;

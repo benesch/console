@@ -13,7 +13,9 @@ import { useParams } from "react-router-dom";
 
 import { MaterializedView, useMaterializedViews } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
+import SchemaFilter from "~/components/SchemaFilter";
 import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
@@ -23,6 +25,7 @@ import {
   SampleCodeBoxWrapper,
 } from "~/layouts/listPageComponents";
 import ClustersIcon from "~/svg/Clusters";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import { ClusterParams } from "./ClusterRoutes";
 import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
@@ -35,14 +38,27 @@ const createExample = `CREATE MATERIALIZED VIEW winning_bids AS
   FROM highest_bid_per_auction
   WHERE end_time < mz_now();`;
 
+const NAME_FILTER_QUERY_STRING_KEY = "viewsName";
+
 const MaterializedViews = () => {
   const { id: clusterId } = useParams<ClusterParams>();
+
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
+  );
+
+  const materializedViewsResponse = useMaterializedViews({
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
+    clusterId,
+  });
 
   const {
     data: materializedViews,
     isInitiallyLoading,
     isError,
-  } = useMaterializedViews(clusterId);
+  } = materializedViewsResponse;
 
   const isEmpty = materializedViews && materializedViews.length === 0;
 
@@ -77,6 +93,10 @@ const MaterializedViews = () => {
         <>
           <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
             <PageHeading>Materialized Views</PageHeading>
+            <HStack>
+              <DatabaseFilter {...databaseFilter} />
+              <SchemaFilter {...schemaFilter} />
+            </HStack>
           </HStack>
           <MaterializedViewTable materializedViews={materializedViews ?? []} />
         </>
