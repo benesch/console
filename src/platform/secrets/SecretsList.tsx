@@ -148,6 +148,11 @@ const SecretsCreationModal = ({
     queryBuilder: createSecretQueryBuilder,
   });
 
+  const handleClose = () => {
+    formReset();
+    onClose();
+  };
+
   const handleValidSubmit = async (formValues: FormValues) => {
     setShowGenericQueryError(false);
     const variables = {
@@ -179,7 +184,7 @@ const SecretsCreationModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent shadow={shadows.level4}>
         <form onSubmit={handleSubmit(handleValidSubmit)}>
@@ -238,7 +243,7 @@ const SecretsCreationModal = ({
 
           <ModalFooter>
             <HStack spacing="2">
-              <Button variant="secondary" size="sm" onClick={onClose}>
+              <Button variant="secondary" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
               <Button
