@@ -9,6 +9,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Modal,
   ModalContent,
   Text,
@@ -595,6 +596,7 @@ export const NewKafkaSourceForm = () => {
                       mr="4"
                     />
                     <Box width="100%">
+                      <FormLabel>Confluent Schema Registry</FormLabel>
                       <SearchableSelect
                         ariaLabel="Choose connection"
                         placeholder="Choose connection"
