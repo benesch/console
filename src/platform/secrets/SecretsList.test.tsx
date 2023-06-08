@@ -172,7 +172,7 @@ describe("SecretsList", () => {
 
       expect(
         await screen.findByText(
-          "There was an error creating a secret key. Please try again."
+          "There was an error creating a secret name. Please try again."
         )
       ).toBeVisible();
     });
