@@ -200,7 +200,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
       message:
         createSecretKey && createSecretKey.length > 0
           ? `A new secret named ${createSecretKey} will be created.`
-          : undefined,
+          : "Alphanumeric characters and underscores only.",
     };
 
     if (!canFieldBeText) {
