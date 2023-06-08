@@ -440,6 +440,7 @@ export const NewKafkaSourceForm = () => {
                 label="Name"
                 error={formState.errors.name?.message}
                 message="Alphanumeric characters and underscores only."
+                required
               >
                 <ObjectNameInput
                   {...register("name", {
@@ -494,6 +495,7 @@ export const NewKafkaSourceForm = () => {
               <InlineLabeledInput
                 label="Cluster"
                 error={formState.errors.cluster?.message}
+                required
               >
                 <Box>
                   <SearchableSelect
@@ -531,6 +533,7 @@ export const NewKafkaSourceForm = () => {
                 <InlineLabeledInput
                   label="Cluster size"
                   error={formState.errors.clusterSize?.message}
+                  required
                 >
                   <SearchableSelect
                     ariaLabel="Select cluster size"
@@ -554,6 +557,7 @@ export const NewKafkaSourceForm = () => {
                 <InlineLabeledInput
                   label="Topic"
                   error={formState.errors.topic?.message}
+                  required
                 >
                   <ObjectNameInput
                     {...register("topic", {
@@ -596,7 +600,7 @@ export const NewKafkaSourceForm = () => {
                       mr="4"
                     />
                     <Box width="100%">
-                      <FormLabel>Confluent Schema Registry</FormLabel>
+                      <FormLabel mb="1">Confluent Schema Registry*</FormLabel>
                       <SearchableSelect
                         ariaLabel="Choose connection"
                         placeholder="Choose connection"

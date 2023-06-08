@@ -356,6 +356,7 @@ export const NewPostgresConnectionForm = () => {
               label="Name"
               error={formState.errors.name?.message}
               message="Alphanumeric characters and underscores only."
+              required
             >
               <ObjectNameInput
                 {...register("name", {
@@ -410,6 +411,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="Host"
                 error={formState.errors.host?.message}
+                required
               >
                 <Input
                   {...register("host", {
@@ -426,6 +428,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="Database"
                 error={formState.errors.pgDatabaseName?.message}
+                required
               >
                 <Input
                   {...register("pgDatabaseName", {
@@ -476,6 +479,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="User"
                 error={formState.errors.user?.message}
+                required
               >
                 <Input
                   {...register("user", {
@@ -538,6 +542,7 @@ export const NewPostgresConnectionForm = () => {
                   textInputRules={{
                     required: "Certificate is required.",
                   }}
+                  required
                 />
               </>
             )}
@@ -552,6 +557,7 @@ export const NewPostgresConnectionForm = () => {
                   <InlineLabeledInput
                     label="SSL Mode"
                     error={fieldState.error?.message}
+                    required={enableCertAuth}
                   >
                     <SearchableSelect
                       ariaLabel="SSL Mode"
@@ -589,6 +595,7 @@ export const NewPostgresConnectionForm = () => {
                 textInputProps={{
                   placeholder: "-----BEGIN CERTIFICATE...",
                 }}
+                required
               />
             )}
           </VStack>

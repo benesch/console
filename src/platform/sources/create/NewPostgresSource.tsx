@@ -392,6 +392,7 @@ export const NewPostgresSourceForm = () => {
               label="Name"
               error={sourceNameErrorMessage(formState.errors.name)}
               message="Alphanumeric characters and underscores only."
+              required
             >
               <ObjectNameInput
                 {...register("name", {
@@ -440,6 +441,7 @@ export const NewPostgresSourceForm = () => {
             <InlineLabeledInput
               label="Cluster"
               error={formState.errors.cluster?.message}
+              required
             >
               <Box>
                 <SearchableSelect
@@ -477,6 +479,7 @@ export const NewPostgresSourceForm = () => {
               <InlineLabeledInput
                 label="Cluster size"
                 error={formState.errors.clusterSize?.message}
+                required
               >
                 <SearchableSelect
                   ariaLabel="Select cluster size"
@@ -500,6 +503,7 @@ export const NewPostgresSourceForm = () => {
               <InlineLabeledInput
                 label="Publication"
                 error={formState.errors.publication?.message}
+                required
               >
                 <ObjectNameInput
                   {...register("publication", {
@@ -525,6 +529,7 @@ export const NewPostgresSourceForm = () => {
                     <InlineLabeledInput
                       key={field.id}
                       label={`Table ${index + 1}`}
+                      required
                     >
                       <HStack alignItems="start">
                         <FormControl

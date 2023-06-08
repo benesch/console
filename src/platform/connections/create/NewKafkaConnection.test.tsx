@@ -44,12 +44,12 @@ const renderComponent = (element: ReactElement) => {
 };
 
 async function fillRequiredFields(user: UserEvent) {
-  const connectionNameInput = screen.getByLabelText("Name");
+  const connectionNameInput = screen.getByLabelText("Name*");
 
   await user.type(connectionNameInput, "name");
   const brokerInput = screen.getByLabelText("Broker host 1");
   await user.type(brokerInput, "broker1:9092");
-  const usernameInput = screen.getByLabelText("Username");
+  const usernameInput = screen.getByLabelText("Username*");
   await user.type(usernameInput, "user");
 
   await user.click(screen.getByLabelText("Password"));
