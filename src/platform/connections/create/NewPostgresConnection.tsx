@@ -21,7 +21,7 @@ import { Controller, useController, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { useAuth } from "~/api/auth";
 import createPostgresConnection from "~/api/materialize/connection/createPostgresConnection";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
@@ -106,6 +106,7 @@ export const NewPostgresConnectionForm = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
   const { data: schemas, error: schemasError } = useSchemas();
   const {
     data: secrets,
@@ -284,7 +285,7 @@ export const NewPostgresConnectionForm = () => {
           type="submit"
           isDisabled={isCreating}
           onClick={() =>
-            segment.track("Create Connection Clicked", { type: "postgres" })
+            track("Create Connection Clicked", { type: "postgres" })
           }
         >
           Create connection

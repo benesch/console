@@ -29,7 +29,7 @@ import * as React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import FreeTrialNotice from "~/components/FreeTrialNotice";
 import { SUPPORT_HREF } from "~/components/SupportLink";
 import SwitchStackModal from "~/components/SwitchStackModal";
@@ -448,6 +448,7 @@ const NavItem = (props: NavItemType) => {
 };
 
 const HelpDropdown = () => {
+  const { track } = useSegment();
   const { colors } = useTheme<MaterializeTheme>();
   return (
     <Menu>
@@ -487,7 +488,7 @@ const HelpDropdown = () => {
         <HelpDropdownLink
           href="https://materialize.com/docs/"
           onClick={() => {
-            segment.track("Link Click", {
+            track("Link Click", {
               label: "Docs",
               href: "https://materialize.com/docs/",
             });

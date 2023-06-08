@@ -2,7 +2,7 @@ import { Text, useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, { GroupBase } from "react-select";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { Schema } from "~/api/materialize/useSchemas";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectFilterStyles, MaterializeTheme } from "~/theme";
@@ -18,6 +18,8 @@ const SchemaFilter = ({
   selected,
   setSelectedSchema,
 }: SchemaFilterProps) => {
+  const { track } = useSegment();
+
   const {
     colors: { semanticColors },
     shadows,
@@ -46,7 +48,7 @@ const SchemaFilter = ({
       onChange={(value) => {
         if (!value) return;
         setSelectedSchema(value.id);
-        segment.track("Schema Filter Changed", { value: value.name });
+        track("Schema Filter Changed", { value: value.name });
       }}
       getOptionValue={(option) => option.id.toString()}
       formatOptionLabel={(data) => (

@@ -20,7 +20,7 @@ import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
 import PricingPage from "~/access/PricingPage";
-import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { segment } from "~/analytics/segment";
 import { hasInvoiceReadPermission, useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
 import useBootIntercom from "~/hooks/useBootIntercom";
@@ -47,6 +47,7 @@ import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 
 /** The root router for the application. */
 const Router = () => {
+  const location = useLocation();
   useTrackFocus();
   useBootIntercom();
 
@@ -70,6 +71,29 @@ const Router = () => {
       },
     });
   }, [ldClient, user]);
+
+  React.useEffect(() => {
+    if (user) {
+      segment.identify(user.id);
+    } else {
+      segment.reset();
+    }
+  }, [user]);
+
+  React.useEffect(() => {
+    segment.page(
+      undefined, // category
+      undefined, // name
+      {
+        // Include the hash because the Frontegg admin portal uses the hash
+        // for routing.
+        hash: location.hash,
+      },
+      {
+        groupId: user?.tenantId,
+      }
+    );
+  }, [location, user]);
 
   return (
     <>
@@ -115,7 +139,6 @@ const Router = () => {
         )}
         <Route path="*" element={<RedirectToHome />} />
       </ProtectedRoutes>
-      <AnalyticsOnEveryPage />
     </>
   );
 };

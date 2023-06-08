@@ -20,7 +20,7 @@ import React from "react";
 import { useController, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import {
   Connection,
   normalizeConnectionRow,
@@ -115,6 +115,7 @@ export const NewKafkaSourceForm = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
   const [queryParams] = useSearchParams();
   const { data: schemas, error: schemasError } = useSchemas();
   const { data: clusterSizes, error: clusterSizesError } =
@@ -399,9 +400,7 @@ export const NewKafkaSourceForm = () => {
             size="sm"
             type="submit"
             isDisabled={isCreating}
-            onClick={() =>
-              segment.track("Create Source Clicked", { type: "kafka" })
-            }
+            onClick={() => track("Create Source Clicked", { type: "kafka" })}
           >
             Create source
           </Button>
@@ -601,9 +600,7 @@ export const NewKafkaSourceForm = () => {
                         options={csrConnections ?? []}
                         displayAddNewItem
                         onAddNewItem={() => {
-                          segment.track(
-                            "New Schema Registry Connection Clicked"
-                          );
+                          track("New Schema Registry Connection Clicked");
                           openCsrConnectionModal();
                         }}
                         addNewItemLabel="New schema registry connection"

@@ -18,7 +18,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { Source, SourcesResponse } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
@@ -90,6 +90,7 @@ const SourcesListPage = ({
 }: SourceListProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const flags = useFlags();
+  const { track } = useSegment();
 
   const {
     data: sources,
@@ -124,7 +125,7 @@ const SourcesListPage = ({
               size="sm"
               as={Link}
               to="new/connection"
-              onClick={() => segment.track("New Source Clicked")}
+              onClick={() => track("New Source Clicked")}
             >
               New Source
             </Button>
