@@ -227,7 +227,7 @@ export const InlineLabeledInput = ({
       </FormLabel>
       {children}
       <Box gridColumn="2">
-        {message && <FormHelperText>{!error && message}</FormHelperText>}
+        {message && <FormHelperText>{message}</FormHelperText>}
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>
