@@ -8,6 +8,7 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
+import * as Sentry from "@sentry/react";
 import {
   differenceInDays,
   differenceInHours,
@@ -72,6 +73,7 @@ const ClusterOverview = () => {
     getClusterById,
     isInitiallyLoading: isClusterLoading,
     isError: isClusterError,
+    error: clusterLoadError,
   } = useClusters();
   const cluster = getClusterById(clusterId);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
@@ -196,7 +198,22 @@ const ClusterOverview = () => {
     return chartData;
   }, [bucketSizeMs, buckets, cluster, data, selectedReplicas]);
 
+  if (clusterLoadError) {
+    Sentry.captureException(
+      new Error("Cluster Overview cluster load error: " + clusterLoadError)
+    );
+  }
+  if (errors.length > 0) {
+    Sentry.captureException(
+      new Error(
+        "Cluster Overview utilization load error:\n" + errors.join("\n")
+      )
+    );
+  }
   if (isClusterError || errors.length > 0) {
+    Sentry.captureException(
+      new Error("Cluster Overview error:\n" + errors.join("\n"))
+    );
     return <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />;
   }
 
