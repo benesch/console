@@ -195,10 +195,16 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
         }
       } catch (err) {
         if ((err as Error)?.name === "AbortError") {
+          const errorMessage = "Timeout: query aborted";
+          onError?.(errorMessage);
+          onSettled?.(undefined, errorMessage);
+          setResults(null);
+          setError(errorMessage);
           return;
         }
         onSettled?.(undefined, DEFAULT_QUERY_ERROR);
         onError?.(DEFAULT_QUERY_ERROR);
+        setResults(null);
         setError(DEFAULT_QUERY_ERROR);
       } finally {
         clearTimeout(timeoutId);

@@ -16,6 +16,7 @@ import {
   ModalContent,
   Switch,
   Text,
+  useDisclosure,
   useTheme,
   VStack,
 } from "@chakra-ui/react";
@@ -63,6 +64,7 @@ import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
 import { relativeSourceErrorsPath } from "../SourceRoutes";
+import ProlongedPostgresSourceCreationModal from "./ProlongedPostgresSourceCreationModal";
 
 type FormState = {
   name: string;
@@ -78,6 +80,8 @@ type FormState = {
     alias: string;
   }[];
 };
+
+const PROLONGED_MODAL_DELAY = 1_500;
 
 function sourceNameErrorMessage(error: FieldError | undefined) {
   if (!error?.type) return error?.message;
@@ -125,6 +129,12 @@ export const NewPostgresSourceForm = () => {
       type: "postgres" as const,
     }
   );
+
+  const {
+    isOpen: isCreationProlonged,
+    onClose: onProlongedCreationModalClose,
+    onOpen: onProlongedCreationModalOpen,
+  } = useDisclosure();
 
   const NEW_CLUSTER_ID_OPTION = {
     id: NEW_CLUSTER_ID,
@@ -198,6 +208,8 @@ export const NewPostgresSourceForm = () => {
   });
 
   const { runSql: createSource, loading: isCreating } = useSqlLazy({
+    // Materialize has a 30 second timeout for attempting to connect to postgres
+    timeout: 35_000,
     queryBuilder: (values: FormState) => {
       assert(values.schema);
       assert(values.connection);
@@ -231,6 +243,9 @@ export const NewPostgresSourceForm = () => {
 
   const handleValidSubmit = (values: FormState) => {
     setGeneralFormError(undefined);
+    const timeoutId = setTimeout(() => {
+      onProlongedCreationModalOpen();
+    }, PROLONGED_MODAL_DELAY);
     createSource(values, {
       onSuccess: async (response) => {
         assert(response);
@@ -288,6 +303,10 @@ export const NewPostgresSourceForm = () => {
           return;
         }
         setGeneralFormError(errorMessage);
+      },
+      onSettled: () => {
+        onProlongedCreationModalClose();
+        clearTimeout(timeoutId);
       },
     });
   };
@@ -627,6 +646,7 @@ export const NewPostgresSourceForm = () => {
           </VStack>
         </FormSection>
       </FormContainer>
+      <ProlongedPostgresSourceCreationModal isOpen={isCreationProlonged} />
     </form>
   );
 };
