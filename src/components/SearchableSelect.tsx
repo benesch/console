@@ -157,6 +157,7 @@ const buildStyles = <
     }),
     singleValue: (base) => ({
       ...base,
+      color: semanticColors.foreground.primary,
       padding: 0,
       margin: 0,
     }),
