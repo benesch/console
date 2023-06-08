@@ -523,7 +523,7 @@ export const NewPostgresConnectionForm = () => {
                   control={control}
                   register={register}
                   fieldKey="sslCertificate"
-                  fieldLabel="Certificate"
+                  fieldLabel="SSL Certificate"
                   selectOptions={secrets ?? []}
                   selectProps={{
                     menuPlacement: "top",
