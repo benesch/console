@@ -1,4 +1,4 @@
-import { sql } from "kysely";
+import { SelectQueryBuilder, sql } from "kysely";
 
 import { assert, isTruthy, notNullOrUndefined } from "~/util";
 
@@ -36,6 +36,19 @@ export function quoteIdentifier(id: string) {
 export function buildWhereConditions(expressions: Array<undefined | string>) {
   expressions = expressions.filter(isTruthy);
   return expressions.length > 0 ? `\nWHERE ${expressions.join("\nAND ")}` : "";
+}
+
+/**
+ * Adds a limit clause to the end of a query.
+ * Materialize does not support parameters in the limit clause currently, so we have to
+ * hard code the limit value as a work around.
+ * https://github.com/MaterializeInc/materialize/issues/19867
+ */
+export function rawLimit<DB, TB extends keyof DB, O>(
+  query: SelectQueryBuilder<DB, TB, O>,
+  value: number
+) {
+  return query.modifyEnd(sql`limit ${sql.raw(value.toString())}`);
 }
 
 /**

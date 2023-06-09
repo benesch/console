@@ -3,9 +3,17 @@ import React from "react";
 
 import { useSqlMany } from "../materialized";
 
-function useSqlTyped<R>(query: CompiledQuery<R>, cluster?: string) {
-  const request = React.useMemo(
-    () => ({
+function useSqlTyped<R, Result = R>(
+  query: CompiledQuery<R> | null,
+  options: {
+    cluster?: string;
+    transformRow?: (r: R) => Result;
+  } = {}
+) {
+  const { cluster, transformRow } = options;
+  const request = React.useMemo(() => {
+    if (!query) return undefined;
+    return {
       queries: [
         {
           query: query.sql,
@@ -13,12 +21,11 @@ function useSqlTyped<R>(query: CompiledQuery<R>, cluster?: string) {
         },
       ],
       cluster: cluster ?? "mz_introspection",
-    }),
-    [query, cluster]
-  );
-  const inner = useSqlMany(request);
+    };
+  }, [query, cluster]);
+  const inner = useSqlMany(query ? request : undefined);
 
-  let results: R[] = [];
+  let results: Result[] = [];
 
   if (inner.data) {
     const { columns, rows } = inner.data[0];
@@ -27,7 +34,10 @@ function useSqlTyped<R>(query: CompiledQuery<R>, cluster?: string) {
       for (let i = 0; i < columns.length; i++) {
         o[columns[i]] = r[i];
       }
-      return o as R;
+      if (transformRow) {
+        return transformRow(o as R);
+      }
+      return o as Result;
     });
   }
 
