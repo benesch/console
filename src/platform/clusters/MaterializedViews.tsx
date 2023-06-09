@@ -16,6 +16,7 @@ import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
@@ -96,6 +97,13 @@ const MaterializedViews = () => {
             <HStack>
               <DatabaseFilter {...databaseFilter} />
               <SchemaFilter {...schemaFilter} />
+              <SearchInput
+                name="source"
+                value={nameFilter.name}
+                onChange={(e) => {
+                  nameFilter.setName(e.target.value);
+                }}
+              />
             </HStack>
           </HStack>
           <MaterializedViewTable materializedViews={materializedViews ?? []} />
