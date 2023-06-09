@@ -31,7 +31,7 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
 import {
   ListPageSecret,
@@ -131,6 +131,7 @@ const SecretsCreationModal = ({
   const toast = useSuccessToast();
 
   const { shadows } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
 
   const {
     register,
@@ -245,7 +246,7 @@ const SecretsCreationModal = ({
                 variant="primary"
                 size="sm"
                 isDisabled={isCreationInFlight}
-                onClick={() => segment.track("Create Secret Clicked")}
+                onClick={() => track("Create Secret Clicked")}
               >
                 Create secret
               </Button>
@@ -258,6 +259,7 @@ const SecretsCreationModal = ({
 };
 
 export const SecretsList = () => {
+  const { track } = useSegment();
   const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
     NAME_FILTER_QUERY_STRING_KEY
   );
@@ -303,7 +305,7 @@ export const SecretsList = () => {
             size="sm"
             onClick={() => {
               onOpen();
-              segment.track("New Secret Clicked");
+              track("New Secret Clicked");
             }}
           >
             New secret

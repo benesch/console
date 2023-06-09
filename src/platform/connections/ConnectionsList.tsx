@@ -15,7 +15,7 @@ import {
 import React, { useState } from "react";
 import { Link, Route } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import {
   ConnectionsResponse,
   ConnectionWithDetails,
@@ -107,6 +107,8 @@ export const ConnectionsList = ({
   connectionsResponse,
   schemaObjectFilters,
 }: Props) => {
+  const { track } = useSegment();
+
   const {
     data: connections,
     isInitiallyLoading,
@@ -156,7 +158,7 @@ export const ConnectionsList = ({
             variant="primary"
             size="sm"
             to="new/connection"
-            onClick={() => segment.track("New Connection Clicked")}
+            onClick={() => track("New Connection Clicked")}
           >
             New connection
           </Button>

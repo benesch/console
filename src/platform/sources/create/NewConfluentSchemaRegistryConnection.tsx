@@ -25,7 +25,7 @@ import React from "react";
 import { useController, useForm } from "react-hook-form";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { useAuth } from "~/api/auth";
 import { createCsrConnection } from "~/api/materialize/connection/createCsrConnection";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
@@ -91,6 +91,7 @@ const NewConfluentSchemaRegistryConnection = ({
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
   const toast = useSuccessToast();
   const [isCreating, setIsCreating] = React.useState(false);
   const [generalFormError, setGeneralFormError] = React.useState<
@@ -475,7 +476,7 @@ const NewConfluentSchemaRegistryConnection = ({
                 variant="primary"
                 size="sm"
                 isDisabled={isCreating}
-                onClick={() => segment.track("Create Schema Registry Clicked")}
+                onClick={() => track("Create Schema Registry Clicked")}
               >
                 Create connection
               </Button>

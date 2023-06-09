@@ -28,7 +28,7 @@ import { useController, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { useAuth } from "~/api/auth";
 import createKafkaConnection, {
   SASL_MECHANISMS,
@@ -281,6 +281,7 @@ export const NewKafkaConnectionForm = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
   const { data: schemas, error: schemasError } = useSchemas();
   const {
     data: secrets,
@@ -455,9 +456,7 @@ export const NewKafkaConnectionForm = () => {
           size="sm"
           type="submit"
           isDisabled={isCreating}
-          onClick={() =>
-            segment.track("Create Connection Clicked", { type: "kafka" })
-          }
+          onClick={() => track("Create Connection Clicked", { type: "kafka" })}
         >
           Create connection
         </Button>

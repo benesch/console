@@ -15,7 +15,7 @@ import {
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import {
   Connection,
   dataConnectionTypes,
@@ -41,6 +41,7 @@ const connectionIcon = (connection: Connection) => {
 };
 
 const CreateSourceEntry = () => {
+  const { track } = useSegment();
   const [nameFilter, setNameFilter] = useQueryStringState("connectionName");
   const {
     data: connections,
@@ -70,7 +71,7 @@ const CreateSourceEntry = () => {
           size="sm"
           minWidth="auto"
           to={`/regions/${regionSlug}/connections/new/connection`}
-          onClick={() => segment.track("New Connection Clicked")}
+          onClick={() => track("New Connection Clicked")}
         >
           New connection
         </Button>

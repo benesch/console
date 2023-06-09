@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import IconNavLink from "~/components/IconNavLink";
 import TextLink from "~/components/TextLink";
 import AwsLogoIcon from "~/svg/AwsLogoIcon";
@@ -26,6 +26,7 @@ const CreateConnectionEntry = () => {
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
   const {
     onOpen: openPrivateLinkModal,
     isOpen: isPrivateLinkModalOpen,
@@ -88,7 +89,7 @@ const CreateConnectionEntry = () => {
                 to="."
                 onClick={() => {
                   openSshModal();
-                  segment.track("Create SSH Connection Clicked");
+                  track("Create SSH Connection Clicked");
                 }}
               >
                 SSH Tunnel
@@ -101,7 +102,7 @@ const CreateConnectionEntry = () => {
                 to="."
                 onClick={() => {
                   openPrivateLinkModal();
-                  segment.track("Create PrivateLink Connection Clicked");
+                  track("Create PrivateLink Connection Clicked");
                 }}
               >
                 PrivateLink

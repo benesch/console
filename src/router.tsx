@@ -20,7 +20,7 @@ import { useRecoilState_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import AppPasswordsPage from "~/access/AppPasswordsPage";
 import CLI from "~/access/cli";
 import PricingPage from "~/access/PricingPage";
-import AnalyticsOnEveryPage from "~/analytics/AnalyticsOnEveryPage";
+import { useSegmentPageTracking } from "~/analytics/segment";
 import { hasInvoiceReadPermission, useAuth } from "~/api/auth";
 import { AuthProvider } from "~/api/auth";
 import useBootIntercom from "~/hooks/useBootIntercom";
@@ -49,6 +49,7 @@ import { regionIdToSlug, regionSlugToNameMap, useRegionSlug } from "./region";
 const Router = () => {
   useTrackFocus();
   useBootIntercom();
+  useSegmentPageTracking();
 
   const ldClient = useLDClient();
   const { user } = useFronteggAuth();
@@ -115,7 +116,6 @@ const Router = () => {
         )}
         <Route path="*" element={<RedirectToHome />} />
       </ProtectedRoutes>
-      <AnalyticsOnEveryPage />
     </>
   );
 };

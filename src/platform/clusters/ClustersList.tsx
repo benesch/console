@@ -16,7 +16,7 @@ import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
@@ -40,7 +40,7 @@ import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 
 const createClusterSuggestion = {
   title: "Create a cluster",
-  string: `CREATE CLUSTER <cluster_name> 
+  string: `CREATE CLUSTER <cluster_name>
   REPLICAS (
     <name> (SIZE = '2xsmall')
   );`,
@@ -65,6 +65,7 @@ const clustersSuggestions: SQLSuggestion[] = [
 const ClustersListPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
   const flags = useFlags();
+  const { track } = useSegment();
   const { data: clusters, isInitiallyLoading, isError } = useClusters();
 
   const isEmpty = clusters !== null && clusters.length === 0;
@@ -79,7 +80,7 @@ const ClustersListPage = () => {
             size="sm"
             as={NavLink}
             to="new"
-            onClick={() => segment.track("New Cluster Clicked")}
+            onClick={() => track("New Cluster Clicked")}
           >
             New cluster
           </Button>

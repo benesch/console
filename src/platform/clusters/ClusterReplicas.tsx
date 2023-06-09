@@ -16,7 +16,7 @@ import {
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import {
   ClusterReplicaWithUtilizaton,
@@ -67,6 +67,7 @@ const getReplicasSuggestions = (name: string): SQLSuggestion[] => [
 ];
 
 const ClusterReplicasPage = () => {
+  const { track } = useSegment();
   const { colors } = useTheme<MaterializeTheme>();
 
   const { id: clusterId, clusterName } = useParams<ClusterParams>();
@@ -130,7 +131,7 @@ const ClusterReplicasPage = () => {
                 size="sm"
                 onClick={() => {
                   onOpen();
-                  segment.track("New Replica Clicked");
+                  track("New Replica Clicked");
                 }}
               >
                 New Replica

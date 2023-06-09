@@ -2,7 +2,7 @@ import { useTheme } from "@chakra-ui/react";
 import React from "react";
 import ReactSelect, { GroupBase } from "react-select";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { Database } from "~/api/materialize/useDatabases";
 import { DropdownIndicator, Option } from "~/components/reactSelectComponents";
 import { buildReactSelectFilterStyles, MaterializeTheme } from "~/theme";
@@ -18,6 +18,8 @@ const DatabaseFilter = ({
   selected,
   setSelectedDatabase,
 }: DatabaseFilterProps) => {
+  const { track } = useSegment();
+
   const {
     colors: { semanticColors },
     shadows,
@@ -42,7 +44,7 @@ const DatabaseFilter = ({
       onChange={(value) => {
         if (!value) return;
         setSelectedDatabase(value.id);
-        segment.track("Database Filter Changed", { value: value.name });
+        track("Database Filter Changed", { value: value.name });
       }}
       getOptionValue={(option) => option.id.toString()}
       formatOptionLabel={(data) => data.name}

@@ -15,7 +15,7 @@ import React from "react";
 import { FieldError, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
@@ -80,6 +80,7 @@ const NewClusterForm = ({
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
+  const { track } = useSegment();
 
   const { data: clusterSizes } = useAvailableClusterSizes();
   const { data: maxReplicas } = useMaxReplicasPerCluster();
@@ -180,7 +181,7 @@ REPLICAS (
               size="sm"
               type="submit"
               isDisabled={isCreating}
-              onClick={() => segment.track("Create Cluster Clicked")}
+              onClick={() => track("Create Cluster Clicked")}
             >
               Create cluster
             </Button>

@@ -1,16 +1,13 @@
 import React from "react";
 import { Navigate, Route } from "react-router-dom";
 
-import segment from "~/analytics/segment";
+import { useSegment } from "~/analytics/segment";
 import InlayBanner from "~/components/InlayBanner";
 import { useRegionSlug } from "~/region";
 import { SentryRoutes } from "~/sentry";
 
-const handleGettingStartedClick = () => {
-  segment.track("Get Started Clicked", {});
-};
-
 const GettingStarted = () => {
+  const { track } = useSegment();
   const regionSlug = useRegionSlug();
 
   return (
@@ -25,7 +22,9 @@ const GettingStarted = () => {
         target: "_blank",
         rel: "noopener",
         href: "//materialize.com/docs/get-started/",
-        onClick: handleGettingStartedClick,
+        onClick: () => {
+          track("Get Started Clicked");
+        },
       }}
       showButton
     >
