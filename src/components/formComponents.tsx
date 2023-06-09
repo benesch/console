@@ -62,6 +62,7 @@ export const FormTopBar = ({
   return (
     <Flex
       position="fixed"
+      zIndex="1"
       top="0"
       width="100%"
       backgroundColor={semanticColors.background.primary}

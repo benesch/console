@@ -45,6 +45,7 @@ import useSchemas, {
   Schema,
 } from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
+import { DocsCallout, DocsLink } from "~/components/DocsCallout";
 import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
@@ -186,87 +187,38 @@ function getAuthParamFromFormState(authMode: number, values: FormState) {
   }
 }
 
-const FormAside = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+const kafkaConnectionDocs: DocsLink[] = [
+  {
+    label: "Confluent",
+    href: "https://materialize.com/docs/ingest-data/confluent-cloud/",
+    icon: <ConfluentLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Redpanda",
+    href: "https://materialize.com/docs/ingest-data/redpanda-cloud/",
+    icon: <RedpandaLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Upstash",
+    href: "https://materialize.com/docs/ingest-data/upstash-kafka/",
+    icon: <UpstashLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Amazon MSK",
+    href: "https://materialize.com/docs/ingest-data/amazon-msk/",
+    icon: <AwsLogoIcon height="4" width="4" />,
+  },
+];
 
+const FormAside = () => {
   return (
     <FormInfoBox maxW={{ md: "40ch" }}>
-      <Text
-        textStyle="text-ui-med"
-        color={semanticColors.foreground.primary}
-        mb={2}
-      >
-        Need help connecting to Kafka?
-      </Text>
-      <Text
-        textStyle="text-base"
-        color={semanticColors.foreground.secondary}
-        mb={6}
-      >
-        Check out our step-by-step guides or reach out to the team for help with
-        setting up your Kafka connection.
-      </Text>
-      <Wrap spacing="2">
-        <WrapItem>
-          <Button
-            as="a"
-            variant="outline"
-            size="sm"
-            height="10"
-            px="4"
-            leftIcon={<ConfluentLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/ingest-data/confluent-cloud/"
-            target="_blank"
-          >
-            Confluent
-          </Button>
-        </WrapItem>
-        <WrapItem>
-          <Button
-            as="a"
-            variant="outline"
-            size="sm"
-            height="10"
-            px="4"
-            leftIcon={<RedpandaLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/ingest-data/redpanda-cloud/"
-            target="_blank"
-          >
-            Redpanda
-          </Button>
-        </WrapItem>
-
-        <WrapItem>
-          <Button
-            as="a"
-            variant="outline"
-            size="sm"
-            height="10"
-            px="4"
-            leftIcon={<UpstashLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/ingest-data/upstash-kafka/"
-            target="_blank"
-          >
-            Upstash
-          </Button>
-        </WrapItem>
-        <WrapItem>
-          <Button
-            as="a"
-            variant="outline"
-            size="sm"
-            height="10"
-            px="4"
-            leftIcon={<AwsLogoIcon height="4" width="4" />}
-            href="https://materialize.com/docs/ingest-data/amazon-msk/"
-            target="_blank"
-          >
-            Amazon MSK
-          </Button>
-        </WrapItem>
-      </Wrap>
+      <DocsCallout
+        title="Need help connecting to Kafka?"
+        description="Check out our step-by-step guides or reach out to the team for help with
+        setting up your Kafka connection."
+        docsLinks={kafkaConnectionDocs}
+      />
     </FormInfoBox>
   );
 };
