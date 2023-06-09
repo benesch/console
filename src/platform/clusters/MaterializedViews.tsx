@@ -39,7 +39,7 @@ const createExample = `CREATE MATERIALIZED VIEW winning_bids AS
   FROM highest_bid_per_auction
   WHERE end_time < mz_now();`;
 
-const NAME_FILTER_QUERY_STRING_KEY = "viewsName";
+const NAME_FILTER_QUERY_STRING_KEY = "viewName";
 
 const MaterializedViews = () => {
   const { id: clusterId } = useParams<ClusterParams>();
