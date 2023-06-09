@@ -11,6 +11,7 @@ export const Accordion = {
         color: "semanticColors.accent.brightPurple",
         lineHeight: "16px",
         p: 0,
+        mt: 4,
         _hover: {
           background: "auto",
         },
@@ -20,7 +21,7 @@ export const Accordion = {
         height: "16px",
       },
       panel: {
-        mt: 6,
+        mt: 2,
         p: 0,
       },
     },
