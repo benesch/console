@@ -35,6 +35,7 @@ import useSchemas, {
   Schema,
 } from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
+import { DocsCallout, DocsLink } from "~/components/DocsCallout";
 import ErrorBox from "~/components/ErrorBox";
 import {
   FormContainer,
@@ -58,7 +59,10 @@ import {
   setSecretFieldsFromServerData,
 } from "~/forms/secretsFormControlAccessors";
 import { currentEnvironmentState } from "~/recoil/environments";
+import { AwsAuroraLogoIcon } from "~/svg/AwsAuroraLogoIcon";
 import AwsLogoIcon from "~/svg/AwsLogoIcon";
+import { GcpLogoIcon } from "~/svg/GcpLogoIcon";
+import { MsftLogoIcon } from "~/svg/MsftLogoIcon";
 import PostgresLogoIcon from "~/svg/PostgresLogoIcon";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
@@ -95,6 +99,47 @@ const SSL_MODE_OPTIONS = ["require", "verify-ca", "verify-full"].map((val) => ({
   id: val,
   name: val,
 }));
+
+const postgresConnectionDocs: DocsLink[] = [
+  {
+    label: "Amazon RDS",
+    href: "https://materialize.com/docs/ingest-data/postgres-amazon-rds/",
+    icon: <AwsLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Amazon Aurora",
+    href: "https://materialize.com/docs/ingest-data/postgres-amazon-aurora/",
+    icon: <AwsAuroraLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Azure DB",
+    href: "https://materialize.com/docs/ingest-data/postgres-azure-db/",
+    icon: <MsftLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Google Cloud SQL",
+    href: "https://materialize.com/docs/ingest-data/postgres-google-cloud-sql/",
+    icon: <GcpLogoIcon height="4" width="4" />,
+  },
+  {
+    label: "Self-hosted PostgreSQL",
+    href: "https://materialize.com/docs/ingest-data/postgres-self-hosted/",
+    icon: <PostgresLogoIcon height="4" width="4" />,
+  },
+];
+
+const FormAside = () => {
+  return (
+    <FormInfoBox maxW={{ md: "40ch" }}>
+      <DocsCallout
+        title="Need help connecting to your Postgres source?"
+        description="Check out our step-by-step guides or reach out to the team for help with
+        setting up your Postgres connection."
+        docsLinks={postgresConnectionDocs}
+      />
+    </FormInfoBox>
+  );
+};
 
 export const NewPostgresConnectionForm = () => {
   const [generalFormError, setGeneralFormError] = useState<
@@ -290,57 +335,7 @@ export const NewPostgresConnectionForm = () => {
           Create connection
         </Button>
       </FormTopBar>
-      <FormContainer
-        title="Connection information"
-        aside={
-          <FormInfoBox>
-            <Text
-              textStyle="text-ui-med"
-              color={semanticColors.foreground.primary}
-              mb={2}
-            >
-              Need help connecting to Postgres?
-            </Text>
-            <Text
-              textStyle="text-base"
-              color={semanticColors.foreground.secondary}
-              maxW={{ md: "40ch" }}
-              mb={6}
-            >
-              Check out our step-by-step guides or reach out to the team for
-              help with setting up your Postgres connection.
-            </Text>
-            <HStack>
-              <Button
-                as="a"
-                variant="outline"
-                size="sm"
-                height="10"
-                px="4"
-                leftIcon={<PostgresLogoIcon height="4" width="4" />}
-                href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/"
-                target="_blank"
-                flexShrink={0}
-              >
-                PostgreSQL CDC
-              </Button>
-              <Button
-                as="a"
-                variant="outline"
-                size="sm"
-                height="10"
-                px="4"
-                leftIcon={<AwsLogoIcon height="4" width="4" />}
-                href="https://materialize.com/docs/connect-sources/cdc-postgres-direct/#aws-rds-t0"
-                target="_blank"
-                flexShrink={0}
-              >
-                AWS RDS
-              </Button>
-            </HStack>
-          </FormInfoBox>
-        }
-      >
+      <FormContainer title="Connection information" aside={<FormAside />}>
         {generalFormError && (
           <InlayBanner
             variant="error"

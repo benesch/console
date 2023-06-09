@@ -214,7 +214,7 @@ const FormAside = () => {
   return (
     <FormInfoBox maxW={{ md: "40ch" }}>
       <DocsCallout
-        title="Need help connecting to Kafka?"
+        title="Need help connecting to your Kafka source?"
         description="Check out our step-by-step guides or reach out to the team for help with
         setting up your Kafka connection."
         docsLinks={kafkaConnectionDocs}
