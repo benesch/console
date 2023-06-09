@@ -61,6 +61,10 @@ export const FormTopBar = ({
 
   return (
     <Flex
+      position="fixed"
+      top="0"
+      width="100%"
+      backgroundColor={semanticColors.background.primary}
       alignItems="center"
       justifyContent="space-between"
       px="4"
@@ -160,7 +164,7 @@ export const FormContainer = ({
   aside,
 }: React.PropsWithChildren<FormContainerProps>) => {
   return (
-    <Box mt={10}>
+    <Box mt={24}>
       <Grid
         templateColumns={{ md: "1fr 420px 1fr", base: "0 1fr 0" }}
         templateRows={{ md: "auto 1fr", base: "auto auto 1fr " }}

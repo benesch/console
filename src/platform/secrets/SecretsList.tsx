@@ -190,7 +190,7 @@ const SecretsCreationModal = ({
                 <InlayBanner
                   variant="error"
                   label="Error"
-                  message="There was an error creating a secret key. Please try again."
+                  message="There was an error creating a secret name. Please try again."
                 />
               )}
               <FormControl isInvalid={!!formState.errors.name}>

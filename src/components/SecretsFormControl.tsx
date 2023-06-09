@@ -269,15 +269,16 @@ export const SecretsFormControl = <FormState extends FieldValues>(
         <HStack alignItems="start">
           <ObjectNameInput
             {...register(`${fieldKey}.key` as Path<FormState>, {
-              required: "Key is required.",
+              required: "Name is required.",
               pattern: {
                 value: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
-                message: "Key must not include special characters.",
+                message: "Name must not include special characters.",
               },
               shouldUnregister: true,
             })}
-            aria-label={`${fieldLabel} secret key`}
-            placeholder="Key"
+            aria-label={`${fieldLabel} secret name`}
+            placeholder="Name"
+            autoFocus={true}
             autoCorrect="off"
             size="sm"
             variant={fieldError?.key ? "error" : "default"}

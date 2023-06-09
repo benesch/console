@@ -142,7 +142,7 @@ describe("NewKafkaConnectionForm", () => {
 
     await user.click(screen.getByLabelText("Password"));
     await user.click(screen.getByText("Create new secret"));
-    const createSecretKeyInput = screen.getByLabelText("Password secret key");
+    const createSecretKeyInput = screen.getByLabelText("Password secret name");
     const createSecretValueInput = screen.getByLabelText(
       "Password secret value"
     );
@@ -318,7 +318,7 @@ describe("NewKafkaConnectionForm", () => {
     await user.click(screen.getByLabelText("Password"));
 
     await user.click(screen.getByText("Create new secret"));
-    const createSecretKeyInput = screen.getByLabelText("Password secret key");
+    const createSecretKeyInput = screen.getByLabelText("Password secret name");
     const createSecretValueInput = screen.getByLabelText(
       "Password secret value"
     );
