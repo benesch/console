@@ -27,16 +27,16 @@ const MockSinkDetail = () => <div>SinkDetail component</div>;
 
 const useSinksColumns = [
   "id",
-  "database_name",
-  "schema_name",
   "name",
   "type",
   "size",
+  "schemaName",
+  "databaseName",
   "status",
   "error",
 ];
 
-const useSinkErrorsColumns = ["last_occurred", "error", "count"];
+const useSinkErrorsColumns = ["lastOccurred", "error", "count"];
 
 const emptySinksResponse = buildUseSqlQueryHandler({
   type: "SELECT" as const,
@@ -47,11 +47,11 @@ const emptySinksResponse = buildUseSqlQueryHandler({
 function setupSinkDetailPage() {
   const sink = {
     id: "u7",
-    database_name: "default",
-    schema_name: "public",
     name: "json_sink",
     type: "kafka",
     size: "xsmall",
+    schemaName: "public",
+    databaseName: "default",
     status: "running",
     error: null,
   };
@@ -78,7 +78,7 @@ function setupSinkDetailPage() {
   server.use(validUseShowCreateHandler);
   server.use(validUseSinkErrorsHandler);
 
-  return `/${sink.id}/${sink.database_name}/${sink.schema_name}/${sink.name}/errors`;
+  return `/${sink.id}/${sink.databaseName}/${sink.schemaName}/${sink.name}/errors`;
 }
 
 describe("SinkRoutes", () => {
@@ -133,11 +133,11 @@ describe("SinkRoutes", () => {
           rows: [
             [
               "u7",
-              "default",
-              "public",
               "json_sink",
               "kafka",
               "xsmall",
+              "public",
+              "default",
               "running",
               null,
             ],
