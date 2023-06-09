@@ -16,7 +16,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Sink, SinksResponse } from "~/api/materialized";
+import { Sink, SinksResponse } from "~/api/materialize/sink/useSinks";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
