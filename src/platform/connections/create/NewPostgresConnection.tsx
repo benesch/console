@@ -131,7 +131,7 @@ const FormAside = () => {
   return (
     <FormInfoBox maxW={{ md: "40ch" }}>
       <DocsCallout
-        title="Need help connecting to your Postgres source?"
+        title="Need help connecting to Postgres?"
         description="Check out our step-by-step guides or reach out to the team for help with
         setting up your Postgres connection."
         docsLinks={postgresConnectionDocs}
