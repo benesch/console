@@ -20,8 +20,6 @@ import {
   Text,
   useTheme,
   VStack,
-  Wrap,
-  WrapItem,
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useController, useFieldArray, useForm } from "react-hook-form";
