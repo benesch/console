@@ -18,6 +18,7 @@ import {
   MenuList,
   Spacer,
   Spinner,
+  StyleProps,
   Tag,
   Text,
   useColorMode,
@@ -58,8 +59,6 @@ export const NAV_HORIZONTAL_SPACING = 4;
 export const NAV_HOVER_STYLES = {
   bg: "semanticColors.background.tertiary",
 };
-export const NAV_LOGO_HEIGHT = "80px";
-
 function isEnvironmentHealthy(environment?: LoadedEnvironment) {
   return (
     environment?.state === "enabled" && environment.status.health === "healthy"
@@ -107,7 +106,6 @@ const NavBar = () => {
         flex={0}
         width="full"
         justifyContent="flex-start"
-        minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
         order={1}
       >
         <NavMenuCompact display={{ base: "block", lg: "none" }} />
@@ -118,8 +116,8 @@ const NavBar = () => {
           flex={0}
           width="full"
           justifyContent="flex-start"
-          minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
           order={1}
+          py={{ lg: 6, sm: 2 }}
         >
           <VStack
             position="relative"
@@ -139,19 +137,13 @@ const NavBar = () => {
         </HStack>
       </HStack>
       <Flex
-        flex={0}
         alignItems="flex-start"
         justifyContent="stretch"
         px={NAV_HORIZONTAL_SPACING}
         order={{ base: 100, lg: 2 }}
+        mb={{ base: 2, lg: 4 }}
       >
-        <React.Suspense
-          fallback={
-            <Box minH={{ base: "auto", lg: "54px" }}>
-              <Spinner />
-            </Box>
-          }
-        >
+        <React.Suspense fallback={<Spinner />}>
           <EnvironmentSelectField />
         </React.Suspense>
       </Flex>
@@ -168,23 +160,7 @@ const NavBar = () => {
       >
         <FreeTrialNotice my="6" mx="4" />
         <SwitchStackModal />
-        <VStack align="start" spacing={4} px={NAV_HORIZONTAL_SPACING} py={6}>
-          <HelpLink
-            href="https://materialize.com/docs/"
-            onClick={() => {
-              track("Link Click", {
-                label: "Docs",
-                href: "https://materialize.com/docs/",
-              });
-            }}
-          >
-            Documentation
-          </HelpLink>
-          <HelpLink href="https://materialize.com/s/chat">
-            Join us on Slack
-          </HelpLink>
-          <HelpLink href={SUPPORT_HREF}>Help Center</HelpLink>
-        </VStack>
+        <HelpLinks display={{ lg: "flex", sm: "none" }} />
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
     </Flex>
@@ -469,6 +445,35 @@ interface HelpLink {
   children: React.ReactNode;
   onClick?: () => void;
 }
+
+const HelpLinks = (props: StyleProps) => {
+  const { track } = useSegment();
+  return (
+    <VStack
+      align="start"
+      spacing={4}
+      px={NAV_HORIZONTAL_SPACING}
+      py={6}
+      {...props}
+    >
+      <HelpLink
+        href="https://materialize.com/docs/"
+        onClick={() => {
+          track("Link Click", {
+            label: "Docs",
+            href: "https://materialize.com/docs/",
+          });
+        }}
+      >
+        Documentation
+      </HelpLink>
+      <HelpLink href="https://materialize.com/s/chat">
+        Join us on Slack
+      </HelpLink>
+      <HelpLink href={SUPPORT_HREF}>Help Center</HelpLink>
+    </VStack>
+  );
+};
 
 const HelpLink = (props: HelpLink) => {
   const {

@@ -70,20 +70,18 @@ const EnvironmentSelectField = () => {
   const currentOption = options.find((o) => o.id === currentEnvironmentId)!;
 
   return (
-    <Box minH={{ base: "auto", lg: "54px" }}>
-      <ReactSelect
-        id="environment-select"
-        aria-label="Environment"
-        name="environment-select"
-        components={{ Option: EnvOption, SingleValue }}
-        options={options}
-        value={currentOption}
-        onChange={selectHandler}
-        styles={colorStyles}
-        isMulti={false}
-        isSearchable={false}
-      />
-    </Box>
+    <ReactSelect
+      id="environment-select"
+      aria-label="Environment"
+      name="environment-select"
+      components={{ Option: EnvOption, SingleValue }}
+      options={options}
+      value={currentOption}
+      onChange={selectHandler}
+      styles={colorStyles}
+      isMulti={false}
+      isSearchable={false}
+    />
   );
 };
 
@@ -191,10 +189,14 @@ const getColorStyles = (mode: ColorMode): StylesConfig<EnvOptionType> => {
     ? colors.gray[300]
     : colors.gray[500];
   return {
+    container: (styles) => ({
+      ...styles,
+      width: "100%",
+    }),
     control: (styles, state) => ({
       ...styles,
       backgroundColor: "transparent",
-      minWidth: "200px",
+      width: "100%",
       borderRadius: "8px",
       borderColor: state.isFocused ? colors.purple[400] : unfocusedBorderColor,
     }),
