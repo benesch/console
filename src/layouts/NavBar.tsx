@@ -11,10 +11,10 @@ import {
   Flex,
   HStack,
   IconButton,
+  Link,
   Menu,
   MenuButton,
   MenuButtonProps,
-  MenuItem,
   MenuList,
   Spacer,
   Spinner,
@@ -83,6 +83,7 @@ export const HideIfEnvironmentUnhealthy = ({
 };
 
 const NavBar = () => {
+  const { track } = useSegment();
   const { colors } = useTheme<MaterializeTheme>();
   const { colorMode } = useColorMode();
 
@@ -167,7 +168,23 @@ const NavBar = () => {
       >
         <FreeTrialNotice my="6" mx="4" />
         <SwitchStackModal />
-        <HelpDropdown />
+        <VStack align="start" spacing={4} px={NAV_HORIZONTAL_SPACING} py={6}>
+          <HelpLink
+            href="https://materialize.com/docs/"
+            onClick={() => {
+              track("Link Click", {
+                label: "Docs",
+                href: "https://materialize.com/docs/",
+              });
+            }}
+          >
+            Documentation
+          </HelpLink>
+          <HelpLink href="https://materialize.com/s/chat">
+            Join us on Slack
+          </HelpLink>
+          <HelpLink href={SUPPORT_HREF}>Help Center</HelpLink>
+        </VStack>
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
     </Flex>
@@ -418,7 +435,7 @@ const NavItem = (props: NavItemType) => {
       color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
-        bg: colors.semanticColors.background.tertiary,
+        bg: `rgba(0, 0, 0, 0.08)`,
         color: colors.semanticColors.foreground.primary,
       }}
     >
@@ -447,75 +464,26 @@ const NavItem = (props: NavItemType) => {
   );
 };
 
-const HelpDropdown = () => {
-  const { track } = useSegment();
-  const { colors } = useTheme<MaterializeTheme>();
-  return (
-    <Menu>
-      <MenuButton
-        aria-label="Help"
-        title="Help"
-        _hover={NAV_HOVER_STYLES}
-        px={NAV_HORIZONTAL_SPACING}
-        py={2}
-      >
-        <HStack>
-          {/* The wrapper box keeps the centers of the circles aligned */}
-          <Flex
-            h={AVATAR_WIDTH}
-            w={AVATAR_WIDTH}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Box
-              bg={colors.semanticColors.background.tertiary}
-              rounded="full"
-              h="8"
-              w="8"
-              color={colors.semanticColors.foreground.primary}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              fontSize="md"
-            >
-              ?
-            </Box>
-          </Flex>
-          <Text color={colors.semanticColors.foreground.primary}>Help</Text>
-        </HStack>
-      </MenuButton>
-      <MenuList>
-        <HelpDropdownLink
-          href="https://materialize.com/docs/"
-          onClick={() => {
-            track("Link Click", {
-              label: "Docs",
-              href: "https://materialize.com/docs/",
-            });
-          }}
-        >
-          Documentation
-        </HelpDropdownLink>
-        <HelpDropdownLink href="https://materialize.com/s/chat">
-          Join us on Slack
-        </HelpDropdownLink>
-        <HelpDropdownLink href={SUPPORT_HREF}>Help Center</HelpDropdownLink>
-      </MenuList>
-    </Menu>
-  );
-};
-
-interface HelpDropdownLinkProps {
+interface HelpLink {
   href: string;
   children: React.ReactNode;
   onClick?: () => void;
 }
 
-const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
+const HelpLink = (props: HelpLink) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   return (
-    <MenuItem as="a" target="_blank" fontWeight="medium" {...props}>
+    <Link
+      as="a"
+      target="_blank"
+      textStyle="text-ui-med"
+      color={semanticColors.foreground.secondary}
+      {...props}
+    >
       {props.children}
-    </MenuItem>
+    </Link>
   );
 };
 
