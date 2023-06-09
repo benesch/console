@@ -1,3 +1,4 @@
+import { useAuth } from "@frontegg/react";
 import {
   AnalyticsBrowser,
   Callback,
@@ -5,6 +6,8 @@ import {
   Options,
   SegmentEvent,
 } from "@segment/analytics-next";
+import React from "react";
+import { useLocation } from "react-router-dom";
 
 import { useCurrentOrganization } from "~/api/auth";
 import config from "~/config";
@@ -57,4 +60,32 @@ export function useSegment() {
   };
 
   return { track };
+}
+
+export function useSegmentPageTracking() {
+  const location = useLocation();
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    segment.page(
+      undefined, // category
+      undefined, // name
+      {
+        // Include the hash because the Frontegg admin portal uses the hash
+        // for routing.
+        hash: location.hash,
+      },
+      {
+        groupId: user?.tenantId,
+      }
+    );
+  }, [location, user]);
+
+  React.useEffect(() => {
+    if (user) {
+      segment.identify(user.id);
+    } else {
+      segment.reset();
+    }
+  }, [user]);
 }

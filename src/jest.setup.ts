@@ -25,6 +25,7 @@ jest.mock("~/analytics/segment", () => {
     useSegment: () => ({
       track: jest.fn(),
     }),
+    useSegmentPageTracking: jest.fn(),
   };
 });
 jest.mock("~/hooks/useBootIntercom");
