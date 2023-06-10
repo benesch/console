@@ -27,10 +27,12 @@ import { NAV_HORIZONTAL_SPACING, NAV_HOVER_STYLES } from "~/layouts/NavBar";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
-export const AVATAR_WIDTH = 8;
+export const AVATAR_WIDTH = 6;
 
 const ProfileDropdown = (props: ButtonProps) => {
-  const { colors } = useTheme<MaterializeTheme>();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const { user, tenantsState } = useAuth();
   const { switchTenant } = useAuthActions();
 
@@ -62,7 +64,12 @@ const ProfileDropdown = (props: ButtonProps) => {
             src={user.profilePictureUrl || user.profileImage}
             name={user.name}
           />
-          <Text>Account</Text>
+          <Text
+            textStyle="text-ui-med"
+            color={semanticColors.foreground.primary}
+          >
+            Account
+          </Text>
         </HStack>
       </MenuButton>
       {/* zIndex superior to Code Editor Run button */}
@@ -72,7 +79,7 @@ const ProfileDropdown = (props: ButtonProps) => {
           <Text
             mt="1"
             fontSize="xs"
-            color={colors.semanticColors.foreground.secondary}
+            color={semanticColors.foreground.secondary}
           >
             {user.email}
           </Text>

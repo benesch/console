@@ -11,13 +11,14 @@ import {
   Flex,
   HStack,
   IconButton,
+  Link,
   Menu,
   MenuButton,
   MenuButtonProps,
-  MenuItem,
   MenuList,
   Spacer,
   Spinner,
+  StyleProps,
   Tag,
   Text,
   useColorMode,
@@ -36,10 +37,7 @@ import SwitchStackModal from "~/components/SwitchStackModal";
 import blackLogo from "~/img/logo-black.svg";
 import whiteLogo from "~/img/logo-white.svg";
 import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
-import ProfileDropdown, {
-  AVATAR_WIDTH,
-  ProfileMenuItems,
-} from "~/layouts/ProfileDropdown";
+import ProfileDropdown, { ProfileMenuItems } from "~/layouts/ProfileDropdown";
 import {
   currentEnvironmentState,
   LoadedEnvironment,
@@ -58,8 +56,6 @@ export const NAV_HORIZONTAL_SPACING = 4;
 export const NAV_HOVER_STYLES = {
   bg: "semanticColors.background.tertiary",
 };
-export const NAV_LOGO_HEIGHT = "80px";
-
 function isEnvironmentHealthy(environment?: LoadedEnvironment) {
   return (
     environment?.state === "enabled" && environment.status.health === "healthy"
@@ -106,7 +102,6 @@ const NavBar = () => {
         flex={0}
         width="full"
         justifyContent="flex-start"
-        minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
         order={1}
       >
         <NavMenuCompact display={{ base: "block", lg: "none" }} />
@@ -117,8 +112,8 @@ const NavBar = () => {
           flex={0}
           width="full"
           justifyContent="flex-start"
-          minHeight={{ base: "auto", lg: NAV_LOGO_HEIGHT }}
           order={1}
+          py={{ lg: 6, sm: 2 }}
         >
           <VStack
             position="relative"
@@ -138,19 +133,13 @@ const NavBar = () => {
         </HStack>
       </HStack>
       <Flex
-        flex={0}
         alignItems="flex-start"
         justifyContent="stretch"
         px={NAV_HORIZONTAL_SPACING}
         order={{ base: 100, lg: 2 }}
+        mb={{ base: 2, lg: 4 }}
       >
-        <React.Suspense
-          fallback={
-            <Box minH={{ base: "auto", lg: "54px" }}>
-              <Spinner />
-            </Box>
-          }
-        >
+        <React.Suspense fallback={<Spinner />}>
           <EnvironmentSelectField />
         </React.Suspense>
       </Flex>
@@ -167,7 +156,7 @@ const NavBar = () => {
       >
         <FreeTrialNotice my="6" mx="4" />
         <SwitchStackModal />
-        <HelpDropdown />
+        <HelpLinks display={{ lg: "flex", sm: "none" }} />
         <ProfileDropdown width="100%" display={{ base: "none", lg: "flex" }} />
       </Flex>
     </Flex>
@@ -418,7 +407,7 @@ const NavItem = (props: NavItemType) => {
       color={colors.semanticColors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
-        bg: colors.semanticColors.background.tertiary,
+        bg: `rgba(0, 0, 0, 0.08)`,
         color: colors.semanticColors.foreground.primary,
       }}
     >
@@ -447,75 +436,55 @@ const NavItem = (props: NavItemType) => {
   );
 };
 
-const HelpDropdown = () => {
-  const { track } = useSegment();
-  const { colors } = useTheme<MaterializeTheme>();
-  return (
-    <Menu>
-      <MenuButton
-        aria-label="Help"
-        title="Help"
-        _hover={NAV_HOVER_STYLES}
-        px={NAV_HORIZONTAL_SPACING}
-        py={2}
-      >
-        <HStack>
-          {/* The wrapper box keeps the centers of the circles aligned */}
-          <Flex
-            h={AVATAR_WIDTH}
-            w={AVATAR_WIDTH}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Box
-              bg={colors.semanticColors.background.tertiary}
-              rounded="full"
-              h="8"
-              w="8"
-              color={colors.semanticColors.foreground.primary}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              fontSize="md"
-            >
-              ?
-            </Box>
-          </Flex>
-          <Text color={colors.semanticColors.foreground.primary}>Help</Text>
-        </HStack>
-      </MenuButton>
-      <MenuList>
-        <HelpDropdownLink
-          href="https://materialize.com/docs/"
-          onClick={() => {
-            track("Link Click", {
-              label: "Docs",
-              href: "https://materialize.com/docs/",
-            });
-          }}
-        >
-          Documentation
-        </HelpDropdownLink>
-        <HelpDropdownLink href="https://materialize.com/s/chat">
-          Join us on Slack
-        </HelpDropdownLink>
-        <HelpDropdownLink href={SUPPORT_HREF}>Help Center</HelpDropdownLink>
-      </MenuList>
-    </Menu>
-  );
-};
-
-interface HelpDropdownLinkProps {
+interface HelpLink {
   href: string;
   children: React.ReactNode;
   onClick?: () => void;
 }
 
-const HelpDropdownLink = (props: HelpDropdownLinkProps) => {
+const HelpLinks = (props: StyleProps) => {
+  const { track } = useSegment();
   return (
-    <MenuItem as="a" target="_blank" fontWeight="medium" {...props}>
+    <VStack
+      align="start"
+      spacing={4}
+      px={NAV_HORIZONTAL_SPACING}
+      py={6}
+      {...props}
+    >
+      <HelpLink
+        href="https://materialize.com/docs/"
+        onClick={() => {
+          track("Link Click", {
+            label: "Docs",
+            href: "https://materialize.com/docs/",
+          });
+        }}
+      >
+        Documentation
+      </HelpLink>
+      <HelpLink href="https://materialize.com/s/chat">
+        Join us on Slack
+      </HelpLink>
+      <HelpLink href={SUPPORT_HREF}>Help Center</HelpLink>
+    </VStack>
+  );
+};
+
+const HelpLink = (props: HelpLink) => {
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+  return (
+    <Link
+      as="a"
+      target="_blank"
+      textStyle="text-ui-med"
+      color={semanticColors.foreground.secondary}
+      {...props}
+    >
       {props.children}
-    </MenuItem>
+    </Link>
   );
 };
 
