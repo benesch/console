@@ -37,10 +37,7 @@ import SwitchStackModal from "~/components/SwitchStackModal";
 import blackLogo from "~/img/logo-black.svg";
 import whiteLogo from "~/img/logo-white.svg";
 import EnvironmentSelectField from "~/layouts/EnvironmentSelect";
-import ProfileDropdown, {
-  AVATAR_WIDTH,
-  ProfileMenuItems,
-} from "~/layouts/ProfileDropdown";
+import ProfileDropdown, { ProfileMenuItems } from "~/layouts/ProfileDropdown";
 import {
   currentEnvironmentState,
   LoadedEnvironment,
@@ -82,7 +79,6 @@ export const HideIfEnvironmentUnhealthy = ({
 };
 
 const NavBar = () => {
-  const { track } = useSegment();
   const { colors } = useTheme<MaterializeTheme>();
   const { colorMode } = useColorMode();
 
