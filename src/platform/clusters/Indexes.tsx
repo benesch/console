@@ -53,13 +53,18 @@ const Indexes = () => {
 
   const isEmpty = indexes && indexes.length === 0;
 
+  if (indexesError || clustersError) {
+    return <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />;
+  }
+  if (isLoading) {
+    return <Spinner data-testid="loading-spinner" />;
+  }
   return (
     <>
-      {indexesError || clustersError ? (
-        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
-      ) : isLoading ? (
-        <Spinner data-testid="loading-spinner" />
-      ) : isEmpty ? (
+      <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
+        <PageHeading>Indexes</PageHeading>
+      </HStack>
+      {isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Missing">
@@ -81,15 +86,10 @@ const Indexes = () => {
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       ) : (
-        <>
-          <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
-            <PageHeading>Indexes</PageHeading>
-          </HStack>
-          <IndexTable
-            indexes={indexes ?? []}
-            replicas={cluster?.replicas ?? []}
-          />
-        </>
+        <IndexTable
+          indexes={indexes ?? []}
+          replicas={cluster?.replicas ?? []}
+        />
       )}
     </>
   );

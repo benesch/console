@@ -63,13 +63,29 @@ const MaterializedViews = () => {
 
   const isEmpty = materializedViews && materializedViews.length === 0;
 
+  if (isError) {
+    return <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />;
+  }
+  if (isInitiallyLoading) {
+    return <Spinner data-testid="loading-spinner" />;
+  }
   return (
     <>
-      {isError ? (
-        <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
-      ) : isInitiallyLoading ? (
-        <Spinner data-testid="loading-spinner" />
-      ) : isEmpty ? (
+      <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
+        <PageHeading>Materialized Views</PageHeading>
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFilter} />
+          <SearchInput
+            name="source"
+            value={nameFilter.name}
+            onChange={(e) => {
+              nameFilter.setName(e.target.value);
+            }}
+          />
+        </HStack>
+      </HStack>
+      {isEmpty ? (
         <EmptyListWrapper>
           <EmptyListHeader>
             <IconBox type="Missing">
@@ -91,23 +107,7 @@ const MaterializedViews = () => {
           </SampleCodeBoxWrapper>
         </EmptyListWrapper>
       ) : (
-        <>
-          <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
-            <PageHeading>Materialized Views</PageHeading>
-            <HStack>
-              <DatabaseFilter {...databaseFilter} />
-              <SchemaFilter {...schemaFilter} />
-              <SearchInput
-                name="source"
-                value={nameFilter.name}
-                onChange={(e) => {
-                  nameFilter.setName(e.target.value);
-                }}
-              />
-            </HStack>
-          </HStack>
-          <MaterializedViewTable materializedViews={materializedViews ?? []} />
-        </>
+        <MaterializedViewTable materializedViews={materializedViews ?? []} />
       )}
     </>
   );
