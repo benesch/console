@@ -1,12 +1,8 @@
 import React from "react";
 import { Route, useParams } from "react-router-dom";
 
-import {
-  SchemaObject,
-  Sink,
-  SinksResponse,
-  useSinks,
-} from "~/api/materialized";
+import useSinks, { Sink, SinksResponse } from "~/api/materialize/sink/useSinks";
+import { SchemaObject } from "~/api/materialized";
 import SinksList from "~/platform/sinks/SinksList";
 import { SentryRoutes } from "~/sentry";
 import { usePoll } from "~/useForegroundInterval";

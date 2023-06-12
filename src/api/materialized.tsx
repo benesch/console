@@ -302,45 +302,6 @@ export interface GroupedError {
   count: number;
 }
 
-/**
- * Fetches errors for a specific sink
- */
-export function useSinkErrors({
-  limit = 20,
-  sinkId,
-  startTime,
-  endTime,
-}: {
-  limit?: number;
-  sinkId?: string;
-  startTime: Date;
-  endTime: Date;
-}) {
-  const result = useSql(
-    sinkId
-      ? `
-  SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
-  FROM mz_internal.mz_sink_status_history h
-  WHERE sink_id = '${sinkId}'
-  AND error IS NOT NULL
-  AND h.occurred_at BETWEEN '${startTime.toISOString()}' AND '${endTime.toISOString()}'
-  GROUP BY h.error
-  ORDER BY last_occurred DESC
-  LIMIT ${limit};`
-      : undefined
-  );
-  let errors: GroupedError[] | null = null;
-  if (result.data) {
-    errors = extractData(result.data, (x) => ({
-      lastOccurred: new Date(parseInt(x("last_occurred"))),
-      error: x("error"),
-      count: x("count"),
-    }));
-  }
-
-  return { ...result, data: errors };
-}
-
 export interface TimestampedCounts {
   count: number;
   timestamp: number;
@@ -390,49 +351,6 @@ export interface Sink extends SchemaObject {
   status?: ConnectorStatus;
   error?: string;
 }
-
-/**
- * Fetches all sinks in the current environment
- */
-export function useSinks({
-  databaseId,
-  schemaId,
-  nameFilter,
-}: { databaseId?: string; schemaId?: string; nameFilter?: string } = {}) {
-  // Note: we CAST d.id and sc.id to text because in v0.52 we changed the database ids and schema
-  // ids to be strings, namespaced on either System or User.
-  const sinkResponse =
-    useSql(`SELECT s.id, d.name as database_name, sc.name as schema_name, s.name, s.type, s.size, st.status, st.error
-FROM mz_sinks s
-INNER JOIN mz_schemas sc ON sc.id = s.schema_id
-INNER JOIN mz_databases d ON d.id = sc.database_id
-LEFT OUTER JOIN mz_internal.mz_sink_statuses st
-ON st.id = s.id
-WHERE s.id LIKE 'u%'
-${databaseId ? `AND CAST(d.id as text) = '${databaseId}'` : ""}
-${schemaId ? `AND CAST(sc.id as text) = '${schemaId}'` : ""}
-${nameFilter ? `AND s.name LIKE '%${nameFilter}%'` : ""};`);
-  let sinks: Sink[] | null = null;
-  if (sinkResponse.data) {
-    sinks = extractData(sinkResponse.data, (x) => ({
-      id: x("id"),
-      name: x("name"),
-      schemaName: x("schema_name"),
-      databaseName: x("database_name"),
-      type: x("type"),
-      size: x("size"),
-      status: x("status"),
-      error: x("error"),
-    }));
-  }
-
-  const getSinkById = (sinkId?: string) =>
-    sinks?.find((s) => s.id == sinkId) ?? null;
-
-  return { ...sinkResponse, data: sinks, getSinkById };
-}
-
-export type SinksResponse = ReturnType<typeof useSinks>;
 
 export interface MaterializedView {
   id: string;

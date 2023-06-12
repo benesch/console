@@ -2,7 +2,8 @@ import { Box, Flex, HStack, Text, useTheme, VStack } from "@chakra-ui/react";
 import { subMinutes } from "date-fns";
 import React from "react";
 
-import { Sink, useSinkErrors } from "~/api/materialized";
+import useSinkErrors from "~/api/materialize/sink/useSinkErrors";
+import { Sink } from "~/api/materialize/sink/useSinks";
 import AlertBox from "~/components/AlertBox";
 import ConnectorErrorsTable from "~/components/ConnectorErrorsTable";
 import TimePeriodSelect, {
