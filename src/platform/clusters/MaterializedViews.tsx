@@ -4,6 +4,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -17,7 +18,6 @@ import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
-import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -71,8 +71,8 @@ const MaterializedViews = () => {
   }
   return (
     <>
-      <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
-        <PageHeading>Materialized Views</PageHeading>
+      <HStack mb="6" alignItems="center" justifyContent="space-between">
+        <Text textStyle="heading-sm">Materialized Views</Text>
         <HStack>
           <DatabaseFilter {...databaseFilter} />
           <SchemaFilter {...schemaFilter} />

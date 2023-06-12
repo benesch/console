@@ -4,6 +4,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -16,7 +17,6 @@ import { Replica, useClusters } from "~/api/materialize/useClusters";
 import { Index, useIndexes } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
-import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -61,8 +61,8 @@ const Indexes = () => {
   }
   return (
     <>
-      <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
-        <PageHeading>Indexes</PageHeading>
+      <HStack mb="6" alignItems="center" justifyContent="space-between">
+        <Text textStyle="heading-sm">Materialized Views</Text>
       </HStack>
       {isEmpty ? (
         <EmptyListWrapper>
