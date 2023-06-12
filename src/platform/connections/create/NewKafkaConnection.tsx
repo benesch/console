@@ -448,6 +448,7 @@ export const NewKafkaConnectionForm = () => {
           <Accordion
             allowToggle
             index={formState.errors.schema ? 0 : undefined}
+            mt="4"
           >
             <AccordionItem>
               <AccordionButton

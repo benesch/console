@@ -343,6 +343,7 @@ const NewConfluentSchemaRegistryConnection = ({
                   allowToggle
                   index={formState.errors.schema ? 0 : undefined}
                   width="100%"
+                  mt="4"
                 >
                   <AccordionItem>
                     <AccordionButton
