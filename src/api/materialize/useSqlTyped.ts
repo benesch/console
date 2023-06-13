@@ -7,10 +7,11 @@ function useSqlTyped<R, Result = R>(
   query: CompiledQuery<R> | null,
   options: {
     cluster?: string;
+    replica?: string;
     transformRow?: (r: R) => Result;
   } = {}
 ) {
-  const { cluster, transformRow } = options;
+  const { cluster, replica, transformRow } = options;
   const request = React.useMemo(() => {
     if (!query) return undefined;
     return {
@@ -21,8 +22,9 @@ function useSqlTyped<R, Result = R>(
         },
       ],
       cluster: cluster ?? "mz_introspection",
+      replica: replica,
     };
-  }, [query, cluster]);
+  }, [query, cluster, replica]);
   const inner = useSqlMany(query ? request : undefined);
 
   let results: Result[] = [];

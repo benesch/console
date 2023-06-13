@@ -1,4 +1,12 @@
-import { Box, Flex, HStack, Spinner, Text, useTheme } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  HStack,
+  Spinner,
+  Text,
+  useTheme,
+  VStack,
+} from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
 import { subMinutes } from "date-fns";
 import React from "react";
@@ -18,6 +26,7 @@ import { MaterializeTheme } from "~/theme";
 import { ClusterParams } from "./ClusterRoutes";
 import ClusterUtilizationGraph, { DataPoint } from "./ClusterUtilizationGraph";
 import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
+import LargestMaintainedQueries from "./LargestMaintainedQueries";
 
 export interface ReplicaData {
   id: string;
@@ -184,88 +193,99 @@ const ClusterOverview = () => {
   const isLoading = isClusterLoading || isStale || !graphData;
 
   return (
-    <Box
-      border={`solid 1px ${semanticColors.border.primary}`}
-      borderRadius="8px"
-      py={4}
-      px={6}
-      width="100%"
-      minW="460px"
-    >
-      <Flex
+    <VStack spacing="6">
+      <Box
+        border={`solid 1px ${semanticColors.border.primary}`}
+        borderRadius="8px"
+        py={4}
+        px={6}
         width="100%"
-        alignItems="start"
-        justifyContent="space-between"
-        mb="6"
+        minW="460px"
       >
-        <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
-          Resource Usage
-        </Text>
-        <HStack>
-          {cluster && (
-            <LabeledSelect
-              label="Replicas"
-              value={selectedReplica}
-              onChange={(e) => setSelectedReplica(e.target.value)}
+        <Flex
+          width="100%"
+          alignItems="start"
+          justifyContent="space-between"
+          mb="6"
+        >
+          <Text as="h3" fontSize="18px" lineHeight="20px" fontWeight={500}>
+            Resource Usage
+          </Text>
+          <HStack>
+            {cluster && (
+              <LabeledSelect
+                label="Replicas"
+                value={selectedReplica}
+                onChange={(e) => setSelectedReplica(e.target.value)}
+              >
+                <option value="all">All</option>
+                {cluster.replicas.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </LabeledSelect>
+            )}
+            <TimePeriodSelect
+              timePeriodMinutes={timePeriodMinutes}
+              setTimePeriodMinutes={setTimePeriodMinutes}
+            />
+          </HStack>
+        </Flex>
+        <HStack spacing={6}>
+          {isLoading ? (
+            <Flex
+              height={graphHeightPx + labelHeightPx}
+              width="100%"
+              alignItems="center"
+              justifyContent="center"
             >
-              <option value="all">All</option>
-              {cluster.replicas.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-            </LabeledSelect>
+              <Spinner data-testid="loading-spinner" />
+            </Flex>
+          ) : (
+            <>
+              <Box width="100%">
+                <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
+                  CPU
+                </Text>
+                <ClusterUtilizationGraph
+                  dataKey="cpuPercent"
+                  data={graphData}
+                  startTime={startTime}
+                  endTime={endTime}
+                  timePeriodMinutes={timePeriodMinutes}
+                  replicaColorMap={replicaColorMap}
+                  replicas={selectedReplicas}
+                />
+              </Box>
+              <Box width="100%">
+                <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
+                  Memory
+                </Text>
+                <ClusterUtilizationGraph
+                  dataKey="memoryPercent"
+                  data={graphData}
+                  startTime={startTime}
+                  endTime={endTime}
+                  timePeriodMinutes={timePeriodMinutes}
+                  replicaColorMap={replicaColorMap}
+                  replicas={selectedReplicas}
+                />
+              </Box>
+            </>
           )}
-          <TimePeriodSelect
-            timePeriodMinutes={timePeriodMinutes}
-            setTimePeriodMinutes={setTimePeriodMinutes}
-          />
         </HStack>
-      </Flex>
-      <HStack spacing={6}>
-        {isLoading ? (
-          <Flex
-            height={graphHeightPx + labelHeightPx}
-            width="100%"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Spinner data-testid="loading-spinner" />
-          </Flex>
-        ) : (
-          <>
-            <Box width="100%">
-              <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
-                CPU
-              </Text>
-              <ClusterUtilizationGraph
-                dataKey="cpuPercent"
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                replicaColorMap={replicaColorMap}
-                replicas={selectedReplicas}
-              />
-            </Box>
-            <Box width="100%">
-              <Text fontSize="sm" lineHeight="16px" mb={2} fontWeight={500}>
-                Memory
-              </Text>
-              <ClusterUtilizationGraph
-                dataKey="memoryPercent"
-                data={graphData}
-                startTime={startTime}
-                endTime={endTime}
-                timePeriodMinutes={timePeriodMinutes}
-                replicaColorMap={replicaColorMap}
-                replicas={selectedReplicas}
-              />
-            </Box>
-          </>
+      </Box>
+      <Box width="100%">
+        {cluster && (
+          <LargestMaintainedQueries
+            clusterId={cluster.id}
+            clusterName={cluster.name}
+            replicaName="r1"
+          />
         )}
-      </HStack>
-    </Box>
+      </Box>
+    </VStack>
   );
 };
 
