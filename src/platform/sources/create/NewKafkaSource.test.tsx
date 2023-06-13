@@ -45,12 +45,6 @@ const renderComponent = (element: ReactElement) => {
 describe("NewKafkaSourceForm", () => {
   beforeEach(() => {
     server.use(
-      // useDatabases
-      buildUseSqlQueryHandler({
-        type: "SELECT" as const,
-        columns: ["id", "name"],
-        rows: [["u2", "materialize"]],
-      }),
       // useSchemas
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -63,11 +57,11 @@ describe("NewKafkaSourceForm", () => {
         column: "allowed_cluster_replica_sizes",
         rows: [['"3xsmall", "2xsmall", xsmall, small, medium, large, xlarge']],
       }),
-      // useClustersFetch
+      // useConnectorClusters
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "cluster_name", "replica_id", "replica_name", "size"],
-        rows: [["u1", "default", "u1", "r1", "2xsmall"]],
+        columns: ["id", "name"],
+        rows: [["u1", "default"]],
       }),
       // useConnectionsFiltered
       buildUseSqlQueryHandler({
@@ -99,13 +93,13 @@ describe("NewKafkaSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewKafkaSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "kafka_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
     expect(await screen.findByText("default")).toBeVisible();
     await user.click(screen.getByText("default"));
-    const topicInput = screen.getByLabelText("Topic");
+    const topicInput = screen.getByLabelText("Topic*");
     await user.type(topicInput, "source_topic");
     await user.click(screen.getByLabelText("Select format"));
     await user.click(screen.getByText("Text"));
@@ -131,7 +125,7 @@ describe("NewKafkaSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewKafkaSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "kafka_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
@@ -140,7 +134,7 @@ describe("NewKafkaSourceForm", () => {
     await user.click(screen.getByLabelText("Select cluster size"));
     await user.click(screen.getByText("3xsmall"));
 
-    const topicInput = screen.getByLabelText("Topic");
+    const topicInput = screen.getByLabelText("Topic*");
     await user.type(topicInput, "source_topic");
     await user.click(screen.getByLabelText("Select format"));
     await user.click(screen.getByText("Text"));
@@ -196,12 +190,6 @@ describe("NewKafkaSourceForm", () => {
 
   it("show validation errors for database and schema if the defaults are missing", async () => {
     server.use(
-      // useDatabases
-      buildUseSqlQueryHandler({
-        type: "SELECT" as const,
-        columns: ["id", "name"],
-        rows: [["u2", "big_co"]],
-      }),
       // useSchemas
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -240,7 +228,7 @@ describe("NewKafkaSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewKafkaSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "kafka_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
@@ -249,7 +237,7 @@ describe("NewKafkaSourceForm", () => {
     await user.click(screen.getByLabelText("Select cluster size"));
     await user.click(screen.getByText("3xsmall"));
 
-    const topicInput = screen.getByLabelText("Topic");
+    const topicInput = screen.getByLabelText("Topic*");
     await user.type(topicInput, "source_topic");
     await user.click(screen.getByLabelText("Select format"));
     await user.click(screen.getByText("Text"));

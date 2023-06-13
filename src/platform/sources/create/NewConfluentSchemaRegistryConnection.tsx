@@ -126,7 +126,7 @@ const NewConfluentSchemaRegistryConnection = ({
       name: "",
       url: "",
       useSsl: false,
-      username: createSecretFieldDefaultValues(),
+      username: createSecretFieldDefaultValues({ mode: "text" }),
       password: createSecretFieldDefaultValues(),
       sslCertificateAuthority: createSecretFieldDefaultValues(),
       sslCertificate: createSecretFieldDefaultValues(),
@@ -296,7 +296,7 @@ const NewConfluentSchemaRegistryConnection = ({
               <VStack alignItems="start" spacing="4">
                 <FormControl isInvalid={!!formState.errors.name}>
                   <FormLabel htmlFor="name" fontSize="sm">
-                    Name
+                    Name*
                   </FormLabel>
                   <ObjectNameInput
                     {...register("name", {
@@ -319,7 +319,7 @@ const NewConfluentSchemaRegistryConnection = ({
                 </FormControl>
                 <FormControl isInvalid={!!formState.errors.url}>
                   <FormLabel htmlFor="url" fontSize="sm">
-                    URL
+                    URL*
                   </FormLabel>
                   <ObjectNameInput
                     {...register("url", {
@@ -343,6 +343,7 @@ const NewConfluentSchemaRegistryConnection = ({
                   allowToggle
                   index={formState.errors.schema ? 0 : undefined}
                   width="100%"
+                  mt="4"
                 >
                   <AccordionItem>
                     <AccordionButton
@@ -410,6 +411,7 @@ const NewConfluentSchemaRegistryConnection = ({
                         required: "SSL certificate is required.",
                       }}
                       variant="vertical"
+                      required
                     />
                     <SecretsFormControl
                       control={control}
@@ -424,6 +426,7 @@ const NewConfluentSchemaRegistryConnection = ({
                         required: "SSL key is required.",
                       }}
                       variant="vertical"
+                      required
                     />
                   </>
                 )}
@@ -444,6 +447,7 @@ const NewConfluentSchemaRegistryConnection = ({
                     required: "Username is required.",
                   }}
                   variant="vertical"
+                  required
                 />
                 <SecretsFormControl
                   control={control}
@@ -462,6 +466,7 @@ const NewConfluentSchemaRegistryConnection = ({
                     required: "Password is required.",
                   }}
                   variant="vertical"
+                  required
                 />
               </VStack>
             </FormSection>

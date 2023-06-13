@@ -9,6 +9,7 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormLabel,
   Modal,
   ModalContent,
   Text,
@@ -21,6 +22,9 @@ import { useController, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import useConnectorClusters, {
+  Cluster,
+} from "~/api/materialize/cluster/useConnectorClusters";
 import {
   Connection,
   normalizeConnectionRow,
@@ -30,7 +34,6 @@ import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import createKafkaSourceStatement from "~/api/materialize/source/createKafkaSourceStatement";
 import getSourceByNameStatement from "~/api/materialize/source/getSourceByNameStatement";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
-import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
 import useSchemas, {
   isDefaultSchema,
   Schema,
@@ -120,7 +123,7 @@ export const NewKafkaSourceForm = () => {
   const { data: schemas, error: schemasError } = useSchemas();
   const { data: clusterSizes, error: clusterSizesError } =
     useAvailableClusterSizes();
-  const { data: clusters, error: clustersError } = useClustersFetch();
+  const { data: clusters, error: clustersError } = useConnectorClusters();
   const { data: connections, error: connectionsError } = useConnectionsFiltered(
     {
       type: "kafka" as const,
@@ -437,6 +440,7 @@ export const NewKafkaSourceForm = () => {
                 label="Name"
                 error={formState.errors.name?.message}
                 message="Alphanumeric characters and underscores only."
+                required
               >
                 <ObjectNameInput
                   {...register("name", {
@@ -491,6 +495,7 @@ export const NewKafkaSourceForm = () => {
               <InlineLabeledInput
                 label="Cluster"
                 error={formState.errors.cluster?.message}
+                required
               >
                 <Box>
                   <SearchableSelect
@@ -528,6 +533,7 @@ export const NewKafkaSourceForm = () => {
                 <InlineLabeledInput
                   label="Cluster size"
                   error={formState.errors.clusterSize?.message}
+                  required
                 >
                   <SearchableSelect
                     ariaLabel="Select cluster size"
@@ -551,6 +557,7 @@ export const NewKafkaSourceForm = () => {
                 <InlineLabeledInput
                   label="Topic"
                   error={formState.errors.topic?.message}
+                  required
                 >
                   <ObjectNameInput
                     {...register("topic", {
@@ -593,6 +600,7 @@ export const NewKafkaSourceForm = () => {
                       mr="4"
                     />
                     <Box width="100%">
+                      <FormLabel mb="1">Confluent Schema Registry*</FormLabel>
                       <SearchableSelect
                         ariaLabel="Choose connection"
                         placeholder="Choose connection"

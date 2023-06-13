@@ -8,6 +8,7 @@ export const Accordion = {
         border: "none",
       },
       button: {
+        color: "semanticColors.accent.brightPurple",
         lineHeight: "16px",
         p: 0,
         _hover: {
@@ -19,7 +20,7 @@ export const Accordion = {
         height: "16px",
       },
       panel: {
-        mt: 6,
+        mt: 2,
         p: 0,
       },
     },

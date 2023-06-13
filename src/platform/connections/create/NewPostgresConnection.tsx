@@ -313,6 +313,12 @@ export const NewPostgresConnectionForm = () => {
 
   const selectedSSLMode = watch("sslMode")?.name;
 
+  React.useEffect(() => {
+    if (selectedSSLMode !== "verify-ca" && selectedSSLMode !== "verify-full") {
+      setValue("sslCertificateAuthority", { mode: "select" });
+    }
+  }, [selectedSSLMode, setValue]);
+
   if (loadingError) {
     return <ErrorBox />;
   }
@@ -350,6 +356,7 @@ export const NewPostgresConnectionForm = () => {
               label="Name"
               error={formState.errors.name?.message}
               message="Alphanumeric characters and underscores only."
+              required
             >
               <ObjectNameInput
                 {...register("name", {
@@ -371,6 +378,7 @@ export const NewPostgresConnectionForm = () => {
           <Accordion
             allowToggle
             index={formState.errors.schema ? 0 : undefined}
+            mt="4"
           >
             <AccordionItem>
               <AccordionButton
@@ -404,6 +412,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="Host"
                 error={formState.errors.host?.message}
+                required
               >
                 <Input
                   {...register("host", {
@@ -420,6 +429,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="Database"
                 error={formState.errors.pgDatabaseName?.message}
+                required
               >
                 <Input
                   {...register("pgDatabaseName", {
@@ -455,7 +465,11 @@ export const NewPostgresConnectionForm = () => {
           <VStack mt="2" spacing="6" alignItems="start">
             <FormControl flexDir="row" display="flex">
               <Switch
-                onChange={() => setEnableCertAuth((prev) => !prev)}
+                onChange={() => {
+                  setEnableCertAuth((prev) => !prev);
+                  setValue("sslKey", { mode: "select" });
+                  setValue("sslCertificate", { mode: "select" });
+                }}
                 isChecked={enableCertAuth}
               />
               <FormLabel m="0" ml="2" lineHeight="16px">
@@ -466,6 +480,7 @@ export const NewPostgresConnectionForm = () => {
               <InlineLabeledInput
                 label="User"
                 error={formState.errors.user?.message}
+                required
               >
                 <Input
                   {...register("user", {
@@ -508,12 +523,13 @@ export const NewPostgresConnectionForm = () => {
                   textInputRules={{
                     required: "SSL key is required.",
                   }}
+                  required
                 />
                 <SecretsFormControl
                   control={control}
                   register={register}
                   fieldKey="sslCertificate"
-                  fieldLabel="Certificate"
+                  fieldLabel="SSL Certificate"
                   selectOptions={secrets ?? []}
                   selectProps={{
                     menuPlacement: "top",
@@ -528,6 +544,7 @@ export const NewPostgresConnectionForm = () => {
                   textInputRules={{
                     required: "Certificate is required.",
                   }}
+                  required
                 />
               </>
             )}
@@ -542,6 +559,7 @@ export const NewPostgresConnectionForm = () => {
                   <InlineLabeledInput
                     label="SSL Mode"
                     error={fieldState.error?.message}
+                    required={enableCertAuth}
                   >
                     <SearchableSelect
                       ariaLabel="SSL Mode"
@@ -579,6 +597,7 @@ export const NewPostgresConnectionForm = () => {
                 textInputProps={{
                   placeholder: "-----BEGIN CERTIFICATE...",
                 }}
+                required
               />
             )}
           </VStack>

@@ -44,14 +44,14 @@ const renderComponent = (element: ReactElement) => {
 };
 
 async function fillRequiredFields(user: UserEvent) {
-  const connectionNameInput = screen.getByLabelText("Name");
+  const connectionNameInput = screen.getByLabelText("Name*");
 
   await user.type(connectionNameInput, "pg_connection");
-  const hostInput = screen.getByLabelText("Host");
+  const hostInput = screen.getByLabelText("Host*");
   await user.type(hostInput, "host.com");
-  const databaseInput = screen.getByLabelText("Database");
+  const databaseInput = screen.getByLabelText("Database*");
   await user.type(databaseInput, "test_database");
-  const userInput = screen.getByLabelText("User");
+  const userInput = screen.getByLabelText("User*");
   await user.type(userInput, "test_user");
 }
 

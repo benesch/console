@@ -203,6 +203,7 @@ export const darkTheme = extendTheme(baseTheme, {
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": darkColors.foreground.secondary,
+      "chakra-body-text": darkColors.foreground.primary,
     },
   },
   shadows: darkShadows,
@@ -215,6 +216,7 @@ export const lightTheme = extendTheme(baseTheme, {
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": lightColors.foreground.secondary,
+      "chakra-body-text": lightColors.foreground.primary,
     },
   },
   shadows: lightShadows,
@@ -258,7 +260,6 @@ export const buildReactSelectFilterStyles = <
       menu: (base) => ({
         ...base,
         position: "absolute",
-        left: "-8px",
         marginTop: "2px",
         minWidth: "240px",
         width: "fit-content",
@@ -271,13 +272,14 @@ export const buildReactSelectFilterStyles = <
       }),
       control: (base, state) => ({
         ...base,
+        cursor: "pointer",
         color: semanticColors.foreground.secondary,
         fontSize: "14px",
         lineHeight: "16px",
         minHeight: "32px",
         padding: "0px",
         borderRadius: "8px",
-        border: "none",
+        borderWidth: "0",
         background: state.isFocused
           ? semanticColors.background.secondary
           : semanticColors.background.primary,
@@ -291,12 +293,12 @@ export const buildReactSelectFilterStyles = <
       }),
       groupHeading: (base) => ({
         ...base,
-        color: semanticColors.foreground.tertiary,
+        color: semanticColors.foreground.secondary,
         fontSize: "14px",
         fontWeight: "500",
         lineHeight: "16px",
         overflow: "hidden",
-        padding: "0 16px",
+        padding: "0 8px",
         textTransform: "none",
       }),
       option: (base) => ({

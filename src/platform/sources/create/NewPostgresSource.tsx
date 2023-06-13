@@ -30,6 +30,9 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import useConnectorClusters, {
+  Cluster,
+} from "~/api/materialize/cluster/useConnectorClusters";
 import {
   Connection,
   useConnectionsFiltered,
@@ -38,7 +41,6 @@ import { alreadyExistsError } from "~/api/materialize/parseErrors";
 import createPostgresSourceStatement from "~/api/materialize/source/createPostgresSourceStatement";
 import getSourceByNameStatement from "~/api/materialize/source/getSourceByNameStatement";
 import useAvailableClusterSizes from "~/api/materialize/useAvailableClusterSizes";
-import { Cluster, useClustersFetch } from "~/api/materialize/useClusters";
 import { Database } from "~/api/materialize/useDatabases";
 import useSchemas, {
   isDefaultSchema,
@@ -124,7 +126,7 @@ export const NewPostgresSourceForm = () => {
   const { data: schemas, error: schemasError } = useSchemas();
   const { data: clusterSizes, error: clusterSizesError } =
     useAvailableClusterSizes();
-  const { data: clusters, error: clustersError } = useClustersFetch();
+  const { data: clusters, error: clustersError } = useConnectorClusters();
   const { data: connections, error: connectionsError } = useConnectionsFiltered(
     {
       type: "postgres" as const,
@@ -390,6 +392,7 @@ export const NewPostgresSourceForm = () => {
               label="Name"
               error={sourceNameErrorMessage(formState.errors.name)}
               message="Alphanumeric characters and underscores only."
+              required
             >
               <ObjectNameInput
                 {...register("name", {
@@ -438,6 +441,7 @@ export const NewPostgresSourceForm = () => {
             <InlineLabeledInput
               label="Cluster"
               error={formState.errors.cluster?.message}
+              required
             >
               <Box>
                 <SearchableSelect
@@ -475,6 +479,7 @@ export const NewPostgresSourceForm = () => {
               <InlineLabeledInput
                 label="Cluster size"
                 error={formState.errors.clusterSize?.message}
+                required
               >
                 <SearchableSelect
                   ariaLabel="Select cluster size"
@@ -498,6 +503,7 @@ export const NewPostgresSourceForm = () => {
               <InlineLabeledInput
                 label="Publication"
                 error={formState.errors.publication?.message}
+                required
               >
                 <ObjectNameInput
                   {...register("publication", {
@@ -523,6 +529,7 @@ export const NewPostgresSourceForm = () => {
                     <InlineLabeledInput
                       key={field.id}
                       label={`Table ${index + 1}`}
+                      required
                     >
                       <HStack alignItems="start">
                         <FormControl

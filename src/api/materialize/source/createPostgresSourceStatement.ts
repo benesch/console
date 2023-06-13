@@ -4,9 +4,9 @@ import {
   escapedIdentifier as id,
   escapedLiteral as lit,
 } from "~/api/materialize";
+import { Cluster } from "~/api/materialize/cluster/useConnectorClusters";
 import { Connection } from "~/api/materialize/connection/useConnections";
 import { queryBuilder } from "~/api/materialize/db";
-import { Cluster } from "~/api/materialize/useClusters";
 import { NEW_CLUSTER_ID } from "~/platform/sources/create/NewPostgresSource";
 import { assert } from "~/util";
 

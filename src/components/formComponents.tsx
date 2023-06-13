@@ -205,6 +205,7 @@ export interface InlineLabeledInputProps {
   error?: string;
   label: string;
   message?: React.ReactNode;
+  required?: boolean;
 }
 
 export const InlineLabeledInput = ({
@@ -212,6 +213,7 @@ export const InlineLabeledInput = ({
   error,
   label,
   message,
+  required,
 }: React.PropsWithChildren<InlineLabeledInputProps>) => {
   return (
     <Grid
@@ -224,10 +226,11 @@ export const InlineLabeledInput = ({
     >
       <FormLabel variant="inline" mt="2" lineHeight="16px">
         {label}
+        {required ? "*" : ""}
       </FormLabel>
       {children}
       <Box gridColumn="2">
-        {message && <FormHelperText>{!error && message}</FormHelperText>}
+        {message && <FormHelperText>{message}</FormHelperText>}
         <FormErrorMessage>{error}</FormErrorMessage>
       </Box>
     </Grid>

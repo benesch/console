@@ -131,6 +131,7 @@ export type SecretsFormControlProps<
   selectOptions?: Option[];
   // If true, allows user to toggle between using a text value or a secret value for the input
   canFieldBeText?: boolean;
+  required?: boolean;
   textInputProps?: Partial<InputProps>;
   textInputRules?: RegisterOptions;
   variant?: "inline" | "vertical";
@@ -143,6 +144,7 @@ export type SecretField<Option extends SelectOption = SelectOption> = {
   key?: string;
   value?: string;
   selected?: Option;
+  required?: boolean;
   text?: string;
 };
 
@@ -160,6 +162,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
     selectProps,
     selectRules,
     canFieldBeText = false,
+    required = false,
     variant = "inline",
   } = props;
   const { errors } = useFormState({
@@ -197,7 +200,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
       message:
         createSecretKey && createSecretKey.length > 0
           ? `A new secret named ${createSecretKey} will be created.`
-          : undefined,
+          : "Alphanumeric characters and underscores only.",
     };
 
     if (!canFieldBeText) {
@@ -316,6 +319,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
           label={fieldLabel ?? ""}
           error={error}
           message={message}
+          required={required}
         >
           {inputChildren}
         </InlineLabeledInput>
@@ -323,6 +327,7 @@ export const SecretsFormControl = <FormState extends FieldValues>(
         <>
           <FormLabel htmlFor="name" fontSize="sm">
             {fieldLabel}
+            {required ? "*" : ""}
           </FormLabel>
           {inputChildren}
           {message && <FormHelperText mt="2">{message}</FormHelperText>}

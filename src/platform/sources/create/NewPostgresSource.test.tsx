@@ -45,12 +45,6 @@ const renderComponent = (element: ReactElement) => {
 describe("NewPostgresSourceForm", () => {
   beforeEach(() => {
     server.use(
-      // useDatabases
-      buildUseSqlQueryHandler({
-        type: "SELECT" as const,
-        columns: ["id", "name"],
-        rows: [["u2", "materialize"]],
-      }),
       // useSchemas
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -63,11 +57,11 @@ describe("NewPostgresSourceForm", () => {
         column: "allowed_cluster_replica_sizes",
         rows: [['"3xsmall", "2xsmall", xsmall, small, medium, large, xlarge']],
       }),
-      // useClustersFetch
+      // useConnectorClusters
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "cluster_name", "replica_id", "replica_name", "size"],
-        rows: [["u1", "default", "u1", "r1", "2xsmall"]],
+        columns: ["id", "name"],
+        rows: [["u1", "default"]],
       }),
       // useConnectionsFiltered
       buildUseSqlQueryHandler({
@@ -93,13 +87,13 @@ describe("NewPostgresSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewPostgresSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "pg_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
     expect(await screen.findByText("default")).toBeVisible();
     await user.click(screen.getByText("default"));
-    const publicationInput = screen.getByLabelText("Publication");
+    const publicationInput = screen.getByLabelText("Publication*");
     await user.type(publicationInput, "mz_source");
     await user.click(screen.getByLabelText("For all tables"));
     await user.click(screen.getByText("Create source"));
@@ -124,7 +118,7 @@ describe("NewPostgresSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewPostgresSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "pg_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
@@ -133,7 +127,7 @@ describe("NewPostgresSourceForm", () => {
     await user.click(screen.getByLabelText("Select cluster size"));
     await user.click(screen.getByText("3xsmall"));
 
-    const publicationInput = screen.getByLabelText("Publication");
+    const publicationInput = screen.getByLabelText("Publication*");
     await user.type(publicationInput, "mz_source");
     await user.click(screen.getByLabelText("For all tables"));
     await user.click(screen.getByText("Create source"));
@@ -164,12 +158,6 @@ describe("NewPostgresSourceForm", () => {
 
   it("show validation errors for database and schema if the defaults are missing", async () => {
     server.use(
-      // useDatabases
-      buildUseSqlQueryHandler({
-        type: "SELECT" as const,
-        columns: ["id", "name"],
-        rows: [["u2", "big_co"]],
-      }),
       // useSchemas
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -208,7 +196,7 @@ describe("NewPostgresSourceForm", () => {
     const user = userEvent.setup();
     renderComponent(<NewPostgresSourceForm />);
 
-    const sourceNameInput = screen.getByLabelText("Name");
+    const sourceNameInput = screen.getByLabelText("Name*");
     await user.type(sourceNameInput, "pg_source");
     await user.click(screen.getByLabelText("Select cluster"));
     // wait for cluster options to load
@@ -217,7 +205,7 @@ describe("NewPostgresSourceForm", () => {
     await user.click(screen.getByLabelText("Select cluster size"));
     await user.click(screen.getByText("3xsmall"));
 
-    const publicationInput = screen.getByLabelText("Publication");
+    const publicationInput = screen.getByLabelText("Publication*");
     await user.type(publicationInput, "mz_source");
     await user.click(screen.getByLabelText("For all tables"));
     await user.click(screen.getByText("Create source"));

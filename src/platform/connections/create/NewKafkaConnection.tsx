@@ -426,6 +426,7 @@ export const NewKafkaConnectionForm = () => {
               label="Name"
               error={formState.errors.name?.message}
               message="Alphanumeric characters and underscores only."
+              required
             >
               <ObjectNameInput
                 {...register("name", {
@@ -447,6 +448,7 @@ export const NewKafkaConnectionForm = () => {
           <Accordion
             allowToggle
             index={formState.errors.schema ? 0 : undefined}
+            mt="4"
           >
             <AccordionItem>
               <AccordionButton
@@ -482,6 +484,7 @@ export const NewKafkaConnectionForm = () => {
                 label={
                   brokerFields.length > 1 ? `Broker ${index + 1}` : "Broker"
                 }
+                required
               >
                 <HStack alignItems="start">
                   <FormControl
@@ -561,7 +564,18 @@ export const NewKafkaConnectionForm = () => {
             variant="soft-rounded"
             isLazy
             index={authMode}
-            onChange={(newTab) => setAuthMode(newTab)}
+            onChange={(newTab) => {
+              setAuthMode(newTab);
+              if (newTab !== AUTH_MODE.SASL) {
+                setValue("saslUsername", { mode: "text" });
+                setValue("saslPassword", { mode: "select" });
+              }
+              if (newTab !== AUTH_MODE.SSL) {
+                setValue("sslKey", { mode: "select" });
+                setValue("sslCertificate", { mode: "select" });
+                setValue("sslCertificateAuthority", { mode: "select" });
+              }
+            }}
             size="sm"
           >
             <TabList>
@@ -605,6 +619,7 @@ export const NewKafkaConnectionForm = () => {
                       required: "Username is required.",
                     }}
                     canFieldBeText
+                    required
                   />
                   <SecretsFormControl
                     control={control}
@@ -619,6 +634,7 @@ export const NewKafkaConnectionForm = () => {
                     selectRules={{
                       required: "Password is required.",
                     }}
+                    required
                   />
                   <SecretsFormControl
                     control={control}
@@ -651,6 +667,7 @@ export const NewKafkaConnectionForm = () => {
                     selectRules={{
                       required: "Key is required.",
                     }}
+                    required
                   />
                   <SecretsFormControl
                     control={control}
@@ -670,6 +687,7 @@ export const NewKafkaConnectionForm = () => {
                     selectRules={{
                       required: "Certificate is required.",
                     }}
+                    required
                     canFieldBeText
                   />
                   <SecretsFormControl

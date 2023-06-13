@@ -1,5 +1,5 @@
+import { Cluster } from "~/api/materialize/cluster/useConnectorClusters";
 import { Connection } from "~/api/materialize/connection/useConnections";
-import { Cluster } from "~/api/materialize/useClusters";
 import {
   KafkaEnvelope,
   KafkaFormat,

@@ -1,4 +1,9 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Circle,
   FormControl,
@@ -29,7 +34,7 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useController, useForm } from "react-hook-form";
 
 import { useSegment } from "~/analytics/segment";
 import { createSecretQueryBuilder } from "~/api/materialize/secret/createSecrets";
@@ -37,8 +42,10 @@ import {
   ListPageSecret,
   useSecretsListPage,
 } from "~/api/materialize/secret/useSecrets";
-import { DEFAULT_DATABASE_NAME } from "~/api/materialize/useDatabases";
-import { DEFAULT_SCHEMA_NAME } from "~/api/materialize/useSchemas";
+import useSchemas, {
+  isDefaultSchema,
+  Schema,
+} from "~/api/materialize/useSchemas";
 import { MATERIALIZE_DATABASE_IDENTIFIER_REGEX } from "~/api/materialize/validation";
 import { useSqlLazy } from "~/api/materialized";
 import DatabaseFilter from "~/components/DatabaseFilter";
@@ -46,6 +53,7 @@ import ErrorBox from "~/components/ErrorBox";
 import InlayBanner from "~/components/InlayBanner";
 import ObjectNameInput from "~/components/ObjectNameInput";
 import SchemaFilter from "~/components/SchemaFilter";
+import SchemaSelect from "~/components/SchemaSelect";
 import SearchInput from "~/components/SearchInput";
 import { useSuccessToast } from "~/components/SuccessToast";
 import TextLink from "~/components/TextLink";
@@ -66,6 +74,7 @@ import { serverErrorToUserError } from "./serverErrorToUserError";
 
 type FormValues = {
   name: string;
+  schema: Schema;
   value: string;
 };
 
@@ -130,10 +139,14 @@ const SecretsCreationModal = ({
   const [showGenericQueryError, setShowGenericQueryError] = useState(false);
   const toast = useSuccessToast();
 
-  const { shadows } = useTheme<MaterializeTheme>();
+  const {
+    shadows,
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
 
   const {
+    control,
     register,
     handleSubmit: handleSubmit,
     reset: formReset,
@@ -144,17 +157,24 @@ const SecretsCreationModal = ({
     mode: "onTouched",
   });
 
+  const { data: schemas, error: loadSchemasError } = useSchemas();
+
   const { runSql: createSecret, loading: isCreationInFlight } = useSqlLazy({
     queryBuilder: createSecretQueryBuilder,
   });
 
+  const handleClose = () => {
+    formReset();
+    onClose();
+  };
+
   const handleValidSubmit = async (formValues: FormValues) => {
     setShowGenericQueryError(false);
     const variables = {
-      ...formValues,
-      // TODO: Add a schema filter select instead of using default values
-      schemaName: DEFAULT_SCHEMA_NAME,
-      databaseName: DEFAULT_DATABASE_NAME,
+      name: formValues.name,
+      databaseName: formValues.schema.databaseName,
+      schemaName: formValues.schema.name,
+      value: formValues.value,
     };
     createSecret(variables, {
       onSuccess: () => {
@@ -177,9 +197,30 @@ const SecretsCreationModal = ({
       },
     });
   };
+  const { field: schemaField } = useController({
+    control,
+    name: "schema",
+    rules: {
+      required: "Schema is required.",
+    },
+  });
+
+  React.useEffect(() => {
+    if (!schemas) return;
+    if (schemaField.value) return;
+
+    const selected = schemas.find(isDefaultSchema);
+    if (selected) {
+      schemaField.onChange(selected);
+    }
+  }, [schemas, schemaField]);
+
+  if (loadSchemasError) {
+    return <ErrorBox />;
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent shadow={shadows.level4}>
         <form onSubmit={handleSubmit(handleValidSubmit)}>
@@ -219,6 +260,37 @@ const SecretsCreationModal = ({
                   {formState.errors.name?.message}
                 </FormErrorMessage>
               </FormControl>
+              <Accordion
+                allowToggle
+                index={formState.errors.schema ? 0 : undefined}
+                width="100%"
+              >
+                <AccordionItem>
+                  <AccordionButton
+                    py="2"
+                    color={semanticColors.accent.brightPurple}
+                  >
+                    <Text textStyle="text-ui-med">Additional Options</Text>
+                    <AccordionIcon ml="2" />
+                  </AccordionButton>
+                  <AccordionPanel
+                    mt="4"
+                    motionProps={{ style: { overflow: "visible" } }}
+                  >
+                    <FormControl isInvalid={!!formState.errors.schema}>
+                      <FormLabel>Schema</FormLabel>
+                      <SchemaSelect
+                        {...schemaField}
+                        schemas={schemas ?? []}
+                        variant={formState.errors.schema ? "error" : "default"}
+                      />
+                      <FormErrorMessage>
+                        {formState.errors.schema?.message}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
               <FormControl isInvalid={!!formState.errors.value}>
                 <FormLabel fontSize="sm">Value</FormLabel>
                 <Input
@@ -238,7 +310,7 @@ const SecretsCreationModal = ({
 
           <ModalFooter>
             <HStack spacing="2">
-              <Button variant="secondary" size="sm" onClick={onClose}>
+              <Button variant="secondary" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
               <Button

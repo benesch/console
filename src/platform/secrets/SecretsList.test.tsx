@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { format } from "date-fns";
 import React from "react";
@@ -82,6 +82,16 @@ describe("SecretsList", () => {
   });
 
   describe("Creation flow", () => {
+    beforeEach(() => {
+      server.use(
+        // useSchemas
+        buildUseSqlQueryHandler({
+          type: "SELECT" as const,
+          columns: ["id", "name", "database_id", "database_name"],
+          rows: [["u1", "public", "u1", "materialize"]],
+        })
+      );
+    });
     it("should create a secret successfully and show feedback that the creation was successful", async () => {
       const createSecretHandler = buildUseSqlQueryHandler({
         type: "CREATE" as const,
@@ -140,6 +150,29 @@ describe("SecretsList", () => {
       expect(
         await screen.findByText("A secret with that name already exists.")
       ).toBeVisible();
+    });
+
+    it("show validation errors for database and schema if the defaults are missing", async () => {
+      server.use(
+        // useSchemas
+        buildUseSqlQueryHandler({
+          type: "SELECT" as const,
+          columns: ["id", "name", "database_id", "database_name"],
+          rows: [["u1", "custom_schema", "u1", "big_co"]],
+        })
+      );
+      const user = userEvent.setup();
+      renderComponent(<SecretsList />, {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      });
+
+      await user.click(screen.getByText("New secret"));
+      await user.click(screen.getByText("Create secret"));
+
+      await waitFor(async () => {
+        expect(await screen.findByText("Schema is required.")).toBeVisible();
+      });
     });
 
     it("should show the inlay error banner when an error occurs while trying to create a secret", async () => {
