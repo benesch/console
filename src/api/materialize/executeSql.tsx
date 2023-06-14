@@ -1,18 +1,12 @@
-import { PostgresError } from "pg-error-enum";
-
 import config from "~/config";
 import { EnabledEnvironment } from "~/recoil/environments";
 import { assert } from "~/util";
 
 import { APPLICATION_NAME, DEFAULT_QUERY_ERROR } from ".";
-
-export interface SqlStatement {
-  query: string;
-  params: (string | null)[];
-}
+import { ErrorCode, ExtendedRequest } from "./types";
 
 export interface SqlRequest {
-  queries: SqlStatement[];
+  queries: ExtendedRequest[];
   cluster: string;
   replica?: string;
 }
@@ -34,8 +28,7 @@ type NetworkError = GenericError & {
 };
 
 type MaterializeError = GenericError & {
-  /* Postgres error code from https://www.postgresql.org/docs/current/errcodes-appendix.html */
-  code: PostgresError;
+  code: ErrorCode;
   detail?: string;
   hint?: string;
 };

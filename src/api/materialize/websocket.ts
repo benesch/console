@@ -5,6 +5,7 @@ import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 import { currentEnvironmentState } from "~/recoil/environments";
 
 import { APPLICATION_NAME } from ".";
+import { Error, Notice } from "./types";
 
 export interface SimpleRequest {
   query: string;
@@ -21,29 +22,31 @@ export interface ExtendedRequest {
 
 export type SqlRequest = SimpleRequest | ExtendedRequest;
 
-// Based on https://github.com/MaterializeInc/materialize/blob/67ceb5670b515887357624709acb904e7f39f42b/src/pgwire/src/message.rs#L446-L456
-export type NoticeSeverity =
-  | "Panic"
-  | "Fatal"
-  | "Error"
-  | "Warning"
-  | "Notice"
-  | "Debug"
-  | "Info"
-  | "Log";
+export interface ParameterStatus {
+  name: string;
+  value: string;
+}
 
-export interface NoticeResponse {
-  message: string;
-  severity: NoticeSeverity;
+export interface CommandStarting {
+  has_rows: boolean;
+  is_streaming: boolean;
+}
+
+export interface BackendKeyData {
+  conn_id: number;
+  secret_key: number;
 }
 
 export type WebSocketResult =
   | { type: "ReadyForQuery"; payload: string }
-  | { type: "Notice"; payload: NoticeResponse }
+  | { type: "Notice"; payload: Notice }
   | { type: "CommandComplete"; payload: string }
-  | { type: "Error"; payload: string }
+  | { type: "Error"; payload: Error }
   | { type: "Rows"; payload: string[] }
-  | { type: "Row"; payload: unknown[] };
+  | { type: "Row"; payload: unknown[] }
+  | { type: "ParameterStatus"; payload: ParameterStatus }
+  | { type: "CommandStarting"; payload: CommandStarting }
+  | { type: "BackendKeyData"; payload: BackendKeyData };
 
 export class SqlWebSocket {
   socket: WebSocket;
