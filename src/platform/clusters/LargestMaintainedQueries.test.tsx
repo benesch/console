@@ -14,6 +14,8 @@ import LargestMaintainedQueries from "./LargestMaintainedQueries";
 
 jest.mock("~/api/auth");
 
+const smallestReplicaColumns = ["name", "memoryBytes"];
+
 const useLargestMaintainedQueriesColumns = [
   "id",
   "name",
@@ -23,22 +25,31 @@ const useLargestMaintainedQueriesColumns = [
   "databaseName",
 ];
 
-const emptyResponse = buildUseSqlQueryHandler({
+const emptySmallestReplicasQuery = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: smallestReplicaColumns,
+  rows: [],
+});
+
+const emptyMaintainedQueriesResponse = buildUseSqlQueryHandler({
   type: "SELECT" as const,
   columns: useLargestMaintainedQueriesColumns,
   rows: [],
 });
 
+const validSmallestReplicaResponse = buildUseSqlQueryHandler({
+  type: "SELECT" as const,
+  columns: smallestReplicaColumns,
+  rows: [["r1", "17179869184"]],
+});
+
 describe("LargestMaintainedQueries", () => {
   it("shows a spinner initially", async () => {
-    server.use(emptyResponse);
+    server.use(emptySmallestReplicasQuery);
+    server.use(emptyMaintainedQueriesResponse);
 
     renderComponent(
-      <LargestMaintainedQueries
-        clusterId="u1"
-        clusterName="default"
-        replicaName="r1"
-      />,
+      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
       {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
@@ -51,7 +62,34 @@ describe("LargestMaintainedQueries", () => {
     expect(await screen.findByTestId("loading-spinner")).toBeVisible();
   });
 
-  it("shows an error state when the data fails to load", async () => {
+  it("shows an error state when the replica info fails to load", async () => {
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: smallestReplicaColumns,
+        rows: [],
+        error: {
+          message: "Something went wrong",
+          code: ErrorCode.INTERNAL_ERROR,
+        },
+      })
+    );
+    renderComponent(
+      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
+      {
+        initializeState: ({ set }) =>
+          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
+      }
+    );
+
+    expect(
+      await screen.findByText(
+        "An error has occurred loading maintained queries"
+      )
+    ).toBeVisible();
+  });
+  it("shows an error state when the maintained query data fails to load", async () => {
+    server.use(validSmallestReplicaResponse);
     server.use(
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -64,11 +102,7 @@ describe("LargestMaintainedQueries", () => {
       })
     );
     renderComponent(
-      <LargestMaintainedQueries
-        clusterId="u1"
-        clusterName="default"
-        replicaName="r1"
-      />,
+      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
       {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
@@ -83,13 +117,10 @@ describe("LargestMaintainedQueries", () => {
   });
 
   it("shows the empty state when there are no results", async () => {
-    server.use(emptyResponse);
+    server.use(emptySmallestReplicasQuery);
+    server.use(emptyMaintainedQueriesResponse);
     renderComponent(
-      <LargestMaintainedQueries
-        clusterId="u1"
-        clusterName="default"
-        replicaName="r1"
-      />,
+      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
       {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
@@ -102,6 +133,7 @@ describe("LargestMaintainedQueries", () => {
   });
 
   it("renders the maintained queries list", async () => {
+    server.use(validSmallestReplicaResponse);
     server.use(
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
@@ -119,11 +151,7 @@ describe("LargestMaintainedQueries", () => {
       })
     );
     renderComponent(
-      <LargestMaintainedQueries
-        clusterId="u1"
-        clusterName="default"
-        replicaName="r1"
-      />,
+      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
       {
         initializeState: ({ set }) =>
           setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),

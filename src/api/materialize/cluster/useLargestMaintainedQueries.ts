@@ -5,31 +5,31 @@ import { rawLimit } from "..";
 import { queryBuilder } from "../db";
 import useSqlTyped from "../useSqlTyped";
 
+export function buildSmallestReplicaQuery(clusterId: string) {
+  const qb = queryBuilder
+    .selectFrom("mz_catalog.mz_cluster_replicas as cr")
+    .innerJoin(
+      "mz_internal.mz_cluster_replica_sizes as rs",
+      "cr.size",
+      "rs.size"
+    )
+    .select(["cr.name", "rs.memory_bytes as memoryBytes"])
+    .where("cr.cluster_id", "=", clusterId)
+    // Order by smallest replicas first
+    .orderBy("rs.memory_bytes", "desc");
+
+  // take the first (smallest) replica
+  return rawLimit(qb, 1).compile();
+}
+
 export function buildLargestMaintainedQueriesQuery(
-  clusterId: string,
+  replicaSize: number | null,
   limit: number
 ) {
+  if (!replicaSize) return null;
+
   const qb = queryBuilder
     .selectFrom("mz_internal.mz_dataflow_arrangement_sizes as s")
-    .select(["s.id", "s.name"])
-    .select((eb) =>
-      sql`${sql.id("s", "size")} / (${rawLimit(
-        eb
-          .selectFrom("mz_catalog.mz_cluster_replicas as cr")
-          .innerJoin(
-            "mz_internal.mz_cluster_replica_sizes as rs",
-            "cr.size",
-            "rs.size"
-          )
-          .select("rs.memory_bytes")
-          .where("cr.cluster_id", "=", clusterId)
-          // Take the smallest replica
-          .orderBy("rs.memory_bytes", "desc"),
-        1
-      )}) * 100 `
-        .$castTo<string>()
-        .as("memoryPercentage")
-    )
     .innerJoin("mz_internal.mz_dataflows as d", "d.id", "s.id")
     .innerJoin(
       "mz_internal.mz_compute_exports as ce",
@@ -37,11 +37,18 @@ export function buildLargestMaintainedQueriesQuery(
       "d.local_id"
     )
     .innerJoin("mz_catalog.mz_objects as o", "o.id", "ce.export_id")
-    .select("o.type")
     .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "o.schema_id")
-    .select("sc.name as schemaName")
     .innerJoin("mz_catalog.mz_databases as da", "da.id", "sc.database_id")
-    .select("da.name as databaseName")
+    .select([
+      "s.id",
+      "s.name",
+      sql`${sql.id("s", "size")} / (${sql.raw(replicaSize.toString())})`
+        .$castTo<string>()
+        .as("memoryPercentage"),
+      "o.type",
+      "sc.name as schemaName",
+      "da.name as databaseName",
+    ])
     .orderBy("memoryPercentage", "desc");
 
   return rawLimit(qb, limit).compile();
@@ -55,20 +62,32 @@ export function buildLargestMaintainedQueriesQuery(
 function useLargestMaintainedQueries({
   clusterId,
   clusterName,
-  replicaName,
 }: {
   clusterId: string;
   clusterName: string;
-  replicaName: string;
 }) {
-  const query = React.useMemo(
-    () => buildLargestMaintainedQueriesQuery(clusterId, 10),
+  const sizeQuery = React.useMemo(
+    () => buildSmallestReplicaQuery(clusterId),
     [clusterId]
+  );
+  const sizeResponse = useSqlTyped(sizeQuery);
+  let replicaInfo: { memoryBytes: number; replicaName: string } | null = null;
+  if (sizeResponse.results.length > 0) {
+    replicaInfo = {
+      memoryBytes: parseInt(sizeResponse.results[0].memoryBytes),
+      replicaName: sizeResponse.results[0].name,
+    };
+  }
+
+  const query = React.useMemo(
+    () =>
+      buildLargestMaintainedQueriesQuery(replicaInfo?.memoryBytes ?? null, 10),
+    [replicaInfo?.memoryBytes]
   );
 
   const response = useSqlTyped(query, {
     cluster: clusterName,
-    replica: replicaName,
+    replica: replicaInfo?.replicaName,
     transformRow: (row) => {
       const memoryPercentage = parseFloat(row.memoryPercentage);
       return {
@@ -79,7 +98,19 @@ function useLargestMaintainedQueries({
     },
   });
 
-  return { ...response, data: response.results };
+  if (!sizeResponse.loading && sizeResponse.results.length === 0) {
+    return { ...sizeResponse, data: [], results: [] };
+  }
+
+  return {
+    ...response,
+    data: response.results,
+    error: sizeResponse.error ?? response.error,
+    refetch: async () => {
+      await sizeResponse.refetch();
+      return response.refetch();
+    },
+  };
 }
 
 export type LargestMaintainedQueriesResponse = ReturnType<

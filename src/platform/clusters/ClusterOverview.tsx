@@ -281,7 +281,6 @@ const ClusterOverview = () => {
           <LargestMaintainedQueries
             clusterId={cluster.id}
             clusterName={cluster.name}
-            replicaName="r1"
           />
         )}
       </Box>

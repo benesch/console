@@ -33,12 +33,10 @@ const typeLabel = (type: string) => {
 export interface LargestMaintainedQueriesProps {
   clusterId: string;
   clusterName: string;
-  replicaName: string;
 }
 const LargestMaintainedQueries = ({
   clusterId,
   clusterName,
-  replicaName,
 }: LargestMaintainedQueriesProps) => {
   const {
     colors: { semanticColors },
@@ -48,7 +46,6 @@ const LargestMaintainedQueries = ({
     useLargestMaintainedQueries({
       clusterId,
       clusterName,
-      replicaName,
     });
   useForegroundInterval(refetch);
 
