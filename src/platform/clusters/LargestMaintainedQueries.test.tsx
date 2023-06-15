@@ -25,18 +25,6 @@ const useLargestMaintainedQueriesColumns = [
   "databaseName",
 ];
 
-const emptySmallestReplicasQuery = buildUseSqlQueryHandler({
-  type: "SELECT" as const,
-  columns: smallestReplicaColumns,
-  rows: [],
-});
-
-const emptyMaintainedQueriesResponse = buildUseSqlQueryHandler({
-  type: "SELECT" as const,
-  columns: useLargestMaintainedQueriesColumns,
-  rows: [],
-});
-
 const validSmallestReplicaResponse = buildUseSqlQueryHandler({
   type: "SELECT" as const,
   columns: smallestReplicaColumns,
@@ -44,24 +32,6 @@ const validSmallestReplicaResponse = buildUseSqlQueryHandler({
 });
 
 describe("LargestMaintainedQueries", () => {
-  it("shows a spinner initially", async () => {
-    server.use(emptySmallestReplicasQuery);
-    server.use(emptyMaintainedQueriesResponse);
-
-    renderComponent(
-      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
-      {
-        initializeState: ({ set }) =>
-          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      }
-    );
-
-    expect(
-      await screen.findByText("Resource intensive maintained queries")
-    ).toBeVisible();
-    expect(await screen.findByTestId("loading-spinner")).toBeVisible();
-  });
-
   it("shows an error state when the replica info fails to load", async () => {
     server.use(
       buildUseSqlQueryHandler({
@@ -113,22 +83,6 @@ describe("LargestMaintainedQueries", () => {
       await screen.findByText(
         "An error has occurred loading maintained queries"
       )
-    ).toBeVisible();
-  });
-
-  it("shows the empty state when there are no results", async () => {
-    server.use(emptySmallestReplicasQuery);
-    server.use(emptyMaintainedQueriesResponse);
-    renderComponent(
-      <LargestMaintainedQueries clusterId="u1" clusterName="default" />,
-      {
-        initializeState: ({ set }) =>
-          setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
-      }
-    );
-
-    expect(
-      await screen.findByText("No maintained queries found")
     ).toBeVisible();
   });
 

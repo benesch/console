@@ -1,7 +1,5 @@
 import {
   Box,
-  Flex,
-  Spinner,
   Table,
   Tbody,
   Td,
@@ -15,7 +13,6 @@ import React from "react";
 
 import useLargestMaintainedQueries from "~/api/materialize/cluster/useLargestMaintainedQueries";
 import ErrorBox from "~/components/ErrorBox";
-import { EmptyListHeaderContents } from "~/layouts/listPageComponents";
 import { MaterializeTheme } from "~/theme";
 import useForegroundInterval from "~/useForegroundInterval";
 
@@ -54,61 +51,54 @@ const LargestMaintainedQueries = ({
       <ErrorBox message="An error has occurred loading maintained queries" />
     );
   }
+  if (!isInitiallyLoading && results.length === 0) {
+    // If the cluster has no maintained queries, show nothing
+    return null;
+  }
   return (
     <>
       <Text textStyle="heading-xs">Resource intensive maintained queries</Text>
       <Text textStyle="text-small" color={semanticColors.foreground.secondary}>
         These queries are responsible for the bulk of your resource usage
       </Text>
-      {isInitiallyLoading ? (
-        <Flex width="100%" alignItems="center" justifyContent="center">
-          <Spinner data-testid="loading-spinner" />
-        </Flex>
-      ) : results.length === 0 ? (
-        <EmptyListHeaderContents
-          title="No maintained queries found"
-          helpText=""
-        />
-      ) : (
-        <Table
-          variant="standalone"
-          data-testid="source-table"
-          borderRadius="xl"
-          mt={4}
-        >
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              <Th>Type</Th>
-              <Th>Memory</Th>
+      <Table
+        variant="standalone"
+        data-testid="source-table"
+        borderRadius="xl"
+        mt={4}
+      >
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Type</Th>
+            <Th>Memory</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {results.map((r) => (
+            <Tr key={r.id}>
+              <Td>
+                <Box
+                  maxW={{
+                    base: "120px",
+                    xl: "200px",
+                    "2xl": "400px",
+                    "3xl": "800px",
+                    "4xl": "1200px",
+                  }}
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {`${r.databaseName}.${r.schemaName}.${r.name}`}
+                </Box>
+              </Td>
+              <Td>{typeLabel(r.type)}</Td>
+              <Td>{r.memoryPercentage}%</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {results.map((r) => (
-              <Tr key={r.id}>
-                <Td>
-                  <Box
-                    maxW={{
-                      base: "120px",
-                      xl: "200px",
-                      "2xl": "400px",
-                      "3xl": "800px",
-                      "4xl": "1200px",
-                    }}
-                    whiteSpace="nowrap"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                  >
-                    {`${r.databaseName}.${r.schemaName}.${r.name}`}
-                  </Box>
-                </Td>
-                <Td>{typeLabel(r.type)}</Td>
-                <Td>{r.memoryPercentage}%</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      )}
+          ))}
+        </Tbody>
+      </Table>
     </>
   );
 };
