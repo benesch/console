@@ -46,6 +46,12 @@ const LargestMaintainedQueries = ({
     });
   useForegroundInterval(refetch);
 
+  if (
+    error === "cannot execute queries on cluster containing sources or sinks"
+  ) {
+    // We could try again check this up front, but there would still be a race conditon, so we will just ignore the error
+    return null;
+  }
   if (error) {
     return (
       <ErrorBox message="An error has occurred loading maintained queries" />
