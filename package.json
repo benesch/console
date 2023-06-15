@@ -63,7 +63,7 @@
     "react-router-dom": "^6.6.1",
     "react-select": "^5.7.2",
     "react-use-intercom": "^5.1.4",
-    "recharts": "^2.3.2",
+    "recharts": "^2.7.1",
     "recoil": "^0.7.6",
     "semver": "^7.5.1",
     "stream": "^0.0.2",
