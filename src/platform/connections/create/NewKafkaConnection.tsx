@@ -438,7 +438,7 @@ export const NewKafkaConnectionForm = () => {
                   },
                 })}
                 autoFocus
-                placeholder="My new connection"
+                placeholder="my_new_connection"
                 autoCorrect="off"
                 size="sm"
                 variant={formState.errors.name ? "error" : "default"}
