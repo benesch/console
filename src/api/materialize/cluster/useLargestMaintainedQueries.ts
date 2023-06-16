@@ -99,12 +99,13 @@ function useLargestMaintainedQueries({
   });
 
   if (!sizeResponse.loading && sizeResponse.results.length === 0) {
-    return { ...sizeResponse, data: [], results: [] };
+    return { ...sizeResponse, data: [], replicaName: null, results: [] };
   }
 
   return {
     ...response,
     data: response.results,
+    replicaName: replicaInfo?.replicaName,
     error: sizeResponse.error ?? response.error,
     refetch: async () => {
       await sizeResponse.refetch();

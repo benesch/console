@@ -1,11 +1,13 @@
 import {
   Box,
+  HStack,
   Table,
   Tbody,
   Td,
   Text,
   Th,
   Thead,
+  Tooltip,
   Tr,
   useTheme,
 } from "@chakra-ui/react";
@@ -13,6 +15,7 @@ import React from "react";
 
 import useLargestMaintainedQueries from "~/api/materialize/cluster/useLargestMaintainedQueries";
 import ErrorBox from "~/components/ErrorBox";
+import infoSvg from "~/img/info.svg";
 import { MaterializeTheme } from "~/theme";
 import useForegroundInterval from "~/useForegroundInterval";
 
@@ -39,7 +42,7 @@ const LargestMaintainedQueries = ({
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
 
-  const { isInitiallyLoading, results, error, refetch } =
+  const { isInitiallyLoading, results, replicaName, error, refetch } =
     useLargestMaintainedQueries({
       clusterId,
       clusterName,
@@ -63,10 +66,20 @@ const LargestMaintainedQueries = ({
   }
   return (
     <>
-      <Text textStyle="heading-xs">Resource intensive maintained queries</Text>
-      <Text textStyle="text-small" color={semanticColors.foreground.secondary}>
-        These queries are responsible for the bulk of your resource usage
-      </Text>
+      <Text textStyle="heading-xs">Resource intensive objects</Text>
+      <HStack spacing={1}>
+        <Text
+          textStyle="text-small"
+          color={semanticColors.foreground.secondary}
+        >
+          These objects are using the most resources on this cluster.
+        </Text>
+        <Tooltip
+          label={`These metrics are pulled from replica: ${replicaName}`}
+        >
+          <img src={infoSvg} />
+        </Tooltip>
+      </HStack>
       <Table
         variant="standalone"
         data-testid="source-table"
