@@ -80,7 +80,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
 
     socket.onResult((result) => {
       if (result.type === "Error") {
-        setErrors((val) => [...val, result.payload]);
+        setErrors((val) => [...val, result.payload.message]);
       }
       if (result.type === "Row") {
         if (querySent) {

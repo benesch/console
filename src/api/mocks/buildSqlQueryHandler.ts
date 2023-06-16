@@ -1,7 +1,6 @@
 import { rest } from "msw";
 
-import { Error, SqlResult } from "~/api/materialize/types";
-import { SqlStatement } from "~/api/materialized";
+import { Error, ExtendedRequest, SqlResult } from "~/api/materialize/types";
 
 type ISQLQuery = {
   ok?: string;
@@ -180,7 +179,7 @@ export function buildSqlQueryHandler(mockQueries: Array<SQLQuery>) {
     if (body == null) {
       return undefined;
     }
-    const { queries: requestQueries }: { queries: SqlStatement[] } = body;
+    const { queries: requestQueries }: { queries: ExtendedRequest[] } = body;
 
     if (mockQueries.length !== requestQueries.length) {
       return undefined;

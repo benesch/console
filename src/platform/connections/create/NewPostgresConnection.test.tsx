@@ -121,7 +121,10 @@ describe("NewPostgresConnectionForm", () => {
       buildSqlQueryHandler([
         {
           type: "CREATE" as const,
-          error: { message: "Something went wrong", code: "XX000" },
+          error: {
+            message: "Something went wrong",
+            code: ErrorCode.INTERNAL_ERROR,
+          },
         },
         {
           type: "SELECT" as const,
