@@ -52,7 +52,7 @@ const LargestMaintainedQueries = ({
   if (
     error === "cannot execute queries on cluster containing sources or sinks"
   ) {
-    // We could try again check this up front, but there would still be a race conditon, so we will just ignore the error
+    // We could try again and check this up front, but there would still be a race conditon, so we will just ignore the error
     return null;
   }
   if (error) {
@@ -80,12 +80,7 @@ const LargestMaintainedQueries = ({
           <img src={infoSvg} />
         </Tooltip>
       </HStack>
-      <Table
-        variant="standalone"
-        data-testid="source-table"
-        borderRadius="xl"
-        mt={4}
-      >
+      <Table variant="standalone" borderRadius="xl" mt={4}>
         <Thead>
           <Tr>
             <Th>Name</Th>
