@@ -400,7 +400,7 @@ export const NewPostgresSourceForm = () => {
                   pattern: MATERIALIZE_DATABASE_IDENTIFIER_REGEX,
                 })}
                 autoFocus
-                placeholder="My_postgres_source"
+                placeholder="my_postgres_source"
                 autoCorrect="off"
                 size="sm"
                 variant={formState.errors.name ? "error" : "default"}
