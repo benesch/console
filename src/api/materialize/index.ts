@@ -83,3 +83,10 @@ export function escapedIdentifier(identifier: string) {
 
   return sql.id(identifier.replace("'", "''"));
 }
+
+/**
+ * Given a cluster id like 'u1' or 's1', returns true for system clusters and false for user clusters.
+ */
+export function isSystemCluster(clusterId: string) {
+  return clusterId.startsWith("s");
+}

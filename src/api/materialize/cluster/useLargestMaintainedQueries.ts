@@ -1,11 +1,14 @@
 import { sql } from "kysely";
 import React from "react";
 
-import { rawLimit } from "..";
+import { isSystemCluster, rawLimit } from "..";
 import { queryBuilder } from "../db";
 import useSqlTyped from "../useSqlTyped";
 
 export function buildSmallestReplicaQuery(clusterId: string) {
+  if (isSystemCluster(clusterId)) {
+    return null;
+  }
   const qb = queryBuilder
     .selectFrom("mz_catalog.mz_cluster_replicas as cr")
     .innerJoin(

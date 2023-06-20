@@ -32,13 +32,13 @@ const validResponse = buildUseSqlQueryHandler({
 
 describe("Subsources", () => {
   it("shows a spinner initially", async () => {
-    renderComponent(<Subsources />, {
+    renderComponent(<Subsources sourceId="u1" />, {
       initializeState: ({ set }) =>
         setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment),
     });
 
-    expect(await screen.findByText("Subsources")).toBeVisible();
-    expect(await screen.findByTestId("loading-spinner")).toBeVisible();
+    expect(screen.getByText("Subsources")).toBeVisible();
+    expect(screen.getByTestId("loading-spinner")).toBeVisible();
   });
 
   it("shows an error state when subsources fail to fetch", async () => {
