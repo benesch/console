@@ -151,7 +151,6 @@ export const EmptyListHeaderContents = ({
         lineHeight="20px"
         fontWeight={400}
         color={semanticColors.foreground.secondary}
-        mt={2}
       >
         {helpText}
       </Heading>

@@ -107,8 +107,8 @@ const SourcesListPage = ({
     <>
       <PageHeader>
         <PageHeading>Sources</PageHeading>
-        <HStack gap="16px">
-          <HStack gap="0px">
+        <HStack spacing="4">
+          <HStack>
             <DatabaseFilter {...databaseFilter} />
             <SchemaFilter {...schemaFilter} />
           </HStack>

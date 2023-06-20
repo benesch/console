@@ -252,7 +252,7 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
       position="relative"
       width={`calc(100% + ${mainContentMargin} * 2)`}
       style={{ marginLeft: `-${mainContentMargin}` }}
-      px={6}
+      px={10}
       borderBottom="solid 1px"
       borderColor="semanticColors.border.primary"
       spacing={4}

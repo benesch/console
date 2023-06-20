@@ -134,12 +134,7 @@ const PricingPage = () => {
           >
             Credit Consumption
           </Heading>
-          <Table
-            variant="rounded"
-            width="100%"
-            marginTop={2}
-            shadow={shadows.level2}
-          >
+          <Table variant="rounded" width="100%" shadow={shadows.level2}>
             <Thead>
               <Tr>
                 <Th
