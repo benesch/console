@@ -138,7 +138,7 @@ if (process.env.SOURCE_MAPS) {
     new SentryPlugin({
       include: path.resolve(__dirname, "dist"),
       org: "materializeinc",
-      project: "cloud-frontend",
+      project: "console",
       release: sentryRelease,
       authToken: process.env.SENTRY_AUTH_TOKEN,
       urlPrefix: `~${publicPath}`,
