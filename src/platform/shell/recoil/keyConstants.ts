@@ -1,0 +1,5 @@
+export default {
+  SHELL_STATE: "SHELL_STATE",
+  HISTORY: "HISTORY",
+  HISTORY_IDS: "HISTORY_IDS",
+};
