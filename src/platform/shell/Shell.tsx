@@ -88,7 +88,10 @@ const Shell = () => {
           switch (result.type) {
             case "CommandStarting":
               if (result.payload.is_streaming) {
-                stateMachine.send("COMMAND_STARTING_IS_STREAMING");
+                stateMachine.send({
+                  type: "COMMAND_STARTING_IS_STREAMING",
+                  hasRows: result.payload.has_rows,
+                });
               } else if (result.payload.has_rows) {
                 stateMachine.send("COMMAND_STARTING_HAS_ROWS");
               } else {
@@ -149,7 +152,10 @@ const Shell = () => {
               updateHistoryItem(state.context.latestCommandOutput);
               break;
             case "CommandComplete":
-              stateMachine.send("COMMAND_COMPLETE");
+              stateMachine.send({
+                type: "COMMAND_COMPLETE",
+                commandCompletePayload: result.payload,
+              });
               assert(state.context.latestCommandOutput);
               updateHistoryItem(state.context.latestCommandOutput);
               break;
