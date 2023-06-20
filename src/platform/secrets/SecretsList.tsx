@@ -23,6 +23,7 @@ import useSecretsListPage, {
 } from "~/api/materialize/secret/useSecrets";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
@@ -134,7 +135,7 @@ export const SecretsList = () => {
       ) : isEmpty ? (
         <EmptyState />
       ) : (
-        <SecretsTable secrets={secrets ?? []} />
+        <SecretsTable refetchSecrets={refetch} secrets={secrets ?? []} />
       )}
       <NewSecretModal
         isOpen={isOpen}
@@ -145,15 +146,19 @@ export const SecretsList = () => {
   );
 };
 
-type SecretsTableProps = { secrets: ListPageSecret[] };
+export interface SecretsTableProps {
+  secrets: ListPageSecret[];
+  refetchSecrets: () => void;
+}
 
-const SecretsTable = ({ secrets }: SecretsTableProps) => {
+const SecretsTable = ({ secrets, refetchSecrets }: SecretsTableProps) => {
   return (
     <Table variant="standalone">
       <Thead>
         <Tr>
           <Th>Name</Th>
           <Th>Created</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -172,6 +177,13 @@ const SecretsTable = ({ secrets }: SecretsTableProps) => {
               </Td>
               <Td width="25%">
                 <Text>{format(secret.createdAt, "MMM d, yyyy")}</Text>
+              </Td>
+              <Td>
+                <OverflowMenu
+                  selectedObject={secret}
+                  refetchObjects={refetchSecrets}
+                  objectType="SECRET"
+                />
               </Td>
             </Tr>
           );
