@@ -76,7 +76,7 @@ export function useSqlLazy<TVariables>({
     data,
     error,
     loading,
-  } = useSqlApiRequest({ timeout });
+  } = useSqlApiRequest({ timeout, lazy: true });
 
   const runSql = React.useCallback(
     (
@@ -132,25 +132,34 @@ export function useSqlMany(request?: SqlRequest) {
   const isError = inner.error !== null;
 
   // When no data has been loaded and query is currently fetching
-  const isInitiallyLoading = !isError && inner.data === null;
 
-  return { ...inner, refetch, isInitiallyLoading, isError };
+  return {
+    ...inner,
+    isInitiallyLoading: request ? inner.isInitiallyLoading : false,
+    loading: request ? inner.loading : false,
+    refetch,
+    isError,
+  };
 }
+
+type UseSqlApiRequestOptions = {
+  /** The timeout in ms for the connection to environmentd. Defaults to 5_000 */
+  timeout?: number;
+  /** Whether the request will run immediately when the hook is called, or be executed later. Defaults to `true`. */
+  lazy?: boolean;
+};
 
 /**
  * A React hook that connects SQL API requests to React's lifecycle.
- * It keeps track of the state of the request and exposes a handler to execute a SQL query.
+ * It keeps track of the state of the request and exposes a handler to execute a query.
  */
-type UseSqlApiRequestOptions = {
-  timeout?: number;
-};
-
 export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
   const { user } = useAuth();
   const environment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(options?.lazy ? false : true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState<boolean>(false);
   const requestIdRef = React.useRef(1);
   const controllerRef = React.useRef<AbortController>(new AbortController());
   const [results, setResults] = useState<Results[] | null>(null);
@@ -214,6 +223,7 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
       } finally {
         clearTimeout(timeoutId);
         setLoading(false);
+        setHasLoadedOnce(true);
       }
     },
     [environment, user.accessToken, timeout]
@@ -224,7 +234,14 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
     controllerRef.current.abort();
   }, []);
 
-  return { data: results, error, loading, runSql, abortRequest };
+  return {
+    data: results,
+    error,
+    isInitiallyLoading: !hasLoadedOnce && loading,
+    loading,
+    runSql,
+    abortRequest,
+  };
 }
 
 export interface ClusterReplicaWithUtilizaton {
