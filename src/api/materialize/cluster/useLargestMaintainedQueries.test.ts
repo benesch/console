@@ -8,14 +8,20 @@ import {
 describe("buildSmallestReplicaQuery", () => {
   it("produces the expected query", () => {
     const query = buildSmallestReplicaQuery("u1");
+    assert(query);
     expect(query.parameters).toEqual(["u1"]);
     expect(query.sql).toEqual(
       'select "cr"."name", "rs"."memory_bytes" as "memoryBytes" from "mz_catalog"."mz_cluster_replicas" as "cr" inner join "mz_internal"."mz_cluster_replica_sizes" as "rs" on "cr"."size" = "rs"."size" where "cr"."cluster_id" = $1 order by "rs"."memory_bytes" desc limit 1'
     );
   });
+
+  it("returns null for system clusters", () => {
+    const query = buildSmallestReplicaQuery("s1");
+    expect(query).toBeNull();
+  });
 });
 
-describe("buildConnectorClustersQuery", () => {
+describe("buildLargestMaintainedQueriesQuery", () => {
   it("produces the expected query", () => {
     const query = buildLargestMaintainedQueriesQuery(17179869184, 10);
     assert(query);
