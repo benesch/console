@@ -4,7 +4,11 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type Int8 = ColumnType<string, string | number | bigint, string | number | bigint>;
+export type Int8 = ColumnType<
+  string,
+  string | number | bigint,
+  string | number | bigint
+>;
 
 export type Json = ColumnType<JsonValue, string, string>;
 
@@ -157,7 +161,7 @@ export interface MzCatalogMzMaterializedViews {
 
 export interface MzCatalogMzObjects {
   id: string;
-  oid: number | null;
+  oid: number;
   schema_id: string;
   name: string;
   type: string;
@@ -213,6 +217,7 @@ export interface MzCatalogMzSchemas {
 
 export interface MzCatalogMzSecrets {
   id: Generated<string>;
+  oid: Generated<number>;
   schema_id: Generated<string>;
   name: Generated<string>;
   owner_id: Generated<string>;
@@ -305,6 +310,21 @@ export interface MzInternalMzArrangementBatchesRaw {
   worker_id: string;
 }
 
+export interface MzInternalMzArrangementHeapAllocationsRaw {
+  operator_id: string;
+  worker_id: string;
+}
+
+export interface MzInternalMzArrangementHeapCapacityRaw {
+  operator_id: string;
+  worker_id: string;
+}
+
+export interface MzInternalMzArrangementHeapSizeRaw {
+  operator_id: string;
+  worker_id: string;
+}
+
 export interface MzInternalMzArrangementRecordsRaw {
   operator_id: string;
   worker_id: string;
@@ -330,6 +350,9 @@ export interface MzInternalMzArrangementSizes {
   operator_id: string;
   records: Numeric;
   batches: Numeric;
+  size: Numeric;
+  capacity: Numeric;
+  allocations: Numeric;
 }
 
 export interface MzInternalMzArrangementSizesPerWorker {
@@ -337,6 +360,9 @@ export interface MzInternalMzArrangementSizesPerWorker {
   worker_id: string;
   records: Int8;
   batches: Int8;
+  size: Int8;
+  capacity: Int8;
+  allocations: Int8;
 }
 
 export interface MzInternalMzClusterLinks {
@@ -502,6 +528,9 @@ export interface MzInternalMzDataflowArrangementSizes {
   name: string;
   records: Numeric | null;
   batches: Numeric | null;
+  size: Numeric | null;
+  capacity: Numeric | null;
+  allocations: Numeric | null;
 }
 
 export interface MzInternalMzDataflowChannelOperators {
@@ -606,6 +635,22 @@ export interface MzInternalMzDataflows {
   name: string;
 }
 
+export interface MzInternalMzDataflowShutdownDurationsHistogram {
+  duration_ns: string;
+  count: Numeric;
+}
+
+export interface MzInternalMzDataflowShutdownDurationsHistogramPerWorker {
+  worker_id: string;
+  duration_ns: string;
+  count: Int8;
+}
+
+export interface MzInternalMzDataflowShutdownDurationsHistogramRaw {
+  worker_id: string;
+  duration_ns: string;
+}
+
 export interface MzInternalMzDataflowsPerWorker {
   id: string;
   worker_id: string;
@@ -669,6 +714,9 @@ export interface MzInternalMzRecordsPerDataflow {
   id: string;
   name: string;
   records: Numeric;
+  size: Numeric;
+  capacity: Numeric;
+  allocations: Numeric;
 }
 
 export interface MzInternalMzRecordsPerDataflowOperator {
@@ -676,6 +724,9 @@ export interface MzInternalMzRecordsPerDataflowOperator {
   name: string;
   dataflow_id: string;
   records: Numeric;
+  size: Numeric;
+  capacity: Numeric;
+  allocations: Numeric;
 }
 
 export interface MzInternalMzRecordsPerDataflowOperatorPerWorker {
@@ -684,6 +735,9 @@ export interface MzInternalMzRecordsPerDataflowOperatorPerWorker {
   worker_id: string;
   dataflow_id: string;
   records: Int8;
+  size: Int8;
+  capacity: Int8;
+  allocations: Int8;
 }
 
 export interface MzInternalMzRecordsPerDataflowPerWorker {
@@ -691,6 +745,9 @@ export interface MzInternalMzRecordsPerDataflowPerWorker {
   name: string;
   worker_id: string;
   records: Numeric;
+  size: Numeric;
+  capacity: Numeric;
+  allocations: Numeric;
 }
 
 export interface MzInternalMzSchedulingElapsed {
@@ -886,6 +943,9 @@ export interface DB {
   "mz_internal.mz_active_peeks": MzInternalMzActivePeeks;
   "mz_internal.mz_active_peeks_per_worker": MzInternalMzActivePeeksPerWorker;
   "mz_internal.mz_arrangement_batches_raw": MzInternalMzArrangementBatchesRaw;
+  "mz_internal.mz_arrangement_heap_allocations_raw": MzInternalMzArrangementHeapAllocationsRaw;
+  "mz_internal.mz_arrangement_heap_capacity_raw": MzInternalMzArrangementHeapCapacityRaw;
+  "mz_internal.mz_arrangement_heap_size_raw": MzInternalMzArrangementHeapSizeRaw;
   "mz_internal.mz_arrangement_records_raw": MzInternalMzArrangementRecordsRaw;
   "mz_internal.mz_arrangement_sharing": MzInternalMzArrangementSharing;
   "mz_internal.mz_arrangement_sharing_per_worker": MzInternalMzArrangementSharingPerWorker;
@@ -930,6 +990,9 @@ export interface DB {
   "mz_internal.mz_dataflow_operator_reachability_raw": MzInternalMzDataflowOperatorReachabilityRaw;
   "mz_internal.mz_dataflow_operators": MzInternalMzDataflowOperators;
   "mz_internal.mz_dataflow_operators_per_worker": MzInternalMzDataflowOperatorsPerWorker;
+  "mz_internal.mz_dataflow_shutdown_durations_histogram": MzInternalMzDataflowShutdownDurationsHistogram;
+  "mz_internal.mz_dataflow_shutdown_durations_histogram_per_worker": MzInternalMzDataflowShutdownDurationsHistogramPerWorker;
+  "mz_internal.mz_dataflow_shutdown_durations_histogram_raw": MzInternalMzDataflowShutdownDurationsHistogramRaw;
   "mz_internal.mz_dataflows": MzInternalMzDataflows;
   "mz_internal.mz_dataflows_per_worker": MzInternalMzDataflowsPerWorker;
   "mz_internal.mz_message_counts": MzInternalMzMessageCounts;

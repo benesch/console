@@ -21,7 +21,11 @@ export type onSettled = (data?: Results[] | null, error?: string) => void;
 export type onSuccess = (data?: Results[] | null) => void;
 export type onError = (error?: string) => void;
 
-export function buildSqlRequest(sql?: string, cluster = "mz_introspection") {
+export function buildSqlRequest(
+  sql?: string,
+  cluster = "mz_introspection",
+  replica?: string
+) {
   return sql
     ? // Run all queries on the `mz_introspection` cluster, as it's
       // guaranteed to exist. (The `default` cluster may have been dropped
@@ -29,6 +33,7 @@ export function buildSqlRequest(sql?: string, cluster = "mz_introspection") {
       {
         queries: [{ query: sql, params: [] }],
         cluster,
+        replica,
       }
     : undefined;
 }
@@ -38,10 +43,10 @@ export function buildSqlRequest(sql?: string, cluster = "mz_introspection") {
  * Runs all queries on the `mz_introspection` cluster.
  * @param sql - SQL query string to execute in the environment.
  */
-export function useSql(sql?: string, cluster?: string) {
+export function useSql(sql?: string, cluster?: string, replica?: string) {
   const request = React.useMemo(
-    () => buildSqlRequest(sql, cluster),
-    [sql, cluster]
+    () => buildSqlRequest(sql, cluster, replica),
+    [sql, cluster, replica]
   );
   const inner = useSqlMany(request);
 
