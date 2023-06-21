@@ -88,6 +88,26 @@ const SqlSelectTable = ({
   cols: string[];
   rows: unknown[][];
 }) => {
+  const getTableHeaderStyles = (tableHeaderIdx: number) => {
+    if (rows.length > 0) {
+      return {};
+    }
+
+    if (tableHeaderIdx === 0) {
+      return {
+        borderBottomLeftRadius: "md",
+      };
+    }
+
+    if (tableHeaderIdx === cols.length - 1) {
+      return {
+        borderBottomRightRadius: "md",
+      };
+    }
+
+    return {};
+  };
+
   return (
     <Table variant="shell">
       <Thead>
@@ -96,7 +116,9 @@ const SqlSelectTable = ({
         </Tr>
         <Tr>
           {cols.map((column, idx) => (
-            <Th key={idx}>{column}</Th>
+            <Th key={idx} {...getTableHeaderStyles(idx)}>
+              {column}
+            </Th>
           ))}
         </Tr>
       </Thead>
