@@ -45,10 +45,10 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
   return (
-  <VStack alignItems="flex-start">
+    <VStack alignItems="flex-start">
       <Code color={semanticColors.foreground.secondary}>
-      {notice.severity.toUpperCase()}: {notice.message}
-    </Code>
+        {notice.severity.toUpperCase()}: {notice.message}
+      </Code>
       {notice.detail && (
         <Code color={semanticColors.foreground.secondary}>
           DETAIL: {notice.detail}
@@ -59,8 +59,8 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
           HINT: {notice.hint}
         </Code>
       )}
-  </VStack>
-);
+    </VStack>
+  );
 };
 
 const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
@@ -173,52 +173,49 @@ const HistoryOutput = (props: HistoryOutputProps) => {
         <NoticeOutput notice={historyOutput} />
       ) : (
         <HStack alignItems="flex-start" width="100%">
-        <CommandChevron />
+          <CommandChevron />
           <VStack spacing="6" alignItems="flex-start" width="100%">
-            <CommandBlock
-              readOnly
-              value={historyOutput.command}
-            />
+            <CommandBlock readOnly value={historyOutput.command} />
 
             {historyOutput.commandResults.map(
               (commandResult, commandResultIdx) => {
-        const {
-          hasRows,
-          endTimeMs,
-          initialTimeMs,
-          commandCompletePayload,
-          notices,
-          cols,
-          rows,
+                const {
+                  hasRows,
+                  endTimeMs,
+                  initialTimeMs,
+                  commandCompletePayload,
+                  notices,
+                  cols,
+                  rows,
                   error,
-        } = commandResult;
+                } = commandResult;
 
-        let renderTable = null;
-        if (hasRows && cols) {
-          renderTable = (
-            <TableContainer>
-              <SqlSelectTable rows={rows ?? []} cols={cols} />
-            </TableContainer>
-          );
-        }
+                let renderTable = null;
+                if (hasRows && cols) {
+                  renderTable = (
+                    <TableContainer>
+                      <SqlSelectTable rows={rows ?? []} cols={cols} />
+                    </TableContainer>
+                  );
+                }
 
-        const timeTaken =
-          endTimeMs && initialTimeMs
+                const timeTaken =
+                  endTimeMs && initialTimeMs
                     ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
-            : null;
+                    : null;
 
                 const hasErrored = !!error;
 
-        return (
-          <React.Fragment key={commandResultIdx}>
+                return (
+                  <React.Fragment key={commandResultIdx}>
                     {!hasRows && !error && (
-              <CommandBlock readOnly value={commandCompletePayload} />
-            )}
-            {renderTable}
+                      <CommandBlock readOnly value={commandCompletePayload} />
+                    )}
+                    {renderTable}
 
-            {notices.map((notice, noticeIdx) => (
+                    {notices.map((notice, noticeIdx) => (
                       <NoticeOutput key={noticeIdx} notice={notice} />
-            ))}
+                    ))}
                     {error && (
                       <ErrorOutput
                         error={error}
@@ -235,8 +232,8 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                     >
                       {timeTaken}
                     </Code>
-          </React.Fragment>
-        );
+                  </React.Fragment>
+                );
               }
             )}
             {historyOutput.error && (
@@ -411,10 +408,10 @@ const Shell = () => {
       const text = (e.target as HTMLTextAreaElement).value.trim();
 
       if (text && text.at(-1) === ";") {
-      runCommand(text);
-      e.preventDefault();
-      setCurrentCommand("");
-      return false;
+        runCommand(text);
+        e.preventDefault();
+        setCurrentCommand("");
+        return false;
       }
     }
     return true;
@@ -424,7 +421,7 @@ const Shell = () => {
   return (
     <VStack
       overflow="auto"
-          width="100%"
+      width="100%"
       height="100%"
       alignItems="flex-start"
       spacing="0"
@@ -439,9 +436,9 @@ const Shell = () => {
           minHeight="0"
           spacing="0"
         >
-              {historyIds.map((historyId) => (
-                <HistoryOutput key={historyId} historyId={historyId} />
-              ))}
+          {historyIds.map((historyId) => (
+            <HistoryOutput key={historyId} historyId={historyId} />
+          ))}
         </VStack>
       )}
       <HStack
@@ -453,12 +450,12 @@ const Shell = () => {
         p="6"
         overflow="auto"
       >
-                <CommandChevron />
-                <CommandBlock
-                  onChange={(e) => setCurrentCommand(e.target.value)}
-                  onKeyDown={handlePromptInput}
-                  autoFocus={true}
-                  value={currentCommand}
+        <CommandChevron />
+        <CommandBlock
+          onChange={(e) => setCurrentCommand(e.target.value)}
+          onKeyDown={handlePromptInput}
+          autoFocus={true}
+          value={currentCommand}
           placeholder="-- write your query here"
           containerProps={{
             width: "100%",
@@ -468,9 +465,9 @@ const Shell = () => {
             width: "100%",
             height: "100%",
           }}
-                />
-              </HStack>
-      </VStack>
+        />
+      </HStack>
+    </VStack>
   );
 };
 

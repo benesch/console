@@ -14,6 +14,18 @@ type CommandBlockProps = TextareaCodeEditorProps & {
 export const CommandBlock = (props: CommandBlockProps) => {
   const theme = useTheme<MaterializeTheme>();
 
+  const handleKeyDown = props.readOnly
+    ? () => {
+        /* 
+          Weird bug where even if the textarea is readonly, react-textarea-code-editor 
+          will still update the value when pressing "tab". 
+          A fix for this is to return false in onKeyDown's
+          event handler.
+        */
+        return false;
+      }
+    : props.onKeyDown;
+
   return (
     <Code {...(props.containerProps ?? {})}>
       <CodeEditor
@@ -26,6 +38,7 @@ export const CommandBlock = (props: CommandBlockProps) => {
         padding={0}
         autoComplete="false"
         autoCorrect="false"
+        onKeyDown={handleKeyDown}
         {...props}
       />
     </Code>
