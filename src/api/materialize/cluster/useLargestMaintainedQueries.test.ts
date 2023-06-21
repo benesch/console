@@ -22,11 +22,19 @@ describe("buildSmallestReplicaQuery", () => {
 });
 
 describe("buildLargestMaintainedQueriesQuery", () => {
-  it("produces the expected query", () => {
-    const query = buildLargestMaintainedQueriesQuery(17179869184, 10);
+  it("produces the expected query for v0.57", () => {
+    const query = buildLargestMaintainedQueriesQuery(17179869184, 10, false);
     assert(query);
     expect(query.sql).toEqual(
       'select "s"."id", "s"."name", "s"."size" / (17179869184) as "memoryPercentage", "o"."type", "sc"."name" as "schemaName", "da"."name" as "databaseName" from "mz_internal"."mz_dataflow_arrangement_sizes" as "s" inner join "mz_internal"."mz_dataflows" as "d" on "d"."id" = "s"."id" inner join "mz_internal"."mz_compute_exports" as "ce" on "ce"."dataflow_id" = "d"."local_id" inner join "mz_catalog"."mz_objects" as "o" on "o"."id" = "ce"."export_id" inner join "mz_catalog"."mz_schemas" as "sc" on "sc"."id" = "o"."schema_id" inner join "mz_catalog"."mz_databases" as "da" on "da"."id" = "sc"."database_id" order by "memoryPercentage" desc limit 10'
+    );
+  });
+
+  it("produces the expected query for v0.58", () => {
+    const query = buildLargestMaintainedQueriesQuery(17179869184, 10, true);
+    assert(query);
+    expect(query.sql).toEqual(
+      'select "s"."id", "s"."name", "s"."size" / (17179869184) as "memoryPercentage", "o"."type", "sc"."name" as "schemaName", "da"."name" as "databaseName" from "mz_internal"."mz_dataflow_arrangement_sizes" as "s" inner join "mz_internal"."mz_compute_exports" as "ce" on "ce"."dataflow_id" = "s"."id" inner join "mz_catalog"."mz_objects" as "o" on "o"."id" = "ce"."export_id" inner join "mz_catalog"."mz_schemas" as "sc" on "sc"."id" = "o"."schema_id" inner join "mz_catalog"."mz_databases" as "da" on "da"."id" = "sc"."database_id" order by "memoryPercentage" desc limit 10'
     );
   });
 });
