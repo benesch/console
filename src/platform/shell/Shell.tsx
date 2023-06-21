@@ -254,6 +254,8 @@ const HistoryOutput = (props: HistoryOutputProps) => {
 };
 
 const Shell = () => {
+  const shellContainerRef = useRef<HTMLDivElement | null>(null);
+
   const stateMachineRef = useRef<StateMachine.Service<
     WebSocketFsmContext,
     WebSocketFsmEvent,
@@ -298,6 +300,17 @@ const Shell = () => {
   const historyIds = useRecoilValue(historyIdsAtom);
 
   const [currentCommand, setCurrentCommand] = useState("");
+
+  useEffect(() => {
+    const scrollToTopOnCommandComplete = () => {
+      // Won't work for subscribe, maybe use state machine values?
+      if (shellContainerRef.current) {
+        shellContainerRef.current.scrollTop =
+          shellContainerRef.current.scrollHeight;
+      }
+    };
+    scrollToTopOnCommandComplete();
+  }, [historyIds, socketReady]);
 
   useEffect(() => {
     if (!socketReady) {
