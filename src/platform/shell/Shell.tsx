@@ -409,10 +409,13 @@ const Shell = () => {
   const handlePromptInput = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       const text = (e.target as HTMLTextAreaElement).value.trim();
+
+      if (text && text.at(-1) === ";") {
       runCommand(text);
       e.preventDefault();
       setCurrentCommand("");
       return false;
+      }
     }
     return true;
   };
