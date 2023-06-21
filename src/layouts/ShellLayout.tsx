@@ -30,21 +30,9 @@ export const ShellThemeProvider = ({ children }: PropsWithChildren) => {
 };
 
 /**
- * The layout for shell, containing the navigation bar at the
+ * The layout for shell, containing the navigation bar
  * and a sticky footer.
  *
- * Pages should generally include `PageHeader` as the first child, but this is
- * not strictly required:
- *
- * ```
- * <ShellLayout>
- *   <PageHeader>
- *     <PageBreadcrumbs crumbs={["page", "to", "page"]} />
- *      { or }
- *     <PageHeading>asdf</PageHeading>
- *   </PageHeader>
- * </ShellLayout>
- * ```
  */
 export const ShellLayout = (props: ShellLayoutProps) => {
   return (
@@ -57,7 +45,7 @@ export const ShellLayout = (props: ShellLayoutProps) => {
       >
         <NavBar />
 
-        <VStack flex={1} alignItems="stretch" spacing={0}>
+        <VStack flex={1} alignItems="stretch" spacing={0} minWidth="0">
           <ErrorBoundary fallback={<ErrorBox />}>
             <React.Suspense
               fallback={
@@ -77,6 +65,7 @@ export const ShellLayout = (props: ShellLayoutProps) => {
                   style={{
                     boxShadow: "none", // We set box shadow to none since the theme provider sets its box shadow by default
                   }}
+                  minHeight="0"
                 >
                   {props.children}
                 </Box>
