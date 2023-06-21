@@ -49,9 +49,9 @@ const ConnectInstructions = (props: BoxProps): JSX.Element => {
 
 PORT=${environmentdAddress.split(":")[1]}
 
-USER=${user.email}
+DATABASE=materialize
 
-DATABASE=materialize`,
+USER=${user.email}`,
           icon: <MonitorIcon w="4" h="4" />,
         },
       ]}
