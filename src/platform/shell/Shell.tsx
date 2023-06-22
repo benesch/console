@@ -415,6 +415,7 @@ const Shell = () => {
       height="100%"
       alignItems="flex-start"
       spacing="0"
+      scrollBehavior="smooth"
       ref={shellContainerRef}
     >
       {historyIds.length > 0 && (
