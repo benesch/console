@@ -306,6 +306,22 @@ const Shell = () => {
   }, [historyIds, socketReady]);
 
   useEffect(() => {
+    const stateMachine = getStateMachine();
+    // On subscribe, xstate triggers the callback initially.
+    let xstateInitActionHasHappened = false;
+    const { unsubscribe } = stateMachine.subscribe((state) => {
+      if (!state.changed) {
+        if (xstateInitActionHasHappened) {
+          // TODO: Handle this error properly and log the event that caused the unsuccessful transition
+          console.error("Unsuccessful transition", state);
+        }
+        xstateInitActionHasHappened = true;
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (!socketReady) {
       return;
     }
