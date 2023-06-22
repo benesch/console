@@ -1,14 +1,30 @@
 import { sql } from "kysely";
 
-import { escapedIdentifier as id } from "~/api/materialize";
 import { queryBuilder } from "~/api/materialize/db";
 
-export function deleteObjectQueryBuilder(variables: {
-  objectName: string;
-  objectType: string;
+import { buildFullyQualifiedObjectName } from ".";
+import { DatabaseObject } from "./types";
+
+export type DeletableObjectType =
+  | "SECRET"
+  | "CONNECTION"
+  | "SOURCE"
+  | "SINK"
+  | "CLUSTER"
+  | "CLUSTER REPLICA";
+
+export function deleteObjectQueryBuilder({
+  dbObject,
+  objectType,
+}: {
+  dbObject: DatabaseObject;
+  objectType: DeletableObjectType;
 }) {
-  const query = sql`DROP ${sql.raw(variables.objectType)} ${id(
-    variables.objectName
-  )} CASCADE`;
+  const shouldCascade =
+    objectType !== "CLUSTER" && objectType !== "CLUSTER REPLICA";
+
+  const query = sql`DROP ${sql.raw(objectType)} ${buildFullyQualifiedObjectName(
+    dbObject
+  )} ${shouldCascade ? sql.raw("CASCADE") : sql.raw("")}`;
   return query.compile(queryBuilder).sql;
 }

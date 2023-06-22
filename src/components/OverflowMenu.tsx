@@ -2,6 +2,8 @@ import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import React, { PropsWithChildren } from "react";
 
+import { DeletableObjectType } from "~/api/materialize/buildDeletObjectStatement";
+import { DatabaseObject } from "~/api/materialize/types";
 import OverflowMenuIcon from "~/svg/OverflowMenuIcon";
 
 import DeleteObjectModal from "./DeleteObjectModal";
@@ -9,18 +11,7 @@ import DeleteObjectModal from "./DeleteObjectModal";
 export interface OverflowMenuProps {
   selectedObject: DatabaseObject;
   refetchObjects: () => void;
-  objectType:
-    | "SECRET"
-    | "CONNECTION"
-    | "SOURCE"
-    | "SINK"
-    | "CLUSTER"
-    | "CLUSTER REPLICA";
-}
-
-export interface DatabaseObject {
-  id: string;
-  name: string;
+  objectType: DeletableObjectType;
 }
 
 const OverflowMenu = ({
@@ -48,8 +39,7 @@ const OverflowMenu = ({
             onClose();
           }}
           onSuccess={refetchObjects}
-          objectId={selectedObject.id}
-          objectName={selectedObject.name}
+          dbObject={selectedObject}
           objectType={objectType}
         />
       )}

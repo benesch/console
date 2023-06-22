@@ -1,5 +1,7 @@
 import { PostgresError as ErrorCode } from "pg-error-enum";
 
+import { SchemaObject } from "../materialized";
+
 export { ErrorCode };
 
 /** Types copied from https://materialize.com/docs/integrations/http-api/#output-format */
@@ -53,3 +55,16 @@ export type SqlResult =
       error: Error;
       notices: Notice[];
     };
+
+export interface ClusterReplica {
+  id: string;
+  name: string;
+  clusterName: string;
+}
+
+export interface Cluster {
+  id: string;
+  name: string;
+}
+
+export type DatabaseObject = SchemaObject | Cluster | ClusterReplica;

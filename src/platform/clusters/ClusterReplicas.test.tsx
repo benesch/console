@@ -25,6 +25,7 @@ const ClusterReplicasWithRoute = () => (
 const useClusterReplicasWithUtilizationColumns = [
   "id",
   "replica_name",
+  "cluster_name",
   "cluster_id",
   "size",
   "cpu_percent",
@@ -98,6 +99,7 @@ describe("ClusterReplicas", () => {
           [
             "test_id",
             "test_replica",
+            "test_cluster",
             "test_cluster_id",
             "2xsmall",
             18.0015698,

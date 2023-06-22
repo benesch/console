@@ -20,7 +20,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 import { useSegment } from "~/analytics/segment";
-import { deleteObjectQueryBuilder } from "~/api/materialize/buildDeletObjectStatement";
+import {
+  DeletableObjectType,
+  deleteObjectQueryBuilder,
+} from "~/api/materialize/buildDeletObjectStatement";
+import { DatabaseObject } from "~/api/materialize/types";
 import useObjectDependencies from "~/api/materialize/useObjectDependencies";
 import { useSqlLazy } from "~/api/materialized";
 import { MaterializeTheme } from "~/theme";
@@ -33,17 +37,15 @@ export interface DeleteObjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  objectId: string;
-  objectName: string;
-  objectType: string;
+  dbObject: DatabaseObject;
+  objectType: DeletableObjectType;
 }
 
 const DeleteObjectModal = ({
   isOpen,
   onClose,
   onSuccess,
-  objectId,
-  objectName,
+  dbObject,
   objectType,
 }: DeleteObjectModalProps) => {
   const {
@@ -61,16 +63,16 @@ const DeleteObjectModal = ({
   });
 
   const { loading: dependencyCountLoading, results: dependencyCount } =
-    useObjectDependencies(objectId);
+    useObjectDependencies(dbObject.id);
   const { runSql: deleteObject, loading: isDeleting } = useSqlLazy({
     queryBuilder: deleteObjectQueryBuilder,
   });
 
   const handleDelete = () => {
-    track("Delete object clicked", { name: objectName });
+    track("Delete object clicked", { name: dbObject.name });
     setShowError(false);
     deleteObject(
-      { objectName, objectType },
+      { dbObject, objectType },
       {
         onSuccess: () => {
           onClose();
@@ -79,7 +81,7 @@ const DeleteObjectModal = ({
             description: (
               <>
                 <Text color={semanticColors.foreground.primary} as="span">
-                  {objectName}{" "}
+                  {dbObject.name}{" "}
                 </Text>
                 deleted successfully
               </>
@@ -98,7 +100,7 @@ const DeleteObjectModal = ({
       <ModalOverlay />
       <ModalContent shadow={shadows.level4}>
         <form onSubmit={handleSubmit(handleDelete)}>
-          <ModalHeader>Delete {objectName}</ModalHeader>
+          <ModalHeader>Delete {dbObject.name}</ModalHeader>
           <ModalCloseButton />
           {dependencyCountLoading || dependencyCount === null ? (
             <>
@@ -119,15 +121,15 @@ const DeleteObjectModal = ({
                   />
                 )}
                 <FormControl isInvalid={!!formState.errors.objectName}>
-                  <FormLabel>To confirm, type {objectName} below</FormLabel>
+                  <FormLabel>To confirm, type {dbObject.name} below</FormLabel>
                   <Input
                     autoFocus
-                    placeholder={objectName}
+                    placeholder={dbObject.name}
                     variant={formState.errors.objectName ? "error" : "default"}
                     {...register("objectName", {
                       required: "Object name is required.",
                       validate: (value) => {
-                        if (value !== objectName) {
+                        if (value !== dbObject.name) {
                           return "Object name must match exactly.";
                         }
                       },
@@ -144,14 +146,14 @@ const DeleteObjectModal = ({
                 >
                   {dependencyCount === 0 ? (
                     <>
-                      This action will permanently delete {objectName} and can
-                      not be undone.
+                      This action will permanently delete {dbObject.name} and
+                      can not be undone.
                     </>
                   ) : (
                     <>
-                      This will permanently delete {objectName} and all sources,
-                      materialized views, views, indexes, and sink that depend
-                      on it.
+                      This will permanently delete {dbObject.name} and all
+                      sources, materialized views, views, indexes, and sink that
+                      depend on it.
                     </>
                   )}
                 </Text>
@@ -180,7 +182,7 @@ const DeleteObjectModal = ({
                 )}
                 <InlayBanner
                   variant="warn"
-                  message={`${objectName} has ${dependencyCount} ${pluralize(
+                  message={`${dbObject.name} has ${dependencyCount} ${pluralize(
                     dependencyCount,
                     "dependent",
                     "dependents"
@@ -192,7 +194,7 @@ const DeleteObjectModal = ({
                   mt="4"
                 >
                   This {objectType.toLowerCase()} is used by other objects. In
-                  order to delete {objectName}, all it’s dependents will be
+                  order to delete {dbObject.name}, all it’s dependents will be
                   deleted as well.
                 </Text>
               </ModalBody>

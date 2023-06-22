@@ -25,6 +25,7 @@ import {
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
 import { PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -139,7 +140,7 @@ const ClusterReplicasPage = () => {
             )}
           </HStack>
           <HStack spacing={6} alignItems="flex-start">
-            <ReplicaTable replicas={replicas ?? []} />
+            <ReplicaTable replicas={replicas ?? []} refetchReplicas={refetch} />
             <Card flex={0} minW="384px" maxW="384px">
               <CardHeader>Interacting with cluster replicas</CardHeader>
               <CardContent pb={8}>
@@ -181,6 +182,7 @@ const ClusterReplicasPage = () => {
 
 interface ReplicaTableProps {
   replicas: ClusterReplicaWithUtilizaton[];
+  refetchReplicas: () => void;
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
@@ -193,6 +195,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
           <Th>Size</Th>
           <Th>CPU</Th>
           <Th>Memory</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -225,6 +228,13 @@ const ReplicaTable = (props: ReplicaTableProps) => {
                   </Text>
                 </>
               )}
+            </Td>
+            <Td>
+              <OverflowMenu
+                selectedObject={r}
+                refetchObjects={props.refetchReplicas}
+                objectType="CLUSTER REPLICA"
+              />
             </Td>
           </Tr>
         ))}
