@@ -1,5 +1,4 @@
 import {
-  Box,
   Code,
   Flex,
   HStack,
@@ -24,6 +23,7 @@ import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
 import CommandBlock from "./CommandBlock";
+import CommandChevron from "./CommandChevron";
 import WebSocketFsm, {
   WebSocketFsmContext,
   WebSocketFsmEvent,
@@ -135,18 +135,6 @@ const SqlSelectTable = ({
         ))}
       </Tbody>
     </Table>
-  );
-};
-
-const CommandChevron = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-
-  return (
-    <Box fontSize="lg" lineHeight="6" color={semanticColors.accent.purple}>
-      &gt;
-    </Box>
   );
 };
 
