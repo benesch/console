@@ -16,6 +16,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
+import debounce from "lodash.debounce";
 import React, { useEffect, useRef } from "react";
 import {
   useRecoilCallback,
@@ -328,6 +329,8 @@ const Shell = () => {
 
     assert(socket);
 
+    const debouncedUpdateHistoryItem = debounce(updateHistoryItem, 100);
+
     socket.onResult((result) => {
       const stateMachine = getStateMachine();
       const { state } = stateMachine;
@@ -359,7 +362,7 @@ const Shell = () => {
             stateMachine.send({ type: "ROW", row: result.payload });
 
             assert(state.context.latestCommandOutput);
-            updateHistoryItem(state.context.latestCommandOutput);
+            debouncedUpdateHistoryItem(state.context.latestCommandOutput);
           } else if (state.matches("commandInProgressHasRows")) {
             stateMachine.send({ type: "ROW", row: result.payload });
           }
