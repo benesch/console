@@ -9,7 +9,13 @@ import DeleteObjectModal from "./DeleteObjectModal";
 export interface OverflowMenuProps {
   selectedObject: DatabaseObject;
   refetchObjects: () => void;
-  objectType: string;
+  objectType:
+    | "SECRET"
+    | "CONNECTION"
+    | "SOURCE"
+    | "SINK"
+    | "CLUSTER"
+    | "CLUSTER REPLICA";
 }
 
 export interface DatabaseObject {
