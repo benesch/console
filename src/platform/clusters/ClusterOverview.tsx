@@ -184,9 +184,6 @@ const ClusterOverview = () => {
     );
   }
   if (isClusterError || errors.length > 0) {
-    Sentry.captureException(
-      new Error("Cluster Overview error:\n" + errors.join("\n"))
-    );
     return <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />;
   }
 
