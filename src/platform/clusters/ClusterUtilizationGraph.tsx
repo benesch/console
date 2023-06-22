@@ -147,6 +147,7 @@ export const ClusterUtilizationGraph = ({
                 background={colors.gray[700]}
                 color={colors.gray[50]}
                 border={0}
+                align="start"
                 borderRadius="md"
                 lineHeight="16px"
                 fontSize="sm"
@@ -157,7 +158,12 @@ export const ClusterUtilizationGraph = ({
                   const datapoint = item.payload as DataPoint;
                   const key = item.dataKey as string;
                   return (
-                    <Flex key={i} justifyContent="space-between" width="160px">
+                    <Flex
+                      key={i}
+                      justifyContent="space-between"
+                      width="fit-content"
+                      gap={4}
+                    >
                       <div>
                         {datapoint.name}
                         <Text as="span" color={colors.gray[400]}>
@@ -165,7 +171,7 @@ export const ClusterUtilizationGraph = ({
                         </Text>
                       </div>
                       {datapoint.notReadyReason === "oom-killed" ? (
-                        <Text>OOM</Text>
+                        <Text>Out of Memory</Text>
                       ) : (
                         <div>{`${(datapoint[key] as number).toFixed(1)}%`}</div>
                       )}
@@ -241,10 +247,10 @@ const ClusterEventDot = (props: DotProps) => {
 
   return (
     <svg
-      x={cx - 10}
-      y={cy - 10}
-      width={20}
-      height={20}
+      x="12"
+      y="12"
+      width="20"
+      height="20"
       fill="red"
       viewBox="0 0 1024 1024"
     >
