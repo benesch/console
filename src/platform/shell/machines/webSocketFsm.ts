@@ -296,6 +296,10 @@ export const webSocketFsm = createMachine<
           target: "commandInProgressStreaming",
           actions: addRowToLatestCommandResult,
         },
+        COMMAND_COMPLETE: {
+          target: "commandSent",
+          actions: completeLatestCommandResult,
+        },
       },
     },
   },
