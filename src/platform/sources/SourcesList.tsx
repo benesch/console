@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
 import { Source, SourcesResponse } from "~/api/materialize/useSources";
@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill, {
@@ -97,6 +98,7 @@ const SourcesListPage = ({
     isInitiallyLoading,
     isError,
     loading,
+    refetch,
   } = sourcesResponse;
 
   const isEmpty = sources && sources.length === 0;
@@ -165,7 +167,7 @@ CREATE SOURCE <source_name>
         </EmptyListWrapper>
       ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <SourceTable sources={sources ?? []} />
+          <SourceTable sources={sources ?? []} refetchSources={refetch} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with sources</CardHeader>
             <CardContent pb={8}>
@@ -200,10 +202,10 @@ CREATE SOURCE <source_name>
 
 interface SourceTableProps {
   sources: Source[];
+  refetchSources: () => void;
 }
 
 const SourceTable = (props: SourceTableProps) => {
-  const navigate = useNavigate();
   const regionSlug = useRegionSlug();
 
   return (
@@ -214,15 +216,12 @@ const SourceTable = (props: SourceTableProps) => {
           <Th width="25%">Status</Th>
           <Th width="25%">Type</Th>
           <Th width="25%">Size</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
         {props.sources.map((s) => (
-          <Tr
-            key={s.id}
-            onClick={() => navigate(sourceErrorsPath(regionSlug, s))}
-            cursor="pointer"
-          >
+          <Tr key={s.id}>
             <Td>
               <Box
                 maxW={{
@@ -236,14 +235,16 @@ const SourceTable = (props: SourceTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                <Tooltip
-                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
-                  placement="bottom"
-                  fontSize="xs"
-                  top={-1}
-                >
-                  {s.name}
-                </Tooltip>
+                <Link to={sourceErrorsPath(regionSlug, s)}>
+                  <Tooltip
+                    label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                    placement="bottom"
+                    fontSize="xs"
+                    top={-1}
+                  >
+                    {s.name}
+                  </Tooltip>
+                </Link>
               </Box>
             </Td>
             <Td>
@@ -260,6 +261,13 @@ const SourceTable = (props: SourceTableProps) => {
             </Td>
             <Td>{s.type}</Td>
             <Td>{s.size || "-"}</Td>
+            <Td>
+              <OverflowMenu
+                selectedObject={s}
+                refetchObjects={props.refetchSources}
+                objectType="SOURCE"
+              />
+            </Td>
           </Tr>
         ))}
       </Tbody>
