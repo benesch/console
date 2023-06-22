@@ -15,15 +15,29 @@ type ShellLayoutProps = PropsWithChildren;
 const MAIN_CONTENT_MARGIN = 4;
 
 /**
+ * Since Shell's css variables are scoped within #shell, our 'body' selector with grabs incorrect
+ * variables for our font styles. The solution is to declare these styles within scope.
+ */
+const DEFAULT_FONT_STYLES = {
+  color: "var(--ck-colors-chakra-body-text)",
+  background: "var(--ck-colors-semanticColors-background-primary)",
+};
+
+/**
  * Theme provider so that everything within Shell is in dark mode.
  * Can't reuse Chakra's ThemeProvider since the CSS variables would override the overall app theme's CSS variables.
  * Derived from https://github.com/chakra-ui/chakra-ui/blob/main/packages/core/system/src/providers.tsx
  */
 export const ShellThemeProvider = ({ children }: PropsWithChildren) => {
   const computedTheme = useMemo(() => toCSSVar(darkTheme), []);
+
   return (
     <EmotionThemeProvider theme={computedTheme}>
-      <Global styles={(theme: any) => ({ "#shell": theme.__cssVars })} />
+      <Global
+        styles={(theme: any) => ({
+          "#shell": { ...theme.__cssVars, ...DEFAULT_FONT_STYLES },
+        })}
+      />
       {children}
     </EmotionThemeProvider>
   );
@@ -58,7 +72,6 @@ export const ShellLayout = (props: ShellLayoutProps) => {
                 <Box
                   as="main"
                   m={MAIN_CONTENT_MARGIN}
-                  bg="semanticColors.background.primary"
                   borderRadius="lg"
                   id="shell"
                   flex="1"
