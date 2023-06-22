@@ -22,7 +22,8 @@ function useSources({
       .leftJoin("mz_internal.mz_source_statuses as st", "st.id", "s.id")
       .select(["st.status", "st.error"])
       .where("s.id", "like", "u%")
-      .where("s.type", "<>", "subsource");
+      .where("s.type", "<>", "subsource")
+      .where("s.type", "<>", "progress");
     if (databaseId) {
       qb = qb.where("d.id", "=", databaseId);
     }
