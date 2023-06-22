@@ -3,7 +3,6 @@ import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
-  format,
   subMinutes,
 } from "date-fns";
 import React from "react";
@@ -21,6 +20,7 @@ import { TimestampedCounts, useBucketedSinkErrors } from "~/api/materialized";
 import ErrorBox from "~/components/ErrorBox";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
+import { formatTimeInUtc } from "~/util";
 
 import { SINKS_FETCH_ERROR_MESSAGE } from "./constants";
 
@@ -147,14 +147,11 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
             const bucket = payload[0].payload as TimestampedCounts;
             const barStart = new Date(bucket.timestamp);
             const barEnd = new Date(bucket.timestamp + bucketSizeMs);
-            const startLabel = `${format(barStart, "MM-dd-yy")} ${format(
+            const startLabel = `${formatTimeInUtc(
               barStart,
-              "HH:mm"
+              "MM-dd-yy HH:mm"
             )} UTC`;
-            const endLabel = `${format(barEnd, "MM-dd-yy")} ${format(
-              barEnd,
-              "HH:mm"
-            )} UTC`;
+            const endLabel = `${formatTimeInUtc(barEnd, "MM-dd-yy HH:mm")} UTC`;
             return (
               <Box
                 background={colors.gray[700]}

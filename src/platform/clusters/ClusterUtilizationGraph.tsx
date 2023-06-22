@@ -3,7 +3,6 @@ import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
-  format,
 } from "date-fns";
 import React from "react";
 import {
@@ -20,6 +19,7 @@ import {
 import { Replica } from "~/api/materialize/useClusters";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
+import { formatTimeInUtc } from "~/util";
 
 import { ReplicaData } from "./ClusterOverview";
 
@@ -164,9 +164,8 @@ export const ClusterUtilizationGraph = ({
                     </Flex>
                   );
                 })}
-                <Text color={colors.gray[400]}>{`${format(
-                  timestamp,
-                  "HH:mm:ss"
+                <Text color={colors.gray[400]}>{`${formatTimeInUtc(
+                  timestamp
                 )} UTC`}</Text>
               </VStack>
             );
