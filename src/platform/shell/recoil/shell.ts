@@ -21,6 +21,11 @@ export const shellStateAtom = atom<ShellState>({
   default: initialShellState,
 });
 
+export const promptAtom = atom<string>({
+  key: keys.PROMPT,
+  default: "",
+});
+
 export const historyIdsAtom = atom<string[]>({
   key: keys.HISTORY_IDS,
   default: [],

@@ -14,8 +14,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilCallback, useRecoilValue } from "recoil";
+import React, { useEffect, useRef } from "react";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Error, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
@@ -36,7 +36,9 @@ import {
   HistoryItem,
   historyItemAtom,
   historySelector,
+  promptAtom,
 } from "./recoil/shell";
+import ShellPrompt from "./ShellPrompt";
 
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
@@ -284,7 +286,7 @@ const Shell = () => {
   const history = useRecoilValue(historySelector);
   const historyIds = useRecoilValue(historyIdsAtom);
 
-  const [currentCommand, setCurrentCommand] = useState("");
+  const setPrompt = useSetRecoilState(promptAtom);
 
   useEffect(() => {
     const scrollToTopOnCommandComplete = () => {
@@ -398,7 +400,7 @@ const Shell = () => {
       if (text && text.at(-1) === ";") {
         runCommand(text);
         e.preventDefault();
-        setCurrentCommand("");
+        setPrompt("");
         return false;
       }
     }
@@ -429,28 +431,13 @@ const Shell = () => {
           ))}
         </VStack>
       )}
-      <HStack
+      <ShellPrompt
         flexGrow="1"
         flexShrink="1"
         minHeight="32"
-        alignItems="flex-start"
         width="100%"
-        p="6"
-      >
-        <CommandChevron />
-        <CommandBlock
-          onChange={(e) => setCurrentCommand(e.target.value)}
-          onKeyDown={handlePromptInput}
-          autoFocus={true}
-          value={currentCommand}
-          placeholder="-- write your query here"
-          containerProps={{
-            width: "100%",
-            height: "100%",
-            overflow: "auto",
-          }}
-        />
-      </HStack>
+        onCommandBlockKeyDown={handlePromptInput}
+      />
     </VStack>
   );
 };
