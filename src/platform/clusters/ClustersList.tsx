@@ -14,13 +14,14 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -66,7 +67,12 @@ const ClustersListPage = () => {
   const { colors } = useTheme<MaterializeTheme>();
   const flags = useFlags();
   const { track } = useSegment();
-  const { data: clusters, isInitiallyLoading, isError } = useClusters();
+  const {
+    data: clusters,
+    isInitiallyLoading,
+    isError,
+    refetch,
+  } = useClusters();
 
   const isEmpty = clusters !== null && clusters.length === 0;
 
@@ -116,7 +122,7 @@ const ClustersListPage = () => {
         </EmptyListWrapper>
       ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <ClusterTable clusters={clusters ?? []} />
+          <ClusterTable clusters={clusters ?? []} refetchClusters={refetch} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with clusters</CardHeader>
             <CardContent pb={8}>
@@ -151,28 +157,33 @@ const ClustersListPage = () => {
 
 interface ClusterTableProps {
   clusters: Cluster[];
+  refetchClusters: () => void;
 }
 
 const ClusterTable = (props: ClusterTableProps) => {
-  const navigate = useNavigate();
-
   return (
     <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
         <Tr>
           <Th>Name</Th>
           <Th>Replicas</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
         {props.clusters.map((c) => (
-          <Tr
-            key={c.id}
-            onClick={() => navigate(relativeClusterPath(c))}
-            cursor="pointer"
-          >
-            <Td>{c.name}</Td>
+          <Tr key={c.id}>
+            <Td>
+              <Link to={relativeClusterPath(c)}>{c.name}</Link>
+            </Td>
             <Td>{c.replicas.length}</Td>
+            <Td>
+              <OverflowMenu
+                selectedObject={c}
+                refetchObjects={props.refetchClusters}
+                objectType="CLUSTER"
+              />
+            </Td>
           </Tr>
         ))}
       </Tbody>
