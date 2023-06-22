@@ -444,11 +444,10 @@ const Shell = () => {
       <HStack
         flexGrow="1"
         flexShrink="1"
-        minHeight="72px"
+        minHeight="32"
         alignItems="flex-start"
         width="100%"
         p="6"
-        overflow="auto"
       >
         <CommandChevron />
         <CommandBlock
@@ -460,10 +459,7 @@ const Shell = () => {
           containerProps={{
             width: "100%",
             height: "100%",
-          }}
-          textAreaStyleProps={{
-            width: "100%",
-            height: "100%",
+            overflow: "auto",
           }}
         />
       </HStack>
