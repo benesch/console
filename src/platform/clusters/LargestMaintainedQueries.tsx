@@ -11,6 +11,7 @@ import {
   Tr,
   useTheme,
 } from "@chakra-ui/react";
+import * as Sentry from "@sentry/react";
 import React from "react";
 
 import useLargestMaintainedQueries from "~/api/materialize/cluster/useLargestMaintainedQueries";
@@ -56,6 +57,9 @@ const LargestMaintainedQueries = ({
     return null;
   }
   if (error) {
+    Sentry.captureException(
+      new Error("LargestMaintainedQueries failed to load:\n" + error)
+    );
     return (
       <ErrorBox message="An error has occurred loading maintained queries" />
     );
