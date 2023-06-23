@@ -55,7 +55,6 @@ const DeleteObjectModal = ({
   } = useTheme<MaterializeTheme>();
   const toast = useSuccessToast();
   const { track } = useSegment();
-  const [showError, setShowError] = React.useState(false);
   const [showConfirmation, setShowConfirmation] = React.useState(false);
   const { register, handleSubmit, formState } = useForm<{
     objectName: string;
@@ -65,13 +64,16 @@ const DeleteObjectModal = ({
 
   const { loading: dependencyCountLoading, results: dependencyCount } =
     useObjectDependencies(dbObject.id);
-  const { runSql: deleteObject, loading: isDeleting } = useSqlLazy({
+  const {
+    runSql: deleteObject,
+    loading: isDeleting,
+    error,
+  } = useSqlLazy({
     queryBuilder: deleteObjectQueryBuilder,
   });
 
   const handleDelete = () => {
     track("Delete object clicked", { name: dbObject.name });
-    setShowError(false);
     deleteObject(
       { dbObject, objectType },
       {
@@ -88,9 +90,6 @@ const DeleteObjectModal = ({
               </>
             ),
           });
-        },
-        onError: () => {
-          setShowError(true);
         },
       }
     );
@@ -120,7 +119,7 @@ const DeleteObjectModal = ({
             <>
               <ModalBody pb="6">
                 <VStack spacing="4">
-                  {showError && (
+                  {error && (
                     <InlayBanner
                       variant="error"
                       label="Error"
@@ -162,7 +161,7 @@ const DeleteObjectModal = ({
                     ) : (
                       <>
                         This will permanently delete {dbObject.name} and all
-                        sources, materialized views, views, indexes, and sink
+                        sources, materialized views, views, indexes, and sinks
                         that depend on it.
                       </>
                     )}
@@ -185,13 +184,6 @@ const DeleteObjectModal = ({
             <>
               <ModalBody pb="10">
                 <VStack spacing="4">
-                  {showError && (
-                    <InlayBanner
-                      variant="error"
-                      label="Error"
-                      message="There was an error deleting the object. Please try again."
-                    />
-                  )}
                   <InlayBanner
                     width="100%"
                     variant="warn"
@@ -209,7 +201,7 @@ const DeleteObjectModal = ({
                     color={semanticColors.foreground.secondary}
                   >
                     This {objectType.toLowerCase()} is used by other objects. In
-                    order to delete {dbObject.name}, all it’s dependents will be
+                    order to delete {dbObject.name}, all its dependents will be
                     deleted as well.
                   </Text>
                 </VStack>

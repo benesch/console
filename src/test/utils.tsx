@@ -68,9 +68,11 @@ export const renderComponent = (
     initialRouterEntries?: string[];
   } = {}
 ) => {
+  const initializeState: InitializeStateFn = ({ set }) =>
+    setFakeEnvironment(set, "AWS/us-east-1", healthyEnvironment);
   return render(
     <ProviderWrapper
-      initializeState={options.initializeState}
+      initializeState={options.initializeState ?? initializeState}
       initialRouterEntries={options.initialRouterEntries}
     >
       {element}

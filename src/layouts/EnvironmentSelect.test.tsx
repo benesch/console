@@ -29,7 +29,8 @@ const renderEnvironmentSelect = () => {
   return renderComponent(
     <div data-testid="wrapper">
       <EnvironmentSelect />
-    </div>
+    </div>,
+    { initializeState: () => null }
   );
 };
 
