@@ -15,6 +15,7 @@ import {
   Spinner,
   Text,
   useTheme,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -100,7 +101,12 @@ const DeleteObjectModal = ({
       <ModalOverlay />
       <ModalContent shadow={shadows.level4}>
         <form onSubmit={handleSubmit(handleDelete)}>
-          <ModalHeader>Delete {dbObject.name}</ModalHeader>
+          <ModalHeader
+            p="4"
+            borderBottom={`1px solid ${semanticColors.border.primary}`}
+          >
+            Delete {dbObject.name}
+          </ModalHeader>
           <ModalCloseButton />
           {dependencyCountLoading || dependencyCount === null ? (
             <>
@@ -113,50 +119,55 @@ const DeleteObjectModal = ({
           ) : showConfirmation || dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
-                {showError && (
-                  <InlayBanner
-                    variant="error"
-                    label="Error"
-                    message="There was an error deleting the object. Please try again."
-                  />
-                )}
-                <FormControl isInvalid={!!formState.errors.objectName}>
-                  <FormLabel>To confirm, type {dbObject.name} below</FormLabel>
-                  <Input
-                    autoFocus
-                    placeholder={dbObject.name}
-                    variant={formState.errors.objectName ? "error" : "default"}
-                    {...register("objectName", {
-                      required: "Object name is required.",
-                      validate: (value) => {
-                        if (value !== dbObject.name) {
-                          return "Object name must match exactly.";
-                        }
-                      },
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {formState.errors.objectName?.message}
-                  </FormErrorMessage>
-                </FormControl>
-                <Text
-                  textStyle="text-base"
-                  color={semanticColors.foreground.secondary}
-                  mt="4"
-                >
-                  {dependencyCount === 0 ? (
-                    <>
-                      This action will permanently delete {dbObject.name} and
-                      can not be undone.
-                    </>
-                  ) : (
-                    <>
-                      This will permanently delete {dbObject.name} and all
-                      sources, materialized views, views, indexes, and sink that
-                      depend on it.
-                    </>
+                <VStack spacing="4">
+                  {showError && (
+                    <InlayBanner
+                      variant="error"
+                      label="Error"
+                      message="There was an error deleting the object. Please try again."
+                    />
                   )}
-                </Text>
+                  <FormControl isInvalid={!!formState.errors.objectName}>
+                    <FormLabel>
+                      To confirm, type {dbObject.name} below
+                    </FormLabel>
+                    <Input
+                      autoFocus
+                      placeholder={dbObject.name}
+                      variant={
+                        formState.errors.objectName ? "error" : "default"
+                      }
+                      {...register("objectName", {
+                        required: "Object name is required.",
+                        validate: (value) => {
+                          if (value !== dbObject.name) {
+                            return "Object name must match exactly.";
+                          }
+                        },
+                      })}
+                    />
+                    <FormErrorMessage>
+                      {formState.errors.objectName?.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                  <Text
+                    textStyle="text-base"
+                    color={semanticColors.foreground.secondary}
+                  >
+                    {dependencyCount === 0 ? (
+                      <>
+                        This action will permanently delete {dbObject.name} and
+                        can not be undone.
+                      </>
+                    ) : (
+                      <>
+                        This will permanently delete {dbObject.name} and all
+                        sources, materialized views, views, indexes, and sink
+                        that depend on it.
+                      </>
+                    )}
+                  </Text>
+                </VStack>
               </ModalBody>
               <ModalFooter>
                 <Button
@@ -173,30 +184,35 @@ const DeleteObjectModal = ({
           ) : (
             <>
               <ModalBody pb="10">
-                {showError && (
+                <VStack spacing="4">
+                  {showError && (
+                    <InlayBanner
+                      variant="error"
+                      label="Error"
+                      message="There was an error deleting the object. Please try again."
+                    />
+                  )}
                   <InlayBanner
-                    variant="error"
-                    label="Error"
-                    message="There was an error deleting the object. Please try again."
+                    width="100%"
+                    variant="warn"
+                    textStyle="text-ui-med"
+                    message={`${
+                      dbObject.name
+                    } has ${dependencyCount} ${pluralize(
+                      dependencyCount,
+                      "dependent",
+                      "dependents"
+                    )}`}
                   />
-                )}
-                <InlayBanner
-                  variant="warn"
-                  message={`${dbObject.name} has ${dependencyCount} ${pluralize(
-                    dependencyCount,
-                    "dependent",
-                    "dependents"
-                  )}`}
-                />
-                <Text
-                  textStyle="text-base"
-                  color={semanticColors.foreground.secondary}
-                  mt="4"
-                >
-                  This {objectType.toLowerCase()} is used by other objects. In
-                  order to delete {dbObject.name}, all it’s dependents will be
-                  deleted as well.
-                </Text>
+                  <Text
+                    textStyle="text-base"
+                    color={semanticColors.foreground.secondary}
+                  >
+                    This {objectType.toLowerCase()} is used by other objects. In
+                    order to delete {dbObject.name}, all it’s dependents will be
+                    deleted as well.
+                  </Text>
+                </VStack>
               </ModalBody>
               <ModalFooter>
                 <Button
