@@ -7,7 +7,10 @@ export interface ReplicaUtilization {
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
+  notReadyReason: NotReadyReason | null;
 }
+
+export type NotReadyReason = "oom-killed";
 
 const useClusterUtilization = (
   clusterId: string | undefined,
@@ -61,9 +64,11 @@ const useClusterUtilization = (
 
     const utilizationQuery = `SELECT r.id,
   u.cpu_percent,
-  u.memory_percent
+  u.memory_percent,
+  crs.reason
 FROM mz_cluster_replicas r
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
+JOIN mz_internal.mz_cluster_replica_statuses as crs ON crs.replica_id = r.id
 WHERE r.cluster_id = '${clusterId}'
 ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
 
@@ -95,6 +100,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
               timestamp: parseInt(result.payload[0] as string),
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,
+              notReadyReason: result.payload[5] as NotReadyReason | null,
             };
             socketBufferRef.current.push(utilization);
             setIsStale(false);

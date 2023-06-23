@@ -7,6 +7,7 @@ import {
 import React from "react";
 import {
   CartesianGrid,
+  DotProps,
   Legend,
   Line,
   LineChart,
@@ -17,6 +18,7 @@ import {
 } from "recharts";
 
 import { Replica } from "~/api/materialize/useClusters";
+import { NotReadyReason } from "~/api/materialize/useClusterUtilization";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 import { formatTimeInUtc } from "~/util";
@@ -34,7 +36,8 @@ export interface DataPoint {
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
-  [key: string]: string | number;
+  notReadyReason: NotReadyReason | null;
+  [key: string]: string | number | null;
 }
 
 interface UtilizationGraph {
@@ -45,6 +48,7 @@ interface UtilizationGraph {
   replicas: Replica[];
   startTime: Date;
   timePeriodMinutes: number;
+  showNotReady?: boolean;
 }
 
 export const ClusterUtilizationGraph = ({
@@ -53,6 +57,7 @@ export const ClusterUtilizationGraph = ({
   endTime,
   replicaColorMap,
   replicas,
+  showNotReady,
   startTime,
   timePeriodMinutes,
 }: UtilizationGraph) => {
@@ -143,6 +148,7 @@ export const ClusterUtilizationGraph = ({
                 background={colors.gray[700]}
                 color={colors.gray[50]}
                 border={0}
+                align="start"
                 borderRadius="md"
                 lineHeight="16px"
                 fontSize="sm"
@@ -153,14 +159,23 @@ export const ClusterUtilizationGraph = ({
                   const datapoint = item.payload as DataPoint;
                   const key = item.dataKey as string;
                   return (
-                    <Flex key={i} justifyContent="space-between" width="160px">
+                    <Flex
+                      key={i}
+                      justifyContent="space-between"
+                      width="fit-content"
+                      gap={4}
+                    >
                       <div>
                         {datapoint.name}
                         <Text as="span" color={colors.gray[400]}>
                           {` (${datapoint.size})`}
                         </Text>
                       </div>
-                      <div>{`${(datapoint[key] as number).toFixed(1)}%`}</div>
+                      {datapoint.notReadyReason === "oom-killed" ? (
+                        <Text>Out of Memory</Text>
+                      ) : (
+                        <div>{`${(datapoint[key] as number).toFixed(1)}%`}</div>
+                      )}
                     </Flex>
                   );
                 })}
@@ -175,15 +190,19 @@ export const ClusterUtilizationGraph = ({
           const replica = replicas.find((r) => r.id === replicaData.id);
           if (!replica) return;
           return (
-            <Line
-              name={replica.name}
-              key={replica.id}
-              dataKey={dataKey}
-              stroke={replicaColorMap.get(replica.id)?.color}
-              data={replicaData.data}
-              isAnimationActive={false}
-              dot={false}
-            />
+            <>
+              <Line
+                name={replica.name}
+                key={replica.id}
+                dataKey={dataKey}
+                stroke={replicaColorMap.get(replica.id)?.color}
+                data={replicaData.data}
+                isAnimationActive={false}
+                dot={
+                  showNotReady ? <ClusterEventDot key={Math.random()} /> : false
+                }
+              />
+            </>
           );
         })}
         <Legend
@@ -217,6 +236,34 @@ export const ClusterUtilizationGraph = ({
         )}
       </LineChart>
     </ResponsiveContainer>
+  );
+};
+
+const ClusterEventDot = (props: DotProps) => {
+  const { cx, cy, payload } = props as DotProps & { payload: DataPoint };
+
+  // If we return null here, recharts won't try to render any more dots after the first null is returned
+  if (!cx || !cy || !payload.notReadyReason) return <></>;
+
+  return (
+    <svg
+      x={cx - 6}
+      y={cy - 6}
+      width="12"
+      height="12"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="8"
+        cy="8"
+        r="7"
+        fill="white"
+        stroke="#000082"
+        strokeWidth="2"
+      />
+    </svg>
   );
 };
 

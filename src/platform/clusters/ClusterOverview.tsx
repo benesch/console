@@ -143,16 +143,18 @@ const ClusterOverview = () => {
         if (!utilizations) {
           continue;
         }
-        let maxCpu = utilizations[0];
+        let maxCpu = utilizations[0].cpuPercent;
+        let maxMemory = utilizations[0].memoryPercent;
+        let notReadyReason = utilizations[0].notReadyReason;
         for (const value of utilizations) {
-          if (value.cpuPercent > maxCpu.cpuPercent) {
-            maxCpu = value;
+          if (value.cpuPercent > maxCpu) {
+            maxCpu = value.cpuPercent;
           }
-        }
-        let maxMemory = utilizations[0];
-        for (const value of utilizations) {
-          if (value.memoryPercent > maxMemory.memoryPercent) {
-            maxMemory = value;
+          if (value.memoryPercent > maxMemory) {
+            maxMemory = value.memoryPercent;
+          }
+          if (!notReadyReason && value.notReadyReason) {
+            notReadyReason = value.notReadyReason;
           }
         }
         const bucketValue: DataPoint = {
@@ -160,8 +162,9 @@ const ClusterOverview = () => {
           name: replica.name,
           size: replica.size,
           timestamp: bucket,
-          cpuPercent: maxCpu.cpuPercent,
-          memoryPercent: maxMemory.memoryPercent,
+          cpuPercent: maxCpu,
+          memoryPercent: maxMemory,
+          notReadyReason: notReadyReason,
         };
         lineData.push(bucketValue);
       }
@@ -269,6 +272,7 @@ const ClusterOverview = () => {
                   timePeriodMinutes={timePeriodMinutes}
                   replicaColorMap={replicaColorMap}
                   replicas={selectedReplicas}
+                  showNotReady
                 />
               </Box>
             </>
