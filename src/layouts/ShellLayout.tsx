@@ -59,7 +59,13 @@ export const ShellLayout = (props: ShellLayoutProps) => {
       >
         <NavBar />
 
-        <VStack flex={1} alignItems="stretch" spacing={0} minWidth="0">
+        <VStack
+          flex={1}
+          alignItems="stretch"
+          spacing={0}
+          minWidth="0"
+          minHeight="0"
+        >
           <ErrorBoundary fallback={<ErrorBox />}>
             <React.Suspense
               fallback={

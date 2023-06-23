@@ -1,5 +1,4 @@
 import {
-  Box,
   Code,
   Flex,
   HStack,
@@ -15,8 +14,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
-import React, { useEffect, useRef, useState } from "react";
-import { useRecoilCallback, useRecoilValue } from "recoil";
+import React, { useEffect, useRef } from "react";
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Error, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
@@ -24,6 +23,7 @@ import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
 import CommandBlock from "./CommandBlock";
+import CommandChevron from "./CommandChevron";
 import WebSocketFsm, {
   WebSocketFsmContext,
   WebSocketFsmEvent,
@@ -36,7 +36,9 @@ import {
   HistoryItem,
   historyItemAtom,
   historySelector,
+  promptAtom,
 } from "./recoil/shell";
+import ShellPrompt from "./ShellPrompt";
 
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
@@ -135,18 +137,6 @@ const SqlSelectTable = ({
         ))}
       </Tbody>
     </Table>
-  );
-};
-
-const CommandChevron = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
-
-  return (
-    <Box fontSize="lg" lineHeight="6" color={semanticColors.accent.purple}>
-      &gt;
-    </Box>
   );
 };
 
@@ -296,7 +286,7 @@ const Shell = () => {
   const history = useRecoilValue(historySelector);
   const historyIds = useRecoilValue(historyIdsAtom);
 
-  const [currentCommand, setCurrentCommand] = useState("");
+  const setPrompt = useSetRecoilState(promptAtom);
 
   useEffect(() => {
     const scrollToTopOnCommandComplete = () => {
@@ -410,7 +400,7 @@ const Shell = () => {
       if (text && text.at(-1) === ";") {
         runCommand(text);
         e.preventDefault();
-        setCurrentCommand("");
+        setPrompt("");
         return false;
       }
     }
@@ -425,6 +415,7 @@ const Shell = () => {
       height="100%"
       alignItems="flex-start"
       spacing="0"
+      scrollBehavior="smooth"
       ref={shellContainerRef}
     >
       {historyIds.length > 0 && (
@@ -441,32 +432,13 @@ const Shell = () => {
           ))}
         </VStack>
       )}
-      <HStack
+      <ShellPrompt
         flexGrow="1"
         flexShrink="1"
-        minHeight="72px"
-        alignItems="flex-start"
+        minHeight="32"
         width="100%"
-        p="6"
-        overflow="auto"
-      >
-        <CommandChevron />
-        <CommandBlock
-          onChange={(e) => setCurrentCommand(e.target.value)}
-          onKeyDown={handlePromptInput}
-          autoFocus={true}
-          value={currentCommand}
-          placeholder="-- write your query here"
-          containerProps={{
-            width: "100%",
-            height: "100%",
-          }}
-          textAreaStyleProps={{
-            width: "100%",
-            height: "100%",
-          }}
-        />
-      </HStack>
+        onCommandBlockKeyDown={handlePromptInput}
+      />
     </VStack>
   );
 };
