@@ -13,6 +13,7 @@ import {
 type SendEvent = { type: "SEND"; command: string };
 type CommandStartingIsStreamingEvent = {
   type: "COMMAND_STARTING_IS_STREAMING";
+  hasRows: boolean;
 };
 type CommandStartingHasRowsEvent = { type: "COMMAND_STARTING_HAS_ROWS" };
 type CommandStartingDefaultEvent = { type: "COMMAND_STARTING_DEFAULT" };
@@ -71,19 +72,38 @@ const addDefaultCommandResult = assign<WebSocketFsmContext>({
       draft.commandResults.push(
         createDefaultCommandResult({
           isStreamingResult: false,
+          hasRows: false,
           initialTimeMs: performance.now(),
         })
       );
     }),
 });
 
-const addStreamingCommandResult = assign<WebSocketFsmContext>({
+const addHasRowsCommandResult = assign<WebSocketFsmContext>({
   latestCommandOutput: ({ latestCommandOutput }) =>
     produce(latestCommandOutput, (draft) => {
       assert(draft);
       draft.commandResults.push(
         createDefaultCommandResult({
+          isStreamingResult: false,
+          hasRows: true,
+          initialTimeMs: performance.now(),
+        })
+      );
+    }),
+});
+
+const addStreamingCommandResult = assign<
+  WebSocketFsmContext,
+  CommandStartingIsStreamingEvent
+>({
+  latestCommandOutput: ({ latestCommandOutput }, event) =>
+    produce(latestCommandOutput, (draft) => {
+      assert(draft);
+      draft.commandResults.push(
+        createDefaultCommandResult({
           isStreamingResult: true,
+          hasRows: event.hasRows,
           initialTimeMs: performance.now(),
         })
       );
@@ -136,12 +156,16 @@ const addRowToLatestCommandResult = assign<WebSocketFsmContext, RowEvent>({
     }),
 });
 
-const completeLatestCommandResult = assign<WebSocketFsmContext>({
-  latestCommandOutput: ({ latestCommandOutput }) =>
+const completeLatestCommandResult = assign<
+  WebSocketFsmContext,
+  CommandCompleteEvent
+>({
+  latestCommandOutput: ({ latestCommandOutput }, event) =>
     produce(latestCommandOutput, (draft) => {
       assert(draft);
       const latestCommandResult = draft.commandResults.at(-1);
       assert(latestCommandResult);
+      latestCommandResult.commandCompletePayload = event.commandCompletePayload;
       latestCommandResult.endTimeMs = performance.now();
     }),
 });
@@ -175,7 +199,7 @@ export const webSocketFsm = createMachine<
         },
         COMMAND_STARTING_HAS_ROWS: {
           target: "commandInProgressHasRows",
-          actions: addDefaultCommandResult,
+          actions: addHasRowsCommandResult,
         },
         COMMAND_STARTING_IS_STREAMING: {
           target: "commandInProgressStreaming",

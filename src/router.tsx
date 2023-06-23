@@ -35,6 +35,7 @@ import SourceRoutes from "~/platform/sources/SourceRoutes";
 import { SentryRoutes } from "~/sentry";
 import { assert } from "~/util";
 
+import { ShellLayout } from "./layouts/ShellLayout";
 import ConnectionsRoutes from "./platform/connections/ConnectionsRoutes";
 import ShellRoutes from "./platform/shell/ShellRoutes";
 import {
@@ -207,9 +208,9 @@ const EnvironmentRoutes = () => {
         <Route
           path="/shell/*"
           element={
-            <BaseLayout>
+            <ShellLayout>
               <ShellRoutes />
-            </BaseLayout>
+            </ShellLayout>
           }
         />
       )}

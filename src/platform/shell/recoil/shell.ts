@@ -26,10 +26,11 @@ export const historyIdsAtom = atom<string[]>({
   default: [],
 });
 
-type HistoryId = string;
+export type HistoryId = string;
 
 type CommandResult = {
   isStreamingResult: boolean;
+  hasRows: boolean;
 
   notices: Notice[];
   error?: Error;
@@ -100,10 +101,12 @@ export function createDefaultNoticeOutput(payload: Notice): NoticeOutput {
 
 export function createDefaultCommandResult(payload: {
   isStreamingResult: boolean;
+  hasRows: boolean;
   initialTimeMs?: number;
 }): CommandResult {
   return {
     isStreamingResult: payload.isStreamingResult,
+    hasRows: payload.hasRows,
     notices: [],
     initialTimeMs: payload.initialTimeMs,
   };
