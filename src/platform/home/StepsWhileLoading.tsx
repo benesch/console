@@ -22,7 +22,7 @@ const StepsWhileLoading = () => {
     sx: {
       ":hover": {
         h2: {
-          color: colors.semanticColors.accent.purple,
+          color: colors.accent.purple,
         },
       },
     },

@@ -18,10 +18,9 @@ const OverrideCodeEditorStyles = () => (
       const mzThemeTokens = themeTokens as MaterializeTheme;
       return {
         "#shell .w-tc-editor": {
-          "--color-fg-default":
-            mzThemeTokens.colors.semanticColors.foreground.primary,
+          "--color-fg-default": mzThemeTokens.colors.foreground.primary,
           "--color-prettylights-syntax-sublimelinter-gutter-mark":
-            mzThemeTokens.colors.semanticColors.foreground.primary,
+            mzThemeTokens.colors.foreground.primary,
         },
       };
     }}

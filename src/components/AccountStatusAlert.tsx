@@ -6,9 +6,7 @@ import SupportLink from "~/components/SupportLink";
 import { MaterializeTheme } from "~/theme";
 
 const AccountStatusAlert = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { organization } = useCurrentOrganization();
   if (!organization) {
     return null;
@@ -18,15 +16,15 @@ const AccountStatusAlert = () => {
   }
   return (
     <Alert
-      backgroundColor={semanticColors.background.warn}
+      backgroundColor={colors.background.warn}
       borderTopWidth="1px"
-      borderTopColor={semanticColors.border.warn}
+      borderTopColor={colors.border.warn}
       borderBottomWidth="1px"
-      borderBottomColor={semanticColors.border.warn}
+      borderBottomColor={colors.border.warn}
       py={2}
       fontSize="sm"
       lineHeight="20px"
-      color={semanticColors.foreground.primary}
+      color={colors.foreground.primary}
       status="warning"
       justifyContent="center"
       data-test-id="account-status-alert"

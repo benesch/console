@@ -40,9 +40,7 @@ const ConnectorErrorsTable = ({
   isLoading,
   timePeriodMinutes,
 }: ConnectorErrorsTableProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const isEmpty = errors && errors.length === 0;
 
@@ -80,22 +78,13 @@ const ConnectorErrorsTable = ({
                 <Td>{error.error}</Td>
                 <Td>{error.count}</Td>
                 <Td>
-                  <Text
-                    color={semanticColors.foreground.secondary}
-                    display="inline"
-                  >
+                  <Text color={colors.foreground.secondary} display="inline">
                     {format(error.lastOccurred, "MM-dd-yy")}
                   </Text>
-                  <Text
-                    color={semanticColors.foreground.secondary}
-                    display="inline"
-                  >
+                  <Text color={colors.foreground.secondary} display="inline">
                     {" · "}
                   </Text>
-                  <Text
-                    color={semanticColors.foreground.primary}
-                    display="inline"
-                  >
+                  <Text color={colors.foreground.primary} display="inline">
                     {format(error.lastOccurred, "HH:mm:ss")} UTC
                   </Text>
                 </Td>

@@ -39,9 +39,7 @@ const LargestMaintainedQueries = ({
   clusterId,
   clusterName,
 }: LargestMaintainedQueriesProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const { isInitiallyLoading, results, replicaName, error, refetch } =
     useLargestMaintainedQueries({
@@ -72,10 +70,7 @@ const LargestMaintainedQueries = ({
     <>
       <Text textStyle="heading-xs">Resource intensive objects</Text>
       <HStack spacing={1}>
-        <Text
-          textStyle="text-small"
-          color={semanticColors.foreground.secondary}
-        >
+        <Text textStyle="text-small" color={colors.foreground.secondary}>
           These objects are using the most resources on this cluster.
         </Text>
         <Tooltip

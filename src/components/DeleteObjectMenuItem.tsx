@@ -19,16 +19,14 @@ const DeleteObjectMenuItem = ({
   objectType,
 }: DeleteObjectMenuItemProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <>
       <MenuItem
         onClick={() => onOpen()}
         textStyle="text-ui-med"
-        color={semanticColors.accent.red}
+        color={colors.accent.red}
       >
         Drop {objectType.toLowerCase()}
       </MenuItem>

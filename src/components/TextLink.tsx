@@ -8,7 +8,7 @@ const TextLink = (props: LinkProps) => {
 
   return (
     <Link
-      color={colors.semanticColors.accent.brightPurple}
+      color={colors.accent.brightPurple}
       textDecoration="none"
       _hover={{ textDecoration: "underline" }}
       {...props}

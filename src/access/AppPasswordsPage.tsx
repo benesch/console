@@ -192,38 +192,34 @@ const PasswordsTable = ({
           return (
             <Tr
               key={token.clientId}
-              textColor={
-                isDeleting
-                  ? colors.semanticColors.foreground.primary
-                  : "default"
-              }
+              textColor={isDeleting ? colors.foreground.primary : "default"}
               opacity={isDeleting ? 0.5 : 1}
               aria-label={token.description}
             >
               <Td
                 borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
+                borderBottomColor={colors.border.primary}
               >
                 {" "}
                 {token.description}
               </Td>
               <Td
                 borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
+                borderBottomColor={colors.border.primary}
               >
                 {" "}
                 {user.name}
               </Td>
               <Td
                 borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
+                borderBottomColor={colors.border.primary}
               >
                 {" "}
                 {format(new Date(token.createdAt), "yyyy/MM/dd")}
               </Td>
               <Td
                 borderBottomWidth="1px"
-                borderBottomColor={colors.semanticColors.border.primary}
+                borderBottomColor={colors.border.primary}
               >
                 <DeleteKeyModal
                   description={token.description}
@@ -258,10 +254,10 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
       status="info"
       mb={2}
       size="sm"
-      background={colors.semanticColors.background.info}
+      background={colors.background.info}
       borderRadius="md"
       borderWidth="1px"
-      borderColor={colors.semanticColors.border.info}
+      borderColor={colors.border.info}
     >
       <VStack alignItems="flex-start" width="100%">
         <AlertDescription width="100%" px={2}>
@@ -271,9 +267,9 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
             </Text>
             <HStack
               role="group"
-              bg={colors.semanticColors.background.primary}
+              bg={colors.background.primary}
               borderWidth="1px"
-              borderColor={colors.semanticColors.border.primary}
+              borderColor={colors.border.primary}
               borderRadius={4}
               px={2}
               py={1}
@@ -290,11 +286,7 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
               />
             </HStack>
           </VStack>
-          <Text
-            pt={1}
-            fontSize="sm"
-            color={colors.semanticColors.foreground.primary}
-          >
+          <Text pt={1} fontSize="sm" color={colors.foreground.primary}>
             Write this down; you will not be able to see your app password again
             after you reload!
           </Text>
@@ -305,7 +297,7 @@ const SecretBox = ({ name, password, onClose }: SecretBoxProps) => {
         right={1}
         top={1}
         size="sm"
-        color={colors.semanticColors.foreground.secondary}
+        color={colors.foreground.secondary}
         onClick={onClose}
       />
     </Alert>

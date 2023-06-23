@@ -55,9 +55,7 @@ export const FormTopBar = ({
   backButtonHref,
   children,
 }: React.PropsWithChildren<FormTopBarProps>) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Flex
@@ -65,21 +63,17 @@ export const FormTopBar = ({
       zIndex="1"
       top="0"
       width="100%"
-      backgroundColor={semanticColors.background.primary}
+      backgroundColor={colors.background.primary}
       alignItems="center"
       justifyContent="space-between"
       px="4"
       py="3"
       boxSizing="border-box"
       borderBottom="1px solid"
-      borderBottomColor={semanticColors.border.primary}
+      borderBottomColor={colors.border.primary}
     >
       <Flex alignItems="center">
-        <Box
-          pr="4"
-          mr="4"
-          borderRight={`1px solid ${semanticColors.border.secondary}`}
-        >
+        <Box pr="4" mr="4" borderRight={`1px solid ${colors.border.secondary}`}>
           <CloseButton
             as={NavLink}
             to={backButtonHref}
@@ -106,9 +100,7 @@ export const FormSection = ({
   children,
   ...props
 }: React.PropsWithChildren<FormSectionProps>) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const variant = props.variant ?? "full-page";
 
   return (
@@ -116,7 +108,7 @@ export const FormSection = ({
       <Text
         as="legend"
         textStyle="heading-xs"
-        color={semanticColors.foreground.tertiary}
+        color={colors.foreground.tertiary}
         mb={variant === "full-page" ? "6" : "4"}
       >
         {title}
@@ -130,16 +122,14 @@ export const FormInfoBox = ({
   children,
   ...props
 }: React.PropsWithChildren<BoxProps>) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Box
       flex="1"
       borderLeft={{
         base: "none",
-        md: `1px solid ${semanticColors.border.primary}`,
+        md: `1px solid ${colors.border.primary}`,
       }}
       px={{ base: "0", md: "6" }}
       py={{ base: "0", md: "4" }}

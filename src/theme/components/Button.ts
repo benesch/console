@@ -10,47 +10,47 @@ export const Button = {
   },
   variants: {
     borderless: {
-      color: "semanticColors.foreground.secondary",
+      color: "foreground.secondary",
       fontSize: "14px",
       lineHeight: "16px",
       fontWeight: 500,
-      backgroundColor: "semanticColors.background.primary",
+      backgroundColor: "background.primary",
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
-        backgroundColor: "semanticColors.background.secondary",
+        backgroundColor: "background.secondary",
       },
     },
     secondary: {
-      color: "semanticColors.foreground.primary",
-      backgroundColor: "semanticColors.background.primary",
+      color: "foreground.primary",
+      backgroundColor: "background.primary",
       borderWidth: "1px",
-      borderColor: "semanticColors.border.secondary",
+      borderColor: "border.secondary",
       shadow: shadows.light.level1,
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
         shadow: "none",
-        backgroundColor: "semanticColors.background.secondary",
+        backgroundColor: "background.secondary",
       },
     },
     primary: {
-      color: "semanticColors.foreground.primaryButtonLabel",
+      color: "foreground.primaryButtonLabel",
       fontSize: "14px",
       lineHeight: "16px",
       fontWeight: 500,
-      backgroundColor: "semanticColors.accent.purple",
+      backgroundColor: "accent.purple",
       shadow: "shadows.level1",
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
         shadow: "none",
         _disabled: {
-          backgroundColor: "semanticColors.accent.purple",
+          backgroundColor: "accent.purple",
         },
       },
     },
     outline: {
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
-        backgroundColor: "semanticColors.background.secondary",
+        backgroundColor: "background.secondary",
       },
     },
     "gradient-1": {

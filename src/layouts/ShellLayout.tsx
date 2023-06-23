@@ -20,7 +20,7 @@ const MAIN_CONTENT_MARGIN = 4;
  */
 const DEFAULT_FONT_STYLES = {
   color: "var(--ck-colors-chakra-body-text)",
-  background: "var(--ck-colors-semanticColors-background-primary)",
+  background: "var(--ck-colors-background-primary)",
 };
 
 /**

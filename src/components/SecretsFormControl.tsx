@@ -41,9 +41,7 @@ const TextOrSecretInputMessage = ({
   onLinkClick?: () => void;
   isTextInput?: boolean;
 }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <>
       If you prefer,{" "}
@@ -52,7 +50,7 @@ const TextOrSecretInputMessage = ({
         fontSize="12px"
         lineHeight="16px"
         fontWeight={400}
-        color={semanticColors.accent.brightPurple}
+        color={colors.accent.brightPurple}
         onClick={onLinkClick}
       >
         {isTextInput ? "use a secret" : "use plain text"}

@@ -20,10 +20,7 @@ const SchemaFilter = ({
 }: SchemaFilterProps) => {
   const { track } = useSegment();
 
-  const {
-    colors: { semanticColors },
-    shadows,
-  } = useTheme<MaterializeTheme>();
+  const { colors, shadows } = useTheme<MaterializeTheme>();
   if (!schemaList) return null;
 
   const options: GroupBase<Schema>[] = [
@@ -54,7 +51,7 @@ const SchemaFilter = ({
       formatOptionLabel={(data) => (
         <>
           {data.databaseName && (
-            <Text color={semanticColors.foreground.secondary} as="span">
+            <Text color={colors.foreground.secondary} as="span">
               {data.databaseName}.
             </Text>
           )}
@@ -63,10 +60,7 @@ const SchemaFilter = ({
       )}
       options={options}
       value={selected ?? options[0].options[0]}
-      styles={buildReactSelectFilterStyles<Schema, false>(
-        semanticColors,
-        shadows
-      )}
+      styles={buildReactSelectFilterStyles<Schema, false>(colors, shadows)}
     />
   );
 };

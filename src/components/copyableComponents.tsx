@@ -31,13 +31,11 @@ export const useCopyableText = (text: string, delay?: number) => {
 export const CopyStateIcon: React.FC<
   React.PropsWithChildren<{ copied: boolean } & IconProps>
 > = ({ copied }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   if (copied)
     return (
       <CheckmarkIcon
-        color={semanticColors.accent.green}
+        color={colors.accent.green}
         data-testid="copyable-checkicon"
         aria-label="Text has been copied"
       />
@@ -97,19 +95,13 @@ export const CopyableBox: React.FC<CopyableBoxProps> = ({
   maxHeight,
   ...props
 }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <HStack
       alignItems="center"
       spacing={0}
       borderRadius={variant === "default" ? "lg" : "0"}
-      bg={
-        variant === "default"
-          ? semanticColors.background.secondary
-          : "transparent"
-      }
+      bg={variant === "default" ? colors.background.secondary : "transparent"}
       w="full"
       fontSize="sm"
       {...props}
@@ -214,11 +206,11 @@ export const TabbedCodeBlock: React.FC<
 
   return (
     <Box
-      bg={colors.semanticColors.background.primary}
+      bg={colors.background.primary}
       role="group"
       position="relative"
       border="1px"
-      borderColor={colors.semanticColors.border.secondary}
+      borderColor={colors.border.secondary}
       borderRadius="8px"
       w="full"
       textAlign="left"
@@ -228,8 +220,8 @@ export const TabbedCodeBlock: React.FC<
     >
       <Flex
         borderBottom="1px"
-        bg={colors.semanticColors.background.secondary}
-        borderColor={colors.semanticColors.border.secondary}
+        bg={colors.background.secondary}
+        borderColor={colors.border.secondary}
         w="full"
         alignItems="stretch"
         justifyContent="flex-start"
@@ -245,16 +237,16 @@ export const TabbedCodeBlock: React.FC<
                 borderBottom="1px solid"
                 borderColor={
                   title === activeTab
-                    ? colors.semanticColors.foreground.primary
+                    ? colors.foreground.primary
                     : "transparent"
                 }
                 textColor={
                   title === activeTab
-                    ? colors.semanticColors.foreground.primary
-                    : colors.semanticColors.foreground.secondary
+                    ? colors.foreground.primary
+                    : colors.foreground.secondary
                 }
                 _hover={{
-                  bg: colors.semanticColors.background.tertiary,
+                  bg: colors.background.tertiary,
                 }}
               >
                 {icon}
@@ -338,7 +330,7 @@ const Line = (props: LineProps) => {
       fontSize="sm"
       _before={{
         content: "counter(line)",
-        color: colors.semanticColors.foreground.tertiary,
+        color: colors.foreground.tertiary,
         position: "absolute",
         left: "0",
         px: 4,

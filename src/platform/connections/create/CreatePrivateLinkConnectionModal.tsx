@@ -24,9 +24,7 @@ const CreatePrivateLinkConnectionModal = ({
   isOpen,
   onClose,
 }: CreatePrivateLinkConnectionModalProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Modal variant="2xl" isOpen={isOpen} onClose={onClose}>
@@ -48,7 +46,7 @@ const CreatePrivateLinkConnectionModal = ({
             Configure AWS PrivateLink
           </Text>
           <Text
-            color={semanticColors.foreground.secondary}
+            color={colors.foreground.secondary}
             as="p"
             width="386px"
             textAlign="center"
@@ -59,7 +57,7 @@ const CreatePrivateLinkConnectionModal = ({
           </Text>
           <Text
             as="p"
-            backgroundColor={semanticColors.background.secondary}
+            backgroundColor={colors.background.secondary}
             borderRadius="8px"
             p="4"
             mb="16"

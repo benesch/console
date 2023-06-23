@@ -54,7 +54,7 @@ import { MaterializeTheme } from "~/theme";
 
 export const NAV_HORIZONTAL_SPACING = 4;
 export const NAV_HOVER_STYLES = {
-  bg: "semanticColors.background.tertiary",
+  bg: "background.tertiary",
 };
 function isEnvironmentHealthy(environment?: LoadedEnvironment) {
   return (
@@ -88,13 +88,13 @@ const NavBar = () => {
       justify="flex-start"
       align={{ base: "center", lg: "stretch" }}
       pb={{ base: 0, lg: 2 }}
-      bg={colors.semanticColors.background.secondary}
-      color={colors.semanticColors.foreground.primary}
+      bg={colors.background.secondary}
+      color={colors.foreground.primary}
       minH={{ base: "auto", lg: "full" }}
       minW="240px"
       borderRightWidth={{ base: 0, lg: 1 }}
       borderBottomWidth={{ base: 1, lg: 0 }}
-      borderColor={colors.semanticColors.border.primary}
+      borderColor={colors.border.primary}
     >
       <HStack
         mx={0}
@@ -259,9 +259,7 @@ const getNavItems = (
 };
 
 const NavItemsGroup = (props: NavItemsGroupType) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <VStack width="100%" alignItems="start" spacing={1}>
       {props.title && (
@@ -272,7 +270,7 @@ const NavItemsGroup = (props: NavItemsGroupType) => {
           textStyle="text-small"
           fontWeight="600"
           textTransform="uppercase"
-          color={semanticColors.foreground.secondary}
+          color={colors.foreground.secondary}
         >
           {props.title}
         </Text>
@@ -403,11 +401,11 @@ const NavItem = (props: NavItemType) => {
       py={2}
       transition="all 0.2s"
       borderRadius={{ lg: "lg", md: "none" }}
-      color={colors.semanticColors.foreground.primary}
+      color={colors.foreground.primary}
       _hover={NAV_HOVER_STYLES}
       _activeLink={{
         bg: `rgba(0, 0, 0, 0.08)`,
-        color: colors.semanticColors.foreground.primary,
+        color: colors.foreground.primary,
       }}
     >
       {props.icon}
@@ -471,15 +469,13 @@ const HelpLinks = (props: StyleProps) => {
 };
 
 const HelpLink = (props: HelpLink) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Link
       as="a"
       target="_blank"
       textStyle="text-ui-med"
-      color={semanticColors.foreground.secondary}
+      color={colors.foreground.secondary}
       {...props}
     >
       {props.children}

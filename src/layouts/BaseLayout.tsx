@@ -81,7 +81,7 @@ export const BaseLayout = ({ overflowY, ...props }: BaseLayoutProps) => {
             maxW="100%"
             px={MAIN_CONTENT_MARGIN}
             pb={4}
-            bg="semanticColors.background.primary"
+            bg="background.primary"
           >
             <Flex flexDir="column" w="full" h="full">
               <ErrorBoundary fallback={<ErrorBox />}>
@@ -136,14 +136,12 @@ export interface PageHeadingProps extends HeadingProps {
  * This component should be used inside of a `PageHeader`.
  */
 export const PageHeading = ({ children, ...props }: PageHeadingProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Heading
       fontSize="2xl"
       lineHeight="32px"
-      color={semanticColors.foreground.primary}
+      color={colors.foreground.primary}
       fontWeight="500"
       my={0}
       {...props}
@@ -178,9 +176,7 @@ export const PageBreadcrumbs = ({ crumbs, children }: PageBreadcrumbsProps) => {
         return (
           <PageHeading
             key={crumb.title}
-            color={
-              isLast ? "default" : colors.semanticColors.foreground.secondary
-            }
+            color={isLast ? "default" : colors.foreground.secondary}
             fontWeight={500}
           >
             <>
@@ -205,10 +201,7 @@ export interface PageTabStripProps {
 }
 
 export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
-  const {
-    colors: { semanticColors },
-    space,
-  } = useTheme<MaterializeTheme>();
+  const { colors, space } = useTheme<MaterializeTheme>();
   const mainContentMargin = space[MAIN_CONTENT_MARGIN];
 
   const [tabBoundingBox, setTabBoundingBox] = React.useState<DOMRect | null>(
@@ -254,12 +247,12 @@ export const PageTabStrip = ({ tabData }: PageTabStripProps) => {
       style={{ marginLeft: `-${mainContentMargin}` }}
       px={10}
       borderBottom="solid 1px"
-      borderColor="semanticColors.border.primary"
+      borderColor="border.primary"
       spacing={4}
     >
       <Box
         ref={highlightRef}
-        background={semanticColors.background.secondary}
+        background={colors.background.secondary}
         position="absolute"
         top="9px"
         left={0}
@@ -287,9 +280,7 @@ export type PageTabProps = NavLinkProps & {
   tabProps?: BoxProps;
 };
 export const PageTab = (props: PageTabProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { children, tabProps, ...navLinkProps } = props;
 
   return (
@@ -297,7 +288,7 @@ export const PageTab = (props: PageTabProps) => {
       style={({ isActive }) =>
         isActive
           ? {
-              borderBottom: `solid 1px ${semanticColors.accent.purple}`,
+              borderBottom: `solid 1px ${colors.accent.purple}`,
               marginBottom: "-1px",
             }
           : undefined
@@ -307,7 +298,7 @@ export const PageTab = (props: PageTabProps) => {
     >
       <Box
         {...tabProps}
-        color={semanticColors.foreground.primary}
+        color={colors.foreground.primary}
         p="16px 12px"
         lineHeight="16px"
         fontSize="14px"
@@ -338,7 +329,7 @@ export const ExpandablePanel = ({
   return (
     <Box width="100%">
       <Box
-        color="semanticColors.accent.brightPurple"
+        color="accent.brightPurple"
         fontSize="xs"
         cursor="pointer"
         userSelect="none"

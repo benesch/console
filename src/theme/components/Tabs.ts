@@ -5,13 +5,11 @@ const { defineMultiStyleConfig, definePartsStyle } =
   createMultiStyleConfigHelpers(parts.keys);
 
 const variantLine = definePartsStyle(({ theme }) => {
-  const {
-    colors: { semanticColors },
-  } = theme;
+  const { colors } = theme;
   return {
     tab: {
       _active: {
-        borderBottomColor: semanticColors.accent.purple,
+        borderBottomColor: colors.accent.purple,
       },
       borderBottomWidth: "1px",
       marginBottom: "-1px",
@@ -19,7 +17,7 @@ const variantLine = definePartsStyle(({ theme }) => {
       mr: 10,
     },
     tablist: {
-      borderBottomColor: semanticColors.border.primary,
+      borderBottomColor: colors.border.primary,
       borderBottomWidth: "1px",
     },
     tabpanel: {
@@ -29,27 +27,24 @@ const variantLine = definePartsStyle(({ theme }) => {
 });
 
 const variantSoftRounded = definePartsStyle(({ theme }) => {
-  const {
-    colors: { semanticColors },
-    textStyles,
-  } = theme;
+  const { colors, textStyles } = theme;
 
   return {
     tab: {
       ...textStyles["text-ui-med"],
       borderRadius: "base",
       px: 3,
-      color: semanticColors.foreground.secondary,
+      color: colors.foreground.secondary,
       height: 6,
       _selected: {
-        color: semanticColors.foreground.primary,
-        bg: semanticColors.background.secondary,
+        color: colors.foreground.primary,
+        bg: colors.background.secondary,
       },
     },
     tablist: {
       columnGap: 2,
       height: 8,
-      borderBottomColor: semanticColors.border.primary,
+      borderBottomColor: colors.border.primary,
       borderBottomWidth: "1px",
     },
     tabpanel: {

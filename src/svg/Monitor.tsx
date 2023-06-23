@@ -20,16 +20,16 @@ const MonitorIcon = (props: IconProps) => {
           width="14"
           height="10"
           rx="2"
-          stroke={colors.semanticColors.foreground.secondary}
+          stroke={colors.foreground.secondary}
         />
         <path
           d="M8 12V14"
-          stroke={colors.semanticColors.foreground.secondary}
+          stroke={colors.foreground.secondary}
           strokeLinecap="round"
         />
         <path
           d="M10 14H6"
-          stroke={colors.semanticColors.foreground.secondary}
+          stroke={colors.foreground.secondary}
           strokeLinecap="round"
         />
       </g>

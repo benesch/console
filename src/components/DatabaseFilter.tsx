@@ -20,10 +20,7 @@ const DatabaseFilter = ({
 }: DatabaseFilterProps) => {
   const { track } = useSegment();
 
-  const {
-    colors: { semanticColors },
-    shadows,
-  } = useTheme<MaterializeTheme>();
+  const { colors, shadows } = useTheme<MaterializeTheme>();
   if (!databaseList) return null;
 
   const options: GroupBase<Database>[] = [
@@ -50,10 +47,7 @@ const DatabaseFilter = ({
       formatOptionLabel={(data) => data.name}
       options={options}
       value={selected ?? options[0].options[0]}
-      styles={buildReactSelectFilterStyles<Database, false>(
-        semanticColors,
-        shadows
-      )}
+      styles={buildReactSelectFilterStyles<Database, false>(colors, shadows)}
     />
   );
 };

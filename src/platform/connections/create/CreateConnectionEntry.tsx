@@ -23,9 +23,7 @@ import CreateSshConnectionModal from "./CreateSshConnectionModal";
 import InviteBox from "./InviteBox";
 
 const CreateConnectionEntry = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
   const {
     onOpen: openPrivateLinkModal,
@@ -47,7 +45,7 @@ const CreateConnectionEntry = () => {
           <Text
             as="h2"
             textStyle="heading-xs"
-            color={semanticColors.foreground.secondary}
+            color={colors.foreground.secondary}
           >
             Create once, and reuse across sources and sinks.
           </Text>
@@ -110,7 +108,7 @@ const CreateConnectionEntry = () => {
             </GridItem>
           </Grid>
         </VStack>
-        <Text textStyle="text-base" color={semanticColors.foreground.secondary}>
+        <Text textStyle="text-base" color={colors.foreground.secondary}>
           Looking to connect somewhere else?{" "}
           <TextLink
             href="https://materialize.com/docs/integrations/"

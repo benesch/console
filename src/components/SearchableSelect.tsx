@@ -55,24 +55,16 @@ const ClearIndicator = <
 >(
   props: React.PropsWithChildren<ClearIndicatorProps<Option, false, Group>>
 ) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <ReactSelectComponents.ClearIndicator {...props}>
-      <CloseIcon
-        height="8px"
-        width="8px"
-        color={semanticColors.foreground.secondary}
-      />
+      <CloseIcon height="8px" width="8px" color={colors.foreground.secondary} />
     </ReactSelectComponents.ClearIndicator>
   );
 };
 
 const Menu = <Option extends SelectOption>(props: MenuProps<Option>) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const { children, selectProps } = props;
 
@@ -81,10 +73,10 @@ const Menu = <Option extends SelectOption>(props: MenuProps<Option>) => {
       {children}
       {selectProps.displayAddNewItem && (
         <Flex
-          background={semanticColors.background.secondary}
-          borderColor={semanticColors.border.secondary}
+          background={colors.background.secondary}
+          borderColor={colors.border.secondary}
           borderTopWidth="1px"
-          color={semanticColors.accent.brightPurple}
+          color={colors.accent.brightPurple}
           cursor="pointer"
           p="3"
           textStyle="text-ui-reg"
@@ -114,10 +106,7 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
     { options, ariaLabel, components, variant = "default", ...props },
     ref: React.Ref<any>
   ) => {
-    const {
-      colors: { semanticColors },
-      shadows,
-    } = useTheme<MaterializeTheme>();
+    const { colors, shadows } = useTheme<MaterializeTheme>();
 
     return (
       <ReactSelect<SelectOption, false, GroupBase<SelectOption>>
@@ -135,7 +124,7 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
         isSearchable
         ref={ref}
         options={options}
-        styles={buildReactSelectFilterStyles(semanticColors, shadows, {
+        styles={buildReactSelectFilterStyles(colors, shadows, {
           control: (base, state) => {
             const isError = state.selectProps.variant === "error";
 
@@ -143,10 +132,10 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
               ...base,
               borderWidth: "1px",
               borderColor: isError
-                ? semanticColors.accent.red
+                ? colors.accent.red
                 : state.isFocused
-                ? semanticColors.accent.brightPurple
-                : semanticColors.border.secondary,
+                ? colors.accent.brightPurple
+                : colors.border.secondary,
               boxShadow: isError
                 ? shadows.input.error
                 : state.isFocused
@@ -159,9 +148,9 @@ const SearchableSelect: SearchableSelectType = React.forwardRef(
                   ? shadows.input.focus
                   : "",
                 borderColor: isError
-                  ? semanticColors.accent.red
+                  ? colors.accent.red
                   : state.isFocused
-                  ? semanticColors.accent.brightPurple
+                  ? colors.accent.brightPurple
                   : "inherit",
               },
             };

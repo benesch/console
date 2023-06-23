@@ -50,10 +50,7 @@ const DeleteObjectModal = ({
   dbObject,
   objectType,
 }: DeleteObjectModalProps) => {
-  const {
-    shadows,
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { shadows, colors } = useTheme<MaterializeTheme>();
   const toast = useSuccessToast();
   const { track } = useSegment();
   const [showConfirmation, setShowConfirmation] = React.useState(false);
@@ -84,7 +81,7 @@ const DeleteObjectModal = ({
           toast({
             description: (
               <>
-                <Text color={semanticColors.foreground.primary} as="span">
+                <Text color={colors.foreground.primary} as="span">
                   {dbObject.name}{" "}
                 </Text>
                 deleted successfully
@@ -106,7 +103,7 @@ const DeleteObjectModal = ({
         <form onSubmit={handleSubmit(handleDelete)}>
           <ModalHeader
             p="4"
-            borderBottom={`1px solid ${semanticColors.border.primary}`}
+            borderBottom={`1px solid ${colors.border.primary}`}
           >
             Delete {dbObject.name}
           </ModalHeader>
@@ -155,7 +152,7 @@ const DeleteObjectModal = ({
                   </FormControl>
                   <Text
                     textStyle="text-base"
-                    color={semanticColors.foreground.secondary}
+                    color={colors.foreground.secondary}
                   >
                     {dependencyCount === 0 ? (
                       <>
@@ -202,7 +199,7 @@ const DeleteObjectModal = ({
                   />
                   <Text
                     textStyle="text-base"
-                    color={semanticColors.foreground.secondary}
+                    color={colors.foreground.secondary}
                   >
                     This {objectType.toLowerCase()} is used by other objects. In
                     order to delete {dbObject.name}, all its dependents will be

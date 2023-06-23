@@ -19,9 +19,7 @@ export interface SinkDetailProps {
 }
 
 const SinkErrors = ({ sink }: SinkDetailProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 
@@ -45,16 +43,14 @@ const SinkErrors = ({ sink }: SinkDetailProps) => {
         <VStack width="100%" alignItems="flex-start" spacing={6}>
           {sink?.error && (
             <AlertBox>
-              <Text opacity="0.6" color={semanticColors.foreground.primary}>
+              <Text opacity="0.6" color={colors.foreground.primary}>
                 Sink error
               </Text>
-              <Text color={semanticColors.foreground.primary}>
-                {sink?.error}
-              </Text>
+              <Text color={colors.foreground.primary}>{sink?.error}</Text>
             </AlertBox>
           )}
           <Box
-            border={`solid 1px ${semanticColors.border.primary}`}
+            border={`solid 1px ${colors.border.primary}`}
             borderRadius="8px"
             py={4}
             px={6}

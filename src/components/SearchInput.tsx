@@ -9,9 +9,7 @@ export interface SearchInputProps extends InputProps {
 }
 
 const SearchInput = ({ containerProps, ...props }: SearchInputProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Box as="div" position="relative" {...containerProps}>
       <Input pl="32px" minWidth="256px" placeholder="Search" {...props} />
@@ -24,7 +22,7 @@ const SearchInput = ({ containerProps, ...props }: SearchInputProps) => {
         alignItems="center"
         pl="2"
       >
-        <SearchIcon color={semanticColors.foreground.secondary} />
+        <SearchIcon color={colors.foreground.secondary} />
       </Box>
     </Box>
   );

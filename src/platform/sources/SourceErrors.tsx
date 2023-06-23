@@ -21,9 +21,7 @@ export interface SourceDetailProps {
 }
 
 const SourceErrors = ({ sourcesResponse }: SourceDetailProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const [timePeriodMinutes, setTimePeriodMinutes] = useTimePeriodMinutes();
 
@@ -53,16 +51,14 @@ const SourceErrors = ({ sourcesResponse }: SourceDetailProps) => {
         <VStack width="100%" alignItems="flex-start" spacing={6}>
           {source?.error && (
             <AlertBox>
-              <Text opacity="0.6" color={semanticColors.foreground.primary}>
+              <Text opacity="0.6" color={colors.foreground.primary}>
                 Source error
               </Text>
-              <Text color={semanticColors.foreground.primary}>
-                {source?.error}
-              </Text>
+              <Text color={colors.foreground.primary}>{source?.error}</Text>
             </AlertBox>
           )}
           <Box
-            border={`solid 1px ${semanticColors.border.primary}`}
+            border={`solid 1px ${colors.border.primary}`}
             borderRadius="8px"
             py={4}
             px={6}

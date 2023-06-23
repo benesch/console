@@ -69,9 +69,7 @@ const NEEDED_PERMISSIONS = [
 ];
 
 const InviteBox = (props: InviteBoxProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { user } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -118,18 +116,15 @@ const InviteBox = (props: InviteBoxProps) => {
     <VStack
       spacing="4"
       borderRadius="lg"
-      background={semanticColors.background.primary}
+      background={colors.background.primary}
       border="1px solid"
-      borderColor={semanticColors.border.primary}
+      borderColor={colors.border.primary}
       padding="6"
       {...props}
     >
       <VStack alignItems="flex-start">
         <Text textStyle="text-ui-med">Don&apos;t have the credentials?</Text>
-        <Text
-          textStyle="text-ui-reg"
-          color={semanticColors.foreground.secondary}
-        >
+        <Text textStyle="text-ui-reg" color={colors.foreground.secondary}>
           Invite a teammate with database access to connect your data.
         </Text>
       </VStack>

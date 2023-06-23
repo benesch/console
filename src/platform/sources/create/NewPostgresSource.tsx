@@ -118,9 +118,7 @@ export const NewPostgresSourceForm = () => {
   >(undefined);
   const navigate = useNavigate();
   const toast = useSuccessToast();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
   const [queryParams] = useSearchParams();
   const { data: schemas, error: schemasError } = useSchemas();
@@ -258,7 +256,7 @@ export const NewPostgresSourceForm = () => {
         toast({
           description: (
             <>
-              <Text color={semanticColors.foreground.primary} as="span">
+              <Text color={colors.foreground.primary} as="span">
                 {values.name}{" "}
               </Text>
               created successfully
@@ -412,10 +410,7 @@ export const NewPostgresSourceForm = () => {
             index={formState.errors.schema ? 0 : undefined}
           >
             <AccordionItem>
-              <AccordionButton
-                color={semanticColors.accent.brightPurple}
-                py="2"
-              >
+              <AccordionButton color={colors.accent.brightPurple} py="2">
                 <Text textStyle="text-ui-med">Additional Options</Text>
                 <AccordionIcon ml="2" />
               </AccordionButton>
@@ -463,7 +458,7 @@ export const NewPostgresSourceForm = () => {
                 />
                 {selectedCluster?.id === NEW_CLUSTER_ID && sourceName && (
                   <Text
-                    color={semanticColors.foreground.secondary}
+                    color={colors.foreground.secondary}
                     mt="2"
                     maxWidth="260px"
                     textStyle="text-ui-reg"

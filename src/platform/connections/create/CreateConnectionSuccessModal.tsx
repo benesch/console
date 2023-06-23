@@ -19,7 +19,7 @@ import { useRegionSlug } from "~/region";
 import ConnectionIcon from "~/svg/ConnectionIcon";
 import { MaterializeTheme } from "~/theme";
 
-// semanticColors.accent.green with 0.12 opacity
+// colors.accent.green with 0.12 opacity
 const SEMANTIC_GREEN_WITH_OPACITY = "rgba(7, 164, 74, 0.12)";
 
 const CreateConnectionSuccessModal = () => {
@@ -27,9 +27,7 @@ const CreateConnectionSuccessModal = () => {
   const [queryParams] = useSearchParams();
   const regionSlug = useRegionSlug();
   const navigate = useNavigate();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   function handleClose() {
     onClose();
@@ -55,22 +53,16 @@ const CreateConnectionSuccessModal = () => {
             <VStack spacing="6">
               <Circle p={3} bg={SEMANTIC_GREEN_WITH_OPACITY}>
                 <ConnectionIcon
-                  color={semanticColors.accent.green}
+                  color={colors.accent.green}
                   height="8"
                   width="8"
                 />
               </Circle>
               <VStack align="left" spacing="2" textAlign="center">
-                <Text
-                  textStyle="heading-md"
-                  color={semanticColors.foreground.primary}
-                >
+                <Text textStyle="heading-md" color={colors.foreground.primary}>
                   New connection created
                 </Text>
-                <Text
-                  textStyle="text-base"
-                  color={semanticColors.foreground.secondary}
-                >
+                <Text textStyle="text-base" color={colors.foreground.secondary}>
                   Create a source from this connection and start streaming data
                   into Materialize.
                 </Text>

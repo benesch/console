@@ -9,8 +9,8 @@ const AlertBox = (props: AlertBoxProp) => {
   return (
     <Box
       width="100%"
-      bg={colors.semanticColors.background.error}
-      border={`solid 1px ${colors.semanticColors.border.error}`}
+      bg={colors.background.error}
+      border={`solid 1px ${colors.border.error}`}
       rounded="lg"
       p={4}
       {...props}

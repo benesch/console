@@ -146,11 +146,11 @@ const ClusterReplicasPage = () => {
               <CardHeader>Interacting with cluster replicas</CardHeader>
               <CardContent pb={8}>
                 <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                  <Text color={colors.semanticColors.foreground.secondary}>
+                  <Text color={colors.foreground.secondary}>
                     Cluster replicas are where Materialize creates and maintains
                     dataflows.
                   </Text>
-                  <Text color={colors.semanticColors.foreground.secondary}>
+                  <Text color={colors.foreground.secondary}>
                     Having trouble?{" "}
                     <TextLink
                       href="https://materialize.com/docs/overview/key-concepts/#clusters"
@@ -208,10 +208,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               {r.cpuPercent && (
                 <>
                   {r.cpuPercent.toFixed(1)}
-                  <Text
-                    as="span"
-                    color={colors.semanticColors.foreground.secondary}
-                  >
+                  <Text as="span" color={colors.foreground.secondary}>
                     %
                   </Text>
                 </>
@@ -221,10 +218,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               {r.memoryPercent && (
                 <>
                   {r.memoryPercent.toFixed(1)}
-                  <Text
-                    as="span"
-                    color={colors.semanticColors.foreground.secondary}
-                  >
+                  <Text as="span" color={colors.foreground.secondary}>
                     %
                   </Text>
                 </>

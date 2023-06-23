@@ -32,10 +32,7 @@ export interface Props {
 const heightPx = 300;
 
 const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
-  const {
-    colors: { semanticColors },
-    fonts,
-  } = useTheme<MaterializeTheme>();
+  const { colors: themeColors, fonts } = useTheme<MaterializeTheme>();
   const endTime = React.useMemo(() => new Date(), []);
   const startTime = React.useMemo(
     () => subMinutes(endTime, timePeriodMinutes),
@@ -86,13 +83,13 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
         <CartesianGrid
           vertical={false}
           horizontal={statuses !== null && statuses.length > 0}
-          stroke={semanticColors.border.secondary}
+          stroke={themeColors.border.secondary}
           strokeDasharray="4"
         />
         <XAxis
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
-          axisLine={{ stroke: semanticColors.border.secondary, strokeWidth: 2 }}
+          axisLine={{ stroke: themeColors.border.secondary, strokeWidth: 2 }}
           tickLine={false}
           ticks={ticks}
           interval={0}
@@ -128,7 +125,7 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
         />
         <Tooltip
           contentStyle={{
-            background: semanticColors.background.inverse,
+            background: themeColors.background.inverse,
             border: 0,
             borderRadius: "8px",
             fontSize: "14px",
@@ -139,7 +136,7 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
             outline: "none",
           }}
           itemStyle={{
-            color: semanticColors.foreground.inverse,
+            color: themeColors.foreground.inverse,
           }}
           content={({ active, payload }) => {
             if (!active || !payload || !payload.length) return null;
@@ -180,7 +177,7 @@ const SinkErrorsGraph = ({ sinkId, timePeriodMinutes }: Props) => {
             x="50%"
             y="50%"
             textAnchor="middle"
-            fill={semanticColors.foreground.primary}
+            fill={themeColors.foreground.primary}
           >
             No errors during this time period.
           </text>

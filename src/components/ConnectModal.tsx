@@ -32,9 +32,7 @@ import TextLink from "./TextLink";
  */
 const ConnectModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <>
@@ -51,7 +49,7 @@ const ConnectModal = () => {
             <Text
               fontSize="sm"
               whiteSpace="normal"
-              color={semanticColors.foreground.secondary}
+              color={colors.foreground.secondary}
             >
               Below are the details to connect to this database. If you need
               more information you can{" "}
@@ -70,9 +68,9 @@ const ConnectModal = () => {
               py="3"
               px="4"
               borderRadius="lg"
-              background={semanticColors.background.secondary}
+              background={colors.background.secondary}
             >
-              <Text fontSize="sm" color={semanticColors.foreground.secondary}>
+              <Text fontSize="sm" color={colors.foreground.secondary}>
                 <TextLink
                   href="https://materialize.com/docs/get-started/"
                   target="_blank"
@@ -90,9 +88,7 @@ const ConnectModal = () => {
 };
 
 const CreateAppPassword = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const {
     addUserApiToken,
     loadingInProgress,
@@ -103,7 +99,7 @@ const CreateAppPassword = () => {
 
   if (loadingInProgress) {
     return (
-      <Flex alignItems="center" color={semanticColors.foreground.secondary}>
+      <Flex alignItems="center" color={colors.foreground.secondary}>
         <Spinner size="sm" mr={2} /> Loading...
       </Flex>
     );
@@ -111,7 +107,7 @@ const CreateAppPassword = () => {
 
   if (createInProgress) {
     return (
-      <Flex alignItems="center" color={semanticColors.foreground.secondary}>
+      <Flex alignItems="center" color={colors.foreground.secondary}>
         <Spinner size="sm" mr={2} />
         <Text fontSize="sm">Generating new app password...</Text>
       </Flex>
@@ -127,7 +123,7 @@ const CreateAppPassword = () => {
             fontSize="sm"
             lineHeight="16px"
             fontWeight={500}
-            color={semanticColors.foreground.primary}
+            color={colors.foreground.primary}
           >
             New app password
           </Text>
@@ -138,7 +134,7 @@ const CreateAppPassword = () => {
           fontSize="sm"
           lineHeight="20px"
           fontWeight={400}
-          color={semanticColors.foreground.secondary}
+          color={colors.foreground.secondary}
         >
           Copy this app password to somewhere safe. App passwords cannot be
           displayed after initial creation.
@@ -154,7 +150,7 @@ const CreateAppPassword = () => {
           <Text fontSize="sm" fontWeight="500">
             Create an app password
           </Text>
-          <Text fontSize="sm" color={semanticColors.foreground.secondary}>
+          <Text fontSize="sm" color={colors.foreground.secondary}>
             Create a new app password if you don’t have one accessible.
           </Text>
         </Box>

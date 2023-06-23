@@ -6,9 +6,7 @@ import { MaterializeTheme } from "~/theme";
 export type SimpleSelectProps = SelectProps;
 
 const SimpleSelect = forwardRef<SimpleSelectProps, "select">((props, ref) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Select
@@ -29,12 +27,12 @@ const SimpleSelect = forwardRef<SimpleSelectProps, "select">((props, ref) => {
           cursor: "pointer",
         },
         _focus: {
-          borderColor: semanticColors.accent.brightPurple,
+          borderColor: colors.accent.brightPurple,
           boxShadow:
             "0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)", // accent.brightPurple,
         },
       }}
-      borderColor={semanticColors.border.secondary}
+      borderColor={colors.border.secondary}
       {...props}
     />
   );

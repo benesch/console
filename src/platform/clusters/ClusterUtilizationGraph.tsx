@@ -20,7 +20,6 @@ import {
 import { Replica } from "~/api/materialize/useClusters";
 import { NotReadyReason } from "~/api/materialize/useClusterUtilization";
 import { MaterializeTheme } from "~/theme";
-import colors from "~/theme/colors";
 import { formatTimeInUtc } from "~/util";
 
 import { ReplicaData } from "./ClusterOverview";
@@ -61,10 +60,7 @@ export const ClusterUtilizationGraph = ({
   startTime,
   timePeriodMinutes,
 }: UtilizationGraph) => {
-  const {
-    colors: { semanticColors },
-    fonts,
-  } = useTheme<MaterializeTheme>();
+  const { colors, fonts } = useTheme<MaterializeTheme>();
   const startTimeMs = startTime.getTime();
   const duration = endTime.getTime() - startTimeMs;
   const tickSlots = Array.from({
@@ -90,14 +86,14 @@ export const ClusterUtilizationGraph = ({
         <CartesianGrid
           vertical={false}
           horizontal={data.length > 0}
-          stroke={semanticColors.border.primary}
+          stroke={colors.border.primary}
           strokeDasharray="4"
         />
         <XAxis
           allowDuplicatedCategory={false}
           domain={[startTime.getTime(), endTime.getTime()]}
           type="number"
-          axisLine={{ stroke: semanticColors.border.secondary, strokeWidth: 2 }}
+          axisLine={{ stroke: colors.border.secondary, strokeWidth: 2 }}
           tickLine={false}
           ticks={ticks}
           dataKey="timestamp"
@@ -229,7 +225,7 @@ export const ClusterUtilizationGraph = ({
             x="50%"
             y="50%"
             textAnchor="middle"
-            fill={semanticColors.foreground.primary}
+            fill={colors.foreground.primary}
           >
             No data
           </text>

@@ -27,16 +27,14 @@ export const DocsCallout = ({
   description,
   docsLinks,
 }: DocsCalloutProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <VStack align="start" spacing={4}>
       <VStack align="start" spacing={2}>
-        <Text textStyle="text-ui-med" color={semanticColors.foreground.primary}>
+        <Text textStyle="text-ui-med" color={colors.foreground.primary}>
           {title}
         </Text>
-        <Text textStyle="text-base" color={semanticColors.foreground.secondary}>
+        <Text textStyle="text-base" color={colors.foreground.secondary}>
           {description}
         </Text>
       </VStack>

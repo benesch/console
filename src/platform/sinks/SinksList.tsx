@@ -147,11 +147,11 @@ const SinksListPage = ({
             <CardHeader>Interacting with sinks</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={colors.semanticColors.foreground.secondary}>
+                <Text color={colors.foreground.secondary}>
                   A sink describes an external system you want Materialize to
                   read data from.
                 </Text>
-                <Text color={colors.semanticColors.foreground.secondary}>
+                <Text color={colors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#sinks"

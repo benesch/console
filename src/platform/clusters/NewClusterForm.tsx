@@ -77,9 +77,7 @@ const NewClusterForm = ({
   const navigate = useNavigate();
   const toast = useSuccessToast();
 
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
 
   const { data: clusterSizes } = useAvailableClusterSizes();
@@ -137,7 +135,7 @@ REPLICAS (
         toast({
           description: (
             <>
-              <Text color={semanticColors.foreground.primary} as="span">
+              <Text color={colors.foreground.primary} as="span">
                 {values.name}{" "}
               </Text>
               created successfully
@@ -194,7 +192,7 @@ REPLICAS (
                   fontSize="14px"
                   lineHeight="16px"
                   fontWeight={500}
-                  color={semanticColors.foreground.primary}
+                  color={colors.foreground.primary}
                   mb={2}
                 >
                   Not sure how to set up your cluster?
@@ -202,7 +200,7 @@ REPLICAS (
                 <Text
                   fontSize="14px"
                   lineHeight="20px"
-                  color={semanticColors.foreground.secondary}
+                  color={colors.foreground.secondary}
                   maxW={{ md: "40ch" }}
                   mb={4}
                 >
@@ -213,7 +211,7 @@ REPLICAS (
                   fontSize="14px"
                   lineHeight="16px"
                   fontWeight={500}
-                  color={semanticColors.accent.brightPurple}
+                  color={colors.accent.brightPurple}
                   sx={{
                     fontFeatureSettings: '"calt"',
                     textDecoration: "none",

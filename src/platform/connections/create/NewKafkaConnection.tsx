@@ -228,9 +228,7 @@ export const NewKafkaConnectionForm = () => {
   const [isCreating, setIsCreating] = useState(false);
   const navigate = useNavigate();
   const toast = useSuccessToast();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
   const { data: schemas, error: schemasError } = useSchemas();
   const {
@@ -361,7 +359,7 @@ export const NewKafkaConnectionForm = () => {
       toast({
         description: (
           <>
-            <Text color={semanticColors.foreground.primary} as="span">
+            <Text color={colors.foreground.primary} as="span">
               {values.name}{" "}
             </Text>
             created successfully
@@ -451,10 +449,7 @@ export const NewKafkaConnectionForm = () => {
             mt="4"
           >
             <AccordionItem>
-              <AccordionButton
-                color={semanticColors.accent.brightPurple}
-                py="2"
-              >
+              <AccordionButton color={colors.accent.brightPurple} py="2">
                 <Text textStyle="text-ui-med">Additional Options</Text>
                 <AccordionIcon ml="2" />
               </AccordionButton>

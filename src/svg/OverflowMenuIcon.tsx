@@ -9,7 +9,7 @@ const OverflowMenuIcon = (props: IconProps) => {
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      color="semanticColors.foreground.tertiary"
+      color="foreground.tertiary"
       {...props}
     >
       <circle cx="8" cy="4" r="1" fill="currentColor" />

@@ -44,13 +44,11 @@ import NewSecretModal from "./NewSecretModal";
 const NAME_FILTER_QUERY_STRING_KEY = "secretName";
 
 const EmptyState = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <EmptyListWrapper>
       <EmptyListHeader>
-        <Circle p={2} bg={semanticColors.background.secondary}>
+        <Circle p={2} bg={colors.background.secondary}>
           <LockIcon />
         </Circle>
         <EmptyListHeaderContents
@@ -60,7 +58,7 @@ const EmptyState = () => {
         <Text
           fontSize="xs"
           textAlign="center"
-          color={semanticColors.foreground.secondary}
+          color={colors.foreground.secondary}
         >
           Need help?{" "}
           <TextLink

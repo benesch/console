@@ -40,9 +40,7 @@ const minBucketSizeMs = 60 * 1000;
 
 const ClusterOverview = () => {
   const flags = useFlags();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { id: clusterId } = useParams<ClusterParams>();
   const {
     getClusterById,
@@ -82,10 +80,10 @@ const ClusterOverview = () => {
     return new Map(
       cluster?.replicas.map((r, i) => [
         r.id,
-        { name: r.name, color: semanticColors.lineGraph[i] },
+        { name: r.name, color: colors.lineGraph[i] },
       ])
     );
-  }, [cluster?.replicas, semanticColors.lineGraph]);
+  }, [cluster?.replicas, colors.lineGraph]);
 
   const bucketSizeMs = React.useMemo(
     () => Math.max(timePeriodMinutes * 1000, minBucketSizeMs),
@@ -197,7 +195,7 @@ const ClusterOverview = () => {
   return (
     <VStack spacing="6">
       <Box
-        border={`solid 1px ${semanticColors.border.primary}`}
+        border={`solid 1px ${colors.border.primary}`}
         borderRadius="8px"
         py={4}
         px={6}
