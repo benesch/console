@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import * as Sentry from "@sentry/react";
 import { subMinutes } from "date-fns";
+import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 import { useParams } from "react-router-dom";
 
@@ -38,6 +39,7 @@ const labelHeightPx = 18;
 const minBucketSizeMs = 60 * 1000;
 
 const ClusterOverview = () => {
+  const flags = useFlags();
   const {
     colors: { semanticColors },
   } = useTheme<MaterializeTheme>();
@@ -276,14 +278,14 @@ const ClusterOverview = () => {
           )}
         </HStack>
       </Box>
-      <Box width="100%">
-        {cluster && (
+      {flags["largest-maintained-queries-219"] && cluster && (
+        <Box width="100%">
           <LargestMaintainedQueries
             clusterId={cluster.id}
             clusterName={cluster.name}
           />
-        )}
-      </Box>
+        </Box>
+      )}
     </VStack>
   );
 };
