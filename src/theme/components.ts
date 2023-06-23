@@ -6,6 +6,7 @@ import colors from "./colors";
 
 export { Accordion } from "~/theme/components/Accordion";
 export { Button } from "~/theme/components/Button";
+export { codeTheme as Code } from "~/theme/components/Code";
 export { FormControl as Form } from "~/theme/components/FormControl";
 export { FormError } from "~/theme/components/FormError";
 export { FormLabel } from "~/theme/components/FormLabel";
@@ -275,6 +276,27 @@ export const Table = defineMultiStyleConfig({
         borderBottom: tableBorderStyle,
         borderBottomWidth: "1px",
         borderBottomColor: "semanticColors.border.primary",
+      },
+    },
+    shell: {
+      table: {
+        borderCollapse: "separate",
+        borderSpacing: 0,
+        borderRadius: "lg",
+        borderWidth: "1px",
+        borderColor: "semanticColors.border.secondary",
+      },
+      th: {
+        fontWeight: "500",
+        color: "semanticColors.foreground.secondary",
+        borderWidth: "1px 0px",
+        borderStyle: "solid",
+        backgroundColor: "semanticColors.background.secondary",
+        textTransform: "none",
+        borderColor: "semanticColors.border.secondary",
+      },
+      td: {
+        borderBottomWidth: "0",
       },
     },
   },
