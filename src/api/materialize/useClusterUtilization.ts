@@ -7,8 +7,10 @@ export interface ReplicaUtilization {
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
-  notReadyReason: string | null;
+  notReadyReason: NotReadyReason | null;
 }
+
+export type NotReadyReason = "oom-killed";
 
 const useClusterUtilization = (
   clusterId: string | undefined,
@@ -98,7 +100,7 @@ ${replicaId ? `AND r.id = '${replicaId}'` : ""}`;
               timestamp: parseInt(result.payload[0] as string),
               cpuPercent: result.payload[3] as number,
               memoryPercent: result.payload[4] as number,
-              notReadyReason: result.payload[5] as string | null,
+              notReadyReason: result.payload[5] as NotReadyReason | null,
             };
             socketBufferRef.current.push(utilization);
             setIsStale(false);

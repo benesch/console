@@ -19,6 +19,7 @@ import {
 } from "recharts";
 
 import { Replica } from "~/api/materialize/useClusters";
+import { NotReadyReason } from "~/api/materialize/useClusterUtilization";
 import { MaterializeTheme } from "~/theme";
 import colors from "~/theme/colors";
 
@@ -35,7 +36,7 @@ export interface DataPoint {
   timestamp: number;
   cpuPercent: number;
   memoryPercent: number;
-  notReadyReason: string | null;
+  notReadyReason: NotReadyReason | null;
   [key: string]: string | number | null;
 }
 
