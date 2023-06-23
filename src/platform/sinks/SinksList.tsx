@@ -20,6 +20,7 @@ import { Sink, SinksResponse } from "~/api/materialize/sink/useSinks";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
@@ -236,11 +237,13 @@ const SinkTable = (props: SinkTableProps) => {
             <Td>{s.type}</Td>
             <Td>{s.size || "-"}</Td>
             <Td>
-              <OverflowMenu
-                selectedObject={s}
-                refetchObjects={props.refetchSinks}
-                objectType="SINK"
-              />
+              <OverflowMenu>
+                <DeleteObjectMenuItem
+                  selectedObject={s}
+                  refetchObjects={props.refetchSinks}
+                  objectType="SINK"
+                />
+              </OverflowMenu>
             </Td>
           </Tr>
         ))}

@@ -23,6 +23,7 @@ import { Source, SourcesResponse } from "~/api/materialize/useSources";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
@@ -262,11 +263,13 @@ const SourceTable = (props: SourceTableProps) => {
             <Td>{s.type}</Td>
             <Td>{s.size || "-"}</Td>
             <Td>
-              <OverflowMenu
-                selectedObject={s}
-                refetchObjects={props.refetchSources}
-                objectType="SOURCE"
-              />
+              <OverflowMenu>
+                <DeleteObjectMenuItem
+                  selectedObject={s}
+                  refetchObjects={props.refetchSources}
+                  objectType="SOURCE"
+                />
+              </OverflowMenu>
             </Td>
           </Tr>
         ))}

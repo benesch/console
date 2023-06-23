@@ -21,6 +21,7 @@ import {
   ConnectionWithDetails,
 } from "~/api/materialize/connection/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
@@ -222,11 +223,13 @@ const ConnectionsTable = ({
               <Td>{connection.numSources}</Td>
               <Td>{connection.numSinks}</Td>
               <Td>
-                <OverflowMenu
-                  selectedObject={connection}
-                  refetchObjects={refetchConnections}
-                  objectType="CONNECTION"
-                />
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={connection}
+                    refetchObjects={refetchConnections}
+                    objectType="CONNECTION"
+                  />
+                </OverflowMenu>
               </Td>
             </Tr>
           );

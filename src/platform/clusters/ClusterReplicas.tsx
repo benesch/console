@@ -24,6 +24,7 @@ import {
 } from "~/api/materialized";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
@@ -230,11 +231,13 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               )}
             </Td>
             <Td>
-              <OverflowMenu
-                selectedObject={r}
-                refetchObjects={props.refetchReplicas}
-                objectType="CLUSTER REPLICA"
-              />
+              <OverflowMenu>
+                <DeleteObjectMenuItem
+                  selectedObject={r}
+                  refetchObjects={props.refetchReplicas}
+                  objectType="CLUSTER REPLICA"
+                />
+              </OverflowMenu>
             </Td>
           </Tr>
         ))}

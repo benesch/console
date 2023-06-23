@@ -20,6 +20,7 @@ import { useSegment } from "~/analytics/segment";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
@@ -178,11 +179,13 @@ const ClusterTable = (props: ClusterTableProps) => {
             </Td>
             <Td>{c.replicas.length}</Td>
             <Td>
-              <OverflowMenu
-                selectedObject={c}
-                refetchObjects={props.refetchClusters}
-                objectType="CLUSTER"
-              />
+              <OverflowMenu>
+                <DeleteObjectMenuItem
+                  selectedObject={c}
+                  refetchObjects={props.refetchClusters}
+                  objectType="CLUSTER"
+                />
+              </OverflowMenu>
             </Td>
           </Tr>
         ))}

@@ -22,6 +22,7 @@ import useSecretsListPage, {
   ListPageSecret,
 } from "~/api/materialize/secret/useSecrets";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
@@ -179,11 +180,13 @@ const SecretsTable = ({ secrets, refetchSecrets }: SecretsTableProps) => {
                 <Text>{format(secret.createdAt, "MMM d, yyyy")}</Text>
               </Td>
               <Td>
-                <OverflowMenu
-                  selectedObject={secret}
-                  refetchObjects={refetchSecrets}
-                  objectType="SECRET"
-                />
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={secret}
+                    refetchObjects={refetchSecrets}
+                    objectType="SECRET"
+                  />
+                </OverflowMenu>
               </Td>
             </Tr>
           );
