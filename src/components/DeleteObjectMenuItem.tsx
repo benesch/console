@@ -1,8 +1,9 @@
-import { MenuItem, useDisclosure } from "@chakra-ui/react";
+import { MenuItem, useDisclosure, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import { DeletableObjectType } from "~/api/materialize/buildDeletObjectStatement";
 import { DatabaseObject } from "~/api/materialize/types";
+import { MaterializeTheme } from "~/theme";
 
 import DeleteObjectModal from "./DeleteObjectModal";
 
@@ -18,9 +19,19 @@ const DeleteObjectMenuItem = ({
   objectType,
 }: DeleteObjectMenuItemProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    colors: { semanticColors },
+  } = useTheme<MaterializeTheme>();
+
   return (
     <>
-      <MenuItem onClick={() => onOpen()}>Delete</MenuItem>
+      <MenuItem
+        onClick={() => onOpen()}
+        textStyle="text-ui-med"
+        color={semanticColors.accent.red}
+      >
+        Drop {objectType.toLowerCase()}
+      </MenuItem>
       {isOpen && (
         <DeleteObjectModal
           isOpen
