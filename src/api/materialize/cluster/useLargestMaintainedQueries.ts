@@ -1,6 +1,8 @@
 import { sql } from "kysely";
 import React from "react";
 
+import { useEnvironmentGate } from "~/recoil/environments";
+
 import { isSystemCluster, rawLimit } from "..";
 import { queryBuilder } from "../db";
 import useSqlTyped from "../useSqlTyped";
@@ -27,34 +29,61 @@ export function buildSmallestReplicaQuery(clusterId: string) {
 
 export function buildLargestMaintainedQueriesQuery(
   replicaSize: number | null,
-  limit: number
+  limit: number,
+  isV058: boolean
 ) {
   if (!replicaSize) return null;
 
-  const qb = queryBuilder
-    .selectFrom("mz_internal.mz_dataflow_arrangement_sizes as s")
-    .innerJoin("mz_internal.mz_dataflows as d", "d.id", "s.id")
-    .innerJoin(
-      "mz_internal.mz_compute_exports as ce",
-      "ce.dataflow_id",
-      "d.local_id"
-    )
-    .innerJoin("mz_catalog.mz_objects as o", "o.id", "ce.export_id")
-    .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "o.schema_id")
-    .innerJoin("mz_catalog.mz_databases as da", "da.id", "sc.database_id")
-    .select([
-      "s.id",
-      "s.name",
-      sql`${sql.id("s", "size")} / (${sql.raw(replicaSize.toString())})`
-        .$castTo<string>()
-        .as("memoryPercentage"),
-      "o.type",
-      "sc.name as schemaName",
-      "da.name as databaseName",
-    ])
-    .orderBy("memoryPercentage", "desc");
+  if (isV058) {
+    const qb = queryBuilder
+      .selectFrom("mz_internal.mz_dataflow_arrangement_sizes as s")
+      .innerJoin(
+        "mz_internal.mz_compute_exports as ce",
+        "ce.dataflow_id",
+        "s.id"
+      )
+      .innerJoin("mz_catalog.mz_objects as o", "o.id", "ce.export_id")
+      .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "o.schema_id")
+      .innerJoin("mz_catalog.mz_databases as da", "da.id", "sc.database_id")
+      .select([
+        "s.id",
+        "s.name",
+        sql`${sql.id("s", "size")} / (${sql.raw(replicaSize.toString())})`
+          .$castTo<string>()
+          .as("memoryPercentage"),
+        "o.type",
+        "sc.name as schemaName",
+        "da.name as databaseName",
+      ])
+      .orderBy("memoryPercentage", "desc");
 
-  return rawLimit(qb, limit).compile();
+    return rawLimit(qb, limit).compile();
+  } else {
+    const qb = queryBuilder
+      .selectFrom("mz_internal.mz_dataflow_arrangement_sizes as s")
+      .innerJoin("mz_internal.mz_dataflows as d", "d.id", "s.id")
+      .innerJoin(
+        "mz_internal.mz_compute_exports as ce",
+        "ce.dataflow_id",
+        "d.local_id"
+      )
+      .innerJoin("mz_catalog.mz_objects as o", "o.id", "ce.export_id")
+      .innerJoin("mz_catalog.mz_schemas as sc", "sc.id", "o.schema_id")
+      .innerJoin("mz_catalog.mz_databases as da", "da.id", "sc.database_id")
+      .select([
+        "s.id",
+        "s.name",
+        sql`${sql.id("s", "size")} / (${sql.raw(replicaSize.toString())})`
+          .$castTo<string>()
+          .as("memoryPercentage"),
+        "o.type",
+        "sc.name as schemaName",
+        "da.name as databaseName",
+      ])
+      .orderBy("memoryPercentage", "desc");
+
+    return rawLimit(qb, limit).compile();
+  }
 }
 
 /**
@@ -82,10 +111,17 @@ function useLargestMaintainedQueries({
     };
   }
 
+  // https://github.com/MaterializeInc/materialize/pull/20061
+  // This can be removed once v0.58.x is rolled out to all customers
+  const isV058 = useEnvironmentGate("0.58.0");
   const query = React.useMemo(
     () =>
-      buildLargestMaintainedQueriesQuery(replicaInfo?.memoryBytes ?? null, 10),
-    [replicaInfo?.memoryBytes]
+      buildLargestMaintainedQueriesQuery(
+        replicaInfo?.memoryBytes ?? null,
+        10,
+        isV058 ?? false
+      ),
+    [isV058, replicaInfo?.memoryBytes]
   );
 
   const response = useSqlTyped(query, {
