@@ -6,8 +6,15 @@ import OverflowMenuIcon from "~/svg/OverflowMenuIcon";
 const OverflowMenu = ({ children }: PropsWithChildren) => {
   return (
     <>
-      <Menu>
-        <MenuButton variant="none" as={Button}>
+      <Menu gutter={2} placement="bottom-start">
+        <MenuButton
+          variant="none"
+          as={Button}
+          width="4"
+          height="4"
+          p="0"
+          minWidth="auto"
+        >
           <OverflowMenuIcon />
         </MenuButton>
         <MenuList>{children}</MenuList>
