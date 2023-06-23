@@ -43,6 +43,7 @@ import {
   historyIdsAtom,
   HistoryItem,
   historyItemAtom,
+  historyItemCommandResultsSelector,
   historySelector,
   promptAtom,
   shellStateAtom,
@@ -148,6 +149,9 @@ type HistoryOutputProps = {
 const HistoryOutput = (props: HistoryOutputProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const historyOutput = useRecoilValue(historyItemAtom(props.historyId ?? ""));
+  const commandResults = useRecoilValue(
+    historyItemCommandResultsSelector(props.historyId ?? "")
+  );
 
   return (
     <VStack
@@ -166,63 +170,59 @@ const HistoryOutput = (props: HistoryOutputProps) => {
           <VStack spacing="6" alignItems="flex-start" width="100%">
             <CommandBlock readOnly value={historyOutput.command} />
 
-            {historyOutput.commandResults.map(
-              (commandResult, commandResultIdx) => {
-                const {
-                  hasRows,
-                  endTimeMs,
-                  initialTimeMs,
-                  commandCompletePayload,
-                  notices,
-                  cols,
-                  rows,
-                  error,
-                } = commandResult;
+            {(commandResults ?? []).map((commandResult, commandResultIdx) => {
+              const {
+                hasRows,
+                endTimeMs,
+                initialTimeMs,
+                commandCompletePayload,
+                notices,
+                cols,
+                rows,
+                error,
+              } = commandResult;
 
-                let renderTable = null;
-                if (hasRows && cols) {
-                  renderTable = (
-                    <TableContainer>
-                      <SqlSelectTable rows={rows ?? []} cols={cols} />
-                    </TableContainer>
-                  );
-                }
-
-                const timeTaken =
-                  endTimeMs && initialTimeMs
-                    ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
-                    : null;
-
-                const hasErrored = !!error;
-
-                return (
-                  <React.Fragment key={commandResultIdx}>
-                    {!hasRows && !error && (
-                      <CommandBlock readOnly value={commandCompletePayload} />
-                    )}
-                    {renderTable}
-
-                    {notices.map((notice, noticeIdx) => (
-                      <NoticeOutput key={noticeIdx} notice={notice} />
-                    ))}
-                    {error && (
-                      <ErrorOutput
-                        error={error}
-                        width="100%"
-                        maxWidth={ERROR_OUTPUT_MAX_WIDTH}
-                      />
-                    )}
-                    <Code
-                      color={
-                        hasErrored ? colors.accent.red : colors.accent.green
-                      }
-                    >
-                      {timeTaken}
-                    </Code>
-                  </React.Fragment>
+              let renderTable = null;
+              if (hasRows && cols) {
+                renderTable = (
+                  <TableContainer>
+                    <SqlSelectTable rows={rows ?? []} cols={cols} />
+                  </TableContainer>
                 );
               }
-            )}
+
+              const timeTaken =
+                endTimeMs && initialTimeMs
+                  ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
+                  : null;
+
+              const hasErrored = !!error;
+
+              return (
+                <React.Fragment key={commandResultIdx}>
+                  {!hasRows && !error && (
+                    <CommandBlock readOnly value={commandCompletePayload} />
+                  )}
+                  {renderTable}
+
+                  {notices.map((notice, noticeIdx) => (
+                    <NoticeOutput key={noticeIdx} notice={notice} />
+                  ))}
+                  {error && (
+                    <ErrorOutput
+                      error={error}
+                      width="100%"
+                      maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                    />
+                  )}
+                  <Code
+                    color={hasErrored ? colors.accent.red : colors.accent.green}
+                  >
+                    {timeTaken}
+                  </Code>
+                </React.Fragment>
+              );
+            })}
             {historyOutput.error && (
               <ErrorOutput
                 error={historyOutput.error}
@@ -461,7 +461,7 @@ const Shell = () => {
     }
     return true;
   };
-  console.log(history);
+  console.log("history", history);
 
   return (
     <VStack

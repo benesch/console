@@ -1,7 +1,8 @@
-import { atom, atomFamily, selector } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { Error, Notice } from "~/api/materialize/types";
+import { assert } from "~/util";
 
 import keys from "./keyConstants";
 
@@ -76,6 +77,7 @@ export const historyItemAtom = atomFamily<HistoryItem, HistoryId>({
   key: keys.HISTORY,
 });
 
+// TODO: Get rid. Used for debugging purposes.
 export const historySelector = selector({
   key: "HISTORY_SELECTOR",
   get: ({ get }) => {
@@ -85,6 +87,104 @@ export const historySelector = selector({
       return get(historyItemAtom(id));
     });
   },
+});
+
+// Copied from https://materialize.com/docs/sql/subscribe/#output
+const RESERVED_SUBSCRIBE_COLUMNS = ["mz_timestamp", "mz_progressed", "mz_diff"];
+
+function mergeMzDiffs(commandResult: CommandResult): CommandResult {
+  if (
+    !commandResult.isStreamingResult ||
+    !commandResult.hasRows ||
+    !commandResult.cols ||
+    !commandResult.rows
+  ) {
+    return commandResult;
+  }
+
+  const newCols = commandResult.cols.filter(
+    (col) => !RESERVED_SUBSCRIBE_COLUMNS.includes(col)
+  );
+
+  const reservedSubscribeColumnsIndicesByCol = commandResult.cols.reduce(
+    (accum, col, colIndex) => {
+      if (RESERVED_SUBSCRIBE_COLUMNS.includes(col)) {
+        accum.set(col, colIndex);
+      }
+      return accum;
+    },
+    new Map<string, number>()
+  );
+
+  const reservedSubscribeColumnsIndices = new Set(
+    reservedSubscribeColumnsIndicesByCol.values()
+  );
+
+  const mzDiffIndex = reservedSubscribeColumnsIndicesByCol.get("mz_diff");
+
+  assert(mzDiffIndex);
+
+  const rowDiffMap = commandResult.rows.reduce((accum, row) => {
+    const rowWithoutReservedColumns = row.filter(
+      (_, rowIndex) => !reservedSubscribeColumnsIndices.has(rowIndex)
+    );
+
+    const rowHash = JSON.stringify(rowWithoutReservedColumns);
+
+    const diff = row[mzDiffIndex] as number;
+
+    let { count } = accum.get(rowHash) ?? {};
+
+    count = count ? count + diff : diff;
+
+    if (count <= 0) {
+      accum.delete(rowHash);
+    } else {
+      accum.set(rowHash, { count, row: rowWithoutReservedColumns });
+    }
+
+    return accum;
+  }, new Map<string, { count: number; row: unknown[] }>());
+
+  const newRows = [...rowDiffMap.entries()]
+    .sort(([keyA], [keyB]) => {
+      if (keyA > keyB) {
+        return 1;
+      } else if (keyB > keyA) {
+        return -1;
+      } else {
+        return 0;
+      }
+    })
+    .map(([_, { row }]) => row);
+
+  return {
+    ...commandResult,
+    cols: newCols,
+    rows: newRows,
+  };
+}
+
+export const historyItemCommandResultsSelector = selectorFamily({
+  key: keys.SUBSCRIBE_TABLE_SELECTOR,
+  get:
+    (historyId: HistoryId) =>
+    ({ get }) => {
+      const historyItem = get(historyItemAtom(historyId));
+
+      if (historyItem.kind !== "command") {
+        return undefined;
+      }
+
+      return historyItem.commandResults.map((commandResult) => {
+        const { isStreamingResult, hasRows } = commandResult;
+
+        if (!isStreamingResult || !hasRows) {
+          return commandResult;
+        }
+        return mergeMzDiffs(commandResult);
+      });
+    },
 });
 
 export function createDefaultCommandOutput(payload: {
