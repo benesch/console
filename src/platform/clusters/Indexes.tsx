@@ -16,7 +16,10 @@ import { Route, useNavigate, useParams } from "react-router-dom";
 import { Replica, useClusters } from "~/api/materialize/useClusters";
 import { Index, useIndexes } from "~/api/materialized";
 import { CodeBlock } from "~/components/copyableComponents";
+import DatabaseFilter from "~/components/DatabaseFilter";
 import ErrorBox from "~/components/ErrorBox";
+import SchemaFilter from "~/components/SchemaFilter";
+import SearchInput from "~/components/SearchInput";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -26,6 +29,7 @@ import {
 } from "~/layouts/listPageComponents";
 import { SentryRoutes } from "~/sentry";
 import ClustersIcon from "~/svg/Clusters";
+import useSchemaObjectFilters from "~/useSchemaObjectFilters";
 
 import { ClusterParams } from "./ClusterRoutes";
 import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
@@ -33,14 +37,28 @@ import { CLUSTERS_FETCH_ERROR_MESSAGE } from "./constants";
 const DFViz = React.lazy(() => import("./Introspection"));
 
 const createExample = `CREATE INDEX active_customers_geo_idx ON active_customers (geo_id);`;
+const NAME_FILTER_QUERY_STRING_KEY = "indexName";
 
 const Indexes = () => {
   const { id: clusterId } = useParams<ClusterParams>();
+
+  const { databaseFilter, schemaFilter, nameFilter } = useSchemaObjectFilters(
+    NAME_FILTER_QUERY_STRING_KEY
+  );
+
+  const useIndexesResponse = useIndexes({
+    databaseId: databaseFilter.selected?.id,
+    schemaId: schemaFilter.selected?.id,
+    nameFilter: nameFilter.name,
+    clusterId,
+  });
+
   const {
     data: indexes,
     isInitiallyLoading: isIndexesLoading,
     isError: indexesError,
-  } = useIndexes(clusterId);
+  } = useIndexesResponse;
+
   const {
     getClusterById,
     isInitiallyLoading: isClustersLoading,
@@ -63,6 +81,17 @@ const Indexes = () => {
     <>
       <HStack mb="6" alignItems="center" justifyContent="space-between">
         <Text textStyle="heading-sm">Indexes</Text>
+      </HStack>
+      <HStack>
+        <DatabaseFilter {...databaseFilter} />
+        <SchemaFilter {...schemaFilter} />
+        <SearchInput
+          name="source"
+          value={nameFilter.name}
+          onChange={(e) => {
+            nameFilter.setName(e.target.value);
+          }}
+        />
       </HStack>
       {isEmpty ? (
         <EmptyListWrapper>
