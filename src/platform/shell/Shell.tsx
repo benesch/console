@@ -333,14 +333,13 @@ const Shell = () => {
 
     socket.onResult((result) => {
       const stateMachine = getStateMachine();
-      const { state } = stateMachine;
 
       switch (result.type) {
         case "ReadyForQuery":
           stateMachine.send("READY_FOR_QUERY");
 
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          assert(stateMachine.state.context.latestCommandOutput);
+          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           break;
         case "CommandStarting":
           if (result.payload.is_streaming) {
@@ -356,14 +355,23 @@ const Shell = () => {
           break;
         case "Rows":
           stateMachine.send({ type: "ROWS", rows: result.payload });
+
+          if (stateMachine.state.matches("commandInProgressStreaming")) {
+            assert(stateMachine.state.context.latestCommandOutput);
+            debouncedUpdateHistoryItem(
+              stateMachine.state.context.latestCommandOutput
+            );
+          }
           break;
         case "Row":
-          if (state.matches("commandInProgressStreaming")) {
+          if (stateMachine.state.matches("commandInProgressStreaming")) {
             stateMachine.send({ type: "ROW", row: result.payload });
 
-            assert(state.context.latestCommandOutput);
-            debouncedUpdateHistoryItem(state.context.latestCommandOutput);
-          } else if (state.matches("commandInProgressHasRows")) {
+            assert(stateMachine.state.context.latestCommandOutput);
+            debouncedUpdateHistoryItem(
+              stateMachine.state.context.latestCommandOutput
+            );
+          } else if (stateMachine.state.matches("commandInProgressHasRows")) {
             stateMachine.send({ type: "ROW", row: result.payload });
           }
           break;
@@ -373,16 +381,16 @@ const Shell = () => {
             commandCompletePayload: result.payload,
           });
 
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          assert(stateMachine.state.context.latestCommandOutput);
+          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           break;
         case "Notice":
-          if (state.matches("readyForQuery")) {
+          if (stateMachine.state.matches("readyForQuery")) {
             commitToHistory(createDefaultNoticeOutput(result.payload));
           } else {
             stateMachine.send({ type: "NOTICE", notice: result.payload });
-            assert(state.context.latestCommandOutput);
-            updateHistoryItem(state.context.latestCommandOutput);
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           }
           break;
         case "Error":
@@ -390,8 +398,8 @@ const Shell = () => {
             type: "ERROR",
             error: result.payload,
           });
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          assert(stateMachine.state.context.latestCommandOutput);
+          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           break;
       }
     });
