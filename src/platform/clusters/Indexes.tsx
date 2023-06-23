@@ -62,7 +62,7 @@ const Indexes = () => {
   return (
     <>
       <HStack mb="6" alignItems="center" justifyContent="space-between">
-        <Text textStyle="heading-sm">Materialized Views</Text>
+        <Text textStyle="heading-sm">Indexes</Text>
       </HStack>
       {isEmpty ? (
         <EmptyListWrapper>
