@@ -17,6 +17,7 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
+import * as Sentry from "@sentry/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -90,6 +91,9 @@ const DeleteObjectModal = ({
               </>
             ),
           });
+        },
+        onError: (message) => {
+          Sentry.captureException(new Error("Delete object error: " + message));
         },
       }
     );
