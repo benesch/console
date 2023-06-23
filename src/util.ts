@@ -3,6 +3,8 @@
  * Generic utility functions.
  */
 
+import { formatInTimeZone } from "date-fns-tz";
+
 /**
  * Asserts that the specified condition is truthy.
  
@@ -48,4 +50,11 @@ export function isTruthy<T>(
   value?: T | undefined | null | false | "" | 0
 ): value is T {
   return !!value;
+}
+
+export function formatTimeInUtc(
+  timestampOrDate: number | Date,
+  format?: string
+) {
+  return formatInTimeZone(timestampOrDate, "UTC", format ?? "HH:mm:ss");
 }
