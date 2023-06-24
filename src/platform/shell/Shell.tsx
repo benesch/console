@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -33,6 +33,7 @@ import { assert } from "~/util";
 import CommandBlock from "./CommandBlock";
 import CommandChevron from "./CommandChevron";
 import WebSocketFsm, {
+  StateMachineState,
   WebSocketFsmContext,
   WebSocketFsmEvent,
   WebSocketFsmState,
@@ -261,7 +262,12 @@ const Shell = () => {
     return stateMachine;
   };
 
-  const { socket, socketReady } = useSqlWs({ open: true });
+  const { socket } = useSqlWs({
+    open: true,
+  });
+
+  const [stateMachineState, setStateMachineState] =
+    useState<StateMachineState | null>(null);
 
   const commitToHistory = useRecoilCallback(({ set }) => {
     return (historyItem: HistoryItem) => {
@@ -295,16 +301,27 @@ const Shell = () => {
   const setPrompt = useSetRecoilState(promptAtom);
   const [shellState, setShellState] = useRecoilState(shellStateAtom);
 
+  const currentStateMachineState = getStateMachine().state.value;
+
+  if (currentStateMachineState !== stateMachineState) {
+    setStateMachineState(currentStateMachineState);
+  }
+
   useEffect(() => {
-    const scrollToTopOnCommandComplete = () => {
-      // Won't work for subscribe, maybe use state machine values?
+    const scrollToBottom = () => {
       if (shellContainerRef.current) {
         shellContainerRef.current.scrollTop =
           shellContainerRef.current.scrollHeight;
       }
     };
-    scrollToTopOnCommandComplete();
-  }, [historyIds, socketReady]);
+
+    if (
+      stateMachineState === "readyForQuery" ||
+      stateMachineState === "commandInProgressStreaming"
+    ) {
+      scrollToBottom();
+    }
+  }, [stateMachineState]);
 
   useEffect(() => {
     const stateMachine = getStateMachine();
@@ -323,11 +340,9 @@ const Shell = () => {
   }, []);
 
   useEffect(() => {
-    if (!socketReady) {
+    if (socket === null) {
       return;
     }
-
-    assert(socket);
 
     const debouncedUpdateHistoryItem = debounce(updateHistoryItem, 100);
 
@@ -336,10 +351,13 @@ const Shell = () => {
 
       switch (result.type) {
         case "ReadyForQuery":
-          stateMachine.send("READY_FOR_QUERY");
-
-          assert(stateMachine.state.context.latestCommandOutput);
-          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+          if (stateMachine.state.matches("initialState")) {
+            stateMachine.send("READY_FOR_QUERY");
+          } else {
+            stateMachine.send("READY_FOR_QUERY");
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+          }
           break;
         case "CommandStarting":
           if (result.payload.is_streaming) {
@@ -403,13 +421,9 @@ const Shell = () => {
           break;
       }
     });
-  }, [socket, socketReady, commitToHistory, updateHistoryItem]);
+  }, [socket, commitToHistory, updateHistoryItem]);
 
   const runCommand = (command: string) => {
-    if (!socketReady) {
-      return;
-    }
-
     assert(socket);
 
     const stateMachine = getStateMachine();
@@ -462,6 +476,7 @@ const Shell = () => {
     return true;
   };
   console.log("history", history);
+  console.log("state machine state", stateMachineState);
 
   return (
     <VStack

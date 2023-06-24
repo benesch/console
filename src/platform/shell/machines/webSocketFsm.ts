@@ -45,6 +45,10 @@ export type WebSocketFsmEvent =
 
 export type WebSocketFsmState =
   | {
+      value: "initialState";
+      context: WebSocketFsmContext;
+    }
+  | {
       value: "readyForQuery";
       context: WebSocketFsmContext;
     }
@@ -64,6 +68,8 @@ export type WebSocketFsmState =
       value: "commandInProgressStreaming";
       context: WebSocketFsmContext;
     };
+
+export type StateMachineState = WebSocketFsmState["value"];
 
 const addDefaultCommandResult = assign<WebSocketFsmContext>({
   latestCommandOutput: ({ latestCommandOutput }) =>
@@ -176,8 +182,16 @@ export const webSocketFsm = createMachine<
   WebSocketFsmState
 >({
   id: "webSocketFsm",
-  initial: "readyForQuery",
+  initial: "initialState",
   states: {
+    initialState: {
+      on: {
+        READY_FOR_QUERY: {
+          target: "readyForQuery",
+          actions: assign({}),
+        },
+      },
+    },
     readyForQuery: {
       on: {
         SEND: {
