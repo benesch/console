@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -32,7 +32,6 @@ import { assert } from "~/util";
 import CommandBlock from "./CommandBlock";
 import CommandChevron from "./CommandChevron";
 import WebSocketFsm, {
-  StateMachineState,
   WebSocketFsmContext,
   WebSocketFsmEvent,
   WebSocketFsmState,
@@ -249,6 +248,8 @@ const Shell = () => {
     WebSocketFsmState
   > | null>(null);
 
+  const [shellState, setShellState] = useRecoilState(shellStateAtom);
+
   const getStateMachine = () => {
     if (stateMachineRef.current !== null) {
       return stateMachineRef.current as StateMachine.Service<
@@ -259,7 +260,7 @@ const Shell = () => {
     }
 
     const stateMachine = interpret(WebSocketFsm);
-    stateMachine.start();
+
     stateMachineRef.current = stateMachine;
     return stateMachine;
   };
@@ -268,8 +269,7 @@ const Shell = () => {
     open: true,
   });
 
-  const [stateMachineState, setStateMachineState] =
-    useState<StateMachineState | null>(null);
+  const { webSocketState } = shellState;
 
   const commitToHistory = useRecoilCallback(({ set }) => {
     return (historyItem: HistoryItem) => {
@@ -279,7 +279,7 @@ const Shell = () => {
         historyItem.historyId,
       ]);
     };
-  });
+  }, []);
 
   const clearHistory = useRecoilCallback(({ reset, set }) => {
     return () => {
@@ -295,19 +295,12 @@ const Shell = () => {
       const id = historyItem.historyId;
       set(historyItemAtom(id), historyItem);
     };
-  });
+  }, []);
 
   const history = useRecoilValue(historySelector);
   const historyIds = useRecoilValue(historyIdsAtom);
 
   const setPrompt = useSetRecoilState(promptAtom);
-  const [shellState, setShellState] = useRecoilState(shellStateAtom);
-
-  const currentStateMachineState = getStateMachine().state.value;
-
-  if (currentStateMachineState !== stateMachineState) {
-    setStateMachineState(currentStateMachineState);
-  }
 
   useEffect(() => {
     const scrollToBottom = () => {
@@ -318,39 +311,36 @@ const Shell = () => {
     };
 
     if (
-      stateMachineState === "readyForQuery" ||
-      stateMachineState === "commandInProgressStreaming"
+      webSocketState === "readyForQuery" ||
+      webSocketState === "commandInProgressStreaming"
     ) {
       scrollToBottom();
     }
-  }, [stateMachineState]);
-
-  useEffect(() => {
-    const stateMachine = getStateMachine();
-    // On subscribe, xstate triggers the callback initially.
-    let xstateInitActionHasHappened = false;
-    const { unsubscribe } = stateMachine.subscribe((state) => {
-      if (!state.changed) {
-        if (xstateInitActionHasHappened) {
-          // TODO: Handle this error properly and log the event that caused the unsuccessful transition
-          console.error("Unsuccessful transition", state);
-        }
-        xstateInitActionHasHappened = true;
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  }, [webSocketState]);
 
   useEffect(() => {
     if (socket === null) {
       return;
     }
 
+    const stateMachine = getStateMachine();
+
+    stateMachine.subscribe(({ value }) => {
+      setShellState((prevState) => ({ ...prevState, webSocketState: value }));
+    });
+
+    stateMachine.subscribe((state) => {
+      if (!state.changed && !state.matches("initialState")) {
+        // TODO: Handle this error properly and log the event that caused the unsuccessful transition
+        console.error("Unsuccessful transition", state);
+      }
+    });
+
+    stateMachine.start();
+
     const debouncedUpdateHistoryItem = debounce(updateHistoryItem, 100);
 
     socket.onResult((result) => {
-      const stateMachine = getStateMachine();
-
       switch (result.type) {
         case "ReadyForQuery":
           if (stateMachine.state.matches("initialState")) {
@@ -423,13 +413,18 @@ const Shell = () => {
           break;
       }
     });
-  }, [socket, commitToHistory, updateHistoryItem]);
+
+    return () => {
+      stateMachine.stop();
+    };
+  }, [socket, commitToHistory, updateHistoryItem, setShellState]);
 
   const runCommand = (command: string) => {
     assert(socket);
 
     const stateMachine = getStateMachine();
 
+    // TODO: Assert state machine is started
     if (!stateMachine.state.matches("readyForQuery")) {
       return;
     }
@@ -478,7 +473,7 @@ const Shell = () => {
     return true;
   };
   console.log("history", history);
-  console.log("state machine state", stateMachineState);
+  console.log("state machine state", webSocketState);
 
   return (
     <VStack

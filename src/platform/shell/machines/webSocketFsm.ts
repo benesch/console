@@ -69,8 +69,6 @@ export type WebSocketFsmState =
       context: WebSocketFsmContext;
     };
 
-export type StateMachineState = WebSocketFsmState["value"];
-
 const addDefaultCommandResult = assign<WebSocketFsmContext>({
   latestCommandOutput: ({ latestCommandOutput }) =>
     produce(latestCommandOutput, (draft) => {

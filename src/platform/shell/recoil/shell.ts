@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Error, Notice } from "~/api/materialize/types";
 import { assert } from "~/util";
 
+import { WebSocketFsmState } from "../machines/webSocketFsm";
 import keys from "./keyConstants";
 
 type ShellState = {
@@ -11,6 +12,7 @@ type ShellState = {
   tutorialVisible: boolean;
   queryStatus: "pending";
   crtEnabled: boolean;
+  webSocketState: WebSocketFsmState["value"] | null;
 };
 
 const initialShellState = {
@@ -18,6 +20,7 @@ const initialShellState = {
   tutorialVisible: false,
   queryStatus: "pending" as const,
   crtEnabled: false,
+  webSocketState: null,
 };
 
 export const shellStateAtom = atom<ShellState>({
