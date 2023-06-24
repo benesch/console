@@ -2,7 +2,6 @@ import "./crt.css";
 
 import {
   Code,
-  Flex,
   HStack,
   StackProps,
   Table,
@@ -72,8 +71,9 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
 
 const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
   const { colors } = useTheme<MaterializeTheme>();
+
   return (
-    <Flex
+    <VStack
       alignItems="flex-start"
       borderRadius="lg"
       borderWidth="1px"
@@ -82,7 +82,9 @@ const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
       {...props}
     >
       <Code>Error: {error.message}</Code>
-    </Flex>
+      {error.detail && <Code>Detail: {error.detail}</Code>}
+      {error.hint && <Code>Hint: {error.hint}</Code>}
+    </VStack>
   );
 };
 
