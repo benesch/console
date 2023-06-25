@@ -10,12 +10,15 @@ import { promptAtom, shellStateAtom } from "./recoil/shell";
 
 type ShellPromptProps = StackProps & {
   onCommandBlockKeyDown: KeyboardEventHandler<HTMLTextAreaElement>;
+  socketError: string | null;
 };
 
-const ShellPrompt = ({ onCommandBlockKeyDown, ...rest }: ShellPromptProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+const ShellPrompt = ({
+  onCommandBlockKeyDown,
+  socketError,
+  ...rest
+}: ShellPromptProps) => {
+  const { colors } = useTheme<MaterializeTheme>();
   const [prompt, setPrompt] = useRecoilState(promptAtom);
   const { webSocketState } = useRecoilValue(shellStateAtom);
 
@@ -25,10 +28,17 @@ const ShellPrompt = ({ onCommandBlockKeyDown, ...rest }: ShellPromptProps) => {
   return (
     <HStack {...rest} alignItems="flex-start" p="6">
       {isCommandProcessing ? (
-        <HStack color={semanticColors.foreground.tertiary} cursor="not-allowed">
+        <HStack color={colors.foreground.tertiary} cursor="not-allowed">
           <Spinner size="sm" thickness="1.5px" speed="0.65s" />
           <Code>Command is processing</Code>
         </HStack>
+      ) : socketError ? (
+        <>
+          <CommandChevron color={colors.accent.red} />
+          <Code color={colors.foreground.tertiary} cursor="not-allowed">
+            {socketError}
+          </Code>
+        </>
       ) : (
         <>
           <CommandChevron />

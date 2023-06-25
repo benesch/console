@@ -267,7 +267,7 @@ const Shell = () => {
     return stateMachine;
   };
 
-  const { socket } = useSqlWs({
+  const { socket, socketError } = useSqlWs({
     open: true,
   });
 
@@ -532,6 +532,7 @@ const Shell = () => {
         minHeight="32"
         width="100%"
         onCommandBlockKeyDown={handlePromptInput}
+        socketError={socketError}
       />
     </VStack>
   );
