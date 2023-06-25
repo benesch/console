@@ -432,6 +432,13 @@ const Shell = () => {
 
     return () => {
       stateMachine.stop();
+      commitToHistory(
+        createDefaultNoticeOutput({
+          message:
+            "Connection was interrupted. Some session state may have been lost.",
+          severity: "Info",
+        })
+      );
     };
   }, [socket, commitToHistory, updateHistoryItem, setShellState]);
 
