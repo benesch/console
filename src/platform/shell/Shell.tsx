@@ -424,7 +424,6 @@ const Shell = () => {
 
     const stateMachine = getStateMachine();
 
-    // TODO: Assert state machine is started
     if (!stateMachine.state.matches("readyForQuery")) {
       return;
     }
@@ -472,6 +471,8 @@ const Shell = () => {
     }
     return true;
   };
+
+  // TODO: Get rid of console logs
   console.log("history", history);
   console.log("state machine state", webSocketState);
 
