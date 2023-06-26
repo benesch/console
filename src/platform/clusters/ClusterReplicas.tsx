@@ -17,6 +17,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import { isSystemCluster } from "~/api/materialize";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import {
   ClusterReplicaWithUtilizaton,
@@ -141,7 +142,11 @@ const ClusterReplicasPage = () => {
             )}
           </HStack>
           <HStack spacing={6} alignItems="flex-start">
-            <ReplicaTable replicas={replicas ?? []} refetchReplicas={refetch} />
+            <ReplicaTable
+              clusterId={clusterId}
+              replicas={replicas ?? []}
+              refetchReplicas={refetch}
+            />
             <Card flex={0} minW="384px" maxW="384px">
               <CardHeader>Interacting with cluster replicas</CardHeader>
               <CardContent pb={8}>
@@ -182,6 +187,7 @@ const ClusterReplicasPage = () => {
 };
 
 interface ReplicaTableProps {
+  clusterId?: string;
   replicas: ClusterReplicaWithUtilizaton[];
   refetchReplicas: () => void;
 }
@@ -225,13 +231,15 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               )}
             </Td>
             <Td>
-              <OverflowMenu>
-                <DeleteObjectMenuItem
-                  selectedObject={r}
-                  refetchObjects={props.refetchReplicas}
-                  objectType="CLUSTER REPLICA"
-                />
-              </OverflowMenu>
+              {props.clusterId && !isSystemCluster(props.clusterId) && (
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={r}
+                    refetchObjects={props.refetchReplicas}
+                    objectType="CLUSTER REPLICA"
+                  />
+                </OverflowMenu>
+              )}
             </Td>
           </Tr>
         ))}

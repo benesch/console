@@ -17,6 +17,7 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import { isSystemCluster } from "~/api/materialize";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
@@ -179,13 +180,15 @@ const ClusterTable = (props: ClusterTableProps) => {
             </Td>
             <Td>{c.replicas.length}</Td>
             <Td>
-              <OverflowMenu>
-                <DeleteObjectMenuItem
-                  selectedObject={c}
-                  refetchObjects={props.refetchClusters}
-                  objectType="CLUSTER"
-                />
-              </OverflowMenu>
+              {!isSystemCluster(c.id) && (
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={c}
+                    refetchObjects={props.refetchClusters}
+                    objectType="CLUSTER"
+                  />
+                </OverflowMenu>
+              )}
             </Td>
           </Tr>
         ))}

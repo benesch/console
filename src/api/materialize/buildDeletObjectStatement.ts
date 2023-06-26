@@ -20,8 +20,7 @@ export function deleteObjectQueryBuilder({
   dbObject: DatabaseObject;
   objectType: DeletableObjectType;
 }) {
-  const shouldCascade =
-    objectType !== "CLUSTER" && objectType !== "CLUSTER REPLICA";
+  const shouldCascade = objectType !== "CLUSTER REPLICA";
 
   const query = sql`DROP ${sql.raw(objectType)} ${buildFullyQualifiedObjectName(
     dbObject
