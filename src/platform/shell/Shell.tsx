@@ -1,3 +1,5 @@
+import "./crt.css";
+
 import {
   Code,
   Flex,
@@ -15,7 +17,12 @@ import {
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
 import React, { useEffect, useRef } from "react";
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 
 import { Error, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
@@ -37,6 +44,7 @@ import {
   historyItemAtom,
   historySelector,
   promptAtom,
+  shellStateAtom,
 } from "./recoil/shell";
 import ShellPrompt from "./ShellPrompt";
 
@@ -276,6 +284,15 @@ const Shell = () => {
     };
   });
 
+  const clearHistory = useRecoilCallback(({ reset, set }) => {
+    return () => {
+      set(historyIdsAtom, (curHistoryIds) => {
+        curHistoryIds.forEach((historyId) => reset(historyItemAtom(historyId)));
+        return [];
+      });
+    };
+  });
+
   const updateHistoryItem = useRecoilCallback(({ set }) => {
     return (historyItem: HistoryItem) => {
       const id = historyItem.historyId;
@@ -287,6 +304,7 @@ const Shell = () => {
   const historyIds = useRecoilValue(historyIdsAtom);
 
   const setPrompt = useSetRecoilState(promptAtom);
+  const [shellState, setShellState] = useRecoilState(shellStateAtom);
 
   useEffect(() => {
     const scrollToTopOnCommandComplete = () => {
@@ -393,6 +411,18 @@ const Shell = () => {
     commitToHistory(latestCommandOutput);
   };
 
+  const slashCommands = new Map<string, () => void>([
+    [
+      "hacktheplanet",
+      () =>
+        setShellState((currentState) => ({
+          ...currentState,
+          crtEnabled: !currentState.crtEnabled,
+        })),
+    ],
+    ["clear", clearHistory],
+  ]);
+
   const handlePromptInput = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       const text = (e.target as HTMLTextAreaElement).value.trim();
@@ -402,6 +432,16 @@ const Shell = () => {
         e.preventDefault();
         setPrompt("");
         return false;
+      }
+
+      if (text.startsWith("\\")) {
+        const handler = slashCommands.get(text.substring(1));
+        if (handler) {
+          handler();
+          setPrompt("");
+          e.preventDefault();
+          return false;
+        }
       }
     }
     return true;
@@ -417,6 +457,9 @@ const Shell = () => {
       spacing="0"
       scrollBehavior="smooth"
       ref={shellContainerRef}
+      className={
+        "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
+      }
     >
       {historyIds.length > 0 && (
         <VStack
