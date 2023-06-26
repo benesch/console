@@ -49,6 +49,8 @@ import {
 } from "./recoil/shell";
 import ShellPrompt from "./ShellPrompt";
 
+const RECOIL_DEBOUNCE_WAIT_MS = 100;
+
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
 const NoticeOutput = ({ notice }: { notice: Notice }) => {
@@ -325,8 +327,19 @@ const Shell = () => {
 
     const stateMachine = getStateMachine();
 
-    stateMachine.subscribe(({ value }) => {
-      setShellState((prevState) => ({ ...prevState, webSocketState: value }));
+    let prevWebSocketState: WebSocketFsmState["value"] | null = null;
+
+    stateMachine.subscribe(({ value: newWebsocketState }) => {
+      if (
+        prevWebSocketState === null ||
+        prevWebSocketState !== newWebsocketState
+      ) {
+        setShellState((prevState) => ({
+          ...prevState,
+          webSocketState: newWebsocketState,
+        }));
+      }
+      prevWebSocketState = newWebsocketState;
     });
 
     stateMachine.subscribe((state) => {
@@ -338,7 +351,10 @@ const Shell = () => {
 
     stateMachine.start();
 
-    const debouncedUpdateHistoryItem = debounce(updateHistoryItem, 100);
+    const debouncedUpdateHistoryItem = debounce(
+      updateHistoryItem,
+      RECOIL_DEBOUNCE_WAIT_MS
+    );
 
     socket.onResult((result) => {
       switch (result.type) {
