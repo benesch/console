@@ -149,17 +149,7 @@ function mergeMzDiffs(commandResult: CommandResult): CommandResult {
     return accum;
   }, new Map<string, { count: number; row: unknown[] }>());
 
-  const newRows = [...rowDiffMap.entries()]
-    .sort(([keyA], [keyB]) => {
-      if (keyA > keyB) {
-        return 1;
-      } else if (keyB > keyA) {
-        return -1;
-      } else {
-        return 0;
-      }
-    })
-    .map(([_, { row }]) => row);
+  const newRows = [...rowDiffMap.entries()].map(([_, { row }]) => row);
 
   return {
     ...commandResult,
