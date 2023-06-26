@@ -1,6 +1,5 @@
 import { Box, BoxProps, Button, Text, useTheme } from "@chakra-ui/react";
 import { differenceInDays } from "date-fns";
-import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
 
 import { useCurrentOrganization } from "~/api/auth";
@@ -8,11 +7,9 @@ import infoSvg from "~/img/info.svg";
 import { MaterializeTheme } from "~/theme";
 
 const FreeTrialNotice = (props: BoxProps) => {
-  const flags = useFlags();
   const { colors } = useTheme<MaterializeTheme>();
   const { organization } = useCurrentOrganization();
 
-  if (!flags["free-trial-card-145"]) return null;
   if (!organization || !organization.trialExpiresAt) return null;
 
   const trialExpiresAt = new Date(organization.trialExpiresAt);
