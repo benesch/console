@@ -105,7 +105,7 @@ const DeleteObjectModal = ({
             p="4"
             borderBottom={`1px solid ${colors.border.primary}`}
           >
-            Drop {dbObject.name}
+            Delete {dbObject.name}
           </ModalHeader>
           <ModalCloseButton />
           {dependencyCountLoading || dependencyCount === null ? (
@@ -119,7 +119,7 @@ const DeleteObjectModal = ({
           ) : showConfirmation || dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
-                <VStack spacing="4">
+                <VStack spacing="4" width="100%">
                   {error && (
                     <InlayBanner
                       variant="error"
