@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
 import { isSystemCluster } from "~/api/materialize";
@@ -167,6 +167,8 @@ function canDeleteCluster(cluster: Cluster) {
 }
 
 const ClusterTable = (props: ClusterTableProps) => {
+  const navigate = useNavigate();
+
   return (
     <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
@@ -178,10 +180,12 @@ const ClusterTable = (props: ClusterTableProps) => {
       </Thead>
       <Tbody>
         {props.clusters.map((c) => (
-          <Tr key={c.id}>
-            <Td>
-              <Link to={relativeClusterPath(c)}>{c.name}</Link>
-            </Td>
+          <Tr
+            key={c.id}
+            onClick={() => navigate(relativeClusterPath(c))}
+            cursor="pointer"
+          >
+            <Td>{c.name}</Td>
             <Td>{c.replicas.length}</Td>
             <Td>
               {canDeleteCluster(c) && (

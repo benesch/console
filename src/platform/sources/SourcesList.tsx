@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
 import { Source, SourcesResponse } from "~/api/materialize/useSources";
@@ -208,6 +208,7 @@ interface SourceTableProps {
 
 const SourceTable = (props: SourceTableProps) => {
   const regionSlug = useRegionSlug();
+  const navigate = useNavigate();
 
   return (
     <Table variant="standalone" data-testid="source-table" borderRadius="xl">
@@ -222,7 +223,11 @@ const SourceTable = (props: SourceTableProps) => {
       </Thead>
       <Tbody>
         {props.sources.map((s) => (
-          <Tr key={s.id}>
+          <Tr
+            key={s.id}
+            onClick={() => navigate(sourceErrorsPath(regionSlug, s))}
+            cursor="pointer"
+          >
             <Td>
               <Box
                 maxW={{
@@ -236,16 +241,14 @@ const SourceTable = (props: SourceTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                <Link to={sourceErrorsPath(regionSlug, s)}>
-                  <Tooltip
-                    label={`${s.databaseName}.${s.schemaName}.${s.name}`}
-                    placement="bottom"
-                    fontSize="xs"
-                    top={-1}
-                  >
-                    {s.name}
-                  </Tooltip>
-                </Link>
+                <Tooltip
+                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {s.name}
+                </Tooltip>
               </Box>
             </Td>
             <Td>

@@ -14,6 +14,7 @@ const OverflowMenu = ({ children }: PropsWithChildren) => {
           height="4"
           p="0"
           minWidth="auto"
+          onClick={(e) => e.stopPropagation()}
         >
           <OverflowMenuIcon />
         </MenuButton>
