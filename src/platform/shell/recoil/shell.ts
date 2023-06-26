@@ -8,12 +8,15 @@ import keys from "./keyConstants";
 type ShellState = {
   page: "start" | "shell";
   tutorialVisible: boolean;
+  queryStatus: "pending";
+  crtEnabled: boolean;
 };
 
 const initialShellState = {
   page: "start" as const,
   tutorialVisible: false,
   queryStatus: "pending" as const,
+  crtEnabled: false,
 };
 
 export const shellStateAtom = atom<ShellState>({

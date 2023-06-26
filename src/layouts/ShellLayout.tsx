@@ -85,6 +85,7 @@ export const ShellLayout = (props: ShellLayoutProps) => {
                     boxShadow: "none", // We set box shadow to none since the theme provider sets its box shadow by default
                   }}
                   minHeight="0"
+                  position="relative"
                 >
                   {props.children}
                 </Box>
