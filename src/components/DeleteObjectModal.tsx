@@ -105,7 +105,7 @@ const DeleteObjectModal = ({
             p="4"
             borderBottom={`1px solid ${colors.border.primary}`}
           >
-            Delete {dbObject.name}
+            Drop {dbObject.name}
           </ModalHeader>
           <ModalCloseButton />
           {dependencyCountLoading || dependencyCount === null ? (
@@ -177,7 +177,7 @@ const DeleteObjectModal = ({
                   width="100%"
                   isDisabled={isDeleting}
                 >
-                  Delete Object
+                  Drop {objectType.toLowerCase()}
                 </Button>
               </ModalFooter>
             </>
