@@ -81,17 +81,17 @@ const Indexes = () => {
     <>
       <HStack mb="6" alignItems="center" justifyContent="space-between">
         <Text textStyle="heading-sm">Indexes</Text>
-      </HStack>
-      <HStack>
-        <DatabaseFilter {...databaseFilter} />
-        <SchemaFilter {...schemaFilter} />
-        <SearchInput
-          name="source"
-          value={nameFilter.name}
-          onChange={(e) => {
-            nameFilter.setName(e.target.value);
-          }}
-        />
+        <HStack>
+          <DatabaseFilter {...databaseFilter} />
+          <SchemaFilter {...schemaFilter} />
+          <SearchInput
+            name="source"
+            value={nameFilter.name}
+            onChange={(e) => {
+              nameFilter.setName(e.target.value);
+            }}
+          />
+        </HStack>
       </HStack>
       {isEmpty ? (
         <EmptyListWrapper>

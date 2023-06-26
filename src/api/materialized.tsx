@@ -449,7 +449,7 @@ export function useIndexes({
       ? `SELECT i.id, i.name, r.name as relation_name, r.type
 FROM mz_indexes i
 INNER JOIN mz_relations r on r.id = i.on_id
-INNER JOIN mz_schemas sc ON sc.id = i.schema_id
+INNER JOIN mz_schemas sc ON sc.id = r.schema_id
 INNER JOIN mz_databases d ON d.id = sc.database_id
 WHERE cluster_id = '${clusterId}'
 AND i.id LIKE 'u%'
