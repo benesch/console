@@ -26,8 +26,26 @@ const IndexesWithSetup = () => (
 );
 
 const useIndexesColumns = ["id", "name", "relation_name", "type"];
+const useClustersFetchColumns = [
+  "id",
+  "cluster_name",
+  "replica_id",
+  "replica_name",
+  "size",
+  "linked_object_id",
+];
 
 describe("Indexes", () => {
+  beforeEach(() => {
+    server.use(
+      buildUseSqlQueryHandler({
+        type: "SELECT" as const,
+        columns: useClustersFetchColumns,
+        rows: [["u1", "cluster_name", "u2", "r1", "3xsmall", null]],
+      })
+    );
+  });
+
   it("shows a spinner initially", async () => {
     server.use(
       buildUseSqlQueryHandler({

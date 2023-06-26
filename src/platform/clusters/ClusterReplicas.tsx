@@ -192,6 +192,13 @@ interface ReplicaTableProps {
   refetchReplicas: () => void;
 }
 
+function canDeleteReplica(
+  clusterId: string | undefined,
+  replica: ClusterReplicaWithUtilizaton
+) {
+  return clusterId && !isSystemCluster(clusterId) && !replica.linkedObjectId;
+}
+
 const ReplicaTable = (props: ReplicaTableProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   return (
@@ -231,7 +238,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               )}
             </Td>
             <Td>
-              {props.clusterId && !isSystemCluster(props.clusterId) && (
+              {canDeleteReplica(props.clusterId, r) && (
                 <OverflowMenu>
                   <DeleteObjectMenuItem
                     selectedObject={r}

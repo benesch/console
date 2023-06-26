@@ -162,6 +162,10 @@ interface ClusterTableProps {
   refetchClusters: () => void;
 }
 
+function canDeleteCluster(cluster: Cluster) {
+  return !isSystemCluster(cluster.id) && !cluster.linkedObjectId;
+}
+
 const ClusterTable = (props: ClusterTableProps) => {
   return (
     <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
@@ -180,7 +184,7 @@ const ClusterTable = (props: ClusterTableProps) => {
             </Td>
             <Td>{c.replicas.length}</Td>
             <Td>
-              {!isSystemCluster(c.id) && (
+              {canDeleteCluster(c) && (
                 <OverflowMenu>
                   <DeleteObjectMenuItem
                     selectedObject={c}

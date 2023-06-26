@@ -253,6 +253,7 @@ export interface ClusterReplicaWithUtilizaton {
   cpuPercent?: number;
   /** Undefined when a replica is first created */
   memoryPercent?: number;
+  linkedObjectId: string;
 }
 
 export function useClusterReplicasWithUtilization(clusterId?: string) {
@@ -264,10 +265,12 @@ export function useClusterReplicasWithUtilization(clusterId?: string) {
   r.cluster_id,
   r.size,
   u.cpu_percent,
-  u.memory_percent
+  u.memory_percent,
+  cl.object_id as linked_object_id
 FROM mz_cluster_replicas r
 JOIN mz_clusters c ON r.cluster_id = c.id
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
+LEFT OUTER JOIN mz_internal.mz_cluster_links cl ON c.id = cl.cluster_id
 WHERE r.cluster_id = '${clusterId}'
 ORDER BY r.id;`
       : undefined
@@ -287,6 +290,7 @@ ORDER BY r.id;`
         size: getColumnByName(row, "size") as string,
         cpuPercent: getColumnByName(row, "cpu_percent") as number,
         memoryPercent: getColumnByName(row, "memory_percent") as number,
+        linkedObjectId: getColumnByName(row, "linked_object_id") as string,
       };
       return replica;
     });
