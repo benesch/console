@@ -17,7 +17,7 @@ jobs:
       - run: yarn test --maxWorkers=100%
 
   e2e-tests:
-    runs-on: ubuntu-20.04-16core
+    runs-on: ubuntu-22.04-16core
     env:
       FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
       FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
