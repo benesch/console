@@ -116,7 +116,9 @@ const DeleteObjectModal = ({
                 </Flex>
               </ModalBody>
             </>
-          ) : showConfirmation || dependencyCount === 0 ? (
+          ) : showConfirmation ||
+            objectType === "CLUSTER REPLICA" ||
+            dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
                 <VStack spacing="4" width="100%">
