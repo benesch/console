@@ -14,13 +14,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Sink, SinksResponse } from "~/api/materialize/sink/useSinks";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill, {
@@ -140,7 +142,7 @@ const SinksListPage = ({
         </EmptyListWrapper>
       ) : (
         <HStack spacing={6} alignItems="flex-start">
-          <SinkTable sinks={sinks || []} />
+          <SinkTable sinks={sinks || []} refetchSinks={sinksResponse.refetch} />
           <Card flex={0} minW="384px" maxW="384px">
             <CardHeader>Interacting with sinks</CardHeader>
             <CardContent pb={8}>
@@ -175,10 +177,10 @@ const SinksListPage = ({
 
 interface SinkTableProps {
   sinks: Sink[];
+  refetchSinks: () => void;
 }
 
 const SinkTable = (props: SinkTableProps) => {
-  const navigate = useNavigate();
   const regionSlug = useRegionSlug();
 
   return (
@@ -189,15 +191,12 @@ const SinkTable = (props: SinkTableProps) => {
           <Th width="25%">Status</Th>
           <Th>Type</Th>
           <Th>Size</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
         {props.sinks.map((s) => (
-          <Tr
-            key={s.id}
-            onClick={() => navigate(sinkErrorsPath(regionSlug, s))}
-            cursor="pointer"
-          >
+          <Tr key={s.id}>
             <Td>
               <Box
                 maxW={{
@@ -211,14 +210,16 @@ const SinkTable = (props: SinkTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                <Tooltip
-                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
-                  placement="bottom"
-                  fontSize="xs"
-                  top={-1}
-                >
-                  {s.name}
-                </Tooltip>
+                <Link to={sinkErrorsPath(regionSlug, s)}>
+                  <Tooltip
+                    label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                    placement="bottom"
+                    fontSize="xs"
+                    top={-1}
+                  >
+                    {s.name}
+                  </Tooltip>
+                </Link>
               </Box>
             </Td>
             <Td>
@@ -235,6 +236,15 @@ const SinkTable = (props: SinkTableProps) => {
             </Td>
             <Td>{s.type}</Td>
             <Td>{s.size || "-"}</Td>
+            <Td>
+              <OverflowMenu>
+                <DeleteObjectMenuItem
+                  selectedObject={s}
+                  refetchObjects={props.refetchSinks}
+                  objectType="SINK"
+                />
+              </OverflowMenu>
+            </Td>
           </Tr>
         ))}
       </Tbody>

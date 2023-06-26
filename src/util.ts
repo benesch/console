@@ -58,3 +58,13 @@ export function formatTimeInUtc(
 ) {
   return formatInTimeZone(timestampOrDate, "UTC", format ?? "HH:mm:ss");
 }
+
+/**
+ * Returns singular if count is exactly 1, otherwise returns plural.
+ */
+export function pluralize(count: number, singular: string, plural: string) {
+  if (count === 1) {
+    return singular;
+  }
+  return plural;
+}

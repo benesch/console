@@ -1,6 +1,9 @@
 import { SelectQueryBuilder, sql } from "kysely";
 
+import { escapedIdentifier as id } from "~/api/materialize";
 import { assert, isTruthy, notNullOrUndefined } from "~/util";
+
+import { DatabaseObject } from "./types";
 
 /**
  * Named used to identify ourselves to the server, needs to be kept in sync with
@@ -13,7 +16,7 @@ export const DEFAULT_QUERY_ERROR = "Error running query.";
  * Quotes a string to be used as a SQL identifier.
  * It is an error to call this function with a string that contains the zero code point.
  */
-export function quoteIdentifier(id: string) {
+export function quoteIdentifier(identifier: string) {
   // According to https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS,
   // any string may be used as an identifier, except those that contain the zero code point.
   //
@@ -24,9 +27,9 @@ export function quoteIdentifier(id: string) {
 
   // Materialize never allows any identifiers to be used whose name contains the null byte,
   // so this assert should never fire unless this function is called with arbitrary user input.
-  assert(id.search("\0") === -1);
+  assert(identifier.search("\0") === -1);
 
-  return `"${id.replace('"', '""')}"`;
+  return `"${identifier.replace('"', '""')}"`;
 }
 
 /**
@@ -89,4 +92,19 @@ export function escapedIdentifier(identifier: string) {
  */
 export function isSystemCluster(clusterId: string) {
   return clusterId.startsWith("s");
+}
+
+/**
+ * Builds a fully qualified object name for clusters, replicas or objects that exist in a schema
+ */
+export function buildFullyQualifiedObjectName(dbObject: DatabaseObject) {
+  if ("schemaName" in dbObject) {
+    return sql`${id(dbObject.databaseName)}.${id(dbObject.schemaName)}.${id(
+      dbObject.name
+    )}`;
+  }
+  if ("clusterName" in dbObject) {
+    return sql`${id(dbObject.clusterName)}.${id(dbObject.name)}`;
+  }
+  return id(dbObject.name);
 }

@@ -21,7 +21,9 @@ import {
   ConnectionWithDetails,
 } from "~/api/materialize/connection/useConnections";
 import DatabaseFilter from "~/components/DatabaseFilter";
+import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
+import OverflowMenu from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
@@ -173,7 +175,10 @@ export const ConnectionsList = ({
       ) : isConnectionsEmpty ? (
         <EmptyState />
       ) : (
-        <ConnectionsTable connections={connections ?? []} />
+        <ConnectionsTable
+          connections={connections ?? []}
+          refetchConnections={connectionsResponse.refetch}
+        />
       )}
       <SentryRoutes>
         <Route
@@ -187,17 +192,22 @@ export const ConnectionsList = ({
 
 type ConnectionsTableProps = {
   connections: ConnectionWithDetails[];
+  refetchConnections: () => void;
 };
 
-const ConnectionsTable = ({ connections }: ConnectionsTableProps) => {
+const ConnectionsTable = ({
+  connections,
+  refetchConnections,
+}: ConnectionsTableProps) => {
   return (
     <Table variant="standalone">
       <Thead>
         <Tr>
-          <Th>Name</Th>
-          <Th>Type</Th>
-          <Th>Sources</Th>
-          <Th>Sinks</Th>
+          <Th width="25%">Name</Th>
+          <Th width="25%">Type</Th>
+          <Th width="25%">Sources</Th>
+          <Th width="25%">Sinks</Th>
+          <Th width="80px"></Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -208,10 +218,19 @@ const ConnectionsTable = ({ connections }: ConnectionsTableProps) => {
               textColor="default"
               aria-label={connection.name}
             >
-              <Td width="25%">{connection.name}</Td>
-              <Td width="25%">{connection.type}</Td>
-              <Td width="25%">{connection.numSources}</Td>
-              <Td width="25%">{connection.numSinks}</Td>
+              <Td>{connection.name}</Td>
+              <Td>{connection.type}</Td>
+              <Td>{connection.numSources}</Td>
+              <Td>{connection.numSinks}</Td>
+              <Td>
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={connection}
+                    refetchObjects={refetchConnections}
+                    objectType="CONNECTION"
+                  />
+                </OverflowMenu>
+              </Td>
             </Tr>
           );
         })}

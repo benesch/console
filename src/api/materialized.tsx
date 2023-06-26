@@ -247,6 +247,7 @@ export function useSqlApiRequest(options?: UseSqlApiRequestOptions) {
 export interface ClusterReplicaWithUtilizaton {
   id: string;
   name: string;
+  clusterName: string;
   size: string;
   /** Undefined when a replica is first created */
   cpuPercent?: number;
@@ -259,11 +260,13 @@ export function useClusterReplicasWithUtilization(clusterId?: string) {
     clusterId
       ? `SELECT r.id,
   r.name as replica_name,
+  c.name as cluster_name,
   r.cluster_id,
   r.size,
   u.cpu_percent,
   u.memory_percent
 FROM mz_cluster_replicas r
+JOIN mz_clusters c ON r.cluster_id = c.id
 JOIN mz_internal.mz_cluster_replica_utilization u ON u.replica_id = r.id
 WHERE r.cluster_id = '${clusterId}'
 ORDER BY r.id;`
@@ -280,6 +283,7 @@ ORDER BY r.id;`
       const replica: ClusterReplicaWithUtilizaton = {
         id: replica_id.toString(),
         name: getColumnByName(row, "replica_name") as string,
+        clusterName: getColumnByName(row, "cluster_name") as string,
         size: getColumnByName(row, "size") as string,
         cpuPercent: getColumnByName(row, "cpu_percent") as number,
         memoryPercent: getColumnByName(row, "memory_percent") as number,

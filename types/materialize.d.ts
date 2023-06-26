@@ -63,6 +63,9 @@ export interface MzCatalogMzClusters {
   name: Generated<string>;
   owner_id: Generated<string>;
   privileges: Generated<string[]>;
+  managed: Generated<boolean>;
+  size: Generated<string | null>;
+  replication_factor: Generated<string | null>;
 }
 
 export interface MzCatalogMzColumns {
@@ -73,6 +76,7 @@ export interface MzCatalogMzColumns {
   type: Generated<string>;
   default: Generated<string | null>;
   type_oid: Generated<number>;
+  type_mod: Generated<number>;
 }
 
 export interface MzCatalogMzConnections {
@@ -91,6 +95,15 @@ export interface MzCatalogMzDatabases {
   name: Generated<string>;
   owner_id: Generated<string>;
   privileges: Generated<string[]>;
+}
+
+export interface MzCatalogMzDefaultPrivileges {
+  role_id: Generated<string>;
+  database_id: Generated<string | null>;
+  schema_id: Generated<string | null>;
+  object_type: Generated<string>;
+  grantee: Generated<string>;
+  privileges: Generated<string>;
 }
 
 export interface MzCatalogMzEgressIps {
@@ -303,6 +316,12 @@ export interface MzInternalMzActivePeeksPerWorker {
   worker_id: string;
   index_id: string;
   time: string;
+}
+
+export interface MzInternalMzAggregates {
+  oid: Generated<number>;
+  agg_kind: Generated<string>;
+  agg_num_direct_args: Generated<number>;
 }
 
 export interface MzInternalMzArrangementBatchesRaw {
@@ -658,6 +677,11 @@ export interface MzInternalMzDataflowsPerWorker {
   name: string;
 }
 
+export interface MzInternalMzKafkaSources {
+  id: Generated<string>;
+  group_id_base: Generated<string>;
+}
+
 export interface MzInternalMzMessageCounts {
   channel_id: string;
   sent: Numeric;
@@ -687,6 +711,11 @@ export interface MzInternalMzMessageCountsSentRaw {
 export interface MzInternalMzObjectDependencies {
   object_id: Generated<string>;
   referenced_object_id: Generated<string>;
+}
+
+export interface MzInternalMzObjectTransitiveDependencies {
+  id: string | null;
+  referenced_object_id: string | null;
 }
 
 export interface MzInternalMzPeekDurationsHistogram {
@@ -907,6 +936,7 @@ export interface MzInternalMzViewKeys {
 }
 
 export interface DB {
+  companies: Companies;
   "mz_catalog.mz_array_types": MzCatalogMzArrayTypes;
   "mz_catalog.mz_audit_events": MzCatalogMzAuditEvents;
   "mz_catalog.mz_aws_privatelink_connections": MzCatalogMzAwsPrivatelinkConnections;
@@ -916,6 +946,7 @@ export interface DB {
   "mz_catalog.mz_columns": MzCatalogMzColumns;
   "mz_catalog.mz_connections": MzCatalogMzConnections;
   "mz_catalog.mz_databases": MzCatalogMzDatabases;
+  "mz_catalog.mz_default_privileges": MzCatalogMzDefaultPrivileges;
   "mz_catalog.mz_egress_ips": MzCatalogMzEgressIps;
   "mz_catalog.mz_functions": MzCatalogMzFunctions;
   "mz_catalog.mz_index_columns": MzCatalogMzIndexColumns;
@@ -942,6 +973,7 @@ export interface DB {
   "mz_catalog.mz_views": MzCatalogMzViews;
   "mz_internal.mz_active_peeks": MzInternalMzActivePeeks;
   "mz_internal.mz_active_peeks_per_worker": MzInternalMzActivePeeksPerWorker;
+  "mz_internal.mz_aggregates": MzInternalMzAggregates;
   "mz_internal.mz_arrangement_batches_raw": MzInternalMzArrangementBatchesRaw;
   "mz_internal.mz_arrangement_heap_allocations_raw": MzInternalMzArrangementHeapAllocationsRaw;
   "mz_internal.mz_arrangement_heap_capacity_raw": MzInternalMzArrangementHeapCapacityRaw;
@@ -995,11 +1027,13 @@ export interface DB {
   "mz_internal.mz_dataflow_shutdown_durations_histogram_raw": MzInternalMzDataflowShutdownDurationsHistogramRaw;
   "mz_internal.mz_dataflows": MzInternalMzDataflows;
   "mz_internal.mz_dataflows_per_worker": MzInternalMzDataflowsPerWorker;
+  "mz_internal.mz_kafka_sources": MzInternalMzKafkaSources;
   "mz_internal.mz_message_counts": MzInternalMzMessageCounts;
   "mz_internal.mz_message_counts_per_worker": MzInternalMzMessageCountsPerWorker;
   "mz_internal.mz_message_counts_received_raw": MzInternalMzMessageCountsReceivedRaw;
   "mz_internal.mz_message_counts_sent_raw": MzInternalMzMessageCountsSentRaw;
   "mz_internal.mz_object_dependencies": MzInternalMzObjectDependencies;
+  "mz_internal.mz_object_transitive_dependencies": MzInternalMzObjectTransitiveDependencies;
   "mz_internal.mz_peek_durations_histogram": MzInternalMzPeekDurationsHistogram;
   "mz_internal.mz_peek_durations_histogram_per_worker": MzInternalMzPeekDurationsHistogramPerWorker;
   "mz_internal.mz_peek_durations_histogram_raw": MzInternalMzPeekDurationsHistogramRaw;
