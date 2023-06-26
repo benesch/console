@@ -192,7 +192,7 @@ const SinkTable = (props: SinkTableProps) => {
           <Th width="25%">Status</Th>
           <Th>Type</Th>
           <Th>Size</Th>
-          <Th width="80px"></Th>
+          <Th width="32px"></Th>
         </Tr>
       </Thead>
       <Tbody>

@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -175,7 +175,7 @@ const ClusterTable = (props: ClusterTableProps) => {
         <Tr>
           <Th>Name</Th>
           <Th>Replicas</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>

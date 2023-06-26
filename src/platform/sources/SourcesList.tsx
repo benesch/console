@@ -25,7 +25,7 @@ import { CodeBlock } from "~/components/copyableComponents";
 import DatabaseFilter from "~/components/DatabaseFilter";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import StatusPill, {
@@ -218,7 +218,7 @@ const SourceTable = (props: SourceTableProps) => {
           <Th width="25%">Status</Th>
           <Th width="25%">Type</Th>
           <Th width="25%">Size</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>
