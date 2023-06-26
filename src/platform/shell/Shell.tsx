@@ -1,6 +1,7 @@
 import "./crt.css";
 
 import {
+  Box,
   Code,
   HStack,
   StackProps,
@@ -48,6 +49,7 @@ import {
   promptAtom,
   shellStateAtom,
 } from "./recoil/shell";
+import RunCommandButton from "./RunCommandButton";
 import ShellPrompt from "./ShellPrompt";
 
 const RECOIL_DEBOUNCE_WAIT_MS = 100;
@@ -175,7 +177,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
       ) : (
         <HStack alignItems="flex-start" width="100%">
           <CommandChevron />
-          <VStack spacing="6" alignItems="flex-start" width="100%">
+          <VStack spacing="6" alignItems="flex-start" flex="1" minWidth="0">
             <CommandBlock readOnly value={historyOutput.command} />
 
             {(commandResults ?? []).map((commandResult, commandResultIdx) => {
@@ -221,6 +223,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                       error={error}
                       width="100%"
                       maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                      overflow="auto"
                     />
                   )}
                   <Code
@@ -236,6 +239,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                 error={historyOutput.error}
                 width="100%"
                 maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                overflow="auto"
               />
             )}
           </VStack>
@@ -489,7 +493,7 @@ const Shell = () => {
 
     const stateMachine = getStateMachine();
 
-    if (!stateMachine.state.matches("readyForQuery")) {
+    if (!stateMachine.state.matches("readyForQuery") || command.length === 0) {
       return;
     }
 
@@ -542,41 +546,50 @@ const Shell = () => {
   console.debug("state machine state", webSocketState);
 
   return (
-    <VStack
-      overflow="auto"
-      width="100%"
-      height="100%"
-      alignItems="flex-start"
-      spacing="0"
-      scrollBehavior="smooth"
-      ref={shellContainerRef}
-      className={
-        "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
-      }
-    >
-      {historyIds.length > 0 && (
-        <VStack
-          flexGrow="0"
-          flexShrink="0"
-          alignItems="flex-start"
-          width="100%"
-          minHeight="0"
-          spacing="0"
-        >
-          {historyIds.map((historyId) => (
-            <HistoryOutput key={historyId} historyId={historyId} />
-          ))}
-        </VStack>
-      )}
-      <ShellPrompt
-        flexGrow="1"
-        flexShrink="1"
-        minHeight="32"
+    <Box width="100%" height="100%" position="relative">
+      <VStack
+        overflow="auto"
         width="100%"
-        onCommandBlockKeyDown={handlePromptInput}
+        height="100%"
+        alignItems="flex-start"
+        spacing="0"
+        scrollBehavior="smooth"
+        ref={shellContainerRef}
+        className={
+          "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
+        }
+      >
+        {historyIds.length > 0 && (
+          <VStack
+            flexGrow="0"
+            flexShrink="0"
+            alignItems="flex-start"
+            width="100%"
+            minHeight="0"
+            spacing="0"
+          >
+            {historyIds.map((historyId) => (
+              <HistoryOutput key={historyId} historyId={historyId} />
+            ))}
+          </VStack>
+        )}
+        <ShellPrompt
+          flexGrow="1"
+          flexShrink="1"
+          minHeight="32"
+          width="100%"
+          onCommandBlockKeyDown={handlePromptInput}
+          socketError={socketError}
+        />
+      </VStack>
+      <RunCommandButton
+        runCommand={runCommand}
         socketError={socketError}
+        position="absolute"
+        bottom="6"
+        right="6"
       />
-    </VStack>
+    </Box>
   );
 };
 

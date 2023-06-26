@@ -47,6 +47,14 @@ export const Button = {
         },
       },
     },
+    tertiary: {
+      color: "semanticColors.foreground.primary",
+      backgroundColor: "semanticColors.background.tertiary",
+      borderColor: "semanticColors.border.secondary",
+
+      borderWidth: "1px",
+      shadow: shadows.light.level2,
+    },
     outline: {
       transition: "all 0.1s cubic-bezier(0.4, 0, 0.2, 1)",
       _hover: {
