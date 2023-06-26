@@ -584,7 +584,7 @@ const Shell = () => {
       </VStack>
       <RunCommandButton
         runCommand={runCommand}
-        restartSocket={restartSocket}
+        cancelStreaming={restartSocket}
         socketError={socketError}
         position="absolute"
         bottom="6"

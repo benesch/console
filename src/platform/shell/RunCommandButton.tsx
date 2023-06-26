@@ -10,35 +10,35 @@ import { promptAtom, shellStateAtom } from "./recoil/shell";
 type RunCommandButtonProps = ButtonProps & {
   runCommand: (command: string) => void;
   socketError: string | null;
-  restartSocket: () => void;
+  cancelStreaming: () => void;
 };
 
 const RunCommandButton = ({
   socketError,
   runCommand,
-  restartSocket,
+  cancelStreaming,
   ...rest
 }: RunCommandButtonProps) => {
   const [prompt, setPrompt] = useRecoilState(promptAtom);
   const { webSocketState } = useRecoilValue(shellStateAtom);
 
-  const isSubscribing = webSocketState === "commandInProgressStreaming";
+  const isStreaming = webSocketState === "commandInProgressStreaming";
 
   const isCommandProcessing =
     webSocketState !== "initialState" && webSocketState !== "readyForQuery";
 
-  const isButtonDisabled = !isSubscribing && isCommandProcessing;
+  const isButtonDisabled = !isStreaming && isCommandProcessing;
 
   return (
     <Button
-      variant={isSubscribing ? "primary" : "tertiary"}
+      variant={isStreaming ? "primary" : "tertiary"}
       position="absolute"
       right="6"
       bottom="6"
-      leftIcon={isSubscribing ? <StopIcon /> : <PlayIcon />}
+      leftIcon={isStreaming ? <StopIcon /> : <PlayIcon />}
       onClick={() => {
-        if (isSubscribing) {
-          restartSocket();
+        if (isStreaming) {
+          cancelStreaming();
         } else {
           runCommand(prompt);
           setPrompt("");
@@ -47,7 +47,7 @@ const RunCommandButton = ({
       {...rest}
       isDisabled={isButtonDisabled}
     >
-      {isSubscribing ? "Stop Streaming" : "Run Query"}
+      {isStreaming ? "Stop Streaming" : "Run Query"}
     </Button>
   );
 };
