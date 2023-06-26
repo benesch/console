@@ -14,9 +14,10 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import { interpret, StateMachine } from "@xstate/fsm";
+import { captureException } from "@sentry/react";
+import { interpret, InterpreterStatus, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -24,7 +25,7 @@ import {
   useSetRecoilState,
 } from "recoil";
 
-import { Error, Notice } from "~/api/materialize/types";
+import { Error as MaterializeError, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
@@ -70,7 +71,10 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
   );
 };
 
-const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
+const ErrorOutput = ({
+  error,
+  ...props
+}: { error: MaterializeError } & StackProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
@@ -267,9 +271,22 @@ const Shell = () => {
     return stateMachine;
   };
 
+  const [socketOpen, setSocketOpen] = useState(true);
+
   const { socket, socketError } = useSqlWs({
-    open: true,
+    open: socketOpen,
   });
+
+  const restartSocket = () => {
+    /**
+     * Since React batches state updates, we need to un-batch
+     * them by using a setTimeout.
+     */
+    setSocketOpen(false);
+    setTimeout(() => {
+      setSocketOpen(true);
+    }, 0);
+  };
 
   const { webSocketState } = shellState;
 
@@ -342,10 +359,30 @@ const Shell = () => {
       prevWebSocketState = newWebsocketState;
     });
 
+    const handleError = () => {
+      commitToHistory(
+        createDefaultNoticeOutput({
+          message:
+            "There was a problem returning the results. Please try again.",
+          severity: "Error",
+        })
+      );
+
+      restartSocket();
+    };
+
     stateMachine.subscribe((state) => {
-      if (!state.changed && !state.matches("initialState")) {
-        // TODO: Handle this error properly and log the event that caused the unsuccessful transition
-        console.error("Unsuccessful transition", state);
+      if (
+        !state.changed &&
+        !state.matches("initialState") &&
+        stateMachine.status !== InterpreterStatus.Stopped
+      ) {
+        captureException(new Error("Unsuccessful state machine transition"), {
+          extra: {
+            xState: state,
+          },
+        });
+        handleError();
       }
     });
 
@@ -357,76 +394,81 @@ const Shell = () => {
     );
 
     socket.onResult((result) => {
-      switch (result.type) {
-        case "ReadyForQuery":
-          if (stateMachine.state.matches("initialState")) {
-            stateMachine.send("READY_FOR_QUERY");
-          } else {
-            stateMachine.send("READY_FOR_QUERY");
-            assert(stateMachine.state.context.latestCommandOutput);
-            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          }
-          break;
-        case "CommandStarting":
-          if (result.payload.is_streaming) {
+      try {
+        switch (result.type) {
+          case "ReadyForQuery":
+            if (stateMachine.state.matches("initialState")) {
+              stateMachine.send("READY_FOR_QUERY");
+            } else {
+              stateMachine.send("READY_FOR_QUERY");
+              assert(stateMachine.state.context.latestCommandOutput);
+              updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            }
+            break;
+          case "CommandStarting":
+            if (result.payload.is_streaming) {
+              stateMachine.send({
+                type: "COMMAND_STARTING_IS_STREAMING",
+                hasRows: result.payload.has_rows,
+              });
+            } else if (result.payload.has_rows) {
+              stateMachine.send("COMMAND_STARTING_HAS_ROWS");
+            } else {
+              stateMachine.send("COMMAND_STARTING_DEFAULT");
+            }
+            break;
+          case "Rows":
+            stateMachine.send({ type: "ROWS", rows: result.payload });
+
+            if (stateMachine.state.matches("commandInProgressStreaming")) {
+              assert(stateMachine.state.context.latestCommandOutput);
+              debouncedUpdateHistoryItem(
+                stateMachine.state.context.latestCommandOutput
+              );
+            }
+            break;
+          case "Row":
+            if (stateMachine.state.matches("commandInProgressStreaming")) {
+              stateMachine.send({ type: "ROW", row: result.payload });
+
+              assert(stateMachine.state.context.latestCommandOutput);
+              debouncedUpdateHistoryItem(
+                stateMachine.state.context.latestCommandOutput
+              );
+            } else if (stateMachine.state.matches("commandInProgressHasRows")) {
+              stateMachine.send({ type: "ROW", row: result.payload });
+            }
+            break;
+          case "CommandComplete":
             stateMachine.send({
-              type: "COMMAND_STARTING_IS_STREAMING",
-              hasRows: result.payload.has_rows,
+              type: "COMMAND_COMPLETE",
+              commandCompletePayload: result.payload,
             });
-          } else if (result.payload.has_rows) {
-            stateMachine.send("COMMAND_STARTING_HAS_ROWS");
-          } else {
-            stateMachine.send("COMMAND_STARTING_DEFAULT");
-          }
-          break;
-        case "Rows":
-          stateMachine.send({ type: "ROWS", rows: result.payload });
 
-          if (stateMachine.state.matches("commandInProgressStreaming")) {
-            assert(stateMachine.state.context.latestCommandOutput);
-            debouncedUpdateHistoryItem(
-              stateMachine.state.context.latestCommandOutput
-            );
-          }
-          break;
-        case "Row":
-          if (stateMachine.state.matches("commandInProgressStreaming")) {
-            stateMachine.send({ type: "ROW", row: result.payload });
-
-            assert(stateMachine.state.context.latestCommandOutput);
-            debouncedUpdateHistoryItem(
-              stateMachine.state.context.latestCommandOutput
-            );
-          } else if (stateMachine.state.matches("commandInProgressHasRows")) {
-            stateMachine.send({ type: "ROW", row: result.payload });
-          }
-          break;
-        case "CommandComplete":
-          stateMachine.send({
-            type: "COMMAND_COMPLETE",
-            commandCompletePayload: result.payload,
-          });
-
-          assert(stateMachine.state.context.latestCommandOutput);
-          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          break;
-        case "Notice":
-          if (stateMachine.state.matches("readyForQuery")) {
-            commitToHistory(createDefaultNoticeOutput(result.payload));
-          } else {
-            stateMachine.send({ type: "NOTICE", notice: result.payload });
             assert(stateMachine.state.context.latestCommandOutput);
             updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          }
-          break;
-        case "Error":
-          stateMachine.send({
-            type: "ERROR",
-            error: result.payload,
-          });
-          assert(stateMachine.state.context.latestCommandOutput);
-          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          break;
+            break;
+          case "Notice":
+            if (stateMachine.state.matches("readyForQuery")) {
+              commitToHistory(createDefaultNoticeOutput(result.payload));
+            } else {
+              stateMachine.send({ type: "NOTICE", notice: result.payload });
+              assert(stateMachine.state.context.latestCommandOutput);
+              updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            }
+            break;
+          case "Error":
+            stateMachine.send({
+              type: "ERROR",
+              error: result.payload,
+            });
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            break;
+        }
+      } catch (error) {
+        captureException(error);
+        handleError();
       }
     });
 
