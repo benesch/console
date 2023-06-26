@@ -1,4 +1,11 @@
-import { Button, Menu, MenuButton, MenuList, useTheme } from "@chakra-ui/react";
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  Portal,
+  useTheme,
+} from "@chakra-ui/react";
 import React, { PropsWithChildren } from "react";
 
 import OverflowMenuIcon from "~/svg/OverflowMenuIcon";
@@ -26,7 +33,10 @@ const OverflowMenu = ({ children }: PropsWithChildren) => {
         >
           <OverflowMenuIcon />
         </MenuButton>
-        <MenuList>{children}</MenuList>
+        {/* The portal prevents hover state from bubbling up to the parent table row */}
+        <Portal>
+          <MenuList>{children}</MenuList>
+        </Portal>
       </Menu>
     </>
   );
