@@ -87,7 +87,7 @@ const LoadingSvg: React.FC<
       width={width}
       viewBox="0 0 33.8232 27.916767"
       xmlns="http://www.w3.org/2000/svg"
-      fill={fillColor ?? colors.semanticColors.accent.purple}
+      fill={fillColor ?? colors.accent.purple}
     >
       <style>{animationStyles}</style>
       <path

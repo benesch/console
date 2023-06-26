@@ -80,9 +80,7 @@ export const config: ChakraTheme["config"] = {
 };
 
 export interface MaterializeTheme extends ChakraTheme {
-  colors: ChakraTheme["colors"] & {
-    semanticColors: ThemeColors;
-  };
+  colors: ChakraTheme["colors"] & ThemeColors & typeof colors;
   textStyles: ChakraTheme["textStyles"] & TextStyles;
   fonts: {
     heading: string;
@@ -197,9 +195,7 @@ export const baseTheme: Partial<ChakraTheme> = {
 };
 
 export const darkTheme = extendTheme(baseTheme, {
-  colors: {
-    semanticColors: darkColors,
-  },
+  colors: darkColors,
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": darkColors.foreground.secondary,
@@ -210,9 +206,7 @@ export const darkTheme = extendTheme(baseTheme, {
 });
 
 export const lightTheme = extendTheme(baseTheme, {
-  colors: {
-    semanticColors: lightColors,
-  },
+  colors: lightColors,
   semanticTokens: {
     colors: {
       "chakra-placeholder-color": lightColors.foreground.secondary,
@@ -251,7 +245,7 @@ export const buildReactSelectFilterStyles = <
   IsMulti extends boolean = boolean,
   Group extends GroupBase<Option> = GroupBase<Option>
 >(
-  semanticColors: ThemeColors,
+  themeColors: ThemeColors,
   shadows: ThemeShadows,
   overrides: StylesConfig<Option, IsMulti, Group> = {}
 ): StylesConfig<Option, IsMulti, Group> => {
@@ -263,9 +257,9 @@ export const buildReactSelectFilterStyles = <
         marginTop: "2px",
         minWidth: "240px",
         width: "fit-content",
-        background: semanticColors.background.primary,
+        background: themeColors.background.primary,
         border: "1px solid",
-        borderColor: semanticColors.border.primary,
+        borderColor: themeColors.border.primary,
         shadow: shadows.level2,
         borderRadius: "8px",
         overflow: "hidden",
@@ -273,7 +267,7 @@ export const buildReactSelectFilterStyles = <
       control: (base, state) => ({
         ...base,
         cursor: "pointer",
-        color: semanticColors.foreground.secondary,
+        color: themeColors.foreground.secondary,
         fontSize: "14px",
         lineHeight: "16px",
         minHeight: "32px",
@@ -281,19 +275,19 @@ export const buildReactSelectFilterStyles = <
         borderRadius: "8px",
         borderWidth: "0",
         background: state.isFocused
-          ? semanticColors.background.secondary
-          : semanticColors.background.primary,
+          ? themeColors.background.secondary
+          : themeColors.background.primary,
       }),
       dropdownIndicator: (base) => ({
         ...base,
-        color: semanticColors.foreground.secondary,
+        color: themeColors.foreground.secondary,
         ":hover": {
-          color: semanticColors.foreground.secondary,
+          color: themeColors.foreground.secondary,
         },
       }),
       groupHeading: (base) => ({
         ...base,
-        color: semanticColors.foreground.secondary,
+        color: themeColors.foreground.secondary,
         fontSize: "14px",
         fontWeight: "500",
         lineHeight: "16px",
@@ -349,7 +343,7 @@ export const getFronteggTheme = (
       },
     },
     // navigation: {
-    //   background: semanticColors.card.bg.light,
+    //   background: themeColors.card.bg.light,
     // },
   },
   /*: {

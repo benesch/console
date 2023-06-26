@@ -19,10 +19,7 @@ import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import { MaterializeTheme } from "~/theme";
 
 const PricingPage = () => {
-  const {
-    colors: { semanticColors },
-    shadows,
-  } = useTheme<MaterializeTheme>();
+  const { colors, shadows } = useTheme<MaterializeTheme>();
   const { pricingTerms, consumptionTable } = data;
 
   const capacityPricingNotice = (
@@ -30,7 +27,7 @@ const PricingPage = () => {
       rowSpan={4}
       borderLeftStyle="solid"
       borderLeftWidth="1px"
-      borderLeftColor={semanticColors.border.primary}
+      borderLeftColor={colors.border.primary}
       borderBottom="none"
       textAlign="center"
       fontSize="xs"
@@ -47,7 +44,7 @@ const PricingPage = () => {
   const cellStyle = (firstCell: boolean): Partial<TableCellProps> => {
     if (firstCell) {
       return {
-        color: semanticColors.foreground.secondary,
+        color: colors.foreground.secondary,
         fontWeight: 500,
         fontSize: "sm",
       };
@@ -71,7 +68,7 @@ const PricingPage = () => {
                   lineHeight="20px"
                   py={4}
                   textTransform="none"
-                  color={semanticColors.foreground.primary}
+                  color={colors.foreground.primary}
                 >
                   On Demand Terms
                 </Text>
@@ -82,7 +79,7 @@ const PricingPage = () => {
                 lineHeight="20px"
                 py={4}
                 textTransform="none"
-                color={semanticColors.foreground.primary}
+                color={colors.foreground.primary}
               >
                 Capacity
               </Th>
@@ -97,7 +94,7 @@ const PricingPage = () => {
                   fontSize="sm"
                   fontWeight={500}
                   textTransform="lowercase"
-                  color={semanticColors.foreground.secondary}
+                  color={colors.foreground.secondary}
                 >
                   {region}
                 </Th>
@@ -106,7 +103,7 @@ const PricingPage = () => {
                 borderBottom="none"
                 borderLeftStyle="solid"
                 borderLeftWidth="1px"
-                borderLeftColor={semanticColors.border.primary}
+                borderLeftColor={colors.border.primary}
               ></Th>
             </Tr>
           </Thead>
@@ -129,7 +126,7 @@ const PricingPage = () => {
             fontSize="xl"
             fontWeight={500}
             lineHeight="24px"
-            color={semanticColors.foreground.primary}
+            color={colors.foreground.primary}
             mb={2}
           >
             Credit Consumption
@@ -144,7 +141,7 @@ const PricingPage = () => {
                   lineHeight="20px"
                   py={4}
                   textTransform="none"
-                  color={semanticColors.foreground.primary}
+                  color={colors.foreground.primary}
                 >
                   {consumptionTable.title}
                 </Th>

@@ -40,18 +40,14 @@ const EnvironmentError = ({
       <Flex flexDirection="column" alignItems="flex-start">
         <VStack w="100%" spacing={2} alignItems="center">
           <AlertBox p={4} marginTop={4}>
-            <Text opacity={0.6} color="semanticColors.foreground.primary">
+            <Text opacity={0.6} color="foreground.primary">
               We&apos;re having trouble connecting to your Materialize region{" "}
               {currentEnvironmentId}
             </Text>
             {showDetails &&
               errors.map((error, i) => {
                 return (
-                  <Text
-                    as="div"
-                    color="semanticColors.foreground.primary"
-                    key={i}
-                  >
+                  <Text as="div" color="foreground.primary" key={i}>
                     {error.message}
                     {error.details && (
                       <>

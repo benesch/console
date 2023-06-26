@@ -18,17 +18,17 @@ const TerminalIcon = (props: IconProps) => {
         width="14"
         height="12"
         rx="2"
-        stroke={colors.semanticColors.foreground.secondary}
+        stroke={colors.foreground.secondary}
       />
       <path
         d="M5 6L7 8L5 10"
-        stroke={colors.semanticColors.foreground.secondary}
+        stroke={colors.foreground.secondary}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M8 10H11"
-        stroke={colors.semanticColors.foreground.secondary}
+        stroke={colors.foreground.secondary}
         strokeLinecap="round"
         strokeLinejoin="round"
       />

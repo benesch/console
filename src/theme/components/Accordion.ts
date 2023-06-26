@@ -8,7 +8,7 @@ export const Accordion = {
         border: "none",
       },
       button: {
-        color: "semanticColors.accent.brightPurple",
+        color: "accent.brightPurple",
         lineHeight: "16px",
         p: 0,
         _hover: {

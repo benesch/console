@@ -19,9 +19,7 @@ import useAppPasswords, {
 } from "~/useAppPasswords";
 
 const PasswordStep = (props: BoxProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const {
     addUserApiToken,
@@ -32,14 +30,14 @@ const PasswordStep = (props: BoxProps) => {
   } = useAppPasswords();
 
   let boxContents = (
-    <Text color={semanticColors.foreground.secondary}>
+    <Text color={colors.foreground.secondary}>
       App passwords cannot be displayed after initial creation.
     </Text>
   );
 
   if (loadingInProgress) {
     boxContents = (
-      <Flex alignItems="center" color={semanticColors.foreground.secondary}>
+      <Flex alignItems="center" color={colors.foreground.secondary}>
         <Spinner size="sm" mr={2} /> Loading...
       </Flex>
     );
@@ -47,7 +45,7 @@ const PasswordStep = (props: BoxProps) => {
 
   if (createInProgress) {
     boxContents = (
-      <Flex alignItems="center" color={semanticColors.foreground.secondary}>
+      <Flex alignItems="center" color={colors.foreground.secondary}>
         <Spinner size="sm" mr={2} /> Generating new app password...
       </Flex>
     );
@@ -62,7 +60,7 @@ const PasswordStep = (props: BoxProps) => {
             fontSize="sm"
             lineHeight="16px"
             fontWeight={500}
-            color={semanticColors.foreground.primary}
+            color={colors.foreground.primary}
           >
             New app password:
           </Text>
@@ -73,7 +71,7 @@ const PasswordStep = (props: BoxProps) => {
           fontSize="sm"
           lineHeight="20px"
           fontWeight={400}
-          color={semanticColors.foreground.primary}
+          color={colors.foreground.primary}
         >
           Copy this app password somewhere safe. App passwords cannot be
           displayed after initial creation!
@@ -87,8 +85,8 @@ const PasswordStep = (props: BoxProps) => {
       alignItems="stretch"
       spacing={2}
       border="1px"
-      bg={semanticColors.background.primary}
-      borderColor={semanticColors.border.primary}
+      bg={colors.background.primary}
+      borderColor={colors.border.primary}
       borderRadius="xl"
       {...props}
     >
@@ -96,7 +94,7 @@ const PasswordStep = (props: BoxProps) => {
         p={4}
         py={2}
         borderBottom="1px"
-        borderColor={semanticColors.border.primary}
+        borderColor={colors.border.primary}
       >
         <Text flex={1} textStyle="heading-sm">
           App passwords

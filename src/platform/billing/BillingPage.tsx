@@ -23,9 +23,7 @@ import { INVOICE_FETCH_ERROR_MESSAGE } from "./constants";
 
 const BillingPage = () => {
   const { invoices, loading, error } = useInvoices();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <>
       <PageHeader>
@@ -64,20 +62,20 @@ const BillingPage = () => {
                 let fg = undefined;
                 switch (invoice.status) {
                   case "draft":
-                    bg = semanticColors.background.tertiary;
-                    fg = semanticColors.foreground.secondary;
+                    bg = colors.background.tertiary;
+                    fg = colors.foreground.secondary;
                     break;
                   case "issued":
-                    bg = semanticColors.accent.green;
-                    fg = semanticColors.foreground.inverse;
+                    bg = colors.accent.green;
+                    fg = colors.foreground.inverse;
                     break;
                   case "paid":
-                    bg = semanticColors.background.info;
-                    fg = semanticColors.foreground.secondary;
+                    bg = colors.background.info;
+                    fg = colors.foreground.secondary;
                     break;
                   case "void":
-                    bg = semanticColors.background.inverse;
-                    fg = semanticColors.foreground.inverse;
+                    bg = colors.background.inverse;
+                    fg = colors.foreground.inverse;
                     break;
                 }
                 return (
@@ -86,7 +84,7 @@ const BillingPage = () => {
                     height={12}
                     sx={{
                       _hover: {
-                        bg: semanticColors.background.primary,
+                        bg: colors.background.primary,
                       },
                     }}
                   >
@@ -113,7 +111,7 @@ const BillingPage = () => {
                           borderRadius={2}
                           sx={{
                             _hover: {
-                              bg: semanticColors.background.secondary,
+                              bg: colors.background.secondary,
                             },
                           }}
                         >

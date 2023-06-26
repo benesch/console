@@ -128,11 +128,11 @@ const ClustersListPage = () => {
             <CardHeader>Interacting with clusters</CardHeader>
             <CardContent pb={8}>
               <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                <Text color={colors.semanticColors.foreground.secondary}>
+                <Text color={colors.foreground.secondary}>
                   Clusters are logical components that let you express resource
                   isolation for all dataflow-powered objects.
                 </Text>
-                <Text color={colors.semanticColors.foreground.secondary}>
+                <Text color={colors.foreground.secondary}>
                   Having trouble?{" "}
                   <TextLink
                     href="https://materialize.com/docs/overview/key-concepts/#clusters"

@@ -9,9 +9,7 @@ import { MaterializeTheme } from "~/theme";
 
 const FreeTrialNotice = (props: BoxProps) => {
   const flags = useFlags();
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { organization } = useCurrentOrganization();
 
   if (!flags["free-trial-card-145"]) return null;
@@ -24,9 +22,9 @@ const FreeTrialNotice = (props: BoxProps) => {
   return (
     <Box
       borderWidth="1px"
-      borderColor={semanticColors.border.info}
+      borderColor={colors.border.info}
       borderRadius="8"
-      background={semanticColors.background.info}
+      background={colors.background.info}
       p="4"
       display={{ base: "none", lg: "block" }}
       {...props}
@@ -34,7 +32,7 @@ const FreeTrialNotice = (props: BoxProps) => {
       <Text
         display="flex"
         textStyle="text-small"
-        color={semanticColors.foreground.secondary}
+        color={colors.foreground.secondary}
       >
         Free trial
         <Box

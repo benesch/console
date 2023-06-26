@@ -25,8 +25,8 @@ const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <HStack
       spacing="4"
-      bg={colors.semanticColors.background.primary}
-      color={colors.semanticColors.foreground.secondary}
+      bg={colors.background.primary}
+      color={colors.foreground.secondary}
       textAlign="center"
       alignItems="center"
       justifyContent="center"
@@ -35,7 +35,7 @@ const PageFooter: React.FC<React.PropsWithChildren<unknown>> = () => {
       fontSize="sm"
       flexDir={{ base: "column", md: "row" }}
       boxShadow="footer"
-      borderTopColor={colors.semanticColors.border.primary}
+      borderTopColor={colors.border.primary}
       borderTopWidth="1px"
     >
       <Text>© {getCurrentYear()} Materialize, Inc.</Text>

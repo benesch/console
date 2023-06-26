@@ -5,9 +5,7 @@ import React from "react";
 import { MaterializeTheme } from "~/theme";
 
 const ProlongedPostgresSourceCreationModal = (props: { isOpen: boolean }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Modal
       isOpen={props.isOpen}
@@ -21,12 +19,9 @@ const ProlongedPostgresSourceCreationModal = (props: { isOpen: boolean }) => {
           <Spinner
             size="sm"
             thickness="1.33px"
-            color={semanticColors.accent.brightPurple}
+            color={colors.accent.brightPurple}
           />
-          <Text
-            textStyle="text-ui-med"
-            color={semanticColors.foreground.primary}
-          >
+          <Text textStyle="text-ui-med" color={colors.foreground.primary}>
             Attempting to connect to postgres...
           </Text>
         </HStack>

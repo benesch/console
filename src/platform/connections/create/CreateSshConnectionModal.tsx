@@ -24,9 +24,7 @@ const CreateSshConnectionModal = ({
   isOpen,
   onClose,
 }: CreateSshConnectionModalProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <Modal variant="2xl" isOpen={isOpen} onClose={onClose}>
@@ -49,7 +47,7 @@ const CreateSshConnectionModal = ({
           </Text>
           <Text
             as="p"
-            backgroundColor={semanticColors.background.secondary}
+            backgroundColor={colors.background.secondary}
             borderRadius="8px"
             p="4"
             mb="16"

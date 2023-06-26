@@ -30,9 +30,7 @@ import { assert } from "~/util";
 export const AVATAR_WIDTH = 6;
 
 const ProfileDropdown = (props: ButtonProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { user, tenantsState } = useAuth();
   const { switchTenant } = useAuthActions();
 
@@ -64,10 +62,7 @@ const ProfileDropdown = (props: ButtonProps) => {
             src={user.profilePictureUrl || user.profileImage}
             name={user.name}
           />
-          <Text
-            textStyle="text-ui-med"
-            color={semanticColors.foreground.primary}
-          >
+          <Text textStyle="text-ui-med" color={colors.foreground.primary}>
             Account
           </Text>
         </HStack>
@@ -76,11 +71,7 @@ const ProfileDropdown = (props: ButtonProps) => {
       <MenuList zIndex={2} pb={2}>
         <VStack px="3" pt="3" pb="2" align="left" lineHeight="1.3" spacing="0">
           <Text fontWeight="semibold">{user.name}</Text>
-          <Text
-            mt="1"
-            fontSize="xs"
-            color={semanticColors.foreground.secondary}
-          >
+          <Text mt="1" fontSize="xs" color={colors.foreground.secondary}>
             {user.email}
           </Text>
         </VStack>
@@ -145,9 +136,7 @@ const ProfileDropdown = (props: ButtonProps) => {
 };
 
 export const ProfileMenuItems = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { routes: authRoutes, user } = useAuth();
   const flags = useFlags();
   return (
@@ -170,9 +159,9 @@ export const ProfileMenuItems = () => {
         fontWeight="medium"
         as="a"
         href={authRoutes.logoutUrl}
-        color={semanticColors.accent.red}
+        color={colors.accent.red}
         borderTop="1px solid"
-        borderTopColor={semanticColors.border.primary}
+        borderTopColor={colors.border.primary}
       >
         Sign out
       </MenuItem>

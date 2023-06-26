@@ -68,13 +68,13 @@ const SinkDetail = ({ sinksResponse }: SinkDetailProps) => {
                   p={6}
                   border="solid 1px"
                   borderRadius="8px"
-                  borderColor="semanticColors.border.primary"
+                  borderColor="border.primary"
                 >
                   {isShowCreateError ? (
                     <Box
                       display="flex"
                       alignItems="center"
-                      color="semanticColors.foreground.secondary"
+                      color="foreground.secondary"
                     >
                       <DiamondErrorIcon />
                       <Text fontSize="sm" lineHeight="16px" marginLeft={2}>
@@ -87,10 +87,7 @@ const SinkDetail = ({ sinksResponse }: SinkDetailProps) => {
                       <Box fontSize="14px" fontWeight="500">
                         {sink.name} DDL Statement
                       </Box>
-                      <Box
-                        fontSize="14px"
-                        color="semanticColors.foreground.secondary"
-                      >
+                      <Box fontSize="14px" color="foreground.secondary">
                         The following statement was used to create this sink.
                       </Box>
                       <CopyableBox

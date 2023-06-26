@@ -25,9 +25,7 @@ const DeleteKeyModal = (props: Props) => {
     deleteUserApiToken(props.clientId);
   };
 
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
     <DangerActionModal
@@ -43,7 +41,7 @@ const DeleteKeyModal = (props: Props) => {
       size="sm"
       variant="outline"
     >
-      <Text fontSize="sm" color={semanticColors.foreground.primary}>
+      <Text fontSize="sm" color={colors.foreground.primary}>
         Deleting this app password will revoke access to any devices or services
         using it to connect to Materialize.
       </Text>

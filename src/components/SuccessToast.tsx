@@ -25,12 +25,12 @@ const SuccessToastComponent = ({
 
   return (
     <Box
-      bg={colors.semanticColors.background.primary}
+      bg={colors.background.primary}
       alignItems="start"
       shadow={shadows.level3}
       border="1px solid"
       borderRadius="lg"
-      borderColor={colors.semanticColors.border.primary}
+      borderColor={colors.border.primary}
       px="6"
       py="4"
       width="auto"
@@ -43,7 +43,7 @@ const SuccessToastComponent = ({
         <Text
           fontWeight="500"
           fontSize="sm"
-          color={colors.semanticColors.foreground.secondary}
+          color={colors.foreground.secondary}
         >
           {description}
         </Text>

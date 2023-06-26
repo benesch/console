@@ -4,12 +4,10 @@ import React from "react";
 import { MaterializeTheme } from "~/theme";
 
 const CommandChevron = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   return (
-    <Box fontSize="lg" lineHeight="6" color={semanticColors.accent.purple}>
+    <Box fontSize="lg" lineHeight="6" color={colors.accent.purple}>
       &gt;
     </Box>
   );

@@ -49,12 +49,10 @@ type FormValues = {
 };
 
 const SuccessToastDescription = ({ secretName }: { secretName: string }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <>
-      <Text color={semanticColors.foreground.primary} as="span">
+      <Text color={colors.foreground.primary} as="span">
         {secretName}{" "}
       </Text>
       created successfully
@@ -77,10 +75,7 @@ const NewSecretModal = ({
   const [showGenericQueryError, setShowGenericQueryError] = useState(false);
   const toast = useSuccessToast();
 
-  const {
-    shadows,
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { shadows, colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
 
   const {
@@ -204,10 +199,7 @@ const NewSecretModal = ({
                 width="100%"
               >
                 <AccordionItem>
-                  <AccordionButton
-                    py="2"
-                    color={semanticColors.accent.brightPurple}
-                  >
+                  <AccordionButton py="2" color={colors.accent.brightPurple}>
                     <Text textStyle="text-ui-med">Additional Options</Text>
                     <AccordionIcon ml="2" />
                   </AccordionButton>

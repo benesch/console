@@ -42,18 +42,12 @@ import { SchemaObjectFilters } from "~/useSchemaObjectFilters";
 import CreateConnectionSuccessModal from "./create/CreateConnectionSuccessModal";
 
 const FiltersEmptyState = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <EmptyListWrapper>
       <EmptyListHeader>
-        <Circle p={2} bg={semanticColors.background.secondary}>
-          <ConnectionIcon
-            width="6"
-            height="6"
-            color={semanticColors.accent.purple}
-          />
+        <Circle p={2} bg={colors.background.secondary}>
+          <ConnectionIcon width="6" height="6" color={colors.accent.purple} />
         </Circle>
         <EmptyListHeaderContents
           title="No available connections"
@@ -65,18 +59,12 @@ const FiltersEmptyState = () => {
 };
 
 const EmptyState = () => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <EmptyListWrapper>
       <EmptyListHeader>
-        <Circle p={2} bg={semanticColors.background.secondary}>
-          <ConnectionIcon
-            width="6"
-            height="6"
-            color={semanticColors.accent.purple}
-          />
+        <Circle p={2} bg={colors.background.secondary}>
+          <ConnectionIcon width="6" height="6" color={colors.accent.purple} />
         </Circle>
         <EmptyListHeaderContents
           title="No available connections"
@@ -85,7 +73,7 @@ const EmptyState = () => {
         <Text
           fontSize="xs"
           textAlign="center"
-          color={semanticColors.foreground.secondary}
+          color={colors.foreground.secondary}
         >
           Need help?{" "}
           <TextLink

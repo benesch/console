@@ -24,10 +24,7 @@ export type LabeledSelectProps = SelectProps & { label: string };
 // https://github.com/chakra-ui/chakra-ui/blob/c483d859d015d850bc871cc5156f159a7694e795/packages/components/select/src/select.tsx
 // So that I could add a label inside the wrapper component
 const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
-  const {
-    colors: { semanticColors },
-    radii,
-  } = useTheme<MaterializeTheme>();
+  const { colors, radii } = useTheme<MaterializeTheme>();
 
   const styles = useMultiStyleConfig("Select", props);
 
@@ -88,13 +85,13 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
       alignItems="center"
       // custom styles
       borderRadius={radii.lg}
-      border={`1px solid ${semanticColors.border.secondary}`}
+      border={`1px solid ${colors.border.secondary}`}
       boxShadow="
         0px 1px 3px 0px hsla(0, 0%, 0%, 0.06), 
         0px 1px 1px 0px hsla(0, 0%, 0%, 0.04),
         0px 0px 0px 0px hsla(0, 0%, 0%, 0)"
       _focusWithin={{
-        border: `1px solid ${semanticColors.accent.brightPurple}`,
+        border: `1px solid ${colors.accent.brightPurple}`,
         boxShadow:
           "0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 0px hsla(0, 0%, 0%, 0), 0px 0px 0px 2px hsla(257, 100%, 65%, 0.24)" /* accent.brightPurple */,
       }}
@@ -107,8 +104,8 @@ const LabeledSelect = forwardRef<LabeledSelectProps, "select">((props, ref) => {
           fontWeight: 500,
           lineHeight: "16px",
           padding: "8px 12px",
-          borderRight: `1px solid ${semanticColors.border.secondary}`,
-          backgroundColor: semanticColors.background.secondary,
+          borderRight: `1px solid ${colors.border.secondary}`,
+          backgroundColor: colors.background.secondary,
         }}
       >
         {props.label}

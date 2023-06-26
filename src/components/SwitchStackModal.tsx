@@ -94,7 +94,7 @@ const SwitchStackModal = () => {
         size="sm"
         width="auto"
         fontWeight={500}
-        color="semanticColors.foreground.primary"
+        color="foreground.primary"
         _hover={NAV_HOVER_STYLES}
         gap={NAV_HORIZONTAL_SPACING}
         height="auto"
@@ -106,9 +106,9 @@ const SwitchStackModal = () => {
         <Tag
           fontSize={12}
           borderWidth="1px"
-          borderColor="semanticColors.border.info"
-          background="semanticColors.background.info"
-          color="semanticColors.foreground.secondary"
+          borderColor="border.info"
+          background="background.info"
+          color="foreground.secondary"
         >
           Internal
         </Tag>
@@ -151,11 +151,7 @@ const SwitchStackModal = () => {
             <ModalCloseButton />
             <ModalBody pt="2" pb="6" alignItems="stretch">
               <FormControl isInvalid={!!formState.errors.stackName}>
-                <Text
-                  color="semanticColors.foreground.secondary"
-                  fontSize="sm"
-                  my="4"
-                >
+                <Text color="foreground.secondary" fontSize="sm" my="4">
                   Current Stack: {getCurrentStack(location.hostname)}
                 </Text>
                 <FormLabel htmlFor="stackName" fontSize="sm">

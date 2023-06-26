@@ -43,38 +43,30 @@ import ShellPrompt from "./ShellPrompt";
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
 const NoticeOutput = ({ notice }: { notice: Notice }) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <VStack alignItems="flex-start">
-      <Code color={semanticColors.foreground.secondary}>
+      <Code color={colors.foreground.secondary}>
         {notice.severity.toUpperCase()}: {notice.message}
       </Code>
       {notice.detail && (
-        <Code color={semanticColors.foreground.secondary}>
-          DETAIL: {notice.detail}
-        </Code>
+        <Code color={colors.foreground.secondary}>DETAIL: {notice.detail}</Code>
       )}
       {notice.hint && (
-        <Code color={semanticColors.foreground.secondary}>
-          HINT: {notice.hint}
-        </Code>
+        <Code color={colors.foreground.secondary}>HINT: {notice.hint}</Code>
       )}
     </VStack>
   );
 };
 
 const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <Flex
       alignItems="flex-start"
       borderRadius="lg"
       borderWidth="1px"
-      borderColor={semanticColors.border.secondary}
+      borderColor={colors.border.secondary}
       p="4"
       {...props}
     >
@@ -145,9 +137,7 @@ type HistoryOutputProps = {
 };
 
 const HistoryOutput = (props: HistoryOutputProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const historyOutput = useRecoilValue(historyItemAtom(props.historyId ?? ""));
 
   return (
@@ -156,7 +146,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
       borderBottomWidth="1px"
       width="100%"
       p="6"
-      borderBottomColor={semanticColors.border.secondary}
+      borderBottomColor={colors.border.secondary}
       spacing={0}
     >
       {historyOutput.kind === "notice" ? (
@@ -215,9 +205,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                     )}
                     <Code
                       color={
-                        hasErrored
-                          ? semanticColors.accent.red
-                          : semanticColors.accent.green
+                        hasErrored ? colors.accent.red : colors.accent.green
                       }
                     >
                       {timeTaken}

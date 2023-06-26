@@ -29,11 +29,7 @@ export const SQLSuggestionBox = ({ title, string }: SQLSuggestion) => {
 
   return (
     <VStack spacing={1} alignItems="stretch">
-      <Text
-        size="xs"
-        fontWeight="600"
-        color={colors.semanticColors.foreground.secondary}
-      >
+      <Text size="xs" fontWeight="600" color={colors.foreground.secondary}>
         {title}
       </Text>
       <CopyableBox contents={string}>{string}</CopyableBox>
@@ -82,34 +78,29 @@ export const IconBox = ({ type, children }: IconBoxProps) => {
 
   let overlapIcon = (
     <Slash
-      fillColor={colors.semanticColors.foreground.primary}
-      bgColor={colors.semanticColors.background.primary}
+      fillColor={colors.foreground.primary}
+      bgColor={colors.background.primary}
     />
   );
   switch (type) {
     case "Missing":
       overlapIcon = (
         <Missing
-          fillColor={colors.semanticColors.foreground.primary}
-          bgColor={colors.semanticColors.background.primary}
+          fillColor={colors.foreground.primary}
+          bgColor={colors.background.primary}
         />
       );
       break;
     default:
       overlapIcon = (
         <Slash
-          fillColor={colors.semanticColors.foreground.primary}
-          bgColor={colors.semanticColors.background.primary}
+          fillColor={colors.foreground.primary}
+          bgColor={colors.background.primary}
         />
       );
   }
   return (
-    <Box
-      stroke={colors.semanticColors.border.primary}
-      h="40px"
-      w="40px"
-      position="relative"
-    >
+    <Box stroke={colors.border.primary} h="40px" w="40px" position="relative">
       <Box
         p="8px"
         position="absolute"
@@ -134,23 +125,17 @@ export const EmptyListHeaderContents = ({
   title,
   helpText,
 }: EmptyListHeaderContentsProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   return (
     <VStack spacing={2}>
-      <Heading
-        fontSize="md"
-        fontWeight={500}
-        color={semanticColors.foreground.primary}
-      >
+      <Heading fontSize="md" fontWeight={500} color={colors.foreground.primary}>
         {title}
       </Heading>
       <Heading
         fontSize="sm"
         lineHeight="20px"
         fontWeight={400}
-        color={semanticColors.foreground.secondary}
+        color={colors.foreground.secondary}
       >
         {helpText}
       </Heading>

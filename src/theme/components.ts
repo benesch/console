@@ -31,9 +31,9 @@ export const Input = defineInputStyleConfig({
       fontSize: "14px",
       lineHeight: "16px",
       width: "100%",
-      backgroundColor: "semanticColors.background.secondary",
+      backgroundColor: "background.secondary",
       borderWidth: "1px",
-      borderColor: "semanticColors.border.secondary",
+      borderColor: "border.secondary",
       boxShadow: "0px 0px 0px 0px hsla(0, 0%, 0%, 0)",
       transition: "box-shadow 50ms ease-out",
       _hover: {
@@ -50,8 +50,8 @@ export const Input = defineInputStyleConfig({
       field: {
         borderRadius: "lg",
         _focus: {
-          backgroundColor: "semanticColors.background.primary",
-          borderColor: "semanticColors.accent.brightPurple",
+          backgroundColor: "background.primary",
+          borderColor: "accent.brightPurple",
           boxShadow: "input.focus",
         },
       },
@@ -59,10 +59,10 @@ export const Input = defineInputStyleConfig({
     error: defineInputPartsStyle({
       field: {
         borderRadius: "lg",
-        borderColor: "semanticColors.accent.red",
+        borderColor: "accent.red",
         boxShadow: "input.error",
         _focus: {
-          backgroundColor: "semanticColors.background.primary",
+          backgroundColor: "background.primary",
         },
       },
     }),
@@ -83,7 +83,7 @@ export const Modal = {
     },
     dialog: {
       borderRadius: "xl",
-      backgroundColor: "semanticColors.background.primary",
+      backgroundColor: "background.primary",
       shadows: "shadows.level4",
     },
     body: {
@@ -98,12 +98,12 @@ export const Modal = {
     },
     closeButton: {
       right: "2",
-      color: "semanticColors.foreground.secondary",
+      color: "foreground.secondary",
     },
   }),
   defaultProps: {
     size: "md",
-    backgroundColor: "semanticColors.background.primary",
+    backgroundColor: "background.primary",
   },
   variants: {
     "2xl": {
@@ -142,13 +142,13 @@ const { defineMultiStyleConfig: defineSelectConfig, definePartsStyle } =
 export const Select = defineSelectConfig({
   baseStyle: definePartsStyle({
     icon: {
-      color: "semanticColors.foreground.secondary",
+      color: "foreground.secondary",
     },
   }),
   variants: {
     borderless: definePartsStyle({
       field: {
-        color: "semanticColors.foreground.secondary",
+        color: "foreground.secondary",
         fontSize: "14px",
         height: "32px",
         lineHeight: "16px",
@@ -157,7 +157,7 @@ export const Select = defineSelectConfig({
           cursor: "pointer",
         },
         _focus: {
-          background: "semanticColors.background.secondary",
+          background: "background.secondary",
         },
       },
     }),
@@ -186,11 +186,11 @@ export const Switch = defineSwitchConfig({
       },
     },
     track: {
-      backgroundColor: "semanticColors.border.secondary",
+      backgroundColor: "border.secondary",
       shadow:
         "inset 0px 0px 0.5px rgba(0, 0, 0, 0.16), inset 0px 0px 2px rgba(0, 0, 0, 0.08)",
       _checked: {
-        backgroundColor: "semanticColors.accent.brightPurple",
+        backgroundColor: "accent.brightPurple",
         shadow:
           "inset 0px 0px 0.5px rgba(0, 0, 0, 0.16), inset 0px 0px 2px rgba(0, 0, 0, 0.12), 0 0 4px 0 rgba(90, 52, 302, 0.16)",
       },
@@ -207,7 +207,7 @@ const { defineMultiStyleConfig } = createMultiStyleConfigHelpers([
   "th",
 ]);
 
-const tableBorderStyle = `solid 1px ${`semanticColors.border.secondary`}`;
+const tableBorderStyle = `solid 1px ${`border.secondary`}`;
 export const Table = defineMultiStyleConfig({
   baseStyle: {},
   variants: {
@@ -240,42 +240,42 @@ export const Table = defineMultiStyleConfig({
       th: {
         textTransform: "none",
         fontFamily: "body",
-        color: "semanticColors.foreground.secondary",
+        color: "foreground.secondary",
         fontSize: "sm",
         fontWeight: "500",
-        backgroundColor: "semanticColors.background.secondary",
+        backgroundColor: "background.secondary",
         border: tableBorderStyle,
         borderWidth: "1px",
-        borderColor: "semanticColors.border.secondary",
+        borderColor: "border.secondary",
         borderX: "none",
         "&:first-of-type": {
           borderRadius: "8px 0 0 8px",
           borderLeftWidth: "1px",
           borderLeftStyle: "solid",
-          borderLeftColor: "semanticColors.border.secondary",
+          borderLeftColor: "border.secondary",
         },
         "&:only-child": {
           borderRadius: "8px",
           borderWidth: "1px",
           borderStyle: "solid",
-          borderColor: "semanticColors.border.secondary",
+          borderColor: "border.secondary",
         },
         "&:last-child:not(:only-child)": {
           borderRadius: "0 8px 8px 0",
           borderRightWidth: "1px",
           borderRightStyle: "solid",
-          borderRightColor: "semanticColors.border.secondary",
+          borderRightColor: "border.secondary",
         },
       },
       tr: {
         _hover: {
-          bg: "semanticColors.background.secondary",
+          bg: "background.secondary",
         },
       },
       td: {
         borderBottom: tableBorderStyle,
         borderBottomWidth: "1px",
-        borderBottomColor: "semanticColors.border.primary",
+        borderBottomColor: "border.primary",
       },
     },
     shell: {
@@ -284,16 +284,16 @@ export const Table = defineMultiStyleConfig({
         borderSpacing: 0,
         borderRadius: "lg",
         borderWidth: "1px",
-        borderColor: "semanticColors.border.secondary",
+        borderColor: "border.secondary",
       },
       th: {
         fontWeight: "500",
-        color: "semanticColors.foreground.secondary",
+        color: "foreground.secondary",
         borderWidth: "1px 0px",
         borderStyle: "solid",
-        backgroundColor: "semanticColors.background.secondary",
+        backgroundColor: "background.secondary",
         textTransform: "none",
-        borderColor: "semanticColors.border.secondary",
+        borderColor: "border.secondary",
       },
       td: {
         borderBottomWidth: "0",

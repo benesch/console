@@ -32,10 +32,10 @@ export const Card = React.forwardRef(
     return (
       <Box
         ref={ref}
-        bg={colors.semanticColors.background.primary}
+        bg={colors.background.primary}
         shadow={shadows.level2}
         border="1px solid"
-        borderColor={colors.semanticColors.border.primary}
+        borderColor={colors.border.primary}
         width="100%"
         borderRadius="xl"
         {...props}
@@ -61,7 +61,7 @@ export const CardHeader = (props: CardTitleProps) => {
   return (
     <CardTitle
       borderBottomWidth="1px"
-      borderBottomColor={colors.semanticColors.border.primary}
+      borderBottomColor={colors.border.primary}
       {...props}
     />
   );

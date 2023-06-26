@@ -72,13 +72,13 @@ const SourceDetail = ({ sourcesResponse }: SourceDetailProps) => {
                   p={6}
                   border="solid 1px"
                   borderRadius="8px"
-                  borderColor="semanticColors.border.primary"
+                  borderColor="border.primary"
                 >
                   {isShowCreateError ? (
                     <Box
                       display="flex"
                       alignItems="center"
-                      color="semanticColors.foreground.secondary"
+                      color="foreground.secondary"
                     >
                       <DiamondErrorIcon />
                       <Text fontSize="sm" lineHeight="16px" marginLeft={2}>
@@ -91,10 +91,7 @@ const SourceDetail = ({ sourcesResponse }: SourceDetailProps) => {
                       <Box fontSize="14px" fontWeight="500">
                         {source.name} DDL Statement
                       </Box>
-                      <Box
-                        fontSize="14px"
-                        color="semanticColors.foreground.secondary"
-                      >
+                      <Box fontSize="14px" color="foreground.secondary">
                         The following statement was used to create this source.
                       </Box>
                       <CopyableBox

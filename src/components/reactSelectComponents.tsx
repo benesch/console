@@ -35,18 +35,16 @@ export const DropdownIndicator = <
 export const Option = <Option,>(
   props: React.PropsWithChildren<OptionProps<Option, false, GroupBase<Option>>>
 ) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { isFocused, innerRef, innerProps } = props;
   return (
     <Box
       ref={innerRef}
       {...innerProps}
       _hover={{
-        backgroundColor: semanticColors.background.secondary,
+        backgroundColor: colors.background.secondary,
       }}
-      backgroundColor={isFocused ? semanticColors.background.secondary : ""}
+      backgroundColor={isFocused ? colors.background.secondary : ""}
       py="8px"
       pr="4"
       width="100%"
@@ -55,7 +53,7 @@ export const Option = <Option,>(
       <HStack spacing="0" alignItems="center" justifyContent="start">
         <Flex justifyContent="center" width="40px">
           {props.isSelected && (
-            <CheckmarkIcon color={semanticColors.accent.brightPurple} />
+            <CheckmarkIcon color={colors.accent.brightPurple} />
           )}
         </Flex>
         <Text fontSize="14px" lineHeight="16px" userSelect="none">

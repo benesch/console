@@ -33,22 +33,20 @@ export const InlayBanner = ({
   buttonProps = {},
   ...props
 }: InlayBannerProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
 
   const colorScheme = {
     error: {
-      border: semanticColors.border.error,
-      background: semanticColors.background.error,
+      border: colors.border.error,
+      background: colors.background.error,
     },
     info: {
-      border: semanticColors.border.info,
-      background: semanticColors.background.info,
+      border: colors.border.info,
+      background: colors.background.info,
     },
     warn: {
-      border: semanticColors.border.warn,
-      background: semanticColors.background.warn,
+      border: colors.border.warn,
+      background: colors.background.warn,
     },
   };
 
@@ -69,14 +67,14 @@ export const InlayBanner = ({
               lineHeight="16px"
               fontWeight="500"
               opacity="0.5"
-              color={semanticColors.foreground.primary}
+              color={colors.foreground.primary}
             >
               {label}
             </Heading>
             <Text
               fontSize="sm"
               lineHeight="20px"
-              color={semanticColors.foreground.primary}
+              color={colors.foreground.primary}
             >
               {message}
             </Text>
@@ -86,7 +84,7 @@ export const InlayBanner = ({
               variant="secondary"
               size="sm"
               flexShrink={0}
-              bg={semanticColors.background.primary}
+              bg={colors.background.primary}
               {...buttonProps}
             >
               {buttonText}

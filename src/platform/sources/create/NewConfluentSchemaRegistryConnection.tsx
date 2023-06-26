@@ -88,9 +88,7 @@ const NewConfluentSchemaRegistryConnection = ({
   onClose,
   onSuccess,
 }: NewConfluentSchemaRegistryConnectionProps) => {
-  const {
-    colors: { semanticColors },
-  } = useTheme<MaterializeTheme>();
+  const { colors } = useTheme<MaterializeTheme>();
   const { track } = useSegment();
   const toast = useSuccessToast();
   const [isCreating, setIsCreating] = React.useState(false);
@@ -245,7 +243,7 @@ const NewConfluentSchemaRegistryConnection = ({
       toast({
         description: (
           <>
-            <Text color={semanticColors.foreground.primary} as="span">
+            <Text color={colors.foreground.primary} as="span">
               {values.name}{" "}
             </Text>
             created successfully
@@ -289,7 +287,7 @@ const NewConfluentSchemaRegistryConnection = ({
               title="General"
               variant="narrow"
               borderBottom="1px solid"
-              borderColor={semanticColors.border.primary}
+              borderColor={colors.border.primary}
               pb="2"
               px="6"
             >
@@ -345,10 +343,7 @@ const NewConfluentSchemaRegistryConnection = ({
                   width="100%"
                 >
                   <AccordionItem>
-                    <AccordionButton
-                      color={semanticColors.accent.brightPurple}
-                      py="2"
-                    >
+                    <AccordionButton color={colors.accent.brightPurple} py="2">
                       <Text textStyle="text-ui-med">Additional Options</Text>
                       <AccordionIcon ml="2" />
                     </AccordionButton>

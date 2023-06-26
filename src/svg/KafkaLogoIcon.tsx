@@ -11,7 +11,7 @@ const KafkaLogoIcon = (props: IconProps) => {
       height="6"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
-      color={colors.semanticColors.foreground.primary}
+      color={colors.foreground.primary}
       {...props}
     >
       <path
