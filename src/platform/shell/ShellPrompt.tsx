@@ -2,9 +2,9 @@ import { Code, HStack, Spinner, StackProps, useTheme } from "@chakra-ui/react";
 import React, { KeyboardEventHandler } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
+import CommandBlock from "~/components/CommandBlock";
 import { MaterializeTheme } from "~/theme";
 
-import CommandBlock from "./CommandBlock";
 import CommandChevron from "./CommandChevron";
 import { promptAtom, shellStateAtom } from "./recoil/shell";
 
@@ -27,18 +27,18 @@ const ShellPrompt = ({
 
   return (
     <HStack {...rest} alignItems="flex-start" p="6">
-      {isCommandProcessing ? (
-        <HStack color={colors.foreground.tertiary} cursor="not-allowed">
-          <Spinner size="sm" thickness="1.5px" speed="0.65s" />
-          <Code>Command is processing</Code>
-        </HStack>
-      ) : socketError ? (
+      {socketError ? (
         <>
           <CommandChevron color={colors.accent.red} />
           <Code color={colors.foreground.tertiary} cursor="not-allowed">
             {socketError}
           </Code>
         </>
+      ) : isCommandProcessing ? (
+        <HStack color={colors.foreground.tertiary} cursor="not-allowed">
+          <Spinner size="sm" thickness="1.5px" speed="0.65s" />
+          <Code>Command is processing</Code>
+        </HStack>
       ) : (
         <>
           <CommandChevron />

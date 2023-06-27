@@ -30,6 +30,11 @@ jest.mock("~/analytics/segment", () => {
 });
 jest.mock("~/hooks/useBootIntercom");
 
+// TODO: Get rid of when react-textarea-code-editor is deprecated
+jest.mock("@uiw/react-textarea-code-editor", () => ({
+  _default: () => null,
+}));
+
 // Establish API mocking before all tests.
 beforeAll(() => {
   mockFlags({});

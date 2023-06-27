@@ -25,6 +25,7 @@ export const lightColors: ThemeColors = {
     primary: colors.white,
     secondary: colors.gray[50],
     tertiary: colors.gray[100],
+    shellTutorial: colors.gray[100],
     error: colors.red[50],
     info: colors.blue[50],
     warn: colors.yellow[100],

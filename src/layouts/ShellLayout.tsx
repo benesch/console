@@ -1,11 +1,19 @@
-import { Box, Center, Flex, Spinner, toCSSVar, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Flex,
+  Spinner,
+  toCSSVar,
+  useTheme,
+  VStack,
+} from "@chakra-ui/react";
 import { Global, ThemeProvider as EmotionThemeProvider } from "@emotion/react";
 import { ErrorBoundary } from "@sentry/react";
 import React, { PropsWithChildren, useMemo } from "react";
 
 import AccountStatusAlert from "~/components/AccountStatusAlert";
 import ErrorBox from "~/components/ErrorBox";
-import { darkTheme } from "~/theme";
+import { darkTheme, MaterializeTheme } from "~/theme";
 
 import NavBar from "./NavBar";
 import PageFooter from "./PageFooter";
@@ -49,6 +57,8 @@ export const ShellThemeProvider = ({ children }: PropsWithChildren) => {
  *
  */
 export const ShellLayout = (props: ShellLayoutProps) => {
+  const { colors } = useTheme<MaterializeTheme>();
+
   return (
     <Flex direction="column" height="100vh">
       <AccountStatusAlert />
@@ -83,9 +93,12 @@ export const ShellLayout = (props: ShellLayoutProps) => {
                   flex="1"
                   style={{
                     boxShadow: "none", // We set box shadow to none since the theme provider sets its box shadow by default
+                    colorScheme: "dark",
                   }}
                   minHeight="0"
                   position="relative"
+                  borderWidth="1px"
+                  borderColor={colors.border.secondary}
                 >
                   {props.children}
                 </Box>
