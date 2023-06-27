@@ -367,7 +367,7 @@ const Shell = () => {
       commitToHistory(
         createDefaultNoticeOutput({
           message:
-            "There was a problem returning the results. Please try again.",
+            "There was a problem executing your query. Please try again.",
           severity: "Error",
         })
       );
@@ -481,7 +481,7 @@ const Shell = () => {
       commitToHistory(
         createDefaultNoticeOutput({
           message:
-            "Connection was interrupted. Some session state may have been lost.",
+            "The connection was interrupted. Some session state may have been lost.",
           severity: "Info",
         })
       );
