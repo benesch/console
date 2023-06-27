@@ -186,9 +186,9 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                 error,
               } = commandResult;
 
-              let renderTable = null;
+              let table = null;
               if (hasRows && cols) {
-                renderTable = (
+                table = (
                   <TableContainer>
                     <SqlSelectTable rows={rows ?? []} cols={cols} />
                   </TableContainer>
@@ -207,7 +207,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                   {!hasRows && !error && (
                     <CommandBlock readOnly value={commandCompletePayload} />
                   )}
-                  {renderTable}
+                  {table}
 
                   {notices.map((notice, noticeIdx) => (
                     <NoticeOutput key={noticeIdx} notice={notice} />
@@ -489,8 +489,8 @@ const Shell = () => {
   };
 
   // TODO: Get rid of console logs
-  console.log("history", history);
-  console.log("state machine state", webSocketState);
+  console.debug("history", history);
+  console.debug("state machine state", webSocketState);
 
   return (
     <VStack

@@ -93,8 +93,17 @@ export const historySelector = selector({
 });
 
 // Copied from https://materialize.com/docs/sql/subscribe/#output
-const RESERVED_SUBSCRIBE_COLUMNS = ["mz_timestamp", "mz_progressed", "mz_diff"];
+const SUBSCRIBE_METADATA_COLUMNS = ["mz_timestamp", "mz_progressed", "mz_diff"];
 
+/**
+ *
+ * A SUBSCRIBE command's output consists of an array of row where each
+ * row has an `mz_diff` column which indicates the copies of the row inserted.
+ * If mz_diff is negative, it indicates the copies of the row deleted.
+ *
+ * This function computes the current state of the output given mz_diff.
+ *
+ */
 function mergeMzDiffs(commandResult: CommandResult): CommandResult {
   if (
     !commandResult.isStreamingResult ||
@@ -106,12 +115,12 @@ function mergeMzDiffs(commandResult: CommandResult): CommandResult {
   }
 
   const newCols = commandResult.cols.filter(
-    (col) => !RESERVED_SUBSCRIBE_COLUMNS.includes(col)
+    (col) => !SUBSCRIBE_METADATA_COLUMNS.includes(col)
   );
 
-  const reservedSubscribeColumnsIndicesByCol = commandResult.cols.reduce(
+  const reservedSubscribeColumnsIndicesByCol = commandResult.cols.reduceRight(
     (accum, col, colIndex) => {
-      if (RESERVED_SUBSCRIBE_COLUMNS.includes(col)) {
+      if (SUBSCRIBE_METADATA_COLUMNS.includes(col)) {
         accum.set(col, colIndex);
       }
       return accum;
@@ -136,7 +145,7 @@ function mergeMzDiffs(commandResult: CommandResult): CommandResult {
 
     const diff = row[mzDiffIndex] as number;
 
-    let { count } = accum.get(rowHash) ?? {};
+    let { count } = accum.get(rowHash) ?? {}; // A row's mz_diff value
 
     count = count ? count + diff : diff;
 
