@@ -25,6 +25,7 @@ import { useSegment } from "~/analytics/segment";
 import {
   DeletableObjectType,
   deleteObjectQueryBuilder,
+  supportsDropCascase,
 } from "~/api/materialize/buildDeletObjectStatement";
 import { DatabaseObject } from "~/api/materialize/types";
 import useObjectDependencies from "~/api/materialize/useObjectDependencies";
@@ -117,7 +118,7 @@ const DeleteObjectModal = ({
               </ModalBody>
             </>
           ) : showConfirmation ||
-            objectType === "CLUSTER REPLICA" ||
+            !supportsDropCascase(objectType) ||
             dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
