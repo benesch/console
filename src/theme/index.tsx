@@ -315,6 +315,7 @@ export const buildReactSelectFilterStyles = <
         ...base,
         padding: 0,
         margin: 0,
+        color: themeColors.foreground.primary,
       }),
     },
     overrides
