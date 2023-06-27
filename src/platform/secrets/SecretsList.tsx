@@ -24,7 +24,7 @@ import useSecretsListPage, {
 import DatabaseFilter from "~/components/DatabaseFilter";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
@@ -157,7 +157,7 @@ const SecretsTable = ({ secrets, refetchSecrets }: SecretsTableProps) => {
         <Tr>
           <Th>Name</Th>
           <Th>Created</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>

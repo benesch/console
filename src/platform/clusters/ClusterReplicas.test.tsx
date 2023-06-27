@@ -30,6 +30,7 @@ const useClusterReplicasWithUtilizationColumns = [
   "size",
   "cpu_percent",
   "memory_percent",
+  "linked_object_id",
 ];
 
 describe("ClusterReplicas", () => {
@@ -104,6 +105,7 @@ describe("ClusterReplicas", () => {
             "2xsmall",
             18.0015698,
             6.836938858032227,
+            "u10",
           ],
         ],
       })

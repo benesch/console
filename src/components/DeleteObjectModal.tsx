@@ -25,6 +25,7 @@ import { useSegment } from "~/analytics/segment";
 import {
   DeletableObjectType,
   deleteObjectQueryBuilder,
+  supportsDropCascase,
 } from "~/api/materialize/buildDeletObjectStatement";
 import { DatabaseObject } from "~/api/materialize/types";
 import useObjectDependencies from "~/api/materialize/useObjectDependencies";
@@ -116,10 +117,12 @@ const DeleteObjectModal = ({
                 </Flex>
               </ModalBody>
             </>
-          ) : showConfirmation || dependencyCount === 0 ? (
+          ) : showConfirmation ||
+            !supportsDropCascase(objectType) ||
+            dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
-                <VStack spacing="4">
+                <VStack spacing="4" width="100%">
                   {error && (
                     <InlayBanner
                       variant="error"
@@ -177,7 +180,7 @@ const DeleteObjectModal = ({
                   width="100%"
                   isDisabled={isDeleting}
                 >
-                  Delete Object
+                  Drop {objectType.toLowerCase()}
                 </Button>
               </ModalFooter>
             </>

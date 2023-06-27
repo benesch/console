@@ -24,7 +24,10 @@ const DeleteObjectMenuItem = ({
   return (
     <>
       <MenuItem
-        onClick={() => onOpen()}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
         textStyle="text-ui-med"
         color={colors.accent.red}
       >

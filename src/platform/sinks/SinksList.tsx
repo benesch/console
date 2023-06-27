@@ -14,7 +14,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Sink, SinksResponse } from "~/api/materialize/sink/useSinks";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
@@ -182,6 +182,7 @@ interface SinkTableProps {
 
 const SinkTable = (props: SinkTableProps) => {
   const regionSlug = useRegionSlug();
+  const navigate = useNavigate();
 
   return (
     <Table variant="standalone" data-testid="sink-table" borderRadius="xl">
@@ -191,12 +192,16 @@ const SinkTable = (props: SinkTableProps) => {
           <Th width="25%">Status</Th>
           <Th>Type</Th>
           <Th>Size</Th>
-          <Th width="80px"></Th>
+          <Th width="32px"></Th>
         </Tr>
       </Thead>
       <Tbody>
         {props.sinks.map((s) => (
-          <Tr key={s.id}>
+          <Tr
+            key={s.id}
+            onClick={() => navigate(sinkErrorsPath(regionSlug, s))}
+            cursor="pointer"
+          >
             <Td>
               <Box
                 maxW={{
@@ -210,16 +215,14 @@ const SinkTable = (props: SinkTableProps) => {
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                <Link to={sinkErrorsPath(regionSlug, s)}>
-                  <Tooltip
-                    label={`${s.databaseName}.${s.schemaName}.${s.name}`}
-                    placement="bottom"
-                    fontSize="xs"
-                    top={-1}
-                  >
-                    {s.name}
-                  </Tooltip>
-                </Link>
+                <Tooltip
+                  label={`${s.databaseName}.${s.schemaName}.${s.name}`}
+                  placement="bottom"
+                  fontSize="xs"
+                  top={-1}
+                >
+                  {s.name}
+                </Tooltip>
               </Box>
             </Td>
             <Td>

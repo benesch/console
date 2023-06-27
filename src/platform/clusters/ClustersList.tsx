@@ -14,15 +14,16 @@ import {
 } from "@chakra-ui/react";
 import { useFlags } from "launchdarkly-react-client-sdk";
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import { isSystemCluster } from "~/api/materialize";
 import { Cluster, useClusters } from "~/api/materialize/useClusters";
 import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
 import { PageHeader, PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -161,31 +162,41 @@ interface ClusterTableProps {
   refetchClusters: () => void;
 }
 
+function canDeleteCluster(cluster: Cluster) {
+  return !isSystemCluster(cluster.id) && !cluster.linkedObjectId;
+}
+
 const ClusterTable = (props: ClusterTableProps) => {
+  const navigate = useNavigate();
+
   return (
     <Table variant="standalone" data-testid="cluster-table" borderRadius="xl">
       <Thead>
         <Tr>
           <Th>Name</Th>
           <Th>Replicas</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>
         {props.clusters.map((c) => (
-          <Tr key={c.id}>
-            <Td>
-              <Link to={relativeClusterPath(c)}>{c.name}</Link>
-            </Td>
+          <Tr
+            key={c.id}
+            onClick={() => navigate(relativeClusterPath(c))}
+            cursor="pointer"
+          >
+            <Td>{c.name}</Td>
             <Td>{c.replicas.length}</Td>
             <Td>
-              <OverflowMenu>
-                <DeleteObjectMenuItem
-                  selectedObject={c}
-                  refetchObjects={props.refetchClusters}
-                  objectType="CLUSTER"
-                />
-              </OverflowMenu>
+              {canDeleteCluster(c) && (
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={c}
+                    refetchObjects={props.refetchClusters}
+                    objectType="CLUSTER"
+                  />
+                </OverflowMenu>
+              )}
             </Td>
           </Tr>
         ))}

@@ -19,6 +19,15 @@ jest.mock("~/platform/clusters/ClusterDetail", () => {
   };
 });
 
+const useClustersFetchColumns = [
+  "id",
+  "cluster_name",
+  "replica_id",
+  "replica_name",
+  "size",
+  "linked_object_id",
+];
+
 const emptyClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
   return res(
     ctx.status(200),
@@ -27,14 +36,7 @@ const emptyClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
         {
           tag: "SELECT 4",
           rows: [],
-          col_names: [
-            "id",
-            "cluster_name",
-            "replica_id",
-            "replica_name",
-            "size",
-            "memory_percent",
-          ],
+          col_names: useClustersFetchColumns,
           notices: [],
         },
       ],
@@ -59,6 +61,7 @@ const validClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
               "u3",
               "2xsmall",
               4.108572006225586,
+              "u10",
             ],
             [
               "u11",
@@ -67,16 +70,10 @@ const validClustersResponse = rest.post("*/api/sql", (_req, res, ctx) => {
               "u13",
               "3xsmall",
               1.2143135070800781,
+              "u10",
             ],
           ],
-          col_names: [
-            "id",
-            "cluster_name",
-            "replica_id",
-            "replica_name",
-            "size",
-            "memory_percent",
-          ],
+          col_names: useClustersFetchColumns,
           notices: [],
         },
       ],

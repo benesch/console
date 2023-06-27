@@ -17,6 +17,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import { useSegment } from "~/analytics/segment";
+import { isSystemCluster } from "~/api/materialize";
 import useMaxReplicasPerCluster from "~/api/materialize/useMaxReplicasPerCluster";
 import {
   ClusterReplicaWithUtilizaton,
@@ -26,7 +27,7 @@ import { Card, CardContent, CardHeader } from "~/components/cardComponents";
 import { CodeBlock } from "~/components/copyableComponents";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
 import { PageHeading } from "~/layouts/BaseLayout";
 import {
@@ -141,7 +142,11 @@ const ClusterReplicasPage = () => {
             )}
           </HStack>
           <HStack spacing={6} alignItems="flex-start">
-            <ReplicaTable replicas={replicas ?? []} refetchReplicas={refetch} />
+            <ReplicaTable
+              clusterId={clusterId}
+              replicas={replicas ?? []}
+              refetchReplicas={refetch}
+            />
             <Card flex={0} minW="384px" maxW="384px">
               <CardHeader>Interacting with cluster replicas</CardHeader>
               <CardContent pb={8}>
@@ -182,8 +187,16 @@ const ClusterReplicasPage = () => {
 };
 
 interface ReplicaTableProps {
+  clusterId?: string;
   replicas: ClusterReplicaWithUtilizaton[];
   refetchReplicas: () => void;
+}
+
+function canDeleteReplica(
+  clusterId: string | undefined,
+  replica: ClusterReplicaWithUtilizaton
+) {
+  return clusterId && !isSystemCluster(clusterId) && !replica.linkedObjectId;
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
@@ -196,7 +209,7 @@ const ReplicaTable = (props: ReplicaTableProps) => {
           <Th>Size</Th>
           <Th>CPU</Th>
           <Th>Memory</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>
@@ -225,13 +238,15 @@ const ReplicaTable = (props: ReplicaTableProps) => {
               )}
             </Td>
             <Td>
-              <OverflowMenu>
-                <DeleteObjectMenuItem
-                  selectedObject={r}
-                  refetchObjects={props.refetchReplicas}
-                  objectType="CLUSTER REPLICA"
-                />
-              </OverflowMenu>
+              {canDeleteReplica(props.clusterId, r) && (
+                <OverflowMenu>
+                  <DeleteObjectMenuItem
+                    selectedObject={r}
+                    refetchObjects={props.refetchReplicas}
+                    objectType="CLUSTER REPLICA"
+                  />
+                </OverflowMenu>
+              )}
             </Td>
           </Tr>
         ))}

@@ -63,12 +63,12 @@ describe("DeleteObjectModal", () => {
           "This action will permanently delete some_secret and can not be undone."
         )
       ).toBeVisible();
-      user.click(screen.getByRole("button", { name: "Delete Object" }));
+      user.click(screen.getByRole("button", { name: "Drop secret" }));
       expect(await screen.findByText("Object name is required.")).toBeVisible();
 
       const input = screen.getByLabelText("To confirm, type some_secret below");
       await act(() => user.type(input, "wrong name"));
-      user.click(screen.getByRole("button", { name: "Delete Object" }));
+      user.click(screen.getByRole("button", { name: "Drop secret" }));
       expect(screen.getByText("Object name must match exactly.")).toBeVisible();
     });
 
@@ -96,7 +96,7 @@ describe("DeleteObjectModal", () => {
       ).toBeVisible();
       const input = screen.getByLabelText("To confirm, type some_secret below");
       await user.type(input, "some_secret");
-      user.click(screen.getByRole("button", { name: "Delete Object" }));
+      user.click(screen.getByRole("button", { name: "Drop secret" }));
       await waitFor(() => expect(successMock).toHaveBeenCalled());
       expect(closeMock).toHaveBeenCalled();
     });
@@ -145,7 +145,7 @@ describe("DeleteObjectModal", () => {
       );
       const input = screen.getByLabelText("To confirm, type some_secret below");
       await user.type(input, "some_secret");
-      user.click(screen.getByRole("button", { name: "Delete Object" }));
+      user.click(screen.getByRole("button", { name: "Drop secret" }));
       await waitFor(() => expect(successMock).toHaveBeenCalled());
       expect(closeMock).toHaveBeenCalled();
     });

@@ -72,7 +72,14 @@ describe("ClusterOverview", () => {
     server.use(
       buildUseSqlQueryHandler({
         type: "SELECT" as const,
-        columns: ["id", "cluster_name", "replica_id", "replica_name", "size"],
+        columns: [
+          "id",
+          "cluster_name",
+          "replica_id",
+          "replica_name",
+          "size",
+          "linked_object_id",
+        ],
         rows: [],
         error: {
           message: "Something went wrong",

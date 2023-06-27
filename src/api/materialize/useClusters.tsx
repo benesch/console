@@ -7,6 +7,7 @@ import { assert } from "~/util";
 export interface Cluster {
   id: string;
   name: string;
+  linkedObjectId: string;
   replicas: Replica[];
 }
 
@@ -14,6 +15,7 @@ export interface Replica {
   id: string;
   name: string;
   size: string;
+  linkedObjectId: string;
   clusterName: string;
 }
 
@@ -28,8 +30,10 @@ export function useClustersFetch() {
     c.name as cluster_name,
     r.id as replica_id,
     r.name as replica_name,
-    r.size
+    r.size,
+    cl.object_id as linked_object_id
   FROM mz_clusters c
+  LEFT OUTER JOIN mz_internal.mz_cluster_links cl ON c.id = cl.cluster_id
   LEFT OUTER JOIN mz_cluster_replicas r ON c.id = r.cluster_id
   ORDER BY r.id;`
   );
@@ -48,6 +52,7 @@ export function useClustersFetch() {
       const replica: Replica | undefined = replicaId
         ? {
             id: replicaId.toString(),
+            linkedObjectId: getColumnByName(row, "linked_object_id") as string,
             name: getColumnByName(row, "replica_name") as string,
             size: getColumnByName(row, "size") as string,
             clusterName: clusterName,
@@ -59,6 +64,7 @@ export function useClustersFetch() {
       } else {
         clusterMap.set(clusterId, {
           id: clusterId,
+          linkedObjectId: getColumnByName(row, "linked_object_id") as string,
           name: clusterName,
           replicas: replica ? [replica] : [],
         });

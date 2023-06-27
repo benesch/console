@@ -23,7 +23,7 @@ import {
 import DatabaseFilter from "~/components/DatabaseFilter";
 import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
-import OverflowMenu from "~/components/OverflowMenu";
+import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import SchemaFilter from "~/components/SchemaFilter";
 import SearchInput from "~/components/SearchInput";
 import TextLink from "~/components/TextLink";
@@ -195,7 +195,7 @@ const ConnectionsTable = ({
           <Th width="25%">Type</Th>
           <Th width="25%">Sources</Th>
           <Th width="25%">Sinks</Th>
-          <Th width="80px"></Th>
+          <Th width={OVERFLOW_BUTTON_WIDTH}></Th>
         </Tr>
       </Thead>
       <Tbody>
