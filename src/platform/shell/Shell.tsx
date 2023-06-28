@@ -1,6 +1,7 @@
 import "./crt.css";
 
 import {
+  Box,
   Code,
   HStack,
   StackProps,
@@ -14,9 +15,10 @@ import {
   useTheme,
   VStack,
 } from "@chakra-ui/react";
-import { interpret, StateMachine } from "@xstate/fsm";
+import { captureException } from "@sentry/react";
+import { interpret, InterpreterStatus, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -24,7 +26,7 @@ import {
   useSetRecoilState,
 } from "recoil";
 
-import { Error, Notice } from "~/api/materialize/types";
+import { Error as MaterializeError, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
@@ -47,6 +49,7 @@ import {
   promptAtom,
   shellStateAtom,
 } from "./recoil/shell";
+import RunCommandButton from "./RunCommandButton";
 import ShellPrompt from "./ShellPrompt";
 
 const RECOIL_DEBOUNCE_WAIT_MS = 100;
@@ -70,7 +73,10 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
   );
 };
 
-const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
+const ErrorOutput = ({
+  error,
+  ...props
+}: { error: MaterializeError } & StackProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
@@ -171,7 +177,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
       ) : (
         <HStack alignItems="flex-start" width="100%">
           <CommandChevron />
-          <VStack spacing="6" alignItems="flex-start" width="100%">
+          <VStack spacing="6" alignItems="flex-start" flex="1" minWidth="0">
             <CommandBlock readOnly value={historyOutput.command} />
 
             {(commandResults ?? []).map((commandResult, commandResultIdx) => {
@@ -217,6 +223,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                       error={error}
                       width="100%"
                       maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                      overflow="auto"
                     />
                   )}
                   <Code
@@ -232,6 +239,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                 error={historyOutput.error}
                 width="100%"
                 maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                overflow="auto"
               />
             )}
           </VStack>
@@ -267,9 +275,22 @@ const Shell = () => {
     return stateMachine;
   };
 
-  const { socket } = useSqlWs({
-    open: true,
+  const [socketOpen, setSocketOpen] = useState(true);
+
+  const { socket, socketError } = useSqlWs({
+    open: socketOpen,
   });
+
+  const restartSocket = () => {
+    /**
+     * Since React batches state updates, we need to un-batch
+     * them by using a setTimeout.
+     */
+    setSocketOpen(false);
+    setTimeout(() => {
+      setSocketOpen(true);
+    }, 0);
+  };
 
   const { webSocketState } = shellState;
 
@@ -342,10 +363,30 @@ const Shell = () => {
       prevWebSocketState = newWebsocketState;
     });
 
+    const handleError = () => {
+      commitToHistory(
+        createDefaultNoticeOutput({
+          message:
+            "There was a problem executing your query. Please try again.",
+          severity: "Error",
+        })
+      );
+
+      restartSocket();
+    };
+
     stateMachine.subscribe((state) => {
-      if (!state.changed && !state.matches("initialState")) {
-        // TODO: Handle this error properly and log the event that caused the unsuccessful transition
-        console.error("Unsuccessful transition", state);
+      if (
+        !state.changed &&
+        !state.matches("initialState") &&
+        stateMachine.status !== InterpreterStatus.Stopped
+      ) {
+        captureException(new Error("Unsuccessful state machine transition"), {
+          extra: {
+            xState: state,
+          },
+        });
+        handleError();
       }
     });
 
@@ -357,81 +398,93 @@ const Shell = () => {
     );
 
     socket.onResult((result) => {
-      switch (result.type) {
-        case "ReadyForQuery":
-          if (stateMachine.state.matches("initialState")) {
-            stateMachine.send("READY_FOR_QUERY");
-          } else {
-            stateMachine.send("READY_FOR_QUERY");
-            assert(stateMachine.state.context.latestCommandOutput);
-            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          }
-          break;
-        case "CommandStarting":
-          if (result.payload.is_streaming) {
+      try {
+        switch (result.type) {
+          case "ReadyForQuery":
+            if (stateMachine.state.matches("initialState")) {
+              stateMachine.send("READY_FOR_QUERY");
+            } else {
+              stateMachine.send("READY_FOR_QUERY");
+              assert(stateMachine.state.context.latestCommandOutput);
+              updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            }
+            break;
+          case "CommandStarting":
+            if (result.payload.is_streaming) {
+              stateMachine.send({
+                type: "COMMAND_STARTING_IS_STREAMING",
+                hasRows: result.payload.has_rows,
+              });
+            } else if (result.payload.has_rows) {
+              stateMachine.send("COMMAND_STARTING_HAS_ROWS");
+            } else {
+              stateMachine.send("COMMAND_STARTING_DEFAULT");
+            }
+            break;
+          case "Rows":
+            stateMachine.send({ type: "ROWS", rows: result.payload });
+
+            if (stateMachine.state.matches("commandInProgressStreaming")) {
+              assert(stateMachine.state.context.latestCommandOutput);
+              debouncedUpdateHistoryItem(
+                stateMachine.state.context.latestCommandOutput
+              );
+            }
+            break;
+          case "Row":
+            if (stateMachine.state.matches("commandInProgressStreaming")) {
+              stateMachine.send({ type: "ROW", row: result.payload });
+
+              assert(stateMachine.state.context.latestCommandOutput);
+              debouncedUpdateHistoryItem(
+                stateMachine.state.context.latestCommandOutput
+              );
+            } else if (stateMachine.state.matches("commandInProgressHasRows")) {
+              stateMachine.send({ type: "ROW", row: result.payload });
+            }
+            break;
+          case "CommandComplete":
             stateMachine.send({
-              type: "COMMAND_STARTING_IS_STREAMING",
-              hasRows: result.payload.has_rows,
+              type: "COMMAND_COMPLETE",
+              commandCompletePayload: result.payload,
             });
-          } else if (result.payload.has_rows) {
-            stateMachine.send("COMMAND_STARTING_HAS_ROWS");
-          } else {
-            stateMachine.send("COMMAND_STARTING_DEFAULT");
-          }
-          break;
-        case "Rows":
-          stateMachine.send({ type: "ROWS", rows: result.payload });
 
-          if (stateMachine.state.matches("commandInProgressStreaming")) {
-            assert(stateMachine.state.context.latestCommandOutput);
-            debouncedUpdateHistoryItem(
-              stateMachine.state.context.latestCommandOutput
-            );
-          }
-          break;
-        case "Row":
-          if (stateMachine.state.matches("commandInProgressStreaming")) {
-            stateMachine.send({ type: "ROW", row: result.payload });
-
-            assert(stateMachine.state.context.latestCommandOutput);
-            debouncedUpdateHistoryItem(
-              stateMachine.state.context.latestCommandOutput
-            );
-          } else if (stateMachine.state.matches("commandInProgressHasRows")) {
-            stateMachine.send({ type: "ROW", row: result.payload });
-          }
-          break;
-        case "CommandComplete":
-          stateMachine.send({
-            type: "COMMAND_COMPLETE",
-            commandCompletePayload: result.payload,
-          });
-
-          assert(stateMachine.state.context.latestCommandOutput);
-          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          break;
-        case "Notice":
-          if (stateMachine.state.matches("readyForQuery")) {
-            commitToHistory(createDefaultNoticeOutput(result.payload));
-          } else {
-            stateMachine.send({ type: "NOTICE", notice: result.payload });
             assert(stateMachine.state.context.latestCommandOutput);
             updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          }
-          break;
-        case "Error":
-          stateMachine.send({
-            type: "ERROR",
-            error: result.payload,
-          });
-          assert(stateMachine.state.context.latestCommandOutput);
-          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
-          break;
+            break;
+          case "Notice":
+            if (stateMachine.state.matches("readyForQuery")) {
+              commitToHistory(createDefaultNoticeOutput(result.payload));
+            } else {
+              stateMachine.send({ type: "NOTICE", notice: result.payload });
+              assert(stateMachine.state.context.latestCommandOutput);
+              updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            }
+            break;
+          case "Error":
+            stateMachine.send({
+              type: "ERROR",
+              error: result.payload,
+            });
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+            break;
+        }
+      } catch (error) {
+        captureException(error);
+        handleError();
       }
     });
 
     return () => {
       stateMachine.stop();
+      commitToHistory(
+        createDefaultNoticeOutput({
+          message:
+            "The connection was interrupted. Some session state may have been lost.",
+          severity: "Info",
+        })
+      );
     };
   }, [socket, commitToHistory, updateHistoryItem, setShellState]);
 
@@ -440,7 +493,7 @@ const Shell = () => {
 
     const stateMachine = getStateMachine();
 
-    if (!stateMachine.state.matches("readyForQuery")) {
+    if (!stateMachine.state.matches("readyForQuery") || command.length === 0) {
       return;
     }
 
@@ -493,40 +546,51 @@ const Shell = () => {
   console.debug("state machine state", webSocketState);
 
   return (
-    <VStack
-      overflow="auto"
-      width="100%"
-      height="100%"
-      alignItems="flex-start"
-      spacing="0"
-      scrollBehavior="smooth"
-      ref={shellContainerRef}
-      className={
-        "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
-      }
-    >
-      {historyIds.length > 0 && (
-        <VStack
-          flexGrow="0"
-          flexShrink="0"
-          alignItems="flex-start"
-          width="100%"
-          minHeight="0"
-          spacing="0"
-        >
-          {historyIds.map((historyId) => (
-            <HistoryOutput key={historyId} historyId={historyId} />
-          ))}
-        </VStack>
-      )}
-      <ShellPrompt
-        flexGrow="1"
-        flexShrink="1"
-        minHeight="32"
+    <Box width="100%" height="100%" position="relative">
+      <VStack
+        overflow="auto"
         width="100%"
-        onCommandBlockKeyDown={handlePromptInput}
+        height="100%"
+        alignItems="flex-start"
+        spacing="0"
+        scrollBehavior="smooth"
+        ref={shellContainerRef}
+        className={
+          "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
+        }
+      >
+        {historyIds.length > 0 && (
+          <VStack
+            flexGrow="0"
+            flexShrink="0"
+            alignItems="flex-start"
+            width="100%"
+            minHeight="0"
+            spacing="0"
+          >
+            {historyIds.map((historyId) => (
+              <HistoryOutput key={historyId} historyId={historyId} />
+            ))}
+          </VStack>
+        )}
+        <ShellPrompt
+          flexGrow="1"
+          flexShrink="1"
+          minHeight="32"
+          width="100%"
+          onCommandBlockKeyDown={handlePromptInput}
+          socketError={socketError}
+        />
+      </VStack>
+      <RunCommandButton
+        runCommand={runCommand}
+        cancelStreaming={restartSocket}
+        socketError={socketError}
+        position="absolute"
+        bottom="6"
+        right="6"
       />
-    </VStack>
+    </Box>
   );
 };
 

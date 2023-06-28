@@ -1,13 +1,20 @@
-import { Box, useTheme } from "@chakra-ui/react";
+import { Box, BoxProps, useTheme } from "@chakra-ui/react";
 import React from "react";
 
 import { MaterializeTheme } from "~/theme";
 
-const CommandChevron = () => {
+type CommandChevronProps = BoxProps;
+
+const CommandChevron = (props: CommandChevronProps) => {
   const { colors } = useTheme<MaterializeTheme>();
 
   return (
-    <Box fontSize="lg" lineHeight="6" color={colors.accent.purple}>
+    <Box
+      {...props}
+      fontSize="lg"
+      lineHeight="5"
+      color={props.color ?? colors.accent.purple}
+    >
       &gt;
     </Box>
   );
