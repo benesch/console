@@ -1,7 +1,7 @@
 import { MenuItem, useDisclosure, useTheme } from "@chakra-ui/react";
 import React from "react";
 
-import { DeletableObjectType } from "~/api/materialize/buildDeletObjectStatement";
+import { DeletableObjectType } from "~/api/materialize/buildDropObjectStatement";
 import { DatabaseObject } from "~/api/materialize/types";
 import { MaterializeTheme } from "~/theme";
 
