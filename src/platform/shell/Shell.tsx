@@ -2,7 +2,6 @@ import "./crt.css";
 
 import {
   Code,
-  Flex,
   HStack,
   StackProps,
   Table,
@@ -16,6 +15,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { interpret, StateMachine } from "@xstate/fsm";
+import debounce from "lodash.debounce";
 import React, { useEffect, useRef } from "react";
 import {
   useRecoilCallback,
@@ -42,11 +42,14 @@ import {
   historyIdsAtom,
   HistoryItem,
   historyItemAtom,
+  historyItemCommandResultsSelector,
   historySelector,
   promptAtom,
   shellStateAtom,
 } from "./recoil/shell";
 import ShellPrompt from "./ShellPrompt";
+
+const RECOIL_DEBOUNCE_WAIT_MS = 100;
 
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
@@ -69,8 +72,9 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
 
 const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
   const { colors } = useTheme<MaterializeTheme>();
+
   return (
-    <Flex
+    <VStack
       alignItems="flex-start"
       borderRadius="lg"
       borderWidth="1px"
@@ -79,7 +83,9 @@ const ErrorOutput = ({ error, ...props }: { error: Error } & StackProps) => {
       {...props}
     >
       <Code>Error: {error.message}</Code>
-    </Flex>
+      {error.detail && <Code>Detail: {error.detail}</Code>}
+      {error.hint && <Code>Hint: {error.hint}</Code>}
+    </VStack>
   );
 };
 
@@ -147,6 +153,9 @@ type HistoryOutputProps = {
 const HistoryOutput = (props: HistoryOutputProps) => {
   const { colors } = useTheme<MaterializeTheme>();
   const historyOutput = useRecoilValue(historyItemAtom(props.historyId ?? ""));
+  const commandResults = useRecoilValue(
+    historyItemCommandResultsSelector(props.historyId ?? "")
+  );
 
   return (
     <VStack
@@ -165,63 +174,59 @@ const HistoryOutput = (props: HistoryOutputProps) => {
           <VStack spacing="6" alignItems="flex-start" width="100%">
             <CommandBlock readOnly value={historyOutput.command} />
 
-            {historyOutput.commandResults.map(
-              (commandResult, commandResultIdx) => {
-                const {
-                  hasRows,
-                  endTimeMs,
-                  initialTimeMs,
-                  commandCompletePayload,
-                  notices,
-                  cols,
-                  rows,
-                  error,
-                } = commandResult;
+            {(commandResults ?? []).map((commandResult, commandResultIdx) => {
+              const {
+                hasRows,
+                endTimeMs,
+                initialTimeMs,
+                commandCompletePayload,
+                notices,
+                cols,
+                rows,
+                error,
+              } = commandResult;
 
-                let renderTable = null;
-                if (hasRows && cols) {
-                  renderTable = (
-                    <TableContainer>
-                      <SqlSelectTable rows={rows ?? []} cols={cols} />
-                    </TableContainer>
-                  );
-                }
-
-                const timeTaken =
-                  endTimeMs && initialTimeMs
-                    ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
-                    : null;
-
-                const hasErrored = !!error;
-
-                return (
-                  <React.Fragment key={commandResultIdx}>
-                    {!hasRows && !error && (
-                      <CommandBlock readOnly value={commandCompletePayload} />
-                    )}
-                    {renderTable}
-
-                    {notices.map((notice, noticeIdx) => (
-                      <NoticeOutput key={noticeIdx} notice={notice} />
-                    ))}
-                    {error && (
-                      <ErrorOutput
-                        error={error}
-                        width="100%"
-                        maxWidth={ERROR_OUTPUT_MAX_WIDTH}
-                      />
-                    )}
-                    <Code
-                      color={
-                        hasErrored ? colors.accent.red : colors.accent.green
-                      }
-                    >
-                      {timeTaken}
-                    </Code>
-                  </React.Fragment>
+              let table = null;
+              if (hasRows && cols) {
+                table = (
+                  <TableContainer>
+                    <SqlSelectTable rows={rows ?? []} cols={cols} />
+                  </TableContainer>
                 );
               }
-            )}
+
+              const timeTaken =
+                endTimeMs && initialTimeMs
+                  ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
+                  : null;
+
+              const hasErrored = !!error;
+
+              return (
+                <React.Fragment key={commandResultIdx}>
+                  {!hasRows && !error && (
+                    <CommandBlock readOnly value={commandCompletePayload} />
+                  )}
+                  {table}
+
+                  {notices.map((notice, noticeIdx) => (
+                    <NoticeOutput key={noticeIdx} notice={notice} />
+                  ))}
+                  {error && (
+                    <ErrorOutput
+                      error={error}
+                      width="100%"
+                      maxWidth={ERROR_OUTPUT_MAX_WIDTH}
+                    />
+                  )}
+                  <Code
+                    color={hasErrored ? colors.accent.red : colors.accent.green}
+                  >
+                    {timeTaken}
+                  </Code>
+                </React.Fragment>
+              );
+            })}
             {historyOutput.error && (
               <ErrorOutput
                 error={historyOutput.error}
@@ -245,6 +250,8 @@ const Shell = () => {
     WebSocketFsmState
   > | null>(null);
 
+  const [shellState, setShellState] = useRecoilState(shellStateAtom);
+
   const getStateMachine = () => {
     if (stateMachineRef.current !== null) {
       return stateMachineRef.current as StateMachine.Service<
@@ -255,12 +262,16 @@ const Shell = () => {
     }
 
     const stateMachine = interpret(WebSocketFsm);
-    stateMachine.start();
+
     stateMachineRef.current = stateMachine;
     return stateMachine;
   };
 
-  const { socket, socketReady } = useSqlWs({ open: true });
+  const { socket } = useSqlWs({
+    open: true,
+  });
+
+  const { webSocketState } = shellState;
 
   const commitToHistory = useRecoilCallback(({ set }) => {
     return (historyItem: HistoryItem) => {
@@ -270,7 +281,7 @@ const Shell = () => {
         historyItem.historyId,
       ]);
     };
-  });
+  }, []);
 
   const clearHistory = useRecoilCallback(({ reset, set }) => {
     return () => {
@@ -286,42 +297,75 @@ const Shell = () => {
       const id = historyItem.historyId;
       set(historyItemAtom(id), historyItem);
     };
-  });
+  }, []);
 
   const history = useRecoilValue(historySelector);
   const historyIds = useRecoilValue(historyIdsAtom);
 
   const setPrompt = useSetRecoilState(promptAtom);
-  const [shellState, setShellState] = useRecoilState(shellStateAtom);
 
   useEffect(() => {
-    const scrollToTopOnCommandComplete = () => {
-      // Won't work for subscribe, maybe use state machine values?
+    const scrollToBottom = () => {
       if (shellContainerRef.current) {
         shellContainerRef.current.scrollTop =
           shellContainerRef.current.scrollHeight;
       }
     };
-    scrollToTopOnCommandComplete();
-  }, [historyIds, socketReady]);
+
+    if (
+      webSocketState === "readyForQuery" ||
+      webSocketState === "commandInProgressStreaming"
+    ) {
+      scrollToBottom();
+    }
+  }, [webSocketState]);
 
   useEffect(() => {
-    if (!socketReady) {
+    if (socket === null) {
       return;
     }
 
-    assert(socket);
+    const stateMachine = getStateMachine();
+
+    let prevWebSocketState: WebSocketFsmState["value"] | null = null;
+
+    stateMachine.subscribe(({ value: newWebsocketState }) => {
+      if (
+        prevWebSocketState === null ||
+        prevWebSocketState !== newWebsocketState
+      ) {
+        setShellState((prevState) => ({
+          ...prevState,
+          webSocketState: newWebsocketState,
+        }));
+      }
+      prevWebSocketState = newWebsocketState;
+    });
+
+    stateMachine.subscribe((state) => {
+      if (!state.changed && !state.matches("initialState")) {
+        // TODO: Handle this error properly and log the event that caused the unsuccessful transition
+        console.error("Unsuccessful transition", state);
+      }
+    });
+
+    stateMachine.start();
+
+    const debouncedUpdateHistoryItem = debounce(
+      updateHistoryItem,
+      RECOIL_DEBOUNCE_WAIT_MS
+    );
 
     socket.onResult((result) => {
-      const stateMachine = getStateMachine();
-      const { state } = stateMachine;
-
       switch (result.type) {
         case "ReadyForQuery":
-          stateMachine.send("READY_FOR_QUERY");
-
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          if (stateMachine.state.matches("initialState")) {
+            stateMachine.send("READY_FOR_QUERY");
+          } else {
+            stateMachine.send("READY_FOR_QUERY");
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
+          }
           break;
         case "CommandStarting":
           if (result.payload.is_streaming) {
@@ -337,14 +381,23 @@ const Shell = () => {
           break;
         case "Rows":
           stateMachine.send({ type: "ROWS", rows: result.payload });
+
+          if (stateMachine.state.matches("commandInProgressStreaming")) {
+            assert(stateMachine.state.context.latestCommandOutput);
+            debouncedUpdateHistoryItem(
+              stateMachine.state.context.latestCommandOutput
+            );
+          }
           break;
         case "Row":
-          if (state.matches("commandInProgressStreaming")) {
+          if (stateMachine.state.matches("commandInProgressStreaming")) {
             stateMachine.send({ type: "ROW", row: result.payload });
 
-            assert(state.context.latestCommandOutput);
-            updateHistoryItem(state.context.latestCommandOutput);
-          } else if (state.matches("commandInProgressHasRows")) {
+            assert(stateMachine.state.context.latestCommandOutput);
+            debouncedUpdateHistoryItem(
+              stateMachine.state.context.latestCommandOutput
+            );
+          } else if (stateMachine.state.matches("commandInProgressHasRows")) {
             stateMachine.send({ type: "ROW", row: result.payload });
           }
           break;
@@ -354,16 +407,16 @@ const Shell = () => {
             commandCompletePayload: result.payload,
           });
 
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          assert(stateMachine.state.context.latestCommandOutput);
+          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           break;
         case "Notice":
-          if (state.matches("readyForQuery")) {
+          if (stateMachine.state.matches("readyForQuery")) {
             commitToHistory(createDefaultNoticeOutput(result.payload));
           } else {
             stateMachine.send({ type: "NOTICE", notice: result.payload });
-            assert(state.context.latestCommandOutput);
-            updateHistoryItem(state.context.latestCommandOutput);
+            assert(stateMachine.state.context.latestCommandOutput);
+            updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           }
           break;
         case "Error":
@@ -371,18 +424,18 @@ const Shell = () => {
             type: "ERROR",
             error: result.payload,
           });
-          assert(state.context.latestCommandOutput);
-          updateHistoryItem(state.context.latestCommandOutput);
+          assert(stateMachine.state.context.latestCommandOutput);
+          updateHistoryItem(stateMachine.state.context.latestCommandOutput);
           break;
       }
     });
-  }, [socket, socketReady, commitToHistory, updateHistoryItem]);
+
+    return () => {
+      stateMachine.stop();
+    };
+  }, [socket, commitToHistory, updateHistoryItem, setShellState]);
 
   const runCommand = (command: string) => {
-    if (!socketReady) {
-      return;
-    }
-
     assert(socket);
 
     const stateMachine = getStateMachine();
@@ -434,7 +487,10 @@ const Shell = () => {
     }
     return true;
   };
-  console.log(history);
+
+  // TODO: Get rid of console logs
+  console.debug("history", history);
+  console.debug("state machine state", webSocketState);
 
   return (
     <VStack
