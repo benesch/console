@@ -29,7 +29,6 @@ import DeleteObjectMenuItem from "~/components/DeleteObjectMenuItem";
 import ErrorBox from "~/components/ErrorBox";
 import OverflowMenu, { OVERFLOW_BUTTON_WIDTH } from "~/components/OverflowMenu";
 import TextLink from "~/components/TextLink";
-import { PageHeading } from "~/layouts/BaseLayout";
 import {
   EmptyListHeader,
   EmptyListHeaderContents,
@@ -127,7 +126,7 @@ const ClusterReplicasPage = () => {
       ) : (
         <>
           <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
-            <PageHeading>Replicas</PageHeading>
+            <Text textStyle="heading-sm">Replicas</Text>
             {replicas && maxReplicas && replicas.length < maxReplicas && (
               <Button
                 variant="primary"

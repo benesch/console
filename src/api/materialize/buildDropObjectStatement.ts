@@ -13,11 +13,11 @@ export type DeletableObjectType =
   | "CLUSTER"
   | "CLUSTER REPLICA";
 
-export function supportsDropCascase(objectType: DeletableObjectType) {
+export function supportsDropCascade(objectType: DeletableObjectType) {
   return objectType !== "CLUSTER REPLICA";
 }
 
-export function deleteObjectQueryBuilder({
+export function buildDropObjectStatement({
   dbObject,
   objectType,
 }: {
@@ -26,6 +26,6 @@ export function deleteObjectQueryBuilder({
 }) {
   const query = sql`DROP ${sql.raw(objectType)} ${buildFullyQualifiedObjectName(
     dbObject
-  )} ${supportsDropCascase(objectType) ? sql.raw("CASCADE") : sql.raw("")}`;
+  )} ${supportsDropCascade(objectType) ? sql.raw("CASCADE") : sql.raw("")}`;
   return query.compile(queryBuilder).sql;
 }

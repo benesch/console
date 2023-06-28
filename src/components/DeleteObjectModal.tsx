@@ -23,10 +23,10 @@ import { useForm } from "react-hook-form";
 
 import { useSegment } from "~/analytics/segment";
 import {
+  buildDropObjectStatement,
   DeletableObjectType,
-  deleteObjectQueryBuilder,
-  supportsDropCascase,
-} from "~/api/materialize/buildDeletObjectStatement";
+  supportsDropCascade,
+} from "~/api/materialize/buildDropObjectStatement";
 import { DatabaseObject } from "~/api/materialize/types";
 import useObjectDependencies from "~/api/materialize/useObjectDependencies";
 import { useSqlLazy } from "~/api/materialized";
@@ -68,7 +68,7 @@ const DeleteObjectModal = ({
     loading: isDeleting,
     error,
   } = useSqlLazy({
-    queryBuilder: deleteObjectQueryBuilder,
+    queryBuilder: buildDropObjectStatement,
   });
 
   const handleDelete = () => {
@@ -118,7 +118,7 @@ const DeleteObjectModal = ({
               </ModalBody>
             </>
           ) : showConfirmation ||
-            !supportsDropCascase(objectType) ||
+            !supportsDropCascade(objectType) ||
             dependencyCount === 0 ? (
             <>
               <ModalBody pb="6">
