@@ -1,4 +1,3 @@
-import { useAuth } from "@frontegg/react";
 import React, { Dispatch, SetStateAction } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
@@ -6,6 +5,7 @@ import { currentEnvironmentState } from "~/recoil/environments";
 
 import { APPLICATION_NAME } from ".";
 import { Error, Notice } from "./types";
+import useAccessTokenOnMount from "./useAccessTokenOnMount";
 
 export interface SimpleRequest {
   query: string;
@@ -77,7 +77,6 @@ export class SqlWebSocket {
 }
 
 export const useSqlWs = ({ open }: { open: boolean }) => {
-  const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -85,7 +84,7 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
 
-  const accessToken = user?.accessToken;
+  const { accessTokenOnMount: accessToken } = useAccessTokenOnMount();
 
   const handleMessage = React.useCallback((event: MessageEvent) => {
     const data = JSON.parse(event.data);
