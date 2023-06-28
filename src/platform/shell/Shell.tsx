@@ -296,6 +296,8 @@ const Shell = () => {
     open: socketOpen,
   });
 
+  const isSocketAvailable = socket !== null && !socketError;
+
   useIdleTimer({
     timeout: IDLE_TIMEOUT_MS,
     onIdle: () => {
@@ -305,6 +307,7 @@ const Shell = () => {
       setSocketOpen(true);
     },
   });
+
   const restartSocket = () => {
     /**
      * Since React batches state updates, we need to un-batch
@@ -366,7 +369,7 @@ const Shell = () => {
   }, [webSocketState]);
 
   useEffect(() => {
-    if (socket === null) {
+    if (socket === null || socketError) {
       return;
     }
 
@@ -510,7 +513,7 @@ const Shell = () => {
         })
       );
     };
-  }, [socket, commitToHistory, updateHistoryItem, setShellState]);
+  }, [socket, socketError, commitToHistory, updateHistoryItem, setShellState]);
 
   const runCommand = (command: string) => {
     assert(socket);
@@ -519,7 +522,7 @@ const Shell = () => {
 
     if (
       !stateMachine.state.matches("readyForQuery") ||
-      socketError ||
+      !isSocketAvailable ||
       command.length === 0
     ) {
       return;
@@ -660,13 +663,13 @@ const Shell = () => {
             minHeight="32"
             width="100%"
             onCommandBlockKeyDown={handlePromptInput}
-            socketError={socketError}
+            isSocketAvailable={isSocketAvailable}
           />
         </VStack>
         <RunCommandButton
           runCommand={runCommand}
           cancelStreaming={restartSocket}
-          socketError={socketError}
+          isSocketAvailable={isSocketAvailable}
           position="absolute"
           bottom="6"
           right="6"

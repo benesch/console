@@ -9,12 +9,12 @@ import { promptAtom, shellStateAtom } from "./recoil/shell";
 
 type RunCommandButtonProps = ButtonProps & {
   runCommand: (command: string) => void;
-  socketError: string | null;
+  isSocketAvailable: boolean;
   cancelStreaming: () => void;
 };
 
 const RunCommandButton = ({
-  socketError,
+  isSocketAvailable,
   runCommand,
   cancelStreaming,
   ...rest
@@ -28,7 +28,7 @@ const RunCommandButton = ({
     webSocketState !== "initialState" && webSocketState !== "readyForQuery";
 
   const isButtonDisabled =
-    !!socketError || (!isStreaming && isCommandProcessing);
+    !isSocketAvailable || (!isStreaming && isCommandProcessing);
 
   return (
     <Button
