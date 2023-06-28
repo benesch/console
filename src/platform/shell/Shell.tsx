@@ -23,6 +23,7 @@ import { captureException } from "@sentry/react";
 import { interpret, InterpreterStatus, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
 import React, { useEffect, useRef, useState } from "react";
+import { useIdleTimer } from "react-idle-timer";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -57,6 +58,8 @@ import {
 import RunCommandButton from "./RunCommandButton";
 import ShellPrompt from "./ShellPrompt";
 import Tutorial from "./Tutorial";
+
+const IDLE_TIMEOUT_MS = 10 * 60 * 1_000; // 10 minutes
 
 const RECOIL_DEBOUNCE_WAIT_MS = 100;
 
@@ -293,6 +296,15 @@ const Shell = () => {
     open: socketOpen,
   });
 
+  useIdleTimer({
+    timeout: IDLE_TIMEOUT_MS,
+    onIdle: () => {
+      setSocketOpen(false);
+    },
+    onActive: () => {
+      setSocketOpen(true);
+    },
+  });
   const restartSocket = () => {
     /**
      * Since React batches state updates, we need to un-batch
