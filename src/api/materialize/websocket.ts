@@ -1,11 +1,11 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
+import { useAuth } from "~/api/auth";
 import { currentEnvironmentState } from "~/recoil/environments";
 
 import { APPLICATION_NAME } from ".";
 import { Error, Notice } from "./types";
-import useAccessTokenOnMount from "./useAccessTokenOnMount";
 
 export interface SimpleRequest {
   query: string;
@@ -83,8 +83,9 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
   const [socket, setSocket] = React.useState<SqlWebSocket | null>(null);
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
+  const { user } = useAuth();
 
-  const { accessTokenOnMount: accessToken } = useAccessTokenOnMount();
+  const accessToken = user.accessToken;
 
   const handleMessage = React.useCallback((event: MessageEvent) => {
     const data = JSON.parse(event.data);
