@@ -198,6 +198,7 @@ export const webSocketFsm = createMachine<
             latestCommandOutput: (_, event) =>
               createDefaultCommandOutput({
                 command: event.command,
+                commandSentTimeMs: performance.now(),
               }),
           }),
         },

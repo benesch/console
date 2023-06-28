@@ -50,7 +50,9 @@ type CommandResult = {
 
   cols?: string[];
   rows?: unknown[][];
-  initialTimeMs?: number;
+  // Timestamp of when the server sends a `CommandStarting` message
+  initialTimeMs: number;
+  // Timestamp of when the server sends a `CommandComplete` message
   endTimeMs?: number;
 };
 
@@ -62,6 +64,8 @@ export type CommandOutput = {
   historyId: HistoryId;
   // The query string
   command: string;
+  // A timestamp of when the command was sent
+  commandSentTimeMs: number;
   // Notices rendered after the command statement but before each result
   notices: Notice[];
   error?: Error;
@@ -191,11 +195,13 @@ export const historyItemCommandResultsSelector = selectorFamily({
 
 export function createDefaultCommandOutput(payload: {
   command: string;
+  commandSentTimeMs: number;
 }): CommandOutput {
   return {
     kind: "command",
     historyId: uuidv4(),
     command: payload.command,
+    commandSentTimeMs: payload.commandSentTimeMs,
     commandResults: [],
     notices: [],
   };
@@ -212,7 +218,7 @@ export function createDefaultNoticeOutput(payload: Notice): NoticeOutput {
 export function createDefaultCommandResult(payload: {
   isStreamingResult: boolean;
   hasRows: boolean;
-  initialTimeMs?: number;
+  initialTimeMs: number;
 }): CommandResult {
   return {
     isStreamingResult: payload.isStreamingResult,
@@ -220,4 +226,40 @@ export function createDefaultCommandResult(payload: {
     notices: [],
     initialTimeMs: payload.initialTimeMs,
   };
+}
+
+/**
+ * Given a command result, in milliseconds, calculates the time between when a command was sent
+ * and when the first "CommandStarting" message is received.
+ *
+ * Since query calculations are performed during this period, we need to account for it when
+ * calculating how long a command took.
+ *
+ */
+function calculateServerResponseTime({
+  commandResults,
+  commandSentTimeMs,
+}: CommandOutput): number {
+  let firstMessagedReceivedDeltaMs = 0;
+  if (commandResults.length > 0) {
+    firstMessagedReceivedDeltaMs =
+      commandResults[0].initialTimeMs - commandSentTimeMs;
+  }
+
+  return firstMessagedReceivedDeltaMs;
+}
+
+export function calculateCommandDuration(
+  commandResult: CommandResult,
+  commandOutput: CommandOutput
+): number | null {
+  const serverResponseTime = calculateServerResponseTime(commandOutput);
+
+  if (!commandResult.endTimeMs) {
+    return null;
+  }
+
+  return (
+    commandResult.endTimeMs - commandResult.initialTimeMs + serverResponseTime
+  );
 }
