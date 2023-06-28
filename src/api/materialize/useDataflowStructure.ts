@@ -51,7 +51,7 @@ export function useDataflowStructure(params?: DataflowStructureParams) {
         {
           query: `CREATE TEMPORARY VIEW export_to_dataflow AS
   SELECT export_id, id FROM mz_internal.mz_compute_exports AS mce JOIN mz_internal.mz_dataflows AS md ON
-  mce.dataflow_id = md.local_id`,
+  mce.dataflow_id = md.id`,
           params: [],
         },
         // OPERATORS
@@ -121,8 +121,8 @@ GROUP BY
   const response = useSqlMany(request);
   const structure: DataflowStructure | null = React.useMemo(() => {
     if (response.data) {
-      const channelsData = response.data[5];
-      const operatorsData = response.data[6];
+      const channelsData = response.data[3];
+      const operatorsData = response.data[4];
       const operators = extractData(operatorsData, (x) => ({
         id: x("id") as number,
         address: x("address") as number[],
