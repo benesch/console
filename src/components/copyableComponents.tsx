@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
+import CommandBlock from "~/components/CommandBlock";
 import CheckmarkIcon from "~/svg/CheckmarkIcon";
 import CopyIcon from "~/svg/CopyIcon";
 import { MaterializeTheme } from "~/theme";
@@ -152,6 +153,9 @@ type CodeBlockExtraProps = {
   lineNumbers?: boolean;
   /** Whether to force-wrap long lines. */
   wrap?: boolean;
+  /** Enables SQL syntax highlighting. */
+  syntaxHighlighting?: boolean;
+  headingIcon?: React.ReactNode;
 };
 
 type TabbedCodeBlockProps = CodeBlockExtraProps & {
@@ -178,6 +182,8 @@ export const TabbedCodeBlock: React.FC<
   tabs,
   lineNumbers,
   wrap,
+  syntaxHighlighting,
+  headingIcon,
   ...props
 }: TabbedCodeBlockProps & BoxProps) => {
   const { colors, shadows } = useTheme<MaterializeTheme>();
@@ -197,7 +203,8 @@ export const TabbedCodeBlock: React.FC<
   if (lineNumbers) {
     codeblockInnards = contents.split("\n").map((line, i) => (
       <Line key={`line-${i}`} index={i}>
-        {line}
+        {syntaxHighlighting ? <CommandBlock readOnly value={line} /> : line}
+
         {"\n"}
       </Line>
     ));
@@ -264,18 +271,22 @@ export const TabbedCodeBlock: React.FC<
           </CodeBlockHeading>
         )}
         <Spacer />
-        <CopyButton
-          contents={contents}
-          flex={0}
-          px="4"
-          py="0px"
-          h="auto"
-          fontSize="sm"
-          borderTopRightRadius="sm"
-          _hover={{
-            bg: "whiteAlpha.400",
-          }}
-        />
+        {headingIcon ? (
+          headingIcon
+        ) : (
+          <CopyButton
+            contents={contents}
+            flex={0}
+            px="4"
+            py="0px"
+            h="auto"
+            fontSize="sm"
+            borderTopRightRadius="sm"
+            _hover={{
+              bg: "whiteAlpha.400",
+            }}
+          />
+        )}
       </Flex>
       <chakra.pre
         fontSize="sm"

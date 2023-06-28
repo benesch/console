@@ -44,6 +44,7 @@ export interface ThemeColors {
     primary: string;
     secondary: string;
     tertiary: string;
+    shellTutorial: string;
     error: string;
     info: string;
     warn: string;

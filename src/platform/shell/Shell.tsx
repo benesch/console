@@ -1,9 +1,13 @@
 import "./crt.css";
 
+import { CloseIcon } from "@chakra-ui/icons";
 import {
-  Box,
+  Button,
   Code,
+  Grid,
+  GridItem,
   HStack,
+  IconButton,
   StackProps,
   Table,
   TableContainer,
@@ -28,10 +32,11 @@ import {
 
 import { Error as MaterializeError, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
+import CommandBlock from "~/components/CommandBlock";
+import BookOpenIcon from "~/svg/BookOpenIcon";
 import { MaterializeTheme } from "~/theme";
 import { assert } from "~/util";
 
-import CommandBlock from "./CommandBlock";
 import CommandChevron from "./CommandChevron";
 import WebSocketFsm, {
   WebSocketFsmContext,
@@ -51,10 +56,15 @@ import {
 } from "./recoil/shell";
 import RunCommandButton from "./RunCommandButton";
 import ShellPrompt from "./ShellPrompt";
+import Tutorial from "./Tutorial";
 
 const RECOIL_DEBOUNCE_WAIT_MS = 100;
 
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
+
+const NAVBAR_HEIGHT = "80px";
+
+const TUTORIAL_WIDTH = "552px";
 
 const NoticeOutput = ({ notice }: { notice: Notice }) => {
   const { colors } = useTheme<MaterializeTheme>();
@@ -259,6 +269,8 @@ const Shell = () => {
   > | null>(null);
 
   const [shellState, setShellState] = useRecoilState(shellStateAtom);
+
+  const { colors } = useTheme<MaterializeTheme>();
 
   const getStateMachine = () => {
     if (stateMachineRef.current !== null) {
@@ -493,7 +505,11 @@ const Shell = () => {
 
     const stateMachine = getStateMachine();
 
-    if (!stateMachine.state.matches("readyForQuery") || command.length === 0) {
+    if (
+      !stateMachine.state.matches("readyForQuery") ||
+      socketError ||
+      command.length === 0
+    ) {
       return;
     }
 
@@ -546,51 +562,106 @@ const Shell = () => {
   console.debug("state machine state", webSocketState);
 
   return (
-    <Box width="100%" height="100%" position="relative">
-      <VStack
-        overflow="auto"
-        width="100%"
-        height="100%"
-        alignItems="flex-start"
-        spacing="0"
-        scrollBehavior="smooth"
-        ref={shellContainerRef}
-        className={
-          "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
-        }
+    <Grid
+      templateAreas={`
+      "navbar navbar" 
+      "shell tutorial"
+      `}
+      gridTemplateRows={`${NAVBAR_HEIGHT} minmax(0,1fr)`}
+      gridTemplateColumns={`minmax(0,1fr) ${
+        shellState.tutorialVisible ? TUTORIAL_WIDTH : 0
+      }`}
+      width="100%"
+      height="100%"
+    >
+      <GridItem
+        area="navbar"
+        borderBottomWidth="1px"
+        borderColor={colors.border.secondary}
+        padding="6"
+        display="flex"
+        justifyContent="flex-end"
       >
-        {historyIds.length > 0 && (
-          <VStack
-            flexGrow="0"
-            flexShrink="0"
-            alignItems="flex-start"
-            width="100%"
-            minHeight="0"
-            spacing="0"
+        {shellState.tutorialVisible ? (
+          <IconButton
+            aria-label="Tutorial button"
+            title="Close tutorial"
+            icon={<CloseIcon height="2.5" width="2.5" />}
+            isRound
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              setShellState((prevState) => ({
+                ...prevState,
+                tutorialVisible: false,
+              }))
+            }
+          />
+        ) : (
+          <Button
+            variant="secondary"
+            title="Open tutorial"
+            onClick={() =>
+              setShellState((prevState) => ({
+                ...prevState,
+                tutorialVisible: true,
+              }))
+            }
+            size="sm"
+            leftIcon={<BookOpenIcon />}
+            borderRadius="3xl"
           >
-            {historyIds.map((historyId) => (
-              <HistoryOutput key={historyId} historyId={historyId} />
-            ))}
-          </VStack>
+            Tutorial
+          </Button>
         )}
-        <ShellPrompt
-          flexGrow="1"
-          flexShrink="1"
-          minHeight="32"
+      </GridItem>
+      <GridItem area="shell" position="relative">
+        <VStack
+          overflow="auto"
           width="100%"
-          onCommandBlockKeyDown={handlePromptInput}
+          height="100%"
+          alignItems="flex-start"
+          spacing="0"
+          scrollBehavior="smooth"
+          ref={shellContainerRef}
+          className={
+            "shell-container " + (shellState.crtEnabled ? "crt-enabled" : "")
+          }
+        >
+          {historyIds.length > 0 && (
+            <VStack
+              flexGrow="0"
+              flexShrink="0"
+              alignItems="flex-start"
+              width="100%"
+              minHeight="0"
+              spacing="0"
+            >
+              {historyIds.map((historyId) => (
+                <HistoryOutput key={historyId} historyId={historyId} />
+              ))}
+            </VStack>
+          )}
+          <ShellPrompt
+            flexGrow="1"
+            flexShrink="1"
+            minHeight="32"
+            width="100%"
+            onCommandBlockKeyDown={handlePromptInput}
+            socketError={socketError}
+          />
+        </VStack>
+        <RunCommandButton
+          runCommand={runCommand}
+          cancelStreaming={restartSocket}
           socketError={socketError}
+          position="absolute"
+          bottom="6"
+          right="6"
         />
-      </VStack>
-      <RunCommandButton
-        runCommand={runCommand}
-        cancelStreaming={restartSocket}
-        socketError={socketError}
-        position="absolute"
-        bottom="6"
-        right="6"
-      />
-    </Box>
+      </GridItem>
+      {shellState.tutorialVisible && <Tutorial runCommand={runCommand} />}
+    </Grid>
   );
 };
 

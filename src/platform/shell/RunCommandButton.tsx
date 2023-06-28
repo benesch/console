@@ -27,7 +27,8 @@ const RunCommandButton = ({
   const isCommandProcessing =
     webSocketState !== "initialState" && webSocketState !== "readyForQuery";
 
-  const isButtonDisabled = !isStreaming && isCommandProcessing;
+  const isButtonDisabled =
+    !!socketError || (!isStreaming && isCommandProcessing);
 
   return (
     <Button

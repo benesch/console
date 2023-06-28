@@ -25,6 +25,7 @@ export const darkColors: ThemeColors = {
     primary: colors.gray[900],
     secondary: colors.gray[800],
     tertiary: colors.gray[700],
+    shellTutorial: "#18181B",
     error: colors.red[700],
     info: colors.blue[900],
     warn: colors.yellow[900],

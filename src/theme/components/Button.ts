@@ -48,16 +48,18 @@ export const Button = {
       },
     },
     tertiary: {
-      color: "semanticColors.foreground.primary",
-      backgroundColor: "semanticColors.background.tertiary",
-      borderColor: "semanticColors.border.secondary",
+      color: "foreground.primary",
+      backgroundColor: "background.tertiary",
+      borderColor: "border.secondary",
+      fontSize: "14px",
+      lineHeight: "16px",
 
       borderWidth: "1px",
       shadow: shadows.light.level2,
       _hover: {
         shadow: "none",
         _disabled: {
-          backgroundColor: "semanticColors.background.tertiary",
+          backgroundColor: "background.tertiary",
         },
       },
     },

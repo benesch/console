@@ -10,17 +10,17 @@ import keys from "./keyConstants";
 type ShellState = {
   page: "start" | "shell";
   tutorialVisible: boolean;
-  queryStatus: "pending";
   crtEnabled: boolean;
   webSocketState: WebSocketFsmState["value"] | null;
+  currentTutorialStep: number;
 };
 
 const initialShellState = {
   page: "start" as const,
-  tutorialVisible: false,
-  queryStatus: "pending" as const,
+  tutorialVisible: true,
   crtEnabled: false,
   webSocketState: null,
+  currentTutorialStep: 0,
 };
 
 export const shellStateAtom = atom<ShellState>({
