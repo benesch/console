@@ -1,7 +1,7 @@
-import { useAuth } from "@frontegg/react";
 import React, { Dispatch, SetStateAction } from "react";
 import { useRecoilValue_TRANSITION_SUPPORT_UNSTABLE } from "recoil";
 
+import { useAuth } from "~/api/auth";
 import { currentEnvironmentState } from "~/recoil/environments";
 
 import { APPLICATION_NAME } from ".";
@@ -77,7 +77,6 @@ export class SqlWebSocket {
 }
 
 export const useSqlWs = ({ open }: { open: boolean }) => {
-  const { user } = useAuth();
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -85,7 +84,17 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
   const [socketReady, setSocketReady] = React.useState<boolean>(false);
   const [socketError, setSocketError] = React.useState<string | null>(null);
 
-  const accessToken = user?.accessToken;
+  const {
+    user: { accessToken },
+  } = useAuth();
+
+  // This ref allows us to avoid triggering useEffect when accessToken changes.
+  // We use a ref since we don't want to sync our websocket connection with the access token, but still use the most up-to-date one when reconnecting.
+  const accessTokenRef = React.useRef(accessToken);
+
+  if (accessTokenRef.current !== accessToken) {
+    accessTokenRef.current = accessToken;
+  }
 
   const handleMessage = React.useCallback((event: MessageEvent) => {
     const data = JSON.parse(event.data);
@@ -129,14 +138,14 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
 
     let ws: WebSocket;
     if (
-      accessToken &&
+      accessTokenRef.current &&
       currentEnvironment?.state === "enabled" &&
       currentEnvironment.status.health === "crashed"
     ) {
       setSocketError("Region unavailable");
     }
     if (
-      accessToken &&
+      accessTokenRef.current &&
       currentEnvironment?.state === "enabled" &&
       currentEnvironment.status.health === "healthy"
     ) {
@@ -151,7 +160,7 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
       ws.onopen = function () {
         ws.send(
           JSON.stringify({
-            token: accessToken,
+            token: accessTokenRef.current,
             options,
           })
         );
@@ -171,14 +180,7 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         ws.removeEventListener("message", handleMessage);
       }
     };
-  }, [
-    currentEnvironment,
-    handleClose,
-    handleError,
-    handleMessage,
-    accessToken,
-    open,
-  ]);
+  }, [currentEnvironment, handleClose, handleError, handleMessage, open]);
 
   return { socketReady, socket, socketError };
 };

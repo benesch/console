@@ -23,6 +23,7 @@ import { captureException } from "@sentry/react";
 import { interpret, InterpreterStatus, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
 import React, { useEffect, useRef, useState } from "react";
+import { useIdleTimer } from "react-idle-timer";
 import {
   useRecoilCallback,
   useRecoilState,
@@ -58,6 +59,8 @@ import {
 import RunCommandButton from "./RunCommandButton";
 import ShellPrompt from "./ShellPrompt";
 import Tutorial from "./Tutorial";
+
+const IDLE_TIMEOUT_MS = 10 * 60 * 1_000; // 10 minutes
 
 const RECOIL_DEBOUNCE_WAIT_MS = 100;
 
@@ -296,6 +299,23 @@ const Shell = () => {
     open: socketOpen,
   });
 
+  const isSocketAvailable = socket !== null && !socketError;
+
+  useIdleTimer({
+    timeout: IDLE_TIMEOUT_MS,
+    onIdle: () => {
+      setSocketOpen(false);
+    },
+    onActive: (e) => {
+      const isTabHidden =
+        e?.type === "visibilitychange" && document.visibilityState === "hidden";
+      if (isTabHidden) {
+        return;
+      }
+      setSocketOpen(true);
+    },
+  });
+
   const restartSocket = () => {
     /**
      * Since React batches state updates, we need to un-batch
@@ -357,7 +377,7 @@ const Shell = () => {
   }, [webSocketState]);
 
   useEffect(() => {
-    if (socket === null) {
+    if (socket === null || socketError) {
       return;
     }
 
@@ -501,7 +521,7 @@ const Shell = () => {
         })
       );
     };
-  }, [socket, commitToHistory, updateHistoryItem, setShellState]);
+  }, [socket, socketError, commitToHistory, updateHistoryItem, setShellState]);
 
   const runCommand = (command: string) => {
     assert(socket);
@@ -510,7 +530,7 @@ const Shell = () => {
 
     if (
       !stateMachine.state.matches("readyForQuery") ||
-      socketError ||
+      !isSocketAvailable ||
       command.length === 0
     ) {
       return;
@@ -651,13 +671,13 @@ const Shell = () => {
             minHeight="32"
             width="100%"
             onCommandBlockKeyDown={handlePromptInput}
-            socketError={socketError}
+            isSocketAvailable={isSocketAvailable}
           />
         </VStack>
         <RunCommandButton
           runCommand={runCommand}
           cancelStreaming={restartSocket}
-          socketError={socketError}
+          isSocketAvailable={isSocketAvailable}
           position="absolute"
           bottom="6"
           right="6"
