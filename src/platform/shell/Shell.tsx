@@ -44,6 +44,7 @@ import WebSocketFsm, {
   WebSocketFsmState,
 } from "./machines/webSocketFsm";
 import {
+  calculateCommandDuration,
   createDefaultNoticeOutput,
   HistoryId,
   historyIdsAtom,
@@ -193,8 +194,6 @@ const HistoryOutput = (props: HistoryOutputProps) => {
             {(commandResults ?? []).map((commandResult, commandResultIdx) => {
               const {
                 hasRows,
-                endTimeMs,
-                initialTimeMs,
                 commandCompletePayload,
                 notices,
                 cols,
@@ -211,10 +210,14 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                 );
               }
 
-              const timeTaken =
-                endTimeMs && initialTimeMs
-                  ? `Returned in ${(endTimeMs - initialTimeMs).toFixed(1)}ms`
-                  : null;
+              const timeTaken = calculateCommandDuration(
+                commandResult,
+                historyOutput
+              );
+
+              const timeTakenStr = timeTaken
+                ? `Returned in ${timeTaken.toFixed(1)}ms`
+                : null;
 
               const hasErrored = !!error;
 
@@ -239,7 +242,7 @@ const HistoryOutput = (props: HistoryOutputProps) => {
                   <Code
                     color={hasErrored ? colors.accent.red : colors.accent.green}
                   >
-                    {timeTaken}
+                    {timeTakenStr}
                   </Code>
                 </React.Fragment>
               );
