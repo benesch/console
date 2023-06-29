@@ -303,7 +303,12 @@ const Shell = () => {
     onIdle: () => {
       setSocketOpen(false);
     },
-    onActive: () => {
+    onActive: (e) => {
+      const isTabHidden =
+        e?.type === "visibilitychange" && document.visibilityState === "hidden";
+      if (isTabHidden) {
+        return;
+      }
       setSocketOpen(true);
     },
   });
