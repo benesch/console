@@ -98,31 +98,6 @@ const ClusterReplicasPage = () => {
         <ErrorBox message={CLUSTERS_FETCH_ERROR_MESSAGE} />
       ) : isInitiallyLoading ? (
         <Spinner data-testid="loading-spinner" />
-      ) : isEmpty ? (
-        <EmptyListWrapper>
-          <EmptyListHeader>
-            <IconBox type="Missing">
-              <ClustersIcon />
-            </IconBox>
-            <EmptyListHeaderContents
-              title="This cluster has no replicas"
-              helpText="Without replicas, your cluster cannot compute dataflows."
-            />
-          </EmptyListHeader>
-          <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster-replica/">
-            <CodeBlock
-              title="Create a cluster replica"
-              contents={`CREATE CLUSTER REPLICA
-  ${clusterName}.<replica_name>
-  SIZE = 'xsmall';`}
-              lineNumbers
-            >
-              {`CREATE CLUSTER REPLICA
-  ${clusterName}.<replica_name>
-  SIZE = 'xsmall';`}
-            </CodeBlock>
-          </SampleCodeBoxWrapper>
-        </EmptyListWrapper>
       ) : (
         <>
           <HStack mb="6" alignItems="flex-start" justifyContent="space-between">
@@ -140,39 +115,66 @@ const ClusterReplicasPage = () => {
               </Button>
             )}
           </HStack>
-          <HStack spacing={6} alignItems="flex-start">
-            <ReplicaTable
-              clusterId={clusterId}
-              replicas={replicas ?? []}
-              refetchReplicas={refetch}
-            />
-            <Card flex={0} minW="384px" maxW="384px">
-              <CardHeader>Interacting with cluster replicas</CardHeader>
-              <CardContent pb={8}>
-                <VStack spacing={4} alignItems="stretch" fontSize="sm">
-                  <Text color={colors.foreground.secondary}>
-                    Cluster replicas are where Materialize creates and maintains
-                    dataflows.
-                  </Text>
-                  <Text color={colors.foreground.secondary}>
-                    Having trouble?{" "}
-                    <TextLink
-                      href="https://materialize.com/docs/overview/key-concepts/#clusters"
-                      target="_blank"
-                    >
-                      View the documentation.
-                    </TextLink>
-                  </Text>
-                  {getReplicasSuggestions(clusterName).map((suggestion) => (
-                    <SQLSuggestionBox
-                      key={`suggestion-${suggestion.title}`}
-                      {...suggestion}
-                    />
-                  ))}
-                </VStack>
-              </CardContent>
-            </Card>
-          </HStack>
+          {isEmpty ? (
+            <EmptyListWrapper>
+              <EmptyListHeader>
+                <IconBox type="Missing">
+                  <ClustersIcon />
+                </IconBox>
+                <EmptyListHeaderContents
+                  title="This cluster has no replicas"
+                  helpText="Without replicas, your cluster cannot compute dataflows."
+                />
+              </EmptyListHeader>
+              <SampleCodeBoxWrapper docsUrl="//materialize.com/docs/sql/create-cluster-replica/">
+                <CodeBlock
+                  title="Create a cluster replica"
+                  contents={`CREATE CLUSTER REPLICA
+  ${clusterName}.<replica_name>
+  SIZE = 'xsmall';`}
+                  lineNumbers
+                >
+                  {`CREATE CLUSTER REPLICA
+  ${clusterName}.<replica_name>
+  SIZE = 'xsmall';`}
+                </CodeBlock>
+              </SampleCodeBoxWrapper>
+            </EmptyListWrapper>
+          ) : (
+            <HStack spacing={6} alignItems="flex-start">
+              <ReplicaTable
+                clusterId={clusterId}
+                replicas={replicas ?? []}
+                refetchReplicas={refetch}
+              />
+              <Card flex={0} minW="384px" maxW="384px">
+                <CardHeader>Interacting with cluster replicas</CardHeader>
+                <CardContent pb={8}>
+                  <VStack spacing={4} alignItems="stretch" fontSize="sm">
+                    <Text color={colors.foreground.secondary}>
+                      Cluster replicas are where Materialize creates and
+                      maintains dataflows.
+                    </Text>
+                    <Text color={colors.foreground.secondary}>
+                      Having trouble?{" "}
+                      <TextLink
+                        href="https://materialize.com/docs/overview/key-concepts/#clusters"
+                        target="_blank"
+                      >
+                        View the documentation.
+                      </TextLink>
+                    </Text>
+                    {getReplicasSuggestions(clusterName).map((suggestion) => (
+                      <SQLSuggestionBox
+                        key={`suggestion-${suggestion.title}`}
+                        {...suggestion}
+                      />
+                    ))}
+                  </VStack>
+                </CardContent>
+              </Card>
+            </HStack>
+          )}
           <NewReplicaModal
             isOpen={isOpen}
             onClose={onClose}
