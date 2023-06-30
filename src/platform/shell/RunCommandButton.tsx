@@ -27,8 +27,11 @@ const RunCommandButton = ({
   const isCommandProcessing =
     webSocketState !== "initialState" && webSocketState !== "readyForQuery";
 
-  const isButtonDisabled =
-    !isSocketAvailable || (!isStreaming && isCommandProcessing);
+  const isLoading = !isStreaming && isCommandProcessing;
+
+  const isButtonDisabled = !isSocketAvailable || isLoading;
+
+  const buttonText = isStreaming ? "Stop Streaming" : "Run Query";
 
   return (
     <Button
@@ -45,10 +48,12 @@ const RunCommandButton = ({
           setPrompt("");
         }
       }}
-      {...rest}
       isDisabled={isButtonDisabled}
+      loadingText={buttonText}
+      isLoading={isLoading}
+      {...rest}
     >
-      {isStreaming ? "Stop Streaming" : "Run Query"}
+      {buttonText}
     </Button>
   );
 };
