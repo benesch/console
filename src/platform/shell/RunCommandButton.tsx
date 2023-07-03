@@ -25,13 +25,18 @@ const RunCommandButton = ({
   const isStreaming = webSocketState === "commandInProgressStreaming";
 
   const isCommandProcessing =
-    webSocketState !== "initialState" && webSocketState !== "readyForQuery";
+    webSocketState === "commandInProgressDefault" ||
+    webSocketState === "commandInProgressHasRows";
 
   const isLoading = !isStreaming && isCommandProcessing;
 
   const isButtonDisabled = !isSocketAvailable || isLoading;
 
-  const buttonText = isStreaming ? "Stop Streaming" : "Run Query";
+  const buttonText = isStreaming
+    ? "Stop Streaming"
+    : isLoading
+    ? "Running Query"
+    : "Run Query";
 
   return (
     <Button
@@ -52,6 +57,9 @@ const RunCommandButton = ({
       loadingText={buttonText}
       isLoading={isLoading}
       {...rest}
+      _hover={{
+        opacity: 1,
+      }}
     >
       {buttonText}
     </Button>
