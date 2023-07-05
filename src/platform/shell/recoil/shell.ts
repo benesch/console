@@ -78,7 +78,14 @@ export type NoticeOutput = Notice & {
   historyId: HistoryId;
 };
 
-export type HistoryItem = CommandOutput | NoticeOutput;
+export type LocalCommandOutput = {
+  kind: "localCommand";
+  historyId: HistoryId;
+  command: string;
+  commandResults: Array<[string, string]>;
+};
+
+export type HistoryItem = CommandOutput | NoticeOutput | LocalCommandOutput;
 
 export const historyItemAtom = atomFamily<HistoryItem, HistoryId>({
   key: keys.HISTORY,
@@ -212,6 +219,18 @@ export function createDefaultNoticeOutput(payload: Notice): NoticeOutput {
     ...payload,
     kind: "notice" as const,
     historyId: uuidv4(),
+  };
+}
+
+export function createDefaultLocalCommandOutput(payload: {
+  command: string;
+  commandResults: Array<[string, string]>;
+}): LocalCommandOutput {
+  return {
+    kind: "localCommand",
+    historyId: uuidv4(),
+    command: payload.command,
+    commandResults: payload.commandResults,
   };
 }
 
