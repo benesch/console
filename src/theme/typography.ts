@@ -69,7 +69,7 @@ export const typographySystem: TextStyles = {
   "text-base": {
     fontFamily: "Inter",
     fontSize: "14px",
-    lineHeight: "20px",
+    lineHeight: "24px",
     fontWeight: "400",
     letterSpacing: "-0.004em",
     fontFeatureSettings: "'tnum' on, 'lnum' on, 'cv06' on, 'cv10' on",
