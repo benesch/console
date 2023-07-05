@@ -66,7 +66,7 @@ const RECOIL_DEBOUNCE_WAIT_MS = 100;
 
 const ERROR_OUTPUT_MAX_WIDTH = "1008px";
 
-const NAVBAR_HEIGHT = "80px";
+const NAVBAR_HEIGHT = "64px";
 
 const TUTORIAL_WIDTH = "552px";
 
@@ -601,17 +601,18 @@ const Shell = () => {
         area="navbar"
         borderBottomWidth="1px"
         borderColor={colors.border.secondary}
-        padding="6"
+        paddingX="4"
+        paddingY="4"
         display="flex"
         justifyContent="flex-end"
       >
         {shellState.tutorialVisible ? (
-          <IconButton
+          <Button
+            variant="secondary"
             aria-label="Tutorial button"
             title="Close tutorial"
-            icon={<CloseIcon height="2.5" width="2.5" />}
-            isRound
-            variant="secondary"
+            leftIcon={<CloseIcon height="2.5" width="2.5" />}
+            borderRadius="3xl"
             size="sm"
             onClick={() =>
               setShellState((prevState) => ({
@@ -619,7 +620,9 @@ const Shell = () => {
                 tutorialVisible: false,
               }))
             }
-          />
+          >
+            Close tutorial
+          </Button>
         ) : (
           <Button
             variant="secondary"
