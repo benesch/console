@@ -31,6 +31,7 @@ const Runnable = ({ runCommand, value, title }: RunnableProps) => {
 
   return (
     <TabbedCodeBlock
+      width="100%"
       flexShrink="0"
       tabs={[{ title, contents: value }]}
       lineNumbers
@@ -65,7 +66,7 @@ const RunnableContainer = ({ children }: PropsWithChildren) => (
 );
 
 const StepsContainer = ({ children }: PropsWithChildren) => (
-  <VStack spacing="10" alignItems="stretch">
+  <VStack spacing="6" alignItems="stretch">
     {children}
   </VStack>
 );
