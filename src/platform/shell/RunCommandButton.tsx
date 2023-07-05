@@ -35,7 +35,7 @@ const RunCommandButton = ({
   const buttonText = isStreaming
     ? "Stop Streaming"
     : isLoading
-    ? "Running Query"
+    ? "Running"
     : "Run Query";
 
   return (
