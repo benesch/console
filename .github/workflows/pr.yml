@@ -22,6 +22,13 @@ jobs:
       FRONTEGG_CLIENT_ID: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_CLIENT_ID }}
       FRONTEGG_SECRET_KEY: ${{ secrets.E2E_TEST_STAGING_FRONTEGG_SECRET_KEY }}
     steps:
+      - run: |
+          # We need to pin to Docker Compose 2.18.1 because of bugs in 2.19.x
+          # TODO(robinclowers): Review as 2.19.2 and future versions come out
+          mkdir -p $HOME/.docker/cli-plugins &&
+          wget https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64 &&
+          mv docker-compose-linux-x86_64 $HOME/.docker/cli-plugins/docker-compose &&
+          chmod +x $HOME/.docker/cli-plugins/docker-compose
       - uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           registry: ghcr.io
