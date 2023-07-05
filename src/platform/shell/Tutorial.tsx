@@ -589,10 +589,16 @@ const Tutorial = ({ runCommand, ...rest }: TutorialProps) => {
           TUTORIAL
         </Text>
         {Steps[step](runCommand)}
-        <HStack flexGrow="0" alignSelf="flex-end" mt="10">
+        <HStack
+          width="100%"
+          flexGrow="0"
+          alignItems="space-between"
+          justifyContent="space-between"
+          mt="10"
+        >
           {!atStart && (
             <Button onClick={() => changeStep(step - 1)} variant="tertiary">
-              Previous
+              Back
             </Button>
           )}
           {!atEnd && (
