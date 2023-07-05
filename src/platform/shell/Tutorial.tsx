@@ -15,7 +15,7 @@ import React, { PropsWithChildren } from "react";
 import { useRecoilState } from "recoil";
 
 import { TabbedCodeBlock } from "~/components/copyableComponents";
-import DoubleChevronRightIcon from "~/svg/DoubleChevronRightIcon";
+import CommandIcon from "~/svg/CommandIcon";
 import { MaterializeTheme } from "~/theme";
 
 import { shellStateAtom } from "./recoil/shell";
@@ -40,8 +40,14 @@ const Runnable = ({ runCommand, value, title }: RunnableProps) => {
           aria-label="Run command button"
           title="Run command"
           onClick={() => runCommand(value)}
-          icon={<DoubleChevronRightIcon color={colors.foreground.secondary} />}
+          icon={<CommandIcon color={colors.foreground.secondary} />}
           variant="unstyled"
+          rounded={0}
+          sx={{
+            _hover: {
+              background: "rgba(255, 255, 255, 0.06)",
+            },
+          }}
         />
       }
     />
