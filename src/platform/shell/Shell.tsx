@@ -600,8 +600,7 @@ const Shell = () => {
         area="navbar"
         borderBottomWidth="1px"
         borderColor={colors.border.secondary}
-        paddingX="4"
-        paddingY="4"
+        padding="4"
         display="flex"
         justifyContent="flex-end"
       >

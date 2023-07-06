@@ -9,7 +9,7 @@ export const codeTheme = defineStyleConfig({
       lineHeight: 6,
       padding: 0,
     },
-    inline: {
+    "inline-syntax": {
       boxSizing: "border-box",
       textStyle: "monospace",
       lineHeight: "20px",

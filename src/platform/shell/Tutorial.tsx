@@ -77,8 +77,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       <TextContainer>
         <Text textStyle="heading-md">Create clusters</Text>
         <Text textStyle="text-base">
-          Use the <Code variant="inline">CREATE CLUSTER</Code> command to create
-          two new clusters:
+          Use the <Code variant="inline-syntax">CREATE CLUSTER</Code> command to
+          create two new clusters:
         </Text>
       </TextContainer>
       <RunnableContainer>
@@ -94,8 +94,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         />
       </RunnableContainer>
       <Text textStyle="text-base">
-        The <Code variant="inline">2xsmall</Code> replica size is sufficient for
-        the data ingestion and computation in this getting started scenario.
+        The <Code variant="inline-syntax">2xsmall</Code> replica size is
+        sufficient for the data ingestion and computation in this getting
+        started scenario.
       </Text>
     </StepsContainer>
   ),
@@ -105,9 +106,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         <Text textStyle="heading-md">Create clusters</Text>
         <Text textStyle="text-base">
           The physical compute resources in your clusters are called{" "}
-          <Code variant="inline">replicas</Code>. Use the{" "}
-          <Code variant="inline">SHOW CLUSTER REPLICAS</Code> command to check
-          the status of the replicas:
+          <Code variant="inline-syntax">replicas</Code>. Use the{" "}
+          <Code variant="inline-syntax">SHOW CLUSTER REPLICAS</Code> command to
+          check the status of the replicas:
         </Text>
       </TextContainer>
       <Runnable
@@ -116,8 +117,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Show cluster replicas"
       />
       <Text textStyle="text-base">
-        Once both replicas are ready (<Code variant="inline">ready=true</Code>),
-        move on to the next step.
+        Once both replicas are ready (
+        <Code variant="inline-syntax">ready=true</Code>), move on to the next
+        step.
       </Text>
     </StepsContainer>
   ),
@@ -128,7 +130,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         <Text textStyle="text-base">
           Most objects in Materialize are namespaced by database and schema,
           including sources, so start by creating a unique schema within the
-          default <Code variant="inline">materialize</Code> database:
+          default <Code variant="inline-syntax">materialize</Code> database:
         </Text>
       </TextContainer>
 
@@ -151,8 +153,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       <TextContainer>
         <Text textStyle="heading-md">Ingest streaming data</Text>
         <Text textStyle="text-base">
-          Use the <Code variant="inline">CREATE SOURCE</Code> command to create
-          the auction house source:
+          Use the <Code variant="inline-syntax">CREATE SOURCE</Code> command to
+          create the auction house source:
         </Text>
       </TextContainer>
 
@@ -165,11 +167,12 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Create auction house source"
       />
       <Text textStyle="text-base">
-        Note that the <Code variant="inline">IN CLUSTER</Code> clause attaches
-        this source to the existing <Code variant="inline">ingest_qck</Code>{" "}
-        cluster, but it&apos;s also possible to create a cluster and replica at
-        the time of source creation using the{" "}
-        <Code variant="inline">WITH SIZE</Code> option.
+        Note that the <Code variant="inline-syntax">IN CLUSTER</Code> clause
+        attaches this source to the existing{" "}
+        <Code variant="inline-syntax">ingest_qck</Code> cluster, but it&apos;s
+        also possible to create a cluster and replica at the time of source
+        creation using the <Code variant="inline-syntax">WITH SIZE</Code>{" "}
+        option.
       </Text>
     </StepsContainer>
   ),
@@ -181,8 +184,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           Now that you&apos;ve created a source, Materialize starts ingesting
           data into durable storage, automatically splitting the stream into
           multiple <em>subsources</em> that represent different tables. Use the{" "}
-          <Code variant="inline">SHOW SOURCES</Code> command to get an idea of
-          the data being generated:
+          <Code variant="inline-syntax">SHOW SOURCES</Code> command to get an
+          idea of the data being generated:
         </Text>
       </TextContainer>
 
@@ -192,10 +195,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Show sources"
       />
       <Text textStyle="text-base">
-        In addition to the <Code variant="inline">auction_house</Code> load
-        generator source and its subsources, you&apos;ll see{" "}
-        <Code variant="inline">auction_house_progress</Code>, which Materialize
-        creates so you can monitor source ingestion.
+        In addition to the <Code variant="inline-syntax">auction_house</Code>{" "}
+        load generator source and its subsources, you&apos;ll see{" "}
+        <Code variant="inline-syntax">auction_house_progress</Code>, which
+        Materialize creates so you can monitor source ingestion.
       </Text>
     </StepsContainer>
   ),
@@ -238,7 +241,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Switch to compute cluster"
       />
       <Text textStyle="text-base">
-        First, create a <Code variant="inline">VIEW</Code>:
+        First, create a <Code variant="inline-syntax">VIEW</Code>:
       </Text>
       <Runnable
         runCommand={runCommand}
@@ -252,13 +255,14 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       />
       <TextContainer>
         <Text textStyle="text-base">
-          This view joins data from <Code variant="inline">auctions</Code> and{" "}
-          <Code variant="inline">bids</Code> to get the average price of bids
-          that arrived before their auctions closed.
+          This view joins data from{" "}
+          <Code variant="inline-syntax">auctions</Code> and{" "}
+          <Code variant="inline-syntax">bids</Code> to get the average price of
+          bids that arrived before their auctions closed.
         </Text>
         <Text textStyle="text-base">
           Note that, as in other SQL databases, a view in Materialize is simply
-          an alias for the embedded <Code variant="inline">SELECT</Code>{" "}
+          an alias for the embedded <Code variant="inline-syntax">SELECT</Code>{" "}
           statement. Materialize computes the results of the query only when the
           view is called.
         </Text>
@@ -331,8 +335,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         <Text textStyle="text-base">
           One thing to note about indexes is that they exist only in the cluster
           where they are created. To experience this, switch to the{" "}
-          <Code variant="inline">default</Code> cluster and query the view
-          again:
+          <Code variant="inline-syntax">default</Code> cluster and query the
+          view again:
         </Text>
       </TextContainer>
 
@@ -350,11 +354,11 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       </RunnableContainer>
       <Text textStyle="text-base">
         Latency is high again because the index you created on the view exists
-        only inside the <Code variant="inline">compute_qck</Code> cluster. In
-        the <Code variant="inline">default</Code> cluster, where you are
-        currently, you don&apos;t have access to the index&apos;s pre-computed
-        results. Instead, the view once again retrieves data from durable
-        storage and computes the results at query-time.
+        only inside the <Code variant="inline-syntax">compute_qck</Code>{" "}
+        cluster. In the <Code variant="inline-syntax">default</Code> cluster,
+        where you are currently, you don&apos;t have access to the index&apos;s
+        pre-computed results. Instead, the view once again retrieves data from
+        durable storage and computes the results at query-time.
       </Text>
     </StepsContainer>
   ),
@@ -374,7 +378,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         </Text>
         <Text textStyle="text-base">
           To see this in action, confirm that you are in the{" "}
-          <Code variant="inline">default</Code> cluster and then create a
+          <Code variant="inline-syntax">default</Code> cluster and then create a
           materialized view:
         </Text>
       </TextContainer>
@@ -397,10 +401,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         />
       </RunnableContainer>
       <Text textStyle="text-base">
-        The <Code variant="inline">SELECT</Code> in this materialized view joins
-        data from <Code variant="inline">auctions</Code> and{" "}
-        <Code variant="inline">bids</Code>, but this time to get the number of
-        eligible bids per item.
+        The <Code variant="inline-syntax">SELECT</Code> in this materialized
+        view joins data from <Code variant="inline-syntax">auctions</Code> and{" "}
+        <Code variant="inline-syntax">bids</Code>, but this time to get the
+        number of eligible bids per item.
       </Text>
     </StepsContainer>
   ),
@@ -409,8 +413,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
         <Text textStyle="text-base">
-          Switch to the <Code variant="inline">compute_qck</Code> cluster and
-          query the materialized view:
+          Switch to the <Code variant="inline-syntax">compute_qck</Code> cluster
+          and query the materialized view:
         </Text>
       </TextContainer>
 
@@ -429,7 +433,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
       <TextContainer>
         <Text textStyle="text-base">
           As you can see, although the materialized view was created in the{" "}
-          <Code variant="inline">default</Code> cluster, its results are
+          <Code variant="inline-syntax">default</Code> cluster, its results are
           available from other clusters as well because they are in shared,
           durable storage.
         </Text>
@@ -467,8 +471,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         </Text>
         <Text textStyle="text-base">
           🧑‍🔬 Materialize has a solution for that! You can use a{" "}
-          <Code variant="inline">SUBSCRIBE</Code> command to be streamed updates
-          to the view
+          <Code variant="inline-syntax">SUBSCRIBE</Code> command to be streamed
+          updates to the view
         </Text>
       </TextContainer>
 
