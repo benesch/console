@@ -31,6 +31,7 @@ import {
 } from "recoil";
 
 import { Error as MaterializeError, Notice } from "~/api/materialize/types";
+import useCancelQuery from "~/api/materialize/useCancelQuery";
 import { useSqlWs } from "~/api/materialize/websocket";
 import CommandBlock from "~/components/CommandBlock";
 import BookOpenIcon from "~/svg/BookOpenIcon";
@@ -322,6 +323,14 @@ const Shell = () => {
     open: socketOpen,
   });
 
+  const { runSql: cancelQuery } = useCancelQuery();
+
+  /**
+   * TODO (#437): Replace with useEnvironmentGate when Adapter work is done and a designated version is set.
+   * When version is stable for all environments, get rid of the flag entirely.
+   */
+  const subscribeCancelFeatureFlag = false;
+
   const isSocketAvailable = socket !== null && !socketError;
 
   useIdleTimer({
@@ -348,6 +357,19 @@ const Shell = () => {
     setTimeout(() => {
       setSocketOpen(true);
     }, 0);
+  };
+
+  const cancelStreaming = () => {
+    if (!subscribeCancelFeatureFlag) {
+      restartSocket();
+      return;
+    }
+
+    const { connectionId } = shellState;
+    if (!connectionId) {
+      return;
+    }
+    cancelQuery(connectionId);
   };
 
   const { webSocketState } = shellState;
@@ -472,6 +494,14 @@ const Shell = () => {
     socket.onResult((result) => {
       try {
         switch (result.type) {
+          case "BackendKeyData":
+            if (result.payload.conn_id) {
+              setShellState((prevState) => ({
+                ...prevState,
+                connectionId: `${result.payload.conn_id}`,
+              }));
+            }
+            break;
           case "ReadyForQuery":
             if (stateMachine.state.matches("initialState")) {
               stateMachine.send("READY_FOR_QUERY");
@@ -740,7 +770,7 @@ const Shell = () => {
         </VStack>
         <RunCommandButton
           runCommand={runCommand}
-          cancelStreaming={restartSocket}
+          cancelStreaming={cancelStreaming}
           isSocketAvailable={isSocketAvailable}
           position="absolute"
           bottom="6"

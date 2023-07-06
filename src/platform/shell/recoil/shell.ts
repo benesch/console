@@ -13,6 +13,7 @@ type ShellState = {
   crtEnabled: boolean;
   webSocketState: WebSocketFsmState["value"] | null;
   currentTutorialStep: number;
+  connectionId: string | null;
 };
 
 const initialShellState = {
@@ -21,6 +22,7 @@ const initialShellState = {
   crtEnabled: false,
   webSocketState: null,
   currentTutorialStep: 0,
+  connectionId: null,
 };
 
 export const shellStateAtom = atom<ShellState>({
