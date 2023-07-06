@@ -248,6 +248,7 @@ export interface ClusterReplicaWithUtilizaton {
   id: string;
   name: string;
   clusterName: string;
+  managed: boolean;
   size: string;
   /** Undefined when a replica is first created */
   cpuPercent?: number;
@@ -262,6 +263,7 @@ export function useClusterReplicasWithUtilization(clusterId?: string) {
       ? `SELECT r.id,
   r.name as replica_name,
   c.name as cluster_name,
+  c.managed,
   r.cluster_id,
   r.size,
   u.cpu_percent,
@@ -287,6 +289,7 @@ ORDER BY r.id;`
         id: replica_id.toString(),
         name: getColumnByName(row, "replica_name") as string,
         clusterName: getColumnByName(row, "cluster_name") as string,
+        managed: getColumnByName(row, "managed") as boolean,
         size: getColumnByName(row, "size") as string,
         cpuPercent: getColumnByName(row, "cpu_percent") as number,
         memoryPercent: getColumnByName(row, "memory_percent") as number,

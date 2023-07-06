@@ -197,7 +197,12 @@ function canDeleteReplica(
   clusterId: string | undefined,
   replica: ClusterReplicaWithUtilizaton
 ) {
-  return clusterId && !isSystemCluster(clusterId) && !replica.linkedObjectId;
+  return (
+    clusterId &&
+    !isSystemCluster(clusterId) &&
+    !replica.linkedObjectId &&
+    !replica.managed
+  );
 }
 
 const ReplicaTable = (props: ReplicaTableProps) => {
