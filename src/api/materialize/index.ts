@@ -6,10 +6,15 @@ import { assert, isTruthy, notNullOrUndefined } from "~/util";
 import { DatabaseObject } from "./types";
 
 /**
- * Named used to identify ourselves to the server, needs to be kept in sync with
+ * Name used to identify ourselves to the server, needs to be kept in sync with
  * the `ApplicationNameHint`.
  */
 export const APPLICATION_NAME = "web_console";
+
+/**
+ * Name used to identify the Shell feature specifically to the server.
+ */
+export const SHELL_APPLICATION_NAME = "web_console_shell";
 export const DEFAULT_QUERY_ERROR = "Error running query.";
 
 /**

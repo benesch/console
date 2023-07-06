@@ -76,7 +76,19 @@ export class SqlWebSocket {
   }
 }
 
-export const useSqlWs = ({ open }: { open: boolean }) => {
+type AuthOptions = { [name: string]: string };
+
+const DEFAULT_AUTH_OPTIONS: AuthOptions = {
+  application_name: APPLICATION_NAME,
+};
+
+export const useSqlWs = ({
+  open,
+  authOptions,
+}: {
+  open: boolean;
+  authOptions?: AuthOptions;
+}) => {
   const currentEnvironment = useRecoilValue_TRANSITION_SUPPORT_UNSTABLE(
     currentEnvironmentState
   );
@@ -153,7 +165,6 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         `wss://${currentEnvironment.environmentdHttpsAddress}/api/experimental/sql`
       );
       // Optional session vars to provide on startup of the WebSocket.
-      const options = { application_name: APPLICATION_NAME };
 
       setSocketError(null);
       ws.addEventListener("message", handleMessage);
@@ -161,7 +172,7 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         ws.send(
           JSON.stringify({
             token: accessTokenRef.current,
-            options,
+            options: authOptions ?? DEFAULT_AUTH_OPTIONS,
           })
         );
       };
@@ -180,7 +191,14 @@ export const useSqlWs = ({ open }: { open: boolean }) => {
         ws.removeEventListener("message", handleMessage);
       }
     };
-  }, [currentEnvironment, handleClose, handleError, handleMessage, open]);
+  }, [
+    currentEnvironment,
+    handleClose,
+    handleError,
+    handleMessage,
+    open,
+    authOptions,
+  ]);
 
   return { socketReady, socket, socketError };
 };

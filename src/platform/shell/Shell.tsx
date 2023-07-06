@@ -21,7 +21,7 @@ import {
 import { captureException } from "@sentry/react";
 import { interpret, InterpreterStatus, StateMachine } from "@xstate/fsm";
 import debounce from "lodash.debounce";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import {
   useRecoilCallback,
@@ -30,6 +30,7 @@ import {
   useSetRecoilState,
 } from "recoil";
 
+import { SHELL_APPLICATION_NAME } from "~/api/materialize";
 import { Error as MaterializeError, Notice } from "~/api/materialize/types";
 import { useSqlWs } from "~/api/materialize/websocket";
 import CommandBlock from "~/components/CommandBlock";
@@ -318,8 +319,16 @@ const Shell = () => {
 
   const [socketOpen, setSocketOpen] = useState(true);
 
+  const wsAuthOptions = useMemo(
+    () => ({
+      application_name: SHELL_APPLICATION_NAME,
+    }),
+    []
+  );
+
   const { socket, socketError } = useSqlWs({
     open: socketOpen,
+    authOptions: wsAuthOptions,
   });
 
   const isSocketAvailable = socket !== null && !socketError;
