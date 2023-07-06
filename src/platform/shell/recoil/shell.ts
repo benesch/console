@@ -112,8 +112,7 @@ function mergeMzDiffs(commandResult: CommandResult): CommandResult {
   if (
     !commandResult.isStreamingResult ||
     !commandResult.hasRows ||
-    !commandResult.cols ||
-    !commandResult.rows
+    !commandResult.cols
   ) {
     return commandResult;
   }
@@ -121,6 +120,14 @@ function mergeMzDiffs(commandResult: CommandResult): CommandResult {
   const newCols = commandResult.cols.filter(
     (col) => !SUBSCRIBE_METADATA_COLUMNS.includes(col)
   );
+
+  if (!commandResult.rows) {
+    return {
+      ...commandResult,
+      cols: newCols,
+      rows: [],
+    };
+  }
 
   const reservedSubscribeColumnsIndicesByCol = commandResult.cols.reduceRight(
     (accum, col, colIndex) => {
