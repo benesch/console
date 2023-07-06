@@ -8,9 +8,6 @@ export function buildCancelQuery(connectionId: string) {
   return query.compile(queryBuilder);
 }
 
-/**
- * Fetches the number of dependencies an object has
- */
 function useCancelQuery() {
   const response = useSqlLazy({
     queryBuilder: (connectionId: string) => buildCancelQuery(connectionId).sql,
