@@ -5,7 +5,7 @@ import { queryBuilder } from "./db";
 
 export function buildCancelQuery(connectionId: string) {
   const query = sql`SELECT pg_cancel_backend(${sql.raw(connectionId)})`;
-  return query.compile(queryBuilder).sql;
+  return query.compile(queryBuilder);
 }
 
 /**
@@ -13,7 +13,7 @@ export function buildCancelQuery(connectionId: string) {
  */
 function useCancelQuery() {
   const response = useSqlLazy({
-    queryBuilder: buildCancelQuery,
+    queryBuilder: (connectionId: string) => buildCancelQuery(connectionId).sql,
   });
 
   return response;
