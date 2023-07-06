@@ -46,6 +46,7 @@ import WebSocketFsm, {
 } from "./machines/webSocketFsm";
 import {
   calculateCommandDuration,
+  createDefaultLocalCommandOutput,
   createDefaultNoticeOutput,
   HistoryId,
   historyIdsAtom,
@@ -83,6 +84,24 @@ const NoticeOutput = ({ notice }: { notice: Notice }) => {
       {notice.hint && (
         <Code color={colors.foreground.secondary}>HINT: {notice.hint}</Code>
       )}
+    </VStack>
+  );
+};
+
+const LocalCommandOutput = ({
+  command,
+  commandResults,
+}: {
+  command: string;
+  commandResults: string[][];
+}) => {
+  return (
+    <VStack spacing="6" alignItems="flex-start" minWidth="0">
+      <HStack alignItems="flex-start" width="100%">
+        <CommandChevron />
+        <CommandBlock value={command} readOnly />
+      </HStack>
+      <SqlSelectTable cols={["Command", "Description"]} rows={commandResults} />
     </VStack>
   );
 };
@@ -188,6 +207,11 @@ const HistoryOutput = (props: HistoryOutputProps) => {
     >
       {historyOutput.kind === "notice" ? (
         <NoticeOutput notice={historyOutput} />
+      ) : historyOutput.kind === "localCommand" ? (
+        <LocalCommandOutput
+          command={historyOutput.command}
+          commandResults={historyOutput.commandResults}
+        />
       ) : (
         <HStack alignItems="flex-start" width="100%">
           <CommandChevron />
@@ -347,6 +371,20 @@ const Shell = () => {
       });
     };
   });
+
+  const showHelp = (commands: Map<string, SlashCommandEntry>) => {
+    const helpItems: Array<[string, string]> = [];
+    for (const [command, { display, description }] of commands) {
+      if (!display) continue;
+      helpItems.push([`\\${command}`, description]);
+    }
+    commitToHistory(
+      createDefaultLocalCommandOutput({
+        command: "\\help",
+        commandResults: helpItems,
+      })
+    );
+  };
 
   const updateHistoryItem = useRecoilCallback(({ set }) => {
     return (historyItem: HistoryItem) => {
@@ -544,16 +582,41 @@ const Shell = () => {
     commitToHistory(latestCommandOutput);
   };
 
-  const slashCommands = new Map<string, () => void>([
+  type SlashCommandEntry = {
+    callback: () => void;
+    description: string;
+    display: boolean;
+  };
+
+  const slashCommands: Map<string, SlashCommandEntry> = new Map([
     [
       "hacktheplanet",
-      () =>
-        setShellState((currentState) => ({
-          ...currentState,
-          crtEnabled: !currentState.crtEnabled,
-        })),
+      {
+        callback: () =>
+          setShellState((currentState) => ({
+            ...currentState,
+            crtEnabled: !currentState.crtEnabled,
+          })),
+        display: false,
+        description: "Hack the planet!",
+      },
     ],
-    ["clear", clearHistory],
+    [
+      "help",
+      {
+        callback: () => showHelp(slashCommands),
+        display: true,
+        description: "Show this help message",
+      },
+    ],
+    [
+      "clear",
+      {
+        callback: clearHistory,
+        display: true,
+        description: "Clear your displayed history",
+      },
+    ],
   ]);
 
   const handlePromptInput = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -570,7 +633,7 @@ const Shell = () => {
       if (text.startsWith("\\")) {
         const handler = slashCommands.get(text.substring(1));
         if (handler) {
-          handler();
+          handler.callback();
           setPrompt("");
           e.preventDefault();
           return false;
