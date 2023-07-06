@@ -326,6 +326,12 @@ const Shell = () => {
 
   const { runSql: cancelQuery } = useCancelQuery();
 
+  /**
+   * TODO (#437): Replace with useEnvironmentGate when Adapter work is done and a designated version is set.
+   * When version is stable for all environments, get rid of the flag entirely.
+   */
+  const subscribeCancelFeatureFlag = false;
+
   const isSocketAvailable = socket !== null && !socketError;
 
   useIdleTimer({
@@ -355,6 +361,11 @@ const Shell = () => {
   };
 
   const cancelStreaming = () => {
+    if (!subscribeCancelFeatureFlag) {
+      restartSocket();
+      return;
+    }
+
     const { connectionId } = shellState;
     if (!connectionId) {
       return;
