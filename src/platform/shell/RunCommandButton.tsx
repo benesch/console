@@ -25,10 +25,18 @@ const RunCommandButton = ({
   const isStreaming = webSocketState === "commandInProgressStreaming";
 
   const isCommandProcessing =
-    webSocketState !== "initialState" && webSocketState !== "readyForQuery";
+    webSocketState === "commandInProgressDefault" ||
+    webSocketState === "commandInProgressHasRows";
 
-  const isButtonDisabled =
-    !isSocketAvailable || (!isStreaming && isCommandProcessing);
+  const isLoading = !isStreaming && isCommandProcessing;
+
+  const isButtonDisabled = !isSocketAvailable || isLoading;
+
+  const buttonText = isStreaming
+    ? "Stop Streaming"
+    : isLoading
+    ? "Running"
+    : "Run Query";
 
   return (
     <Button
@@ -45,10 +53,15 @@ const RunCommandButton = ({
           setPrompt("");
         }
       }}
-      {...rest}
       isDisabled={isButtonDisabled}
+      loadingText={buttonText}
+      isLoading={isLoading}
+      {...rest}
+      _hover={{
+        opacity: 1,
+      }}
     >
-      {isStreaming ? "Stop Streaming" : "Run Query"}
+      {buttonText}
     </Button>
   );
 };

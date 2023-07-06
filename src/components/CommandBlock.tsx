@@ -76,8 +76,9 @@ export const CommandBlock = ({
         autoComplete="false"
         autoCorrect="false"
         onKeyDown={handleKeyDown}
-        {...rest}
         ref={codeEditorRef}
+        data-color-mode="dark"
+        {...rest}
       />
       <OverrideCodeEditorStyles />
     </Code>

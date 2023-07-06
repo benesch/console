@@ -667,7 +667,7 @@ const Shell = () => {
           )}
           <ShellPrompt
             flexGrow="1"
-            flexShrink="1"
+            flexShrink="0"
             minHeight="32"
             width="100%"
             onCommandBlockKeyDown={handlePromptInput}
