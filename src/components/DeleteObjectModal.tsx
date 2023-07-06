@@ -127,7 +127,8 @@ const DeleteObjectModal = ({
                     <InlayBanner
                       variant="error"
                       label="Error"
-                      message="There was an error deleting the object. Please try again."
+                      width="100%"
+                      message={`There was an error deleting the object: ${error}.`}
                     />
                   )}
                   <FormControl isInvalid={!!formState.errors.objectName}>
