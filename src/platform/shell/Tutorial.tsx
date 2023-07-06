@@ -15,7 +15,7 @@ import React, { PropsWithChildren } from "react";
 import { useRecoilState } from "recoil";
 
 import { TabbedCodeBlock } from "~/components/copyableComponents";
-import DoubleChevronRightIcon from "~/svg/DoubleChevronRightIcon";
+import CommandIcon from "~/svg/CommandIcon";
 import { MaterializeTheme } from "~/theme";
 
 import { shellStateAtom } from "./recoil/shell";
@@ -31,6 +31,7 @@ const Runnable = ({ runCommand, value, title }: RunnableProps) => {
 
   return (
     <TabbedCodeBlock
+      width="100%"
       flexShrink="0"
       tabs={[{ title, contents: value }]}
       lineNumbers
@@ -40,8 +41,14 @@ const Runnable = ({ runCommand, value, title }: RunnableProps) => {
           aria-label="Run command button"
           title="Run command"
           onClick={() => runCommand(value)}
-          icon={<DoubleChevronRightIcon color={colors.foreground.secondary} />}
+          icon={<CommandIcon color={colors.foreground.secondary} />}
           variant="unstyled"
+          rounded={0}
+          sx={{
+            _hover: {
+              background: "rgba(255, 255, 255, 0.06)",
+            },
+          }}
         />
       }
     />
@@ -59,7 +66,7 @@ const RunnableContainer = ({ children }: PropsWithChildren) => (
 );
 
 const StepsContainer = ({ children }: PropsWithChildren) => (
-  <VStack spacing="10" alignItems="stretch">
+  <VStack spacing="6" alignItems="stretch">
     {children}
   </VStack>
 );
@@ -69,9 +76,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Create clusters</Text>
-        <Text>
-          Use the <Code>CREATE CLUSTER</Code> command to create two new
-          clusters:
+        <Text textStyle="text-base">
+          Use the <Code variant="inline-syntax">CREATE CLUSTER</Code> command to
+          create two new clusters:
         </Text>
       </TextContainer>
       <RunnableContainer>
@@ -86,9 +93,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           title="Create compute cluster"
         />
       </RunnableContainer>
-      <Text>
-        The <Code>2xsmall</Code> replica size is sufficient for the data
-        ingestion and computation in this getting started scenario.
+      <Text textStyle="text-base">
+        The <Code variant="inline-syntax">2xsmall</Code> replica size is
+        sufficient for the data ingestion and computation in this getting
+        started scenario.
       </Text>
     </StepsContainer>
   ),
@@ -96,10 +104,11 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Create clusters</Text>
-        <Text>
+        <Text textStyle="text-base">
           The physical compute resources in your clusters are called{" "}
-          <Code>replicas</Code>. Use the <Code>SHOW CLUSTER REPLICAS</Code>{" "}
-          command to check the status of the replicas:
+          <Code variant="inline-syntax">replicas</Code>. Use the{" "}
+          <Code variant="inline-syntax">SHOW CLUSTER REPLICAS</Code> command to
+          check the status of the replicas:
         </Text>
       </TextContainer>
       <Runnable
@@ -107,9 +116,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         value="SHOW CLUSTER REPLICAS WHERE cluster IN ('compute_qck', 'ingest_qck');"
         title="Show cluster replicas"
       />
-      <Text>
-        Once both replicas are ready (<Code>ready=true</Code>), move on to the
-        next step.
+      <Text textStyle="text-base">
+        Once both replicas are ready (
+        <Code variant="inline-syntax">ready=true</Code>), move on to the next
+        step.
       </Text>
     </StepsContainer>
   ),
@@ -117,10 +127,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Ingest streaming data</Text>
-        <Text>
+        <Text textStyle="text-base">
           Most objects in Materialize are namespaced by database and schema,
           including sources, so start by creating a unique schema within the
-          default <Code>materialize</Code> database:
+          default <Code variant="inline-syntax">materialize</Code> database:
         </Text>
       </TextContainer>
 
@@ -142,9 +152,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Ingest streaming data</Text>
-        <Text>
-          Use the <Code>CREATE SOURCE</Code> command to create the auction house
-          source:
+        <Text textStyle="text-base">
+          Use the <Code variant="inline-syntax">CREATE SOURCE</Code> command to
+          create the auction house source:
         </Text>
       </TextContainer>
 
@@ -156,11 +166,13 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
   FOR ALL TABLES;`}
         title="Create auction house source"
       />
-      <Text>
-        Note that the <Code>IN CLUSTER</Code> clause attaches this source to the
-        existing <Code>ingest_qck</Code> cluster, but it&apos;s also possible to
-        create a cluster and replica at the time of source creation using the{" "}
-        <Code>WITH SIZE</Code> option.
+      <Text textStyle="text-base">
+        Note that the <Code variant="inline-syntax">IN CLUSTER</Code> clause
+        attaches this source to the existing{" "}
+        <Code variant="inline-syntax">ingest_qck</Code> cluster, but it&apos;s
+        also possible to create a cluster and replica at the time of source
+        creation using the <Code variant="inline-syntax">WITH SIZE</Code>{" "}
+        option.
       </Text>
     </StepsContainer>
   ),
@@ -168,12 +180,12 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Ingest streaming data</Text>
-        <Text>
+        <Text textStyle="text-base">
           Now that you&apos;ve created a source, Materialize starts ingesting
           data into durable storage, automatically splitting the stream into
           multiple <em>subsources</em> that represent different tables. Use the{" "}
-          <Code>SHOW SOURCES</Code> command to get an idea of the data being
-          generated:
+          <Code variant="inline-syntax">SHOW SOURCES</Code> command to get an
+          idea of the data being generated:
         </Text>
       </TextContainer>
 
@@ -182,10 +194,11 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         value="SHOW SOURCES;"
         title="Show sources"
       />
-      <Text>
-        In addition to the <Code>auction_house</Code> load generator source and
-        its subsources, you&apos;ll see <Code>auction_house_progress</Code>,
-        which Materialize creates so you can monitor source ingestion.
+      <Text textStyle="text-base">
+        In addition to the <Code variant="inline-syntax">auction_house</Code>{" "}
+        load generator source and its subsources, you&apos;ll see{" "}
+        <Code variant="inline-syntax">auction_house_progress</Code>, which
+        Materialize creates so you can monitor source ingestion.
       </Text>
     </StepsContainer>
   ),
@@ -193,7 +206,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Ingest streaming data</Text>
-        <Text>
+        <Text textStyle="text-base">
           Before moving on, get a sense of the data you&apos;ll be working with:
         </Text>
       </TextContainer>
@@ -216,7 +229,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
+        <Text textStyle="text-base">
           With auction data streaming in, you can now explore the unique value
           of Materialize: computing real-time results over fast-changing data.
         </Text>
@@ -227,8 +240,8 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         value="SET CLUSTER = compute_qck;"
         title="Switch to compute cluster"
       />
-      <Text>
-        First, create a <b>view</b>:
+      <Text textStyle="text-base">
+        First, create a <Code variant="inline-syntax">VIEW</Code>:
       </Text>
       <Runnable
         runCommand={runCommand}
@@ -241,15 +254,17 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Create avg_bids view"
       />
       <TextContainer>
-        <Text>
-          This view joins data from <Code>auctions</Code> and <Code>bids</Code>{" "}
-          to get the average price of bids that arrived before their auctions
-          closed.
+        <Text textStyle="text-base">
+          This view joins data from{" "}
+          <Code variant="inline-syntax">auctions</Code> and{" "}
+          <Code variant="inline-syntax">bids</Code> to get the average price of
+          bids that arrived before their auctions closed.
         </Text>
-        <Text>
+        <Text textStyle="text-base">
           Note that, as in other SQL databases, a view in Materialize is simply
-          an alias for the embedded <Code>SELECT</Code> statement. Materialize
-          computes the results of the query only when the view is called.
+          an alias for the embedded <Code variant="inline-syntax">SELECT</Code>{" "}
+          statement. Materialize computes the results of the query only when the
+          view is called.
         </Text>
       </TextContainer>
     </StepsContainer>
@@ -258,7 +273,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>Query the view a few times:</Text>
+        <Text textStyle="text-base">Query the view a few times:</Text>
       </TextContainer>
 
       <Runnable
@@ -267,7 +282,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Query avg_bids"
       />
 
-      <Text>
+      <Text textStyle="text-base">
         You&apos;ll see the average bid change as new auction data streams into
         Materialize. However, the view retrieves data from durable storage and
         computes results at query-time, so latency is high and would be much
@@ -279,7 +294,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
+        <Text textStyle="text-base">
           Next, create an <b>index</b> on the view:
         </Text>
       </TextContainer>
@@ -290,7 +305,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         title="Create index on avg_bids"
       />
       <TextContainer>
-        <Text>
+        <Text textStyle="text-base">
           🚀🚀🚀 This is where Materialize becomes a true streaming database.
           When you use an index,{" "}
           <b>
@@ -299,14 +314,14 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           </b>
           .
         </Text>
-        <Text>Query the view again:</Text>
+        <Text textStyle="text-base">Query the view again:</Text>
       </TextContainer>
       <Runnable
         runCommand={runCommand}
         value="SELECT * FROM avg_bids;"
         title="Query avg_bids"
       />
-      <Text>
+      <Text textStyle="text-base">
         You&apos;ll see the average bids continue to change, but now that the
         view is indexed and results are pre-computed and stored in memory,
         latency is down considerably!
@@ -317,10 +332,11 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
+        <Text textStyle="text-base">
           One thing to note about indexes is that they exist only in the cluster
           where they are created. To experience this, switch to the{" "}
-          <Code>default</Code> cluster and query the view again:
+          <Code variant="inline-syntax">default</Code> cluster and query the
+          view again:
         </Text>
       </TextContainer>
 
@@ -336,13 +352,13 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           title="Query avg_bids"
         />
       </RunnableContainer>
-      <Text>
+      <Text textStyle="text-base">
         Latency is high again because the index you created on the view exists
-        only inside the <Code>compute_qck</Code> cluster. In the{" "}
-        <Code>default</Code> cluster, where you are currently, you don&apos;t
-        have access to the index&apos;s pre-computed results. Instead, the view
-        once again retrieves data from durable storage and computes the results
-        at query-time.
+        only inside the <Code variant="inline-syntax">compute_qck</Code>{" "}
+        cluster. In the <Code variant="inline-syntax">default</Code> cluster,
+        where you are currently, you don&apos;t have access to the index&apos;s
+        pre-computed results. Instead, the view once again retrieves data from
+        durable storage and computes the results at query-time.
       </Text>
     </StepsContainer>
   ),
@@ -350,19 +366,20 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
+        <Text textStyle="text-base">
           In many cases, you&apos;ll want results to be accessible from multiple
           clusters, however. To achieve this, you use materialized views.
         </Text>
-        <Text>
+        <Text textStyle="text-base">
           Like an index, a materialized view incrementally computes the results
           of a query as new data arrives. But unlike an index,{" "}
           <b>a materialized view persists its results to durable storage</b>{" "}
           that is accessible to all clusters.
         </Text>
-        <Text>
+        <Text textStyle="text-base">
           To see this in action, confirm that you are in the{" "}
-          <Code>default</Code> cluster and then create a materialized view:
+          <Code variant="inline-syntax">default</Code> cluster and then create a
+          materialized view:
         </Text>
       </TextContainer>
 
@@ -383,9 +400,10 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           title="Create materialized view num_bids"
         />
       </RunnableContainer>
-      <Text>
-        The <Code>SELECT</Code> in this materialized view joins data from{" "}
-        <Code>auctions</Code> and <Code>bids</Code>, but this time to get the
+      <Text textStyle="text-base">
+        The <Code variant="inline-syntax">SELECT</Code> in this materialized
+        view joins data from <Code variant="inline-syntax">auctions</Code> and{" "}
+        <Code variant="inline-syntax">bids</Code>, but this time to get the
         number of eligible bids per item.
       </Text>
     </StepsContainer>
@@ -394,9 +412,9 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
-          Switch to the <Code>compute_qck</Code> cluster and query the
-          materialized view:
+        <Text textStyle="text-base">
+          Switch to the <Code variant="inline-syntax">compute_qck</Code> cluster
+          and query the materialized view:
         </Text>
       </TextContainer>
 
@@ -413,12 +431,13 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         />
       </RunnableContainer>
       <TextContainer>
-        <Text>
+        <Text textStyle="text-base">
           As you can see, although the materialized view was created in the{" "}
-          <Code>default</Code> cluster, its results are available from other
-          clusters as well because they are in shared, durable storage.
+          <Code variant="inline-syntax">default</Code> cluster, its results are
+          available from other clusters as well because they are in shared,
+          durable storage.
         </Text>
-        <Text>
+        <Text textStyle="text-base">
           If retrieving a materialized view&apos;s results from storage is too
           slow, you can create an index on the materialized view as well:
         </Text>
@@ -435,7 +454,7 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
           title="Query num_bids"
         />
       </RunnableContainer>
-      <Text>
+      <Text textStyle="text-base">
         Now that the materialized view serves results from memory, latency is
         low again.
       </Text>
@@ -445,14 +464,15 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Compute real-time results</Text>
-        <Text>
+        <Text textStyle="text-base">
           As new bids come in, a change will occur in the materialized view.
           That&apos;ll leave your query results less reflective of what the
           actual data says.
         </Text>
-        <Text>
+        <Text textStyle="text-base">
           🧑‍🔬 Materialize has a solution for that! You can use a{" "}
-          <Code>SUBSCRIBE</Code> command to be streamed updates to the view
+          <Code variant="inline-syntax">SUBSCRIBE</Code> command to be streamed
+          updates to the view
         </Text>
       </TextContainer>
 
@@ -461,14 +481,14 @@ const Steps: Array<(runCommand: (value: string) => void) => JSX.Element> = [
         value="SUBSCRIBE num_bids;"
         title="Subscribe to num_bids"
       />
-      <Text>Watch the results update in realtime!</Text>
+      <Text textStyle="text-base">Watch the results update in realtime!</Text>
     </StepsContainer>
   ),
   (runCommand) => (
     <StepsContainer>
       <TextContainer>
         <Text textStyle="heading-md">Clean up</Text>
-        <Text>
+        <Text textStyle="text-base">
           Once you&apos;re done exploring the auction house source, remember to
           clean up your environment:
         </Text>
@@ -583,10 +603,19 @@ const Tutorial = ({ runCommand, ...rest }: TutorialProps) => {
           TUTORIAL
         </Text>
         {Steps[step](runCommand)}
-        <HStack flexGrow="0" alignSelf="flex-end" mt="10">
+        <HStack
+          width="100%"
+          flexGrow="0"
+          alignSelf="flex-end"
+          alignItems="space-between"
+          justifyContent={
+            atStart ? "flex-end" : atEnd ? "flex-start" : "space-between"
+          }
+          mt="10"
+        >
           {!atStart && (
             <Button onClick={() => changeStep(step - 1)} variant="tertiary">
-              Previous
+              Back
             </Button>
           )}
           {!atEnd && (
