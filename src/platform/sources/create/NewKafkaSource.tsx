@@ -64,6 +64,7 @@ const PROLONGED_MODAL_DELAY = 1_500;
 const formatOptions = [
   { id: "avro" as const, name: "Avro" },
   { id: "protobuf" as const, name: "Protobuf" },
+  { id: "json" as const, name: "JSON" },
   { id: "text" as const, name: "Text" },
   { id: "bytes" as const, name: "Bytes" },
 ];
@@ -80,6 +81,7 @@ const envelopeOptions = [
 const envelopeOptionsByFormat = {
   avro: envelopeOptions,
   protobuf: [envelopeOptions[0], envelopeOptions[1]],
+  json: [envelopeOptions[0], envelopeOptions[1]],
   text: [envelopeOptions[0], envelopeOptions[1]],
   bytes: [envelopeOptions[0], envelopeOptions[1]],
 };
